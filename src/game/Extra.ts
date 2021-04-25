@@ -43,8 +43,11 @@ interface ExtraProps {
 interface ExtraState {
     isVisible: boolean;
     isTouchingGround: boolean;
+    isTouchingFloor: boolean;
     isDead: boolean;
     isColliding: boolean;
+    distFromGround: number;
+    distFromFloor: number;
 }
 
 interface ExtraPhysics {
@@ -222,8 +225,11 @@ export default class Extra {
         this.state = {
             isVisible: true,
             isTouchingGround: false,
+            isTouchingFloor: false,
             isDead: false,
             isColliding: false,
+            distFromGround: 0,
+            distFromFloor: 0,
         };
         this.spriteIndex = spriteIndex;
         this.spawnTime = 0;

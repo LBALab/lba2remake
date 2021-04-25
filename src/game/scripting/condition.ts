@@ -3,6 +3,7 @@ import { WORLD_SIZE } from '../../utils/lba';
 import { ScriptContext } from './ScriptContext';
 import { LBA2GameFlags } from '../data/gameFlags';
 import Actor from '../Actor';
+import Zone from '../Zone';
 
 export function COL(this: ScriptContext) {
     if (this.actor.props.life <= 0) {
@@ -32,7 +33,7 @@ export function ZONE(this: ScriptContext) {
     return ZONE_OBJ.call(this, this.actor);
 }
 
-export function ZONE_OBJ(this: ScriptContext, actor) {
+export function ZONE_OBJ(this: ScriptContext, actor: Actor) {
     const pos = actor.physics.position.clone();
     let halfHeight = 0.005 * WORLD_SIZE;
     if (actor.model && actor.model.boundingBox) {
@@ -40,6 +41,7 @@ export function ZONE_OBJ(this: ScriptContext, actor) {
         halfHeight = (bb.max.y - bb.min.y) * 0.5;
     }
     pos.y += halfHeight;
+    let match: Zone = null;
     for (const zone of this.scene.zones) {
         if (zone.props.type !== 2)
             continue;
@@ -48,10 +50,23 @@ export function ZONE_OBJ(this: ScriptContext, actor) {
         if (pos.x >= box.xMin && pos.x <= box.xMax &&
             pos.y >= box.yMin && pos.y <= box.yMax &&
             pos.z >= box.zMin && pos.z <= box.zMax) {
-            return zone.props.snap;
+            if (match) {
+                const szZone = (box.xMax - box.xMin)
+                    + (box.yMax - box.yMin)
+                    + (box.zMax - box.zMin);
+                const mBox = match.props.box;
+                const szMatch = (mBox.xMax - mBox.xMin)
+                    + (mBox.yMax - mBox.yMin)
+                    + (mBox.zMax - mBox.zMin);
+                if (szZone < szMatch) {
+                    match = zone;
+                }
+            } else {
+                match = zone;
+            }
         }
     }
-    return -1;
+    return match ? match.props.snap : -1;
 }
 
 export function BODY(this: ScriptContext) {
@@ -155,10 +170,8 @@ export function FUEL(this: ScriptContext) {
 }
 
 export function CARRIED_BY(this: ScriptContext) {
-    return -1;
+    return CARRIED_BY_OBJ.call(this, this.actor);
 }
-
-CARRIED_BY.unimplemented = true;
 
 export function CDROM(this: ScriptContext) {
     return 1;
@@ -192,11 +205,9 @@ export function BETA_OBJ(this: ScriptContext, actor: Actor) {
     return ((THREE.MathUtils.radToDeg(angle) / 360) * 0x1000) % 0x1000;
 }
 
-export function CARRIED_OBJ_BY(this: ScriptContext) {
-    return -1;
+export function CARRIED_BY_OBJ(this: ScriptContext, actor: Actor) {
+    return actor.state.isCarriedBy;
 }
-
-CARRIED_OBJ_BY.unimplemented = true;
 
 export function ANGLE(this: ScriptContext, actor: Actor) {
     if (actor.state.isDead) {

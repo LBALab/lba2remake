@@ -6,7 +6,7 @@ export const MoveOpcode = [
     {
         opcode: 0x00,
         command: 'END',
-        handler: st.END
+        handler: st.END_MOVE
     },
     {
         opcode: 0x01,

@@ -29,10 +29,12 @@ interface ActorFlags {
     hasCollisions: boolean;
     hasCollisionBricks: boolean;
     hasCollisionBricksLow: boolean;
+    hasCollisionFloor: boolean;
     hasSpriteAnim3D: boolean;
     isVisible: boolean;
     isSprite: boolean;
     canFall: boolean;
+    canCarryActor: boolean;
     noShadow: boolean;
 }
 
@@ -72,6 +74,10 @@ interface ActorPhysics {
         angle: number;
         destAngle: number;
     };
+    carried: {
+        position: THREE.Vector3;
+        orientation: THREE.Quaternion;
+    };
 }
 
 export interface ActorState {
@@ -87,6 +93,8 @@ export interface ActorState {
     wasHitBy: number;
     hasSeenHit: boolean;
     repeatHit: number;
+    isCarried: boolean;
+    isCarriedBy: number;
     isSwitchingHit: boolean;
     isCrouching: boolean;
     isClimbing: boolean;
@@ -718,6 +726,8 @@ export default class Actor {
             wasHitBy: -1,
             hasSeenHit: false,
             repeatHit: 0,
+            isCarried: false,
+            isCarriedBy: -1,
             isSwitchingHit: false,
             isCrouching: false,
             isClimbing: false,
@@ -756,7 +766,11 @@ function initPhysics({pos, angle}) {
             position: new THREE.Vector3(0, 0, 0),
             angle: angleRad,
             destAngle: angleRad,
-        }
+        },
+        carried: {
+            position: new THREE.Vector3(),
+            orientation: new THREE.Quaternion(),
+        },
     };
 }
 
@@ -804,8 +818,10 @@ export function createNewActorProps(
             hasCollisions: true,
             hasCollisionBricks: true,
             hasCollisionBricksLow: true,
+            hasCollisionFloor: true,
             hasSpriteAnim3D: false,
             canFall: true,
+            canCarryActor: false,
             isVisible: true,
             isSprite: false,
             noShadow: false

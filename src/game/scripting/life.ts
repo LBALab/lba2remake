@@ -411,7 +411,7 @@ export function HIT(this: ScriptContext, actor, strength) {
     actor.props.life -= strength;
 }
 
-export function PLAY_VIDEO(this: ScriptContext, cmdState, video) {
+export function PLAY_VIDEO(this: ScriptContext, cmdState, video: string) {
     if (!cmdState.skipListener) {
         const that = this;
         this.game.pause();
@@ -422,7 +422,7 @@ export function PLAY_VIDEO(this: ScriptContext, cmdState, video) {
         };
         this.game.setUiState({ skip: false,
             video: {
-                path: getVideoPath(video),
+                path: getVideoPath(video.toUpperCase()),
                 onEnded
             }});
         cmdState.skipListener = function skipListener() {

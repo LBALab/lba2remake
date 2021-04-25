@@ -144,7 +144,7 @@ export function SET_TRACK(this: ScriptContext, offset) {
     this.moveState.stopped = false;
 }
 
-export function SET_TRACK_OBJ(this: ScriptContext, actor, offset) {
+export function SET_TRACK_OBJ(this: ScriptContext, actor: Actor, offset) {
     actor.scripts.move.context.state.reentryOffset = offset;
     actor.scripts.move.context.state.stopped = false;
 }
@@ -206,4 +206,8 @@ export function GOTO(this: ScriptContext, offset) {
 export function STOP(this: ScriptContext) {
     this.state.stopped = true;
     this.state.continue = false;
+}
+
+export function END_MOVE(this: ScriptContext) {
+    STOP.call(this);
 }

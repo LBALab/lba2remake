@@ -11,6 +11,9 @@ export function processPhysicsFrame(game: Game, scene: Scene, time: Time) {
     for (const actor of scene.actors) {
         processActorPhysics(game, scene, actor, time);
     }
+    for (const actor of scene.actors) {
+        processCarriedPosition(scene, actor);
+    }
     if (scene.isActive) {
         processZones(game, scene, time);
         processSidesceneTransitions(scene);
@@ -26,12 +29,14 @@ function processActorPhysics(game: Game, scene: Scene, actor: Actor, time: Time)
     if (currentTalkingActor > -1 && currentTalkingActor !== actor.index) {
         return;
     }
-
-    actor.physics.position.add(actor.physics.temp.position);
+    if (actor.state.isCarriedBy === -1) {
+        actor.physics.position.add(actor.physics.temp.position);
+    }
     if (actor.props.flags.hasCollisions) {
         if (!actor.state.hasGravityByAnim &&
             actor.props.flags.canFall && !actor.state.isClimbing &&
             !actor.state.isUsingProtoOrJetpack &&
+            actor.props.flags.hasCollisionFloor &&
             actor.props.dirMode !== ActorDirMode.WAGON) {
             // Max falling speed: 0.15m per frame
             actor.physics.position.y -= 0.25 * WORLD_SIZE * time.delta;
@@ -41,12 +46,71 @@ function processActorPhysics(game: Game, scene: Scene, actor: Actor, time: Time)
         }
         processCollisionsWithActors(scene, actor);
     }
+    if (actor.state.isCarriedBy === -1) {
+        actor.model.mesh.quaternion.copy(actor.physics.orientation);
+        actor.model.mesh.position.copy(actor.physics.position);
+        if (actor.model.boundingBoxDebugMesh) {
+            actor.model.boundingBoxDebugMesh.quaternion.copy(actor.model.mesh.quaternion);
+            actor.model.boundingBoxDebugMesh.quaternion.invert();
+        }
+    }
+}
+
+const TMP_POS = new THREE.Vector3();
+const TMP_Q = new THREE.Quaternion();
+const TMP_EULER = new THREE.Euler();
+
+function processCarriedPosition(scene: Scene, actor: Actor) {
+    if (actor.state.isCarriedBy === -1) {
+        actor.state.isCarried = false;
+        return;
+    }
+
+    const carrier = scene.actors[actor.state.isCarriedBy];
+    if (!actor.state.isCarried) {
+        initCarriedState(scene, actor);
+    }
+
+    const {
+        position: cPosition,
+        orientation: cOrientation
+    } = actor.physics.carried;
+
+    // Process the world position of actor based
+    // on local position on top of the carrier object
+    actor.physics.position.copy(carrier.physics.position);
+    TMP_POS.copy(cPosition);
+    TMP_POS.applyQuaternion(carrier.physics.orientation);
+    TMP_POS.add(actor.physics.temp.position);
+    actor.physics.position.add(TMP_POS);
+    TMP_Q.copy(carrier.physics.orientation);
+    TMP_Q.invert();
+    TMP_POS.applyQuaternion(TMP_Q);
+    cPosition.copy(TMP_POS);
+
+    // Process the world rotation of actor based on
+    // local orientation on top of the carrier object
+    TMP_Q.multiply(cOrientation);
+    TMP_Q.invert();
+    actor.physics.orientation.multiply(TMP_Q);
+    cOrientation.copy(carrier.physics.orientation);
+    TMP_EULER.setFromQuaternion(actor.physics.orientation, 'XZY');
+    actor.physics.temp.angle = TMP_EULER.y;
+
     actor.model.mesh.quaternion.copy(actor.physics.orientation);
     actor.model.mesh.position.copy(actor.physics.position);
-    if (actor.model.boundingBoxDebugMesh) {
-        actor.model.boundingBoxDebugMesh.quaternion.copy(actor.model.mesh.quaternion);
-        actor.model.boundingBoxDebugMesh.quaternion.invert();
-    }
+}
+
+function initCarriedState(scene: Scene, actor: Actor) {
+    const carried = actor.physics.carried;
+    const carrier = scene.actors[actor.state.isCarriedBy];
+    carried.position.copy(actor.physics.position);
+    carried.position.sub(carrier.physics.position);
+    TMP_Q.copy(carrier.physics.orientation);
+    TMP_Q.invert();
+    carried.position.applyQuaternion(TMP_Q);
+    carried.orientation.copy(carrier.physics.orientation);
+    actor.state.isCarried = true;
 }
 
 const BB_MIN = 0.004 * WORLD_SIZE;
@@ -83,10 +147,12 @@ const CENTER1 = new THREE.Vector3();
 const CENTER2 = new THREE.Vector3();
 
 const YSTEP = WORLD_SIZE / 3072;
-const Y_THRESHOLD = WORLD_SIZE * 0.000625;
+const Y_THRESHOLD = 0.000625 * WORLD_SIZE;
+const H_THRESHOLD = 0.007 * WORLD_SIZE;
 
 function processCollisionsWithActors(scene: Scene, actor: Actor) {
     actor.state.hasCollidedWithActor = -1;
+    actor.state.isCarriedBy = -1;
     if (actor.model === null || actor.state.isDead ||
         !actor.props.flags.hasCollisions) {
         return;
@@ -122,18 +188,27 @@ function processCollisionsWithActors(scene: Scene, actor: Actor) {
             ACTOR_BOX.getCenter(CENTER1);
             ACTOR2_BOX.getCenter(CENTER2);
             const dir = CENTER1.sub(CENTER2);
-            if (actor.physics.position.y < ACTOR2_BOX.max.y - Y_THRESHOLD) {
+            const canCarryActor = otherActor.props.flags.canCarryActor;
+            const threshold = canCarryActor ? H_THRESHOLD : Y_THRESHOLD;
+            if (ACTOR_BOX.min.y < ACTOR2_BOX.max.y - threshold) {
                 if (ITRS_SIZE.x < ITRS_SIZE.z) {
                     DIFF.set(ITRS_SIZE.x * Math.sign(dir.x), 0, 0);
                 } else {
                     DIFF.set(0, 0, ITRS_SIZE.z * Math.sign(dir.z));
                 }
+            } else if (canCarryActor) {
+                actor.state.distFromFloor = 0;
+                actor.state.isCarriedBy = otherActor.index;
+                DIFF.set(0, ITRS_SIZE.y * Math.sign(dir.y), 0);
             }
-            if (actor.props.dirMode !== ActorDirMode.WAGON) {
+            if (!actor.props.flags.canCarryActor) {
                 actor.physics.position.add(DIFF);
                 ACTOR_BOX.translate(DIFF);
             }
-            actor.state.hasCollidedWithActor = otherActor.index;
+            if (actor.state.isCarriedBy !== otherActor.index
+                && otherActor.state.isCarriedBy !== actor.index) {
+                actor.state.hasCollidedWithActor = otherActor.index;
+            }
         }
     }
 }

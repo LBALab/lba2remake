@@ -7,6 +7,7 @@ import Actor from '../../Actor';
 import { Time } from '../../../datatypes';
 import Scene from '../../Scene';
 import { getParams } from '../../../params';
+import Extra from '../../Extra';
 
 const STEP = 1 / WORLD_SIZE;
 const HALF_BRICK = 1 / 32;
@@ -133,8 +134,13 @@ export default class IsoSceneryPhysics {
         }
     }
 
-    processCollisions(scene: Scene, obj, time: Time) {
-        const isUsingProtoOrJetpack = (obj.props.entityIndex === BehaviourMode.JETPACK ||
+    processCollisions(scene: Scene, obj: Actor | Extra, time: Time) {
+        if (!obj.props.flags.hasCollisionBricks) {
+            return false;
+        }
+
+        const isUsingProtoOrJetpack = obj instanceof Actor &&
+            (obj.props.entityIndex === BehaviourMode.JETPACK ||
             obj.props.entityIndex === BehaviourMode.PROTOPACK) &&
             obj.props.animIndex === AnimType.FORWARD;
 
@@ -148,9 +154,9 @@ export default class IsoSceneryPhysics {
         const dz = Math.floor(position.z * 32);
         const cell = this.grid.cells[(dx * 64) + dz];
 
-        if (obj.animState) { // if it's an actor
-            obj.floorSound = -1;
-            obj.floorSound2 = null;
+        if (obj instanceof Actor && obj.animState) { // if it's an actor
+            obj.animState.floorSound = -1;
+            obj.animState.floorSound2 = null;
         }
 
         let isTouchingGround = false;
@@ -163,7 +169,7 @@ export default class IsoSceneryPhysics {
                 const bb = column.box;
                 const y = getColumnY(column, position);
 
-                if (obj.animState) { // if it's an actor
+                if (obj instanceof Actor && obj.animState) { // if it's an actor
                     obj.animState.floorSound = column.sound;
                     obj.animState.floorSound2 = column.sound2;
                 }
@@ -175,23 +181,26 @@ export default class IsoSceneryPhysics {
                         if (newY - position.y < 0.12 && !isUsingProtoOrJetpack) {
                             position.y = newY;
                             isTouchingGround = true;
-                            switch (column.groundType) {
-                                case GROUND_TYPES.WATER:
-                                case GROUND_TYPES.WATER2:
-                                    if (DOME_SCENES.includes(scene.index)) { // Dome of the slate
-                                        obj.state.isDrowningStars = true;
-                                    } else {
-                                        obj.state.isDrowning = true;
-                                    }
-                                    break;
-                                case GROUND_TYPES.LAVA:
-                                    obj.state.isDrowningLava = true;
-                                    break;
-                                case GROUND_TYPES.CAVE_SPIKES:
-                                    if (obj.animState && !obj.state.isJumping) { // if it's an actor
-                                        obj.hit(-1, 5);
-                                    }
-                                    break;
+                            if (obj instanceof Actor) {
+                                switch (column.groundType) {
+                                    case GROUND_TYPES.WATER:
+                                    case GROUND_TYPES.WATER2:
+                                        // Dome of the slate
+                                        if (DOME_SCENES.includes(scene.index)) {
+                                            obj.state.isDrowningStars = true;
+                                        } else {
+                                            obj.state.isDrowning = true;
+                                        }
+                                        break;
+                                    case GROUND_TYPES.LAVA:
+                                        obj.state.isDrowningLava = true;
+                                        break;
+                                    case GROUND_TYPES.CAVE_SPIKES:
+                                        if (obj.animState && !obj.state.isJumping) {
+                                            obj.hit(-1, 5);
+                                        }
+                                        break;
+                                }
                             }
                         }
                         if (!isLBA1) {
@@ -223,11 +232,13 @@ export default class IsoSceneryPhysics {
         obj.state.distFromGround = Math.max(position.y - groundHeight, 0) * WORLD_SIZE;
         obj.state.distFromFloor = Math.max(position.y - height, 0) * WORLD_SIZE;
         obj.state.isTouchingGround = isTouchingGround;
-        obj.state.isUsingProtoOrJetpack = isUsingProtoOrJetpack;
+        if (obj instanceof Actor) {
+            obj.state.isUsingProtoOrJetpack = isUsingProtoOrJetpack;
+        }
 
         if (isUsingProtoOrJetpack) {
             let heightOffset = PROTOPACK_OFFSET;
-            if (obj.props.entityIndex === BehaviourMode.JETPACK) {
+            if (obj instanceof Actor && obj.props.entityIndex === BehaviourMode.JETPACK) {
                 heightOffset = JETPACK_OFFSET;
             }
             if (height - position.y < heightOffset) {
@@ -367,13 +378,13 @@ function getFloorHeightSimple(grid, position: THREE.Vector3) {
 
 function processBoxIntersections(
     grid,
-    actor: Actor,
+    obj: Actor | Extra,
     position: THREE.Vector3,
     dx: number,
     dz: number,
     isTouchingGround: boolean
 ) {
-    const boundingBox = actor.model.boundingBox;
+    const boundingBox = obj.model.boundingBox;
     ACTOR_BOX.copy(boundingBox);
     ACTOR_BOX.min.multiplyScalar(STEP);
     ACTOR_BOX.max.multiplyScalar(STEP);
@@ -392,25 +403,25 @@ function processBoxIntersections(
                         BB.max.y -= STEP;
                     }
 
-                    if (intersectBox(actor, position)) {
+                    if (intersectBox(obj, position)) {
                         collision = true;
                     }
                 }
             } else {
                 BB.min.set((64 - (dx + ox)) / 32, -Infinity, (dz + oz) / 32);
                 BB.max.set((65 - (dx + ox)) / 32, Infinity, (dz + oz + 1) / 32);
-                if (intersectBox(actor, position)) {
+                if (intersectBox(obj, position)) {
                     collision = true;
                 }
                 isTouchingGround = false;
             }
         }
     }
-    actor.state.isColliding = collision;
+    obj.state.isColliding = collision;
     return isTouchingGround;
 }
 
-function intersectBox(actor: Actor, position: THREE.Vector3) {
+function intersectBox(actor: Actor | Extra, position: THREE.Vector3) {
     if (ACTOR_BOX.intersectsBox(BB)) {
         INTERSECTION.copy(ACTOR_BOX);
         INTERSECTION.intersect(BB);

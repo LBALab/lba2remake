@@ -257,7 +257,7 @@ const MEDIUM_FALL_HEIGHT = 2;
 const SMALL_FALL_HEIGHT = 0.3;
 
 function processFall(scene: Scene, hero: Actor) {
-    let distFromFloor = hero.state.distFromGround;
+    let distFromFloor = hero.state.distFromFloor;
     if (scene.scenery instanceof Island) {
         distFromFloor = scene.scenery.physics.getDistFromFloor(scene, hero);
     }
