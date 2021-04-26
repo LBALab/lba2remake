@@ -26,9 +26,7 @@ const getAngleValues = () => {
     return { midValue, maxValue };
 };
 
-const isLBA1 = getParams().game === 'lba1';
-
-export const PolygonType = !isLBA1 ? {
+export const PolygonType = {
     SOLID: 0,
     FLAT: 1,
     TRANS: 2,
@@ -55,18 +53,11 @@ export const PolygonType = !isLBA1 ? {
     TEXTURE_Z_INCRUST_DITHER: 23,
     TEXTURE_Z_FOG: 24,
     FLAG_ZBUFFER: 25,
-} : {
-    FLAT: 0,
-    COPPER: 1,
-    BOPPER: 2,
-    MARBLE: 3,
-    TELE: 4,
-    TRANS: 5,
-    TRAME: 6,
-    GOURAUD: 7,
-    DITHER: 8,
-    GOURAUD_TABLE: 9,
-    DITHER_TABLE: 10,
+    // LBA1 specific
+    COPPER: 26,
+    BOPPER: 27,
+    MARBLE: 28,
+    TELE: 29,
 };
 
 export function getRotation(nextValue, currentValue, interpolation) {
