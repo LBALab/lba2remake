@@ -15,6 +15,7 @@ export default function IsoGridEditorSettings(props) {
         <select onChange={setCam} value={props.sharedState.cam}>
             <option value={0}>Isometric</option>
             <option value={1}>Iso 3D</option>
+            <option value={2}>Free camera</option>
         </select>
     </div>;
 }

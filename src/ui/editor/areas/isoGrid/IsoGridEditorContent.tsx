@@ -36,6 +36,10 @@ interface State {
     controlsState: {
         cameraLerp: THREE.Vector3;
         cameraLookAtLerp: THREE.Vector3;
+        cameraOrientation: THREE.Quaternion;
+        cameraHeadOrientation: THREE.Quaternion;
+        cameraSpeed: THREE.Vector3;
+        freeCamera: boolean;
     };
     selectionObj: THREE.Object3D;
     selectionData?: any;
@@ -82,6 +86,8 @@ const closeStyle = {
 */
 
 const UP = new THREE.Vector3(0, 1, 0);
+const EULER = new THREE.Euler(0.0, 0.0, 0.0, 'YXZ');
+const MAX_X_ANGLE = Math.PI / 2.5;
 
 export default class IsoGridEditorContent extends FrameListener<Props, State> {
     root: HTMLElement;
@@ -110,18 +116,23 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
 
         const isoCamera = getIsometricCamera();
         const iso3DCamera = getIso3DCamera();
-        const cameras = [isoCamera, iso3DCamera];
+        const cameras = [isoCamera, iso3DCamera, iso3DCamera];
         const camera = cameras[this.cam];
         const scene = {
             camera,
             threeScene: new THREE.Scene(),
+            scenery: {},
             target: {
                 threeObject: new THREE.Object3D()
             }
         };
         const controlsState = {
             cameraLerp: new THREE.Vector3(),
-            cameraLookAtLerp: new THREE.Vector3()
+            cameraLookAtLerp: new THREE.Vector3(),
+            cameraOrientation: new THREE.Quaternion(),
+            cameraHeadOrientation: new THREE.Quaternion(),
+            cameraSpeed: new THREE.Vector3(),
+            freeCamera: true,
         };
         scene.threeScene.add(isoCamera.threeCamera);
         scene.threeScene.add(iso3DCamera.controlNode);
@@ -230,6 +241,26 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
                 }
                 break;
             }
+            case 67: // c
+            case 'KeyC':
+                this.props.stateHandler.setCam((this.props.sharedState.cam + 1) % 3);
+            break;
+            case 87: // w
+            case 'KeyW':
+                this.state.controlsState.cameraSpeed.z = 1;
+                break;
+            case 83: // s
+            case 'KeyS':
+                this.state.controlsState.cameraSpeed.z = -1;
+                break;
+            case 65: // a
+            case 'KeyA':
+                this.state.controlsState.cameraSpeed.x = 1;
+                break;
+            case 68: // d
+            case 'KeyD':
+                this.state.controlsState.cameraSpeed.x = -1;
+                break;
             case 27: // escape
             case 'Escape': {
                 break;
@@ -246,6 +277,26 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
             case 'ArrowRight': {
                 this.lastTick = 0;
             }
+            case 87: // w
+            case 'KeyW':
+                if (this.state.controlsState.cameraSpeed.z === 1)
+                    this.state.controlsState.cameraSpeed.z = 0;
+                break;
+            case 83: // s
+            case 'KeyS':
+                if (this.state.controlsState.cameraSpeed.z === -1)
+                    this.state.controlsState.cameraSpeed.z = 0;
+                break;
+            case 65: // a
+            case 'KeyA':
+                if (this.state.controlsState.cameraSpeed.x === 1)
+                    this.state.controlsState.cameraSpeed.x = 0;
+                break;
+            case 68: // d
+            case 'KeyD':
+                if (this.state.controlsState.cameraSpeed.x === -1)
+                    this.state.controlsState.cameraSpeed.x = 0;
+                break;
         }
     }
 
@@ -317,7 +368,11 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
         if (this.cam !== cam && cam !== undefined) {
             this.cam = cam;
             scene.camera = cameras[cam];
+            if (cam === 2) {
+                this.resetCameraState();
+            }
         }
+        controlsState.freeCamera = this.cam === 2;
         this.checkResize();
         const time = {
             delta: Math.min(clock.getDelta(), 0.05),
@@ -357,25 +412,42 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
 
     onMouseMove(e) {
         if (this.moving) {
-            const tgtObject = this.state.scene.target.threeObject;
-            const speedX = new THREE.Vector3().set(
-                3.6,
-                0,
-                3.6
-            );
-            const info = this.INFO[this.angle];
-            speedX.applyAxisAngle(UP, this.angle * Math.PI / 2);
-            speedX.multiplyScalar(e[info.x] * 0.002 * info.sx);
-            const speedZ = new THREE.Vector3().set(
-                5,
-                0,
-                -5
-            );
-            speedX.applyAxisAngle(UP, this.angle * Math.PI / 2);
-            speedZ.multiplyScalar(e[info.z] * 0.002 * info.sz);
-            tgtObject.position.add(speedZ);
-            tgtObject.position.add(speedX);
-            tgtObject.updateMatrixWorld();
+            if (this.cam === 2) {
+                const movementX = e.movementX || 0;
+                const movementY = -e.movementY || 0;
+
+                EULER.setFromQuaternion(this.state.controlsState.cameraHeadOrientation, 'YXZ');
+                EULER.y = 0;
+                EULER.x = Math.min(
+                    Math.max(EULER.x - (movementY * 0.002), -MAX_X_ANGLE),
+                    MAX_X_ANGLE
+                );
+                this.state.controlsState.cameraHeadOrientation.setFromEuler(EULER);
+                EULER.setFromQuaternion(this.state.controlsState.cameraOrientation, 'YXZ');
+                EULER.x = 0;
+                EULER.y -= movementX * 0.002;
+                this.state.controlsState.cameraOrientation.setFromEuler(EULER);
+            } else {
+                const tgtObject = this.state.scene.target.threeObject;
+                const speedX = new THREE.Vector3().set(
+                    3.6,
+                    0,
+                    3.6
+                );
+                const info = this.INFO[this.angle];
+                speedX.applyAxisAngle(UP, this.angle * Math.PI / 2);
+                speedX.multiplyScalar(e[info.x] * 0.002 * info.sx);
+                const speedZ = new THREE.Vector3().set(
+                    5,
+                    0,
+                    -5
+                );
+                speedX.applyAxisAngle(UP, this.angle * Math.PI / 2);
+                speedZ.multiplyScalar(e[info.z] * 0.002 * info.sz);
+                tgtObject.position.add(speedZ);
+                tgtObject.position.add(speedX);
+                tgtObject.updateMatrixWorld();
+            }
         }
     }
 
@@ -389,6 +461,24 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
     onWheel(e) {
         this.zoom += e.deltaY * 0.01;
         this.zoom = Math.min(Math.max(-1, this.zoom), 8);
+    }
+
+    resetCameraState() {
+        const camera = this.state.scene.camera;
+        const controlNode = camera.controlNode;
+        if (!controlNode)
+            return;
+
+        const baseEuler = new THREE.Euler(0.0, 0.0, 0.0, 'YXZ');
+        const headEuler = new THREE.Euler(0.0, 0.0, 0.0, 'YXZ');
+        baseEuler.setFromQuaternion(controlNode.quaternion, 'YXZ');
+        headEuler.copy(baseEuler);
+
+        headEuler.y = 0;
+        this.state.controlsState.cameraHeadOrientation.setFromEuler(headEuler);
+
+        baseEuler.x = 0;
+        this.state.controlsState.cameraOrientation.setFromEuler(baseEuler);
     }
 
     render() {
