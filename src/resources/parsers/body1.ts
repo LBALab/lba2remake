@@ -1,4 +1,4 @@
-import { WORLD_SCALE } from '../../utils/lba';
+import { WORLD_SCALE, PolygonType } from '../../utils/lba';
 import { computeBoundingBox } from './body2';
 
 export const parseModelLBA1 = (resource, index, bodyProps) => {
@@ -94,6 +94,20 @@ function loadShades(object: any, data: DataView, offset: number) {
     return offset;
 }
 
+const PolyTypeMapping = {
+    0: PolygonType.FLAT,
+    1: PolygonType.COPPER,
+    2: PolygonType.BOPPER,
+    3: PolygonType.MARBLE,
+    4: PolygonType.TELE,
+    5: PolygonType.TRANS,
+    6: PolygonType.TRAME,
+    7: PolygonType.GOURAUD,
+    8: PolygonType.DITHER,
+    9: PolygonType.GOURAUD_TABLE,
+    10: PolygonType.DITHER_TABLE,
+};
+
 function loadPolygons(object: any, data: DataView, offset: number) {
     object.polygonsSize = data.getUint16(offset, true);
     offset += 2;
@@ -108,7 +122,7 @@ function loadPolygons(object: any, data: DataView, offset: number) {
 
         const poly = {
             renderType,
-            polyType: renderType & 0x0F,
+            polyType: PolyTypeMapping[renderType & 0x0F],
             vertex: [],
             colour: Math.floor(colour / 16),
             intensity: 0,
