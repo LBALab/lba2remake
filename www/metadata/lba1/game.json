@@ -61,8 +61,7 @@
       "type": "boolean"
     },
     {
-      "name": "gas",
-      "type": "boolean"
+      "name": "gas"
     },
     {
       "name": "pirate_flag",
