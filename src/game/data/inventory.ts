@@ -1,6 +1,9 @@
 import { LBA2BodyType, LBA1BodyType } from './bodyType';
 import { getParams } from '../../params';
 
+// Note that slots are for the inventory are defined as starting from 0 in the
+// top left and increasing to the right row by row.
+
 const isLBA1 = getParams().game === 'lba1';
 
 const LBA2InventoryColumns = 7;
