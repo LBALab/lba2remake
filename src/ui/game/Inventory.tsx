@@ -14,9 +14,12 @@ import {
     loadSceneInventoryModel,
 } from './overlay';
 import { ControlsState } from '../../game/ControlsState';
+import { getParams } from '../../params';
 
 const InventoryObjectsIndex = 4;
 const InventoryTextOffset = 100;
+
+const isLBA1 = getParams().game === 'lba1';
 
 const Inventory = ({ game, closeInventory }: any) => {
     const [selectedSlot, setSelectedSlot] = useState(game.getState().hero.inventorySlot);
@@ -276,11 +279,24 @@ const Inventory = ({ game, closeInventory }: any) => {
     }
 
     return (
-        <div className="inventory">
-            <div className="inventoryItems" ref={inventoryRef}>
+        <div className={`
+            inventory
+            ${isLBA1 === true ? 'inventoryLba1' : ''}
+        `}>
+            <div className={`
+                    inventoryItems
+                    ${isLBA1 === true ? 'inventoryItemsLba1' : ''}
+                `}
+                ref={inventoryRef}
+            >
                 {inventorySlots}
             </div>
-            <div className="inventoryText"><p>{invText}</p></div>
+            <div className={`
+                inventoryText
+                ${isLBA1 === true ? 'inventoryTextLba1' : ''}
+            `}>
+                <p>{invText}</p>
+            </div>
         </div>
     );
 };
