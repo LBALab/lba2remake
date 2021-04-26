@@ -10,7 +10,6 @@ import {loadPaletteTexture, loadSubTextureRGBA} from '../texture';
 import {compile} from '../utils/shaders';
 import { WORLD_SIZE, PolygonType } from '../utils/lba';
 import Lightning from '../game/scenery/island/environment/Lightning';
-import { getParams } from '../params';
 
 const push = Array.prototype.push;
 
@@ -163,7 +162,6 @@ export function loadMesh(
         ambience
     );
     const object = new THREE.Object3D();
-    const isLBA1 = getParams().game === 'lba1';
 
     each(geometries, (geom: ModelGeometry, name) => {
         const {
@@ -226,9 +224,6 @@ export function loadMesh(
                 const sphere = new THREE.Sphere();
                 bufferGeometry.boundingSphere = body.boundingBox.getBoundingSphere(sphere);
             }
-            if (isLBA1) {
-                bufferGeometry.computeVertexNormals();
-            }
 
             const modelMesh = new THREE.Mesh(bufferGeometry, material);
             modelMesh.onBeforeRender = Lightning.applyUniforms;
@@ -260,10 +255,6 @@ export function loadMesh(
                 'boneIndex',
                 new THREE.BufferAttribute(new Uint8Array(lineBones), 1)
             );
-
-            if (isLBA1) {
-                linebufferGeometry.computeVertexNormals();
-            }
 
             const lineSegments = new THREE.LineSegments(linebufferGeometry, material);
             lineSegments.onBeforeRender = Lightning.applyUniforms;
