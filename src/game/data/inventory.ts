@@ -1,20 +1,16 @@
-import { BodyType } from './bodyType';
+import { LBA2BodyType, LBA1BodyType } from './bodyType';
+import { getParams } from '../../params';
 
 // Note that slots are for the inventory are defined as starting from 0 in the
 // top left and increasing to the right row by row.
 
-/*
-const LBAInventoryColumns = 7;
-const LBAInventoryRows = 4;
-
-// LBAInventoryMapping maps from inventory slot ID to item ID.
-const LBAInventoryMapping = {
-    // TODO
-};
-*/
+const isLBA1 = getParams().game === 'lba1';
 
 const LBA2InventoryColumns = 7;
 const LBA2InventoryRows = 5;
+
+const LBA1InventoryColumns = 7;
+const LBA1InventoryRows = 4;
 
 export enum LBA2Items {
     HOLOMAP = 0,
@@ -73,6 +69,37 @@ export enum LBA2Items {
     FIRE_RING_OF_LIGHTNING = 53,
 }
 
+export enum LBA1Items {
+    HOLOMAP = 0,
+    MAGIC_BALL = 1,
+    FUNFROCK_SABER = 2,
+    GAWLEYS_HORN = 3,
+    TUNIC = 4,
+    BOOK_OF_BU = 5,
+    SENDELLS_MEDALLION = 6,
+    FLASK_CLEAR_WATER = 7,
+    RED_CARD = 8,
+    BLUE_CARD = 9,
+    ID_CARD = 10,
+    MR_MIERS_PASS = 11,
+    PROTO_PACK = 12,
+    SNOWBOARD = 13,
+    MECA_PINGUIN = 14,
+    GAS = 15,
+    PIRATE_FLAG = 16,
+    MAGIC_FLUTE = 17,
+    SPACE_GUITAR = 18,
+    HAIR_DRYER = 19,
+    ANCESTRAL_KEY = 20,
+    BOTTLE_SIRUP = 21,
+    BOTTLE_SIRUP_EMPTY = 22,
+    FERRY_TICKET = 23,
+    KEYPAD = 24,
+    COFFEE_CAN = 25,
+    BONUS_LIST = 26,
+    CLOVER_LEAF = 27,
+}
+
 // LBA2InventoryMapping maps from inventory slot ID to item ID.
 const LBA2InventoryMapping = {
     0: LBA2Items.MAGIC_BALL,
@@ -112,33 +139,63 @@ const LBA2InventoryMapping = {
     34: LBA2Items.FRAGMENT_WANNIES,
 };
 
-export const LBA2WeaponToBodyMapping = {
-    [LBA2Items.MAGIC_BALL]: BodyType.TWINSEN_TUNIC,
-    [LBA2Items.DARTS]: BodyType.TWINSEN_TUNIC,
-    [LBA2Items.LASER_PISTON_WITH_CRYSTAL]: BodyType.TWINSEN_LASER_PISTOL,
-    [LBA2Items.SWORD]: BodyType.TWINSEN_SWORD,
-    [LBA2Items.WANNIE_GLOVE]: BodyType.TWINSEN_WANNIE_GLOVE,
-    [LBA2Items.BLOWGUN]: BodyType.TWINSEN_BLOWGUN,
+const LBA1InventoryMapping = {
+    0: LBA1Items.HOLOMAP,
+    1: LBA1Items.TUNIC,
+    2: LBA1Items.RED_CARD,
+    3: LBA1Items.PROTO_PACK,
+    4: LBA1Items.PIRATE_FLAG,
+    5: LBA1Items.ANCESTRAL_KEY,
+    6: LBA1Items.KEYPAD,
+    7: LBA1Items.MAGIC_BALL,
+    8: LBA1Items.BOOK_OF_BU,
+    9: LBA1Items.BLUE_CARD,
+    10: LBA1Items.SNOWBOARD,
+    11: LBA1Items.MAGIC_FLUTE,
+    12: LBA1Items.BOTTLE_SIRUP,
+    13: LBA1Items.COFFEE_CAN,
+    14: LBA1Items.FUNFROCK_SABER,
+    15: LBA1Items.SENDELLS_MEDALLION,
+    16: LBA1Items.ID_CARD,
+    17: LBA1Items.MECA_PINGUIN,
+    18: LBA1Items.SPACE_GUITAR,
+    19: LBA1Items.BOTTLE_SIRUP_EMPTY,
+    20: LBA1Items.BONUS_LIST,
+    21: LBA1Items.GAWLEYS_HORN,
+    22: LBA1Items.FLASK_CLEAR_WATER,
+    23: LBA1Items.MR_MIERS_PASS,
+    24: LBA1Items.GAS,
+    25: LBA1Items.HAIR_DRYER,
+    26: LBA1Items.FERRY_TICKET,
+    27: LBA1Items.CLOVER_LEAF,
 };
 
-// GetInventoryMapping returns the game inventory mapping (slot ID to item ID)
-// for either LBA or LBA2.
+export const LBA2WeaponToBodyMapping = {
+    [LBA2Items.MAGIC_BALL]: LBA2BodyType.TWINSEN_TUNIC,
+    [LBA2Items.DARTS]: LBA2BodyType.TWINSEN_TUNIC,
+    [LBA2Items.LASER_PISTON_WITH_CRYSTAL]: LBA2BodyType.TWINSEN_LASER_PISTOL,
+    [LBA2Items.SWORD]: LBA2BodyType.TWINSEN_SWORD,
+    [LBA2Items.WANNIE_GLOVE]: LBA2BodyType.TWINSEN_WANNIE_GLOVE,
+    [LBA2Items.BLOWGUN]: LBA2BodyType.TWINSEN_BLOWGUN,
+};
+
+export const LBA1WeaponToBodyMapping = {
+    [LBA1Items.MAGIC_BALL]: LBA1BodyType.TWINSEN_TUNIC,
+    [LBA1Items.FUNFROCK_SABER]: LBA1BodyType.TWINSEN_SWORD,
+};
+
 export function GetInventoryMapping() {
-    // TODO: Dynamically swap to use LBA once we have functionality for that.
-    return LBA2InventoryMapping;
+    return isLBA1 ? LBA1InventoryMapping : LBA2InventoryMapping;
 }
 
 export function GetInventoryRows() {
-    // TODO: Dynamically swap to use LBA once we have functionality for that.
-    return LBA2InventoryRows;
+    return isLBA1 ? LBA1InventoryRows : LBA2InventoryRows;
 }
 
 export function GetInventoryColumns() {
-    // TODO: Dynamically swap to use LBA once we have functionality for that.
-    return LBA2InventoryColumns;
+    return isLBA1 ? LBA1InventoryColumns : LBA2InventoryColumns;
 }
 
 export function GetInventoryItems() {
-    // TODO: Dynamically swap to use LBA once we have functionality for that.
-    return LBA2Items;
+    return isLBA1 ? LBA1Items : LBA2Items;
 }

@@ -1,8 +1,8 @@
 import * as THREE from 'three';
 import Actor, { ActorDirMode, ActorState } from '../Actor';
 import { AnimType } from '../data/animType';
-import { BodyType } from '../data/bodyType';
-import { LBA2WeaponToBodyMapping, LBA2Items, GetInventoryItems } from '../data/inventory';
+import { LBA2BodyType, LBA1BodyType } from '../data/bodyType';
+import { LBA2WeaponToBodyMapping, LBA2Items, LBA1Items, LBA1WeaponToBodyMapping } from '../data/inventory';
 import { WORLD_SIZE } from '../../utils/lba';
 import { processHit } from './animAction';
 import Scene from '../Scene';
@@ -28,6 +28,8 @@ export const BehaviourMode = {
     BUGGY: 12,
     SKELETON: 13
 };
+
+const isLBA1 = getParams().game === 'lba1';
 
 export function updateHero(game: Game, scene: Scene, hero: Actor, time: Time) {
     const behaviour = game.getState().hero.behaviour;
@@ -61,26 +63,50 @@ function handleBodyChanges(game: Game, scene: Scene, hero: Actor) {
     const equippedItem = game.getState().hero.equippedItemId;
     if (equippedItem < 0) {
         // Corner case for when Twinsen hasn't yet picked up the magic ball.
-        if (game.getState().flags.quest[LBA2Items.TUNIC]) {
-            hero.setBody(scene, BodyType.TWINSEN_TUNIC);
+        if (isLBA1) {
+            if (game.getState().flags.quest[LBA1Items.SENDELLS_MEDALLION]) {
+                hero.setBody(scene, LBA1BodyType.TWINSEN_TUNIC);
+            } else if (game.getState().flags.quest[LBA1Items.TUNIC]) {
+                hero.setBody(scene, LBA1BodyType.TWINSEN_TUNIC_NO_MEDALLION);
+            }
+            // Prison or Nurse bodies are set in script instead
         } else {
-            hero.setBody(scene, BodyType.TWINSEN_NO_TUNIC);
+            if (game.getState().flags.quest[LBA2Items.TUNIC]) {
+                hero.setBody(scene, LBA2BodyType.TWINSEN_TUNIC);
+            } else {
+                hero.setBody(scene, LBA2BodyType.TWINSEN_NO_TUNIC);
+            }
         }
         return;
     }
 
-    if (hero.props.bodyIndex !== LBA2WeaponToBodyMapping[equippedItem]) {
-        let body = LBA2WeaponToBodyMapping[equippedItem];
-        if (body === BodyType.TWINSEN_TUNIC && !game.getState().flags.quest[LBA2Items.TUNIC]) {
-            body = BodyType.TWINSEN_NO_TUNIC;
+    if (isLBA1) {
+        if (hero.props.bodyIndex !== LBA1WeaponToBodyMapping[equippedItem]) {
+            const body = LBA1WeaponToBodyMapping[equippedItem];
+            hero.setBody(scene, body);
+            if (equippedItem === LBA1Items.FUNFROCK_SABER) {
+                hero.setAnimWithCallback(AnimType.SWORD_DRAW, () => {
+                    hero.setAnim(AnimType.NONE);
+                    hero.state.isDrawingSword = false;
+                });
+                hero.state.isDrawingSword = true;
+            }
         }
-        hero.setBody(scene, body);
-        if (equippedItem === LBA2Items.SWORD) {
-            hero.setAnimWithCallback(AnimType.SWORD_DRAW, () => {
-                hero.setAnim(AnimType.NONE);
-                hero.state.isDrawingSword = false;
-            });
-            hero.state.isDrawingSword = true;
+    } else {
+        if (hero.props.bodyIndex !== LBA2WeaponToBodyMapping[equippedItem]) {
+            let body = LBA2WeaponToBodyMapping[equippedItem];
+            if (body === LBA2BodyType.TWINSEN_TUNIC &&
+                !game.getState().flags.quest[LBA2Items.TUNIC]) {
+                body = LBA2BodyType.TWINSEN_NO_TUNIC;
+            }
+            hero.setBody(scene, body);
+            if (equippedItem === LBA2Items.SWORD) {
+                hero.setAnimWithCallback(AnimType.SWORD_DRAW, () => {
+                    hero.setAnim(AnimType.NONE);
+                    hero.state.isDrawingSword = false;
+                });
+                hero.state.isDrawingSword = true;
+            }
         }
     }
 }
@@ -125,7 +151,6 @@ const Q = new THREE.Quaternion();
 const EULER = new THREE.Euler();
 
 function processFirstPersonsMovement(game: Game, scene: Scene, hero: Actor, time: Time) {
-    const isLBA1 = getParams().game === 'lba1';
     const controlsState = game.controlsState;
     if (hero.state.isClimbing ||
         hero.state.isSearching) {
@@ -302,7 +327,6 @@ function processActorMovement(
     time: Time,
     behaviour: number
 ) {
-    const isLBA1 = getParams().game === 'lba1';
     const controlsState = game.controlsState;
     if (hero.state.isClimbing ||
         hero.state.isSearching) {
@@ -351,7 +375,7 @@ function processActorMovement(
         if (!controlsState.relativeToCam && controlsState.controlVector.y !== 0) {
             hero.state.isWalking = true;
             animIndex = controlsState.controlVector.y === 1 ? AnimType.FORWARD : AnimType.BACKWARD;
-            if (controlsState.sideStep === 1) {
+            if (!isLBA1 && controlsState.sideStep === 1) {
                 animIndex = controlsState.controlVector.y === 1 ?
                     AnimType.DODGE_FORWARD : AnimType.DODGE_BACKWARD;
             }
@@ -403,34 +427,48 @@ function processActorMovement(
             animIndex = AnimType.CROUCH;
         }
         if (controlsState.weapon === 1) {
-            switch (game.getState().hero.equippedItemId) {
-                case LBA2Items.MAGIC_BALL:
-                    animIndex = AnimType.THROW;
-                    break;
-                case LBA2Items.DARTS:
-                    if (game.getState().flags.quest[GetInventoryItems().DARTS] <= 0) {
-                        if (game.getState().flags.quest[GetInventoryItems().MAGIC_BALL] === 1) {
-                            game.getState().hero.equippedItemId = GetInventoryItems().MAGIC_BALL;
+            if (isLBA1) {
+                switch (game.getState().hero.equippedItemId) {
+                    case LBA1Items.MAGIC_BALL:
+                        animIndex = AnimType.THROW;
+                        break;
+                    case LBA1Items.FUNFROCK_SABER:
+                        hero.state.isWalking = true;
+                        animIndex = AnimType.SWORD_ATTACK;
+                        break;
+                }
+            } else {
+                switch (game.getState().hero.equippedItemId) {
+                    case LBA1Items.MAGIC_BALL:
+                    case LBA2Items.MAGIC_BALL:
+                        animIndex = AnimType.THROW;
+                        break;
+                    case LBA2Items.DARTS:
+                        if (game.getState().flags.quest[LBA2Items.DARTS] <= 0) {
+                            if (game.getState().flags.quest[LBA2Items.MAGIC_BALL] === 1) {
+                                game.getState().hero.equippedItemId = LBA2Items.MAGIC_BALL;
+                            } else {
+                                game.getState().hero.equippedItemId = -1;
+                            }
                         } else {
-                            game.getState().hero.equippedItemId = -1;
+                            animIndex = AnimType.THROW_DART;
                         }
-                    } else {
-                        animIndex = AnimType.THROW_DART;
-                    }
-                    break;
-                case LBA2Items.BLOWGUN:
-                    animIndex = AnimType.BLOWGUN_SHOOT;
-                    break;
-                case LBA2Items.WANNIE_GLOVE:
-                    animIndex = AnimType.WANNIE_GLOVE_SWING;
-                    break;
-                case LBA2Items.LASER_PISTON_WITH_CRYSTAL:
-                    animIndex = AnimType.LASTER_PISTOL_SHOOT;
-                    break;
-                case LBA2Items.SWORD:
-                    hero.state.isWalking = true;
-                    animIndex = AnimType.SWORD_ATTACK;
-                    break;
+                        break;
+                    case LBA2Items.BLOWGUN:
+                        animIndex = AnimType.BLOWGUN_SHOOT;
+                        break;
+                    case LBA2Items.WANNIE_GLOVE:
+                        animIndex = AnimType.WANNIE_GLOVE_SWING;
+                        break;
+                    case LBA2Items.LASER_PISTON_WITH_CRYSTAL:
+                        animIndex = AnimType.LASTER_PISTOL_SHOOT;
+                        break;
+                    case LBA1Items.FUNFROCK_SABER:
+                    case LBA2Items.SWORD:
+                        hero.state.isWalking = true;
+                        animIndex = AnimType.SWORD_ATTACK;
+                        break;
+                }
             }
             if (hero.props.entityIndex === BehaviourMode.HORN) {
                 animIndex = AnimType.THROW;
@@ -467,7 +505,7 @@ function processActorMovement(
                 }
                 hero.physics.orientation.setFromEuler(euler);
                 // hero.state.isTurning = true;
-            } else {
+            } else if (!isLBA1) {
                 animIndex = controlsState.controlVector.x === 1
                     ? AnimType.DODGE_LEFT
                     : AnimType.DODGE_RIGHT;

@@ -4,7 +4,6 @@ import Actor, { ActorDirMode } from '../Actor';
 import { AnimType } from '../data/animType';
 import { SampleType } from '../data/sampleType';
 import { LBA2GameFlags } from '../data/gameFlags';
-import { GetInventoryItems } from '../data/inventory';
 import { setMagicBallLevel } from '../GameState';
 import { unimplemented } from './utils';
 import { WORLD_SCALE, getRandom } from '../../utils/lba';
@@ -12,6 +11,9 @@ import { getVideoPath } from '../../resources';
 import { ScriptContext } from './ScriptContext';
 import { getParams } from '../../params';
 import { initWagonState } from '../gameplay/wagon';
+import { LBA2Items, GetInventoryItems, LBA1Items } from '../data/inventory';
+
+const isLBA1 = getParams().game === 'lba1';
 
 export const PALETTE = unimplemented();
 
@@ -86,7 +88,6 @@ export function MESSAGE_OBJ(this: ScriptContext, cmdState, actor, id, sayMessage
                 }
             }, 4500);
         } else {
-            const isLBA1 = getParams().game === 'lba1';
             hero.props.dirMode = ActorDirMode.NO_MOVE;
             hero.props.prevEntityIndex = hero.props.entityIndex;
             hero.props.prevAnimIndex = hero.props.animIndex;
@@ -237,7 +238,15 @@ export function INC_CHAPTER(this: ScriptContext) {
     this.game.getState().flags.quest[LBA2GameFlags.CHAPTER] += 1;
 }
 
-// FOUND_OBJECT_CALLBACKS allow us to execute arbitrary code when a specific item is found.
+const FOUND_OBJECT_CALLBACKS_LBA2 = {
+    [LBA2Items.DARTS]: (game, _scene) => {
+        game.getState().flags.quest[LBA2Items.DARTS] = 3;
+        if (game.getState().hero.equippedItemId === -1) {
+            game.getState().hero.equippedItemId = LBA2Items.DARTS;
+        }
+    },
+};
+
 const FOUND_OBJECT_CALLBACKS = {
     [GetInventoryItems().MAGIC_BALL]: (game, _scene) => {
         if (game.getState().hero.equippedItemId === -1) {
@@ -247,12 +256,7 @@ const FOUND_OBJECT_CALLBACKS = {
     [GetInventoryItems().TUNIC]: (game, _scene) => {
         game.getState().hero.magic = 20;
     },
-    [GetInventoryItems().DARTS]: (game, _scene) => {
-        game.getState().flags.quest[GetInventoryItems().DARTS] = 3;
-        if (game.getState().hero.equippedItemId === -1) {
-            game.getState().hero.equippedItemId = GetInventoryItems().DARTS;
-        }
-    },
+    ...(!isLBA1 ? FOUND_OBJECT_CALLBACKS_LBA2 : {}),
 };
 
 export function FOUND_OBJECT(this: ScriptContext, cmdState, id) {
@@ -473,7 +477,6 @@ export function ASK_CHOICE(this: ScriptContext, cmdState, index) {
 export function ASK_CHOICE_OBJ(this: ScriptContext, cmdState, actor, index) {
     const hero = this.scene.actors[0];
     if (!cmdState.skipListener) {
-        const isLBA1 = getParams().game === 'lba1';
         const text = this.scene.props.texts[index];
         hero.props.dirMode = ActorDirMode.NO_MOVE;
         hero.props.prevEntityIndex = hero.props.entityIndex;
@@ -527,12 +530,18 @@ export function ADD_FUEL(this: ScriptContext, fuel) {
     if (this.game.getState().hero.fuel > 100) {
         this.game.getState().hero.fuel = 100;
     }
+    if (isLBA1 && this.game.getState().flags.quest[LBA1Items.GAS]) {
+        this.game.getState().flags.quest[LBA1Items.GAS] = this.game.getState().hero.fuel;
+    }
 }
 
 export function SUB_FUEL(this: ScriptContext, fuel) {
     this.game.getState().hero.fuel -= fuel;
     if (this.game.getState().hero.fuel < 0) {
         this.game.getState().hero.fuel = 0;
+    }
+    if (isLBA1 && this.game.getState().flags.quest[LBA1Items.GAS]) {
+        this.game.getState().flags.quest[LBA1Items.GAS] = this.game.getState().hero.fuel;
     }
 }
 

@@ -12,7 +12,7 @@ import Scene from '../Scene';
 import MagicBall from '../MagicBall';
 import { Time } from '../../datatypes';
 import { AnimAction } from '../../resources/parsers/entity2';
-import { GetInventoryItems } from '../data/inventory';
+import { LBA2Items } from '../data/inventory';
 
 interface AnimActionContext {
     time: Time;
@@ -23,6 +23,8 @@ interface AnimActionContext {
     animState?: any;
     entityAnim?: any;
 }
+
+const isLBA1 = getParams().game === 'lba1';
 
 const ANGLE_OFFSET = 0.225;
 const DART_MODEL = 61;
@@ -164,7 +166,6 @@ export const SAMPLE_STOP = (_action, { actor }) => {
 export const ZV = unimplemented();
 
 export const LEFT_STEP = (_action: AnimAction, { actor, scene, animState }: AnimActionContext) => {
-    const isLBA1 = getParams().game === 'lba1';
     const floorSound = animState.floorSound;
     if (floorSound !== undefined && floorSound !== -1) {
         const offset = scene.props.isIsland ? 30 : isLBA1 ? 126 : 60;
@@ -175,7 +176,6 @@ export const LEFT_STEP = (_action: AnimAction, { actor, scene, animState }: Anim
 };
 
 export const RIGHT_STEP = (_action: AnimAction, { actor, scene, animState }: AnimActionContext) => {
-    const isLBA1 = getParams().game === 'lba1';
     let floorSound = animState.floorSound;
     if (animState.floorSound2) {
         floorSound = animState.floorSound2;
@@ -310,8 +310,8 @@ export const THROW_DART = async (action: AnimAction, { game, scene, actor }: Ani
     );
     dart.flags |= ExtraFlag.DART;
 
-    if (game.getState().flags.quest[GetInventoryItems().DARTS] > 0) {
-        game.getState().flags.quest[GetInventoryItems().DARTS] -= 1;
+    if (!isLBA1 && game.getState().flags.quest[LBA2Items.DARTS] > 0) {
+        game.getState().flags.quest[LBA2Items.DARTS] -= 1;
     }
 };
 

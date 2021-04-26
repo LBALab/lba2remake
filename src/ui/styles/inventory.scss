@@ -47,6 +47,10 @@
     align-items: center;
 }
 
+.inventoryLba1 {
+    top: 53%;
+}
+
 @media screen and (orientation:landscape) {
     .inventory {
         width: 115vh;
@@ -78,6 +82,16 @@
     font-size: larger;
 }
 
+.inventoryTextLba1 {
+    height: 21%;
+    overflow-y: hidden;
+    display: block;
+}
+
+.inventoryTextLba1 p {
+    margin: 15px;
+}
+
 .inventoryText p {
     margin-block-start: 0;
     margin-block-end: 0;
@@ -96,6 +110,11 @@
     grid-template-rows: auto auto auto auto auto;
 }
 
+.inventoryItemsLba1 {
+    height: 65%;
+    grid-template-rows: auto auto auto auto;
+}
+
 .inventoryItem {
     background: rgba(0, 0, 0, 0.6);
     margin: 0.5vh;
@@ -111,6 +130,7 @@
     right: 15px;
     font-size: 1.25em;
     font-family: LBA;
+    z-index: 1;
 }
 
 .selected {
