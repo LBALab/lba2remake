@@ -192,9 +192,7 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
     }
 
     onKeyDown(event) {
-        const key = event.code || event.which || event.keyCode;
-        switch (key) {
-            case 37: // left
+        switch (event.code) {
             case 'ArrowLeft': {
                 const newTick = Date.now();
                 if (newTick - this.lastTick > 400) {
@@ -207,7 +205,6 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
                 }
                 break;
             }
-            case 39: // right
             case 'ArrowRight': {
                 const newTick = Date.now();
                 if (newTick - this.lastTick > 400) {
@@ -217,7 +214,6 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
                 }
                 break;
             }
-            case 38: // up
             case 'ArrowUp': {
                 const { selectionData, isoGrid } = this.state;
                 if (selectionData && isoGrid) {
@@ -229,7 +225,6 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
                 }
                 break;
             }
-            case 40: // down
             case 'ArrowDown': {
                 const { selectionData, isoGrid } = this.state;
                 if (selectionData && isoGrid) {
@@ -241,27 +236,21 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
                 }
                 break;
             }
-            case 67: // c
             case 'KeyC':
                 this.props.stateHandler.setCam((this.props.sharedState.cam + 1) % 3);
             break;
-            case 87: // w
             case 'KeyW':
                 this.state.controlsState.cameraSpeed.z = 1;
                 break;
-            case 83: // s
             case 'KeyS':
                 this.state.controlsState.cameraSpeed.z = -1;
                 break;
-            case 65: // a
             case 'KeyA':
                 this.state.controlsState.cameraSpeed.x = 1;
                 break;
-            case 68: // d
             case 'KeyD':
                 this.state.controlsState.cameraSpeed.x = -1;
                 break;
-            case 27: // escape
             case 'Escape': {
                 break;
             }
@@ -269,30 +258,23 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
     }
 
     onKeyUp(event) {
-        const key = event.code || event.which || event.keyCode;
-        switch (key) {
-            case 37: // left
+        switch (event.code) {
             case 'ArrowLeft':
-            case 39: // right
             case 'ArrowRight': {
                 this.lastTick = 0;
             }
-            case 87: // w
             case 'KeyW':
                 if (this.state.controlsState.cameraSpeed.z === 1)
                     this.state.controlsState.cameraSpeed.z = 0;
                 break;
-            case 83: // s
             case 'KeyS':
                 if (this.state.controlsState.cameraSpeed.z === -1)
                     this.state.controlsState.cameraSpeed.z = 0;
                 break;
-            case 65: // a
             case 'KeyA':
                 if (this.state.controlsState.cameraSpeed.x === 1)
                     this.state.controlsState.cameraSpeed.x = 0;
                 break;
-            case 68: // d
             case 'KeyD':
                 if (this.state.controlsState.cameraSpeed.x === -1)
                     this.state.controlsState.cameraSpeed.x = 0;
