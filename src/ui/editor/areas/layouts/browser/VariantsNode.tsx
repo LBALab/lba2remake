@@ -2,6 +2,9 @@ import * as React from 'react';
 import { map } from 'lodash';
 import DebugData from '../../../DebugData';
 import { findAllVariants } from '../variants/search';
+import { getParams } from '../../../../../params';
+
+const isLBA1 = getParams().game === 'lba1';
 
 const scenesStyle = {
     position: 'absolute' as const,
@@ -130,13 +133,15 @@ function getVariants() {
             index: layout.index,
             props: layout.props
         };
-        findAllVariants(lDef).then((variants) => {
-            variantsCache[key] = [
-                defaultVariant,
-                ...variants
-            ];
-            loading[key] = false;
-        });
+        if (!isLBA1) {
+            findAllVariants(lDef).then((variants) => {
+                variantsCache[key] = [
+                    defaultVariant,
+                    ...variants
+                ];
+                loading[key] = false;
+            });
+        }
     }
     return [defaultVariant];
 }
