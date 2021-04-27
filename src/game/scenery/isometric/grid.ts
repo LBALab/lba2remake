@@ -32,6 +32,13 @@ export async function getGridMetadata(entry) {
     return globalGridMetadata[entry];
 }
 
+export async function suppressBrickMD(entry, brick) {
+    if (!(entry in globalGridMetadata)) {
+        globalGridMetadata[entry] = {};
+    }
+    globalGridMetadata[entry][brick] = { layout: -1 };
+}
+
 const libraries = [];
 
 export async function loadLibrary(bricks, mask, palette, entry) {
