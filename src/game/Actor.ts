@@ -712,6 +712,11 @@ export default class Actor {
         audio.stopVoice();
     }
 
+    getBoundingBox() {
+        return this.model ?
+        this.model.boundingBox : this.sprite.boundingBox;
+    }
+
     private static createState(): ActorState {
         return {
             isVisible: false,
