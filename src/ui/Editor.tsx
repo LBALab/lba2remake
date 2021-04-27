@@ -74,7 +74,11 @@ export default class Editor extends React.Component<EditorProps, EditorState> {
         this.enableSeparator = this.enableSeparator.bind(this);
         this.disableSeparator = this.disableSeparator.bind(this);
 
-        const layout = loadLayout(this);
+        let layout = loadLayout(this);
+        if (!layout) {
+            localStorage.removeItem('editor_mode');
+            layout = loadLayout(this);
+        }
 
         this.state = {
             layout,
