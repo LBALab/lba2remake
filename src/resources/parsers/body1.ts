@@ -117,7 +117,7 @@ function loadPolygons(object: any, data: DataView, offset: number) {
     for (let i = 0; i < object.polygonsSize; i += 1) {
         const renderType = data.getUint8(offset);
         const numVertex = data.getUint8(offset + 1);
-        const colour = data.getUint16(offset + 2, true);
+        const colour = data.getUint8(offset + 2);
         const hasExtra = !!((renderType & 0x40));
         const hasTransparency = (renderType === 2);
         offset += 4;
