@@ -6,12 +6,13 @@ import { SampleType } from '../data/sampleType';
 import { LBA2GameFlags } from '../data/gameFlags';
 import { setMagicBallLevel } from '../GameState';
 import { unimplemented } from './utils';
-import { WORLD_SCALE, getRandom } from '../../utils/lba';
+import { WORLD_SCALE, getRandom, angleTo, angleToRad } from '../../utils/lba';
 import { getVideoPath } from '../../resources';
 import { ScriptContext } from './ScriptContext';
 import { getParams } from '../../params';
 import { initWagonState } from '../gameplay/wagon';
 import { LBA2Items, GetInventoryItems, LBA1Items } from '../data/inventory';
+import Extra, { getBonus } from '../Extra';
 
 const isLBA1 = getParams().game === 'lba1';
 
@@ -358,7 +359,36 @@ export function SET_DOOR_DOWN(this: ScriptContext, dist) {
     this.actor.threeObject.position.set(pos[0] - l, pos[1], pos[2]);
 }
 
-export const GIVE_BONUS = unimplemented();
+export function GIVE_BONUS(this: ScriptContext, canGiveBonus) {
+    const hero = this.scene.actors[0];
+    const bonusSprite = getBonus(this.actor.props.extraType);
+    let destAngle = angleTo(this.actor.physics.position, hero.physics.position);
+    destAngle += angleToRad(getRandom(0, 300) - 150);
+
+    const boundingBox = this.actor.model ?
+        this.actor.model.boundingBox : this.actor.sprite.boundingBox;
+    const position = this.actor.physics.position.clone();
+    const offset = new THREE.Vector3(
+        0,
+        ((boundingBox.max.y - boundingBox.min.y) / 2),
+        0,
+    );
+    offset.applyEuler(new THREE.Euler(0, destAngle, 0, 'XZY'));
+    position.add(offset);
+    Extra.bonus(
+        this.game,
+        this.scene,
+        position,
+        destAngle,
+        bonusSprite,
+        this.actor.props.extraAmount,
+        this.time,
+    );
+
+    if (!canGiveBonus) {
+        this.actor.props.extraType |= 1;
+    }
+}
 
 export function CHANGE_CUBE(this: ScriptContext, index) {
     this.scene.goto(index, false, false, true, true);
