@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { map } from 'lodash';
-import LibrariesData from '../../layouts/data/libraries.json';
+import LibrariesData from '../../layouts/data/libraries';
 
 /*
 const inputStyle = {

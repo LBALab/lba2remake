@@ -4,6 +4,9 @@ import DebugData from '../../../DebugData';
 import Renderer from '../../../../../renderer';
 import { getBricksHQR } from '../../../../../resources';
 import { areResourcesPreloaded } from '../../../../../resources/load';
+import { getParams } from '../../../../../params';
+
+const isLBA1 = getParams().game === 'lba1';
 
 const indexStyle = {
     position: 'absolute' as const,
@@ -216,8 +219,9 @@ const getLayouts = () => {
     }
     if (bkg && DebugData.scope.library) {
         const library = DebugData.scope.library.index;
+        const offset = isLBA1 ? 0 : 179;
         if (!(library in libraries)) {
-            const buffer = bkg.getEntry(179 + library);
+            const buffer = bkg.getEntry(offset + library);
             const dataView = new DataView(buffer);
             const numLayouts = dataView.getUint32(0, true) / 4;
             libraries[library] = map(times(numLayouts), index => ({

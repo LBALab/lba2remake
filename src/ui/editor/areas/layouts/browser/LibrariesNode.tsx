@@ -1,5 +1,5 @@
 import * as React from 'react';
-import LibrariesData from '../data/libraries.json';
+import LibrariesData from '../data/libraries';
 
 const indexStyle = {
     position: 'absolute' as const,

@@ -1,4 +1,9 @@
+import { getParams } from '../../../params';
+
 const cachedLayouts = {};
+const isLBA1 = getParams().game === 'lba1';
+
+const libOffset = isLBA1 ? 0 : 179;
 
 export function loadLayout(bkg, layout) {
     const { library, index } = layout;
@@ -6,7 +11,7 @@ export function loadLayout(bkg, layout) {
     if (key in cachedLayouts) {
         return cachedLayouts[key];
     }
-    const buffer = bkg.getEntry(179 + library);
+    const buffer = bkg.getEntry(libOffset + library);
 
     const dataView = new DataView(buffer);
     const numLayouts = dataView.getUint32(0, true) / 4;

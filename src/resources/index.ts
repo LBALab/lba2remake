@@ -9,6 +9,7 @@ import {
 }  from './load';
 import { getLanguageConfig } from '../lang';
 import { getBodyIndex, getAnimIndex } from '../model/entity';
+import { getParams } from '../params';
 
 const getVideoPath = (video: string) => {
     return getResourcePath(`VIDEO_${video}`);
@@ -95,7 +96,9 @@ const getModelsTexture = async () => {
 // for ad-hoc usage only
 // currently used in some Editor custom parsing
 const getBricksHQR = async () => {
-    return await loadResource(ResourceName.BRICKS);
+    const isLBA1 = getParams().game === 'lba1';
+    const resName = isLBA1 ? ResourceName.LIBRARIES : ResourceName.BRICKS;
+    return await loadResource(resName);
 };
 
 const getBricks = async () => {
