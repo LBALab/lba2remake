@@ -365,8 +365,7 @@ export function GIVE_BONUS(this: ScriptContext, canGiveBonus) {
     let destAngle = angleTo(this.actor.physics.position, hero.physics.position);
     destAngle += angleToRad(getRandom(0, 300) - 150);
 
-    const boundingBox = this.actor.model ?
-        this.actor.model.boundingBox : this.actor.sprite.boundingBox;
+    const boundingBox = this.actor.getBoundingBox();
     const position = this.actor.physics.position.clone();
     const offset = new THREE.Vector3(
         0,
