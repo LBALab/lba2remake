@@ -592,7 +592,9 @@ export function FULL_POINT(this: ScriptContext) {
 
 export const FADE_TO_PAL = unimplemented();
 
-export const ACTION = unimplemented();
+export function ACTION(this: ScriptContext) {
+    this.game.controlsState.action = 1;
+}
 
 export const SET_FRAME = unimplemented();
 
