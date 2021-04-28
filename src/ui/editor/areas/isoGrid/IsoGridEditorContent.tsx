@@ -17,6 +17,7 @@ import { WORLD_SCALE_B, WORLD_SIZE } from '../../../../utils/lba';
 import DebugData from '../../DebugData';
 import { getParams } from '../../../../params';
 import { hideBrick } from '../../../../game/scenery/isometric/grid';
+import { saveSceneReplacementModel } from '../../../../game/scenery/isometric/metadata';
 
 interface Props extends TickerProps {
     params: any;
@@ -46,6 +47,7 @@ interface State {
     selectionData?: any;
     showOriginal: boolean;
     highlight: boolean;
+    updateProgress?: string;
 }
 
 const canvasStyle = {
@@ -65,6 +67,19 @@ const infoStyle = {
     bottom: 0,
     height: 100,
     borderTop: '1px solid white'
+};
+
+const applyChangesStyle = {
+    position: 'absolute' as const,
+    left: 0,
+    bottom: 100
+};
+
+const mainInfoButton = {
+    margin: '4px',
+    padding: '5px 10px',
+    color: 'white',
+    background: 'rgb(45, 45, 48)'
 };
 
 const dataBlock = {
@@ -120,6 +135,7 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
         this.onWheel = this.onWheel.bind(this);
         this.setShowOriginal = this.setShowOriginal.bind(this);
         this.setHighlight = this.setHighlight.bind(this);
+        this.applyChanges = this.applyChanges.bind(this);
 
         const isoCamera = getIsometricCamera();
         const iso3DCamera = getIso3DCamera();
@@ -326,7 +342,7 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
         }
     }
 
-    async loadIsoGrid(isoGridIdx) {
+    async loadIsoGrid(isoGridIdx, repositionCamera = true) {
         if (this.loading) {
             return;
         }
@@ -339,15 +355,17 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
             this.state.scene.threeScene.remove(oldIsoGrid.threeObject);
         }
         this.state.scene.threeScene.add(isoGrid.threeObject);
-        const heroProps = sceneData.actors[0];
-        if (heroProps) {
-            const {pos} = heroProps;
-            this.state.scene.target.threeObject.position.set(
-                pos[0],
-                pos[1],
-                pos[2]
-            );
-            this.state.scene.target.threeObject.updateWorldMatrix();
+        if (repositionCamera) {
+            const heroProps = sceneData.actors[0];
+            if (heroProps) {
+                const {pos} = heroProps;
+                this.state.scene.target.threeObject.position.set(
+                    pos[0],
+                    pos[1],
+                    pos[2]
+                );
+                this.state.scene.target.threeObject.updateWorldMatrix();
+            }
         }
         this.loading = false;
         this.setState({isoGrid, isoGridIdx}, this.saveDebugScope);
@@ -518,6 +536,7 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
                     onMouseLeave={this.onMouseUp}
                     onWheel={this.onWheel}/>
             {this.renderInfo()}
+            {this.renderApplyButton()}
             <div id="stats" style={{position: 'absolute', top: 0, left: 0, width: '50%'}}/>
         </div>;
     }
@@ -553,6 +572,36 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
                 </label><br/>
             </div>
         </div>;
+    }
+
+    renderApplyButton() {
+        if (!window.isLocalServer) {
+            return null;
+        }
+        const progressStyle = {
+            background: '#222222',
+            color: 'red',
+            padding: 5
+        };
+        return <div style={applyChangesStyle}>
+            {this.state.updateProgress
+                ? <div style={progressStyle}>{this.state.updateProgress}</div>
+                : <button style={mainInfoButton} onClick={this.applyChanges}>
+                    Apply changes
+                </button>
+            }
+        </div>;
+    }
+
+    async applyChanges() {
+        if (!window.isLocalServer) {
+            return;
+        }
+        this.setState({ updateProgress: 'Applying changes...' }, this.saveDebugScope);
+        const sceneData = await getScene(this.isoGridIdx);
+        await saveSceneReplacementModel(this.isoGridIdx, sceneData.ambience);
+        await this.loadIsoGrid(this.isoGridIdx, false);
+        this.setState({ updateProgress: null }, this.saveDebugScope);
     }
 }
 
