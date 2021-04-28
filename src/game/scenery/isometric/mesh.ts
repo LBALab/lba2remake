@@ -70,6 +70,7 @@ export async function loadMesh(grid, entry, ambience, is3D, editorData, numActor
                 z,
                 gridMetadata,
                 editorData,
+                is3D,
                 numActors
             );
         }
@@ -149,6 +150,7 @@ function buildColumn(
     z,
     gridMetadata,
     editorData,
+    is3D,
     numActors
 ) {
     const h = 0.5;
@@ -177,6 +179,9 @@ function buildColumn(
     for (let y = 0; y < blocks.length; y += 1) {
         const yPos = (y * h) + h;
         if (blocks[y]) {
+            if (is3D && blocks[y].hide && !editorData) {
+                continue;
+            }
             const layout = library.layouts[blocks[y].layout];
             if (layout) {
                 const key = `${x},${y},${z}`;
