@@ -15,9 +15,6 @@ declare global {
 
 export function compile(type, source: string) {
     const lines = source.split('\n');
-    if (!lines[0].match('#version 300 es')) {
-        throw new Error('Shader must have "#version 300 es" directive as first line');
-    }
     const webGL2 = window.WebGL2RenderingContext && getParams().webgl2;
     if (!webGL2) {
         const precision = [];

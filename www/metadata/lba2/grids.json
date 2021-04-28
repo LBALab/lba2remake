@@ -7,13 +7,13 @@
     },
     "7": {
         "9x7x8": {
-            "layout": -1
+            "hide": true
         },
         "9x8x8": {
-            "layout": -1
+            "hide": true
         },
         "9x9x8": {
-            "layout": -1
+            "hide": true
         },
         "8x6x7": {
             "layout": 28,
@@ -34,13 +34,13 @@
             "block": 1
         },
         "31x7x48": {
-            "layout": -1
+            "hide": true
         },
         "31x8x48": {
-            "layout": -1
+            "hide": true
         },
         "31x9x48": {
-            "layout": -1
+            "hide": true
         },
         "30x6x47": {
             "layout": 28,
@@ -57,52 +57,52 @@
     },
     "12": {
         "10x8x22": {
-            "layout": -1
+            "hide": true
         },
         "10x8x21": {
-            "layout": -1
+            "hide": true
         },
         "10x8x20": {
-            "layout": -1
+            "hide": true
         },
         "10x8x16": {
-            "layout": -1
+            "hide": true
         },
         "10x8x15": {
-            "layout": -1
+            "hide": true
         },
         "10x8x14": {
-            "layout": -1
+            "hide": true
         },
         "11x8x22": {
-            "layout": -1
+            "hide": true
         },
         "11x8x21": {
-            "layout": -1
+            "hide": true
         },
         "11x8x20": {
-            "layout": -1
+            "hide": true
         },
         "11x8x16": {
-            "layout": -1
+            "hide": true
         },
         "11x8x15": {
-            "layout": -1
+            "hide": true
         },
         "11x8x14": {
-            "layout": -1
+            "hide": true
         },
         "12x8x22": {
-            "layout": -1
+            "hide": true
         },
         "12x8x21": {
-            "layout": -1
+            "hide": true
         },
         "12x8x15": {
-            "layout": -1
+            "hide": true
         },
         "12x8x14": {
-            "layout": -1
+            "hide": true
         }
     }
 }

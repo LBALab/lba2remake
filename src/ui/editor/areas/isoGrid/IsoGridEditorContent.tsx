@@ -45,6 +45,8 @@ interface State {
     };
     selectionObj: THREE.Object3D;
     selectionData?: any;
+    showOriginal: boolean;
+    highlight: boolean;
 }
 
 const canvasStyle = {
@@ -53,7 +55,8 @@ const canvasStyle = {
     left: 0,
     right: 0,
     bottom: 100,
-    cursor: 'move'
+    cursor: 'move',
+    background: 'black'
 };
 
 const infoStyle = {
@@ -61,7 +64,8 @@ const infoStyle = {
     left: 0,
     right: 0,
     bottom: 0,
-    height: 100
+    height: 100,
+    borderTop: '1px solid white'
 };
 
 const dataBlock = {
@@ -115,6 +119,8 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
         this.onMouseUp = this.onMouseUp.bind(this);
         this.onMouseMove = this.onMouseMove.bind(this);
         this.onWheel = this.onWheel.bind(this);
+        this.setShowOriginal = this.setShowOriginal.bind(this);
+        this.setHighlight = this.setHighlight.bind(this);
 
         const isoCamera = getIsometricCamera();
         const iso3DCamera = getIso3DCamera();
@@ -148,7 +154,9 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
             controlsState,
             selectionObj,
             isoGridIdx: 0,
-            cameras
+            cameras,
+            highlight: false,
+            showOriginal: false
         };
         clock.start();
     }
@@ -350,7 +358,16 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
     }
 
     frame() {
-        const { renderer, clock, scene, cameras, controlsState } = this.state;
+        const {
+            renderer,
+            clock,
+            scene,
+            cameras,
+            controlsState,
+            isoGrid,
+            highlight,
+            showOriginal
+        } = this.state;
         const { cam, isoGridIdx } = this.props.sharedState;
         if (this.isoGridIdx !== isoGridIdx && isoGridIdx !== undefined) {
             this.loadIsoGrid(isoGridIdx);
@@ -368,6 +385,17 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
             delta: Math.min(clock.getDelta(), 0.05),
             elapsed: clock.getElapsedTime()
         };
+        if (isoGrid) {
+            const editorData = isoGrid.editorData;
+            editorData.mode.value = 0;
+            if (showOriginal) {
+                editorData.mode.value = 1;
+            }
+            if (highlight) {
+                editorData.mode.value = 2;
+            }
+            editorData.replacementMesh.visible = !showOriginal;
+        }
         renderer.stats.begin();
         scene.camera.update(scene, controlsState, time);
         renderer.render(scene);
@@ -471,6 +499,15 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
         this.state.controlsState.cameraOrientation.setFromEuler(baseEuler);
     }
 
+    setShowOriginal(e) {
+        this.setState({ showOriginal: e.target.checked }, this.saveDebugScope);
+
+    }
+
+    setHighlight(e) {
+        this.setState({ highlight: e.target.checked }, this.saveDebugScope);
+    }
+
     render() {
         return <div
             id="renderZone"
@@ -489,9 +526,9 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
     }
 
     renderInfo() {
-        const { selectionData } = this.state;
-        if (selectionData) {
-            return <div style={infoStyle}>
+        const { selectionData, highlight, showOriginal } = this.state;
+        return <div style={infoStyle}>
+            {selectionData && <React.Fragment>
                 <div style={dataBlock}>
                     <div>Selection:</div><br/>
                     <div>X: {selectionData.x}</div>
@@ -502,9 +539,23 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
                     <div>Layout: {selectionData.block.layout}</div>
                     <div>Block (in layout): {selectionData.block.block}</div>
                 </div>
-            </div>;
-        }
-        return null;
+            </React.Fragment>}
+            <div style={{position: 'absolute', right: 0, top: 2, textAlign: 'right'}}>
+                <label style={{cursor: 'pointer', userSelect: 'none'}}>
+                    <input type="checkBox"
+                            checked={showOriginal}
+                            onChange={this.setShowOriginal} />
+                    Show original bricks
+                </label><br/>
+                <label style={{cursor: 'pointer', userSelect: 'none'}}>
+                    <input type="checkBox"
+                            checked={highlight}
+                            onChange={this.setHighlight} />
+                    Highlight <span style={{color: '#FF0000'}}>replaced</span><br/>
+                    and <span style={{color: '#00FF00'}}>hidden</span> bricks
+                </label><br/>
+            </div>
+        </div>;
     }
 }
 

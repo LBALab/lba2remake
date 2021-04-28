@@ -890,7 +890,8 @@ async function loadVariantMesh(library, group, loadForExporting = false) {
             transparent: true,
             uniforms: {
                 library: {value: library.texture}
-            }
+            },
+            glslVersion: Renderer.getGLSLVersion()
         });
     const mesh = new THREE.Mesh(bufferGeometry, material);
 

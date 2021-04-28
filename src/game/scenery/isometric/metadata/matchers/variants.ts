@@ -26,7 +26,7 @@ export function checkVariantMatch(grid, xStart, yStart, zStart, variant, replace
                 if (replacements.bricks.has(`${xGrid},${yGrid},${zGrid}`)) {
                     return false;
                 }
-                if (!column[yGrid]) {
+                if (!column[yGrid] || column[yGrid].hide) {
                     return false;
                 }
                 if (column[yGrid].layout !== layout) {

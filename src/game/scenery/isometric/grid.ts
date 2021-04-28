@@ -36,7 +36,7 @@ export async function suppressBrickMD(entry, brick) {
     if (!(entry in globalGridMetadata)) {
         globalGridMetadata[entry] = {};
     }
-    globalGridMetadata[entry][brick] = { layout: -1 };
+    globalGridMetadata[entry][brick] = { hide: true };
 }
 
 const libraries = [];
