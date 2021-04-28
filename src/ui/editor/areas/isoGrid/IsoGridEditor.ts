@@ -18,7 +18,13 @@ const IsoGridEditor = {
     }),
     stateHandler: {
         setCam(cam) {
-            this.setState({cam});
+            if (cam === 2) {
+                // Skip saving state if using free camera to
+                // prevent bug when loading directly on free cam
+                this.state.cam = 2;
+            } else {
+                this.setState({cam});
+            }
         },
         setIsoGridIdx(isoGridIdx) {
             this.setState({isoGridIdx});
