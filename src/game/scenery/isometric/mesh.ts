@@ -56,6 +56,7 @@ export async function loadMesh(grid, entry, ambience, is3D, editorData, numActor
         uniforms.mode = { value: 0 };
         editorData.mode = uniforms.mode;
         editorData.replacementMesh = replacementMesh;
+        editorData.bricksMap = new Map<string, any>();
     }
 
     for (let z = 0; z < 64; z += 1) {
@@ -99,6 +100,10 @@ export async function loadMesh(grid, entry, ambience, is3D, editorData, numActor
             );
         }
         const mesh = new THREE.Mesh(bufferGeometry, material);
+
+        if (editorData && name === 'standard') {
+            editorData.bricksGeom = bufferGeometry;
+        }
 
         mesh.frustumCulled = false;
         mesh.name = `iso_grid_${name}`;
@@ -219,11 +224,21 @@ function buildColumn(
                         flag = 1;
                     }
 
+                    let brickData = null;
+                    if (editorData) {
+                        brickData = {
+                            start: flags.length,
+                            end: flags.length
+                        };
+                        editorData.bricksMap.set(key, brickData);
+                    }
+
                     const pushNFlags = (num) => {
                         if (editorData) {
                             for (let i = 0; i < num; i += 1) {
                                 flags.push(flag);
                             }
+                            brickData.end += num;
                         }
                     };
 

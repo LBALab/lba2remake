@@ -32,11 +32,54 @@ export async function getGridMetadata(entry) {
     return globalGridMetadata[entry];
 }
 
-export async function suppressBrickMD(entry, brick) {
+let saveTimeout = null;
+
+export async function hideBrick(entry, isoGrid, brick) {
     if (!(entry in globalGridMetadata)) {
         globalGridMetadata[entry] = {};
     }
-    globalGridMetadata[entry][brick] = { hide: true };
+    const gridMetadata = globalGridMetadata[entry];
+    let hide = true;
+    if (brick in gridMetadata) {
+        const info = gridMetadata[brick];
+        if (info.hide) {
+            delete gridMetadata[brick];
+            hide = false;
+        } else {
+            gridMetadata[brick] = { hide: true };
+        }
+    } else {
+        gridMetadata[brick] = { hide: true };
+    }
+    const editorData = isoGrid.editorData;
+    const key = brick.replaceAll('x', ',');
+    if (editorData.bricksMap.has(key)) {
+        const brickData = editorData.bricksMap.get(key);
+        const flagAttr = editorData.bricksGeom.attributes.flag;
+        for (let i = brickData.start; i < brickData.end; i += 1) {
+            flagAttr.array[i] = hide ? 2 : 0;
+        }
+        flagAttr.needsUpdate = true;
+    }
+    if (saveTimeout) {
+        clearTimeout(saveTimeout);
+    }
+    saveTimeout = setTimeout(async () => {
+        try {
+            await fetch(`/grid_metadata/${getParams().game}`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/octet-stream'
+                },
+                body: JSON.stringify(globalGridMetadata, null, 4)
+            });
+            // tslint:disable-next-line: no-console
+            console.log('Saved grid metadata');
+        } catch (err) {
+            // tslint:disable-next-line: no-console
+            console.warn('Failed to save grid metadata:', err);
+        }
+    }, 1000);
 }
 
 const libraries = [];

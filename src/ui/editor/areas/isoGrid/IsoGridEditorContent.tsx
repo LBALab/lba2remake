@@ -16,8 +16,7 @@ import {
 import { WORLD_SCALE_B, WORLD_SIZE } from '../../../../utils/lba';
 import DebugData from '../../DebugData';
 import { getParams } from '../../../../params';
-import { suppressBrickMD } from '../../../../game/scenery/isometric/grid';
-import { releaseResource, ResourceName } from '../../../../resources/load';
+import { hideBrick } from '../../../../game/scenery/isometric/grid';
 
 interface Props extends TickerProps {
     params: any;
@@ -261,13 +260,11 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
             case 'KeyD':
                 this.state.controlsState.cameraSpeed.x = -1;
                 break;
-            case 'Delete':
-            case 'KeyX':
+            case 'KeyH':
                 const s = this.state.selectionData;
-                if (this.state.selectionData) {
-                    suppressBrickMD(this.isoGridIdx, `${s.x}x${s.y}x${s.z}`);
-                    releaseResource(ResourceName.GRIDS);
-                    this.loadIsoGrid(this.isoGridIdx);
+                if (this.state.selectionData && this.state.isoGrid) {
+                    const isoGrid = this.state.isoGrid;
+                    hideBrick(this.isoGridIdx, isoGrid, `${s.x}x${s.y}x${s.z}`);
                 }
                 break;
         }
