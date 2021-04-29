@@ -149,6 +149,9 @@ export const ActorDirMode = {
     MOVE_BUGGY_MANUAL: 13
 };
 
+const G = new THREE.Object3D();
+const P = new THREE.Vector3(0, 0, 0);
+
 export default class Actor {
     readonly type: string = 'actor';
     readonly index: number;
@@ -454,6 +457,18 @@ export default class Actor {
         this.state.isWalking = true;
         this.state.isTurning = true;
         return this.getDistance(position);
+    }
+
+    gotoPosition(position: THREE.Vector3, delta: number) {
+        G.position.set(0, 0, 0);
+        P.set(0, 0, 0);
+        P.subVectors(position, this.physics.position).normalize();
+        G.translateOnAxis(P, delta);
+
+        this.threeObject.position.add(G.position);
+        this.physics.position.copy(this.threeObject.position);
+
+        return this.physics.position.distanceTo(position);
     }
 
     gotoSprite(position: THREE.Vector3, delta: number) {
