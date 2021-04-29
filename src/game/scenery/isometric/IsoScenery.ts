@@ -131,7 +131,7 @@ export default class IsoScenery {
 
     getBrickInfo({x, y, z}) {
         const { library, cells } = this.grid;
-        const cell = cells[(x * 64) + z];
+        const cell = cells[(z * 64) + x];
         if (cell) {
             const blocks = cell.blocks;
             if (blocks[y]) {

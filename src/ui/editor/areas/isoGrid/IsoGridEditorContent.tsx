@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as THREE from 'three';
+import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
 
 import Renderer from '../../../../renderer';
 import { fullscreen } from '../../../styles/index';
@@ -43,7 +44,9 @@ interface State {
         cameraSpeed: THREE.Vector3;
         freeCamera: boolean;
     };
-    selectionObj: THREE.Object3D;
+    cursorObj: THREE.Object3D;
+    cursor?: any;
+    showCursorGizmo: boolean;
     selectionData?: any;
     showOriginal: boolean;
     highlight: boolean;
@@ -82,13 +85,6 @@ const mainInfoButton = {
     background: 'rgb(45, 45, 48)'
 };
 
-const dataBlock = {
-    display: 'inline-block' as const,
-    borderRight: '1px dashed black',
-    padding: '5px 10px',
-    height: '100%'
-};
-
 /*
 const infoButton = {
     margin: '2px 4px',
@@ -112,6 +108,8 @@ const MAX_X_ANGLE = Math.PI / 2.5;
 export default class IsoGridEditorContent extends FrameListener<Props, State> {
     root: HTMLElement;
     canvas: HTMLCanvasElement;
+    gizmo: TransformControls;
+    gizmoEnabled: boolean = false;
     moving: boolean = false;
     isoGridIdx: number = -1;
     loading: boolean = false;
@@ -134,6 +132,7 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
         this.onMouseMove = this.onMouseMove.bind(this);
         this.onWheel = this.onWheel.bind(this);
         this.setShowOriginal = this.setShowOriginal.bind(this);
+        this.setShowCursorGizmo = this.setShowCursorGizmo.bind(this);
         this.setHighlight = this.setHighlight.bind(this);
         this.applyChanges = this.applyChanges.bind(this);
 
@@ -167,7 +166,8 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
             scene,
             clock,
             controlsState,
-            selectionObj,
+            cursorObj: selectionObj,
+            showCursorGizmo: false,
             isoGridIdx: 0,
             cameras,
             highlight: false,
@@ -191,6 +191,43 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
             await this.preload();
             this.canvas = document.createElement('canvas');
             this.canvas.tabIndex = 0;
+            const camera = this.state.cameras[1].threeCamera;
+            this.gizmo = new TransformControls(camera, this.canvas);
+            this.gizmo.attach(this.state.cursorObj);
+            this.gizmo.addEventListener('mouseDown', () => {
+                this.gizmoEnabled = true;
+            });
+            this.gizmo.addEventListener('mouseUp', () => {
+                this.gizmoEnabled = false;
+            });
+            this.gizmo.addEventListener('objectChange', () => {
+                const position = this.state.cursorObj.position;
+                const OW = WORLD_SCALE_B;
+                const OH = WORLD_SCALE_B * 0.5;
+                const H_OW = OW * 0.5;
+                const H_OH = OH * 0.5;
+                position.set(
+                    Math.round(position.x / OW - H_OW) * OW + H_OW,
+                    Math.round(position.y / OH - H_OH) * OH + H_OH,
+                    Math.round(position.z / OW - H_OW) * OW + H_OW,
+                );
+                const newCursor = {
+                    x: Math.round((position.z / WORLD_SIZE) * 32 - 0.5),
+                    y: Math.round((position.y / WORLD_SIZE) * 64 - 0.5),
+                    z: Math.round(64.5 - (position.x / WORLD_SIZE) * 32),
+                };
+                const { cursor, isoGrid } = this.state;
+                if (cursor &&
+                    (cursor.x !== newCursor.x ||
+                     cursor.y !== newCursor.y ||
+                     cursor.z !== newCursor.z)) {
+                    const newSelection = isoGrid.getBrickInfo(newCursor);
+                    this.select(newSelection, newCursor);
+                }
+            });
+            this.gizmo.enabled = false;
+            this.gizmo.visible = false;
+            this.state.scene.threeScene.add(this.gizmo);
             const renderer = new Renderer(this.canvas, 'iso_grids_editor');
             renderer.threeRenderer.setAnimationLoop(() => {
                 this.props.ticker.frame();
@@ -240,24 +277,28 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
                 break;
             }
             case 'ArrowUp': {
-                const { selectionData, isoGrid } = this.state;
-                if (selectionData && isoGrid) {
-                    const { x, y, z } = selectionData;
-                    const newSelection = isoGrid.getBrickInfo({ x, y: y + 1, z });
-                    if (newSelection) {
-                        this.select(newSelection);
+                const { cursor, isoGrid } = this.state;
+                if (cursor && isoGrid) {
+                    const { x, y, z } = cursor;
+                    if (y >= 24) {
+                        break;
                     }
+                    const newCursor = { x, y: y + 1, z };
+                    const newSelection = isoGrid.getBrickInfo(newCursor);
+                    this.select(newSelection, newCursor);
                 }
                 break;
             }
             case 'ArrowDown': {
-                const { selectionData, isoGrid } = this.state;
-                if (selectionData && isoGrid) {
-                    const { x, y, z } = selectionData;
-                    const newSelection = isoGrid.getBrickInfo({ x, y: y - 1, z });
-                    if (newSelection) {
-                        this.select(newSelection);
+                const { cursor, isoGrid } = this.state;
+                if (cursor && isoGrid) {
+                    const { x, y, z } = cursor;
+                    if (y <= 0) {
+                        break;
                     }
+                    const newCursor = { x, y: y - 1, z };
+                    const newSelection = isoGrid.getBrickInfo(newCursor);
+                    this.select(newSelection, newCursor);
                 }
                 break;
             }
@@ -325,20 +366,34 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
         }
     }
 
-    select(selectionData) {
+    select(selectionData, cursor = null) {
         if (selectionData) {
             const { x, y, z } = selectionData;
-            this.state.selectionObj.visible = true;
-            this.state.selectionObj.position.set(
+            this.state.cursorObj.visible = true;
+            this.state.cursorObj.position.set(
                 (64.5 - z) / 32,
                 (y + 0.5) / 64,
                 (x + 0.5) / 32
             );
-            this.state.selectionObj.position.multiplyScalar(WORLD_SIZE);
-            this.setState({ selectionData }, this.saveDebugScope);
+            this.state.cursorObj.position.multiplyScalar(WORLD_SIZE);
+            this.setState({
+                selectionData,
+                cursor: { x, y, z }
+            }, this.saveDebugScope);
         } else {
-            this.state.selectionObj.visible = false;
-            this.setState({ selectionData: null }, this.saveDebugScope);
+            if (cursor) {
+                const { x, y, z } = cursor;
+                this.state.cursorObj.visible = true;
+                this.state.cursorObj.position.set(
+                    (64.5 - z) / 32,
+                    (y + 0.5) / 64,
+                    (x + 0.5) / 32
+                );
+                this.state.cursorObj.position.multiplyScalar(WORLD_SIZE);
+            } else {
+                this.state.cursorObj.visible = false;
+            }
+            this.setState({ selectionData: null, cursor }, this.saveDebugScope);
         }
     }
 
@@ -381,7 +436,8 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
             controlsState,
             isoGrid,
             highlight,
-            showOriginal
+            showOriginal,
+            showCursorGizmo,
         } = this.state;
         const { cam, isoGridIdx } = this.props.sharedState;
         if (this.isoGridIdx !== isoGridIdx && isoGridIdx !== undefined) {
@@ -411,6 +467,10 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
             }
             editorData.replacementMesh.visible = !showOriginal;
         }
+        if (this.gizmo) {
+            this.gizmo.enabled = showCursorGizmo;
+            this.gizmo.visible = showCursorGizmo;
+        }
         renderer.stats.begin();
         scene.camera.update(scene, controlsState, time);
         renderer.render(scene);
@@ -432,8 +492,10 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
     }
 
     onMouseDown() {
-        this.moving = true;
-        this.clickStart = Date.now();
+        if (!this.gizmoEnabled) {
+            this.moving = true;
+            this.clickStart = Date.now();
+        }
     }
 
     INFO = [
@@ -516,7 +578,10 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
 
     setShowOriginal(e) {
         this.setState({ showOriginal: e.target.checked }, this.saveDebugScope);
+    }
 
+    setShowCursorGizmo(e) {
+        this.setState({ showCursorGizmo: e.target.checked }, this.saveDebugScope);
     }
 
     setHighlight(e) {
@@ -542,20 +607,38 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
     }
 
     renderInfo() {
-        const { selectionData, highlight, showOriginal } = this.state;
+        const { cursor, selectionData, highlight, showOriginal, showCursorGizmo } = this.state;
         return <div style={infoStyle}>
-            {selectionData && <React.Fragment>
-                <div style={dataBlock}>
-                    <div>Selection:</div><br/>
-                    <div>X: {selectionData.x}</div>
-                    <div>Y: {selectionData.y}</div>
-                    <div>Z: {selectionData.z}</div>
+            <div>
+                <div>Cursor:&nbsp;
+                    {cursor ? <span style={{color: '#8a2727'}}>
+                        <span style={{color: '#ff4949'}}>{cursor.x}</span>
+                        x
+                        <span style={{color: '#ff4949'}}>{cursor.y}</span>
+                        x
+                        <span style={{color: '#ff4949'}}>{cursor.z}</span>
+                    </span> : <span style={{color: '#8a2727'}}>Disabled</span>}
                 </div>
-                <div style={dataBlock}>
-                    <div>Layout: {selectionData.block.layout}</div>
-                    <div>Block (in layout): {selectionData.block.block}</div>
-                </div>
-            </React.Fragment>}
+                {cursor && <div>
+                    <label style={{cursor: 'pointer', userSelect: 'none'}}>
+                        <input type="checkBox"
+                                checked={showCursorGizmo}
+                                onChange={this.setShowCursorGizmo} />
+                        Show gizmo
+                    </label>
+                </div>}
+                <br/>
+                {selectionData
+                ? <React.Fragment>
+                    <div>Layout:&nbsp;
+                        <span style={{color: '#49d2ff'}}>{selectionData.block.layout}</span>
+                    </div>
+                    <div title="(in layout)">Block:&nbsp;
+                        <span style={{color: '#49d2ff'}}>{selectionData.block.block}</span>
+                    </div>
+                </React.Fragment>
+                : cursor && <span style={{color: '#49d2ff'}}>Empty block</span>}
+            </div>
             <div style={{position: 'absolute', right: 0, top: 2, textAlign: 'right'}}>
                 <label style={{cursor: 'pointer', userSelect: 'none'}}>
                     <input type="checkBox"
@@ -609,7 +692,7 @@ function makeSelectionObject() {
     const geometry = new THREE.BoxBufferGeometry(WORLD_SCALE_B, WORLD_SCALE_B * 0.5, WORLD_SCALE_B);
     const edges = new THREE.EdgesGeometry(geometry);
     const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({
-        color: 0xff0000
+        color: 0xffffff
     }));
     return line;
 }
