@@ -253,26 +253,28 @@ const register = (
         await resource.loading;
     };
 
-    resource.parseSync = (index?: number, language?: any) => {
-        if (resource.parsedEntries[index]) {
+    resource.parseSync = (index?: number, param?: any) => {
+        const useCache = !(param && param.noCache);
+        if (useCache && resource.parsedEntries[index]) {
             return resource.parsedEntries[index];
         }
         if (!ResourceTypes[resource.type].parser) {
             return null;
         }
-        const data = ResourceTypes[resource.type].parser(resource, index, language);
+        const data = ResourceTypes[resource.type].parser(resource, index, param);
         resource.parsedEntries[index] = data;
         return resource.parsedEntries[index];
     };
 
-    resource.parse = async (index?: number, language?: any) => {
-        if (resource.parsedEntries[index]) {
+    resource.parse = async (index?: number, param?: any) => {
+        const useCache = !(param && param.noCache);
+        if (useCache && resource.parsedEntries[index]) {
             return resource.parsedEntries[index];
         }
         if (!ResourceTypes[resource.type].parser) {
             return null;
         }
-        const data = await ResourceTypes[resource.type].parser(resource, index, language);
+        const data = await ResourceTypes[resource.type].parser(resource, index, param);
         resource.parsedEntries[index] = data;
         return resource.parsedEntries[index];
     };

@@ -51,7 +51,8 @@ export default class IsoScenery {
             mask,
             palette,
             is3D,
-            gridMetadata
+            gridMetadata,
+            noCache: isGridEditor
         });
 
         const editorData = isGridEditor ? {} : null;

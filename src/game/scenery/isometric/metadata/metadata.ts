@@ -4,7 +4,7 @@ import { getBricksHQR } from '../../../../resources';
 import { loadLayout } from '../layouts';
 import { getParams } from '../../../../params';
 
-export async function loadMetadata(entry, library, mergeReplacements = false) {
+export async function loadMetadata(entry, library, isEditor, mergeReplacements = false) {
     const { game } = getParams();
     const bkg = await getBricksHQR();
     const layoutsReq = await fetch(`/metadata/${game}/layouts.json`);
@@ -21,7 +21,7 @@ export async function loadMetadata(entry, library, mergeReplacements = false) {
             if (hasFullReplacement) {
                 info = {...data};
             } else {
-                const model = await loadModel(`/models/${game}/layouts/${data.file}`, true);
+                const model = await loadModel(`/models/${game}/layouts/${data.file}`, !isEditor);
                 model.scene.name = data.file;
                 info = {
                     ...data,

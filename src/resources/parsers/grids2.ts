@@ -91,7 +91,7 @@ export const getCells = (
                         && replacementBlock.layout !== -1) {
                         blocks[blocks.length - 1] = replacementBlock;
                     }
-                    if (replacementBlock.hide) {
+                    if (replacementBlock.hide && blocks[blocks.length - 1]) {
                         blocks[blocks.length - 1].hide = true;
                     }
                     isValid = replacementBlock.layout !== -1;

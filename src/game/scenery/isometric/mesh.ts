@@ -42,6 +42,7 @@ export async function loadMesh(grid, entry, ambience, is3D, editorData, numActor
         entry,
         ambience,
         is3D,
+        !!editorData,
         numActors
     );
     const replacementMesh = gridMetadata.replacements.threeObject;
