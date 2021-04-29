@@ -2869,6 +2869,9 @@
     }
   },
   "4": {
+    "0": {
+      "mirror": false
+    },
     "3": {
       "mirror": true
     },
@@ -2887,6 +2890,11 @@
     "8": {
       "mirror": true
     },
+    "9": {
+      "replace": true,
+      "file": "EM_009_hole_with_bars.glb",
+      "orientation": 0
+    },
     "14": {
       "mirror": true
     },
@@ -2899,11 +2907,96 @@
     "18": {
       "mirror": true
     },
+    "21": {
+      "replace": true,
+      "file": "EM_021_cylinder_vertical.glb",
+      "orientation": 0
+    },
+    "22": {
+      "replace": true,
+      "file": "EM_022_023_cylinder_horizontal.glb",
+      "orientation": 0
+    },
+    "23": {
+      "replace": true,
+      "file": "EM_022_023_cylinder_horizontal.glb",
+      "orientation": 1
+    },
+    "29": {
+      "replace": true,
+      "file": "EM_029_031_cylinder_curve_up.glb",
+      "orientation": 0
+    },
+    "31": {
+      "replace": true,
+      "file": "EM_029_031_cylinder_curve_up.glb",
+      "orientation": 2
+    },
+    "32": {
+      "replace": true,
+      "file": "EM_032_033_034_035_cylinder_curve_down.glb",
+      "orientation": 0
+    },
+    "33": {
+      "replace": true,
+      "file": "EM_032_033_034_035_cylinder_curve_down.glb",
+      "orientation": 3
+    },
+    "34": {
+      "replace": true,
+      "file": "EM_032_033_034_035_cylinder_curve_down.glb",
+      "orientation": 2
+    },
+    "35": {
+      "replace": true,
+      "file": "EM_032_033_034_035_cylinder_curve_down.glb",
+      "orientation": 1
+    },
+    "36": {
+      "replace": true,
+      "file": "EM_036_cylinder_vertical_small.glb",
+      "orientation": 0
+    },
+    "37": {
+      "replace": true,
+      "file": "EM_037_038_cylinder_curve_down_start.glb",
+      "orientation": 0
+    },
+    "38": {
+      "replace": true,
+      "file": "EM_037_038_cylinder_curve_down_start.glb",
+      "orientation": 3
+    },
+    "39": {
+      "replace": true,
+      "file": "EM_039_cylinder_vertical_small_start.glb",
+      "orientation": 0
+    },
+    "45": {
+      "replace": true,
+      "file": "EM_045_067_cylinder_vertical_fork.glb",
+      "orientation": 0
+    },
+    "49": {
+      "replace": true,
+      "file": "EM_049_cone.glb",
+      "orientation": 0
+    },
+    "50": {
+      "replace": true,
+      "file": "EM_050_cylinder_horizontal_start.glb",
+      "orientation": 0
+    },
     "59": {
       "mirror": false
     },
     "60": {
       "mirror": false
+    },
+    "67": {
+      "replace": true,
+      "file": "EM_045_067_cylinder_vertical_fork.glb",
+      "orientation": 3
     },
     "68": {
       "mirror": true
@@ -2944,11 +3037,183 @@
     "90": {
       "mirror": true
     },
+    "94": {
+      "replace": true,
+      "file": "EM_021_cylinder_vertical.glb",
+      "orientation": 0
+    },
+    "107": {
+      "replace": true,
+      "file": "EM_107_cylinder_vertical_top_deco.glb",
+      "orientation": 0
+    },
+    "108": {
+      "replace": true,
+      "file": "EM_108_109_cylinder_railings.glb",
+      "orientation": 0
+    },
+    "109": {
+      "replace": true,
+      "file": "EM_108_109_cylinder_railings.glb",
+      "orientation": 1
+    },
+    "133": {
+      "replace": true,
+      "file": "EM_133_blue_table.glb",
+      "orientation": 0
+    },
+    "136": {
+      "replace": true,
+      "file": "EM_136_big_spool.glb",
+      "orientation": 0
+    },
+    "137": {
+      "replace": true,
+      "file": "EM_137_black_hose.glb",
+      "orientation": 0
+    },
+    "139": {
+      "replace": true,
+      "file": "EM_139_bunk_beds.glb",
+      "orientation": 0
+    },
+    "141": {
+      "replace": true,
+      "file": "EM_141_oil_barrel.glb",
+      "orientation": 0
+    },
+    "142": {
+      "replace": true,
+      "file": "EM_142_piled_oil_barrels.glb",
+      "orientation": 0
+    },
+    "143": {
+      "replace": true,
+      "file": "EM_143_map_screen.glb",
+      "orientation": 0
+    },
+    "144": {
+      "replace": true,
+      "file": "EM_144_megaphone.glb",
+      "orientation": 0
+    },
     "155": {
-      "mirror": true
+      "replace": true,
+      "file": "EM_155_wooden_box.glb",
+      "orientation": 0
     },
     "157": {
       "mirror": true
+    },
+    "108:5x2x1:127,4141,127,4141,4141,4142,4143,4142,4143,4143": {
+      "replace": true,
+      "file": "EM_108_cylinder_railings_var1.glb",
+      "orientation": 0
+    },
+    "108:3x2x1:127,4141,4141,4142,4143,4143": {
+      "replace": true,
+      "file": "EM_108_cylinder_railings_var2.glb",
+      "orientation": 0
+    },
+    "108:4x2x1:127,4141,127,4141,4142,4143,4142,4143": {
+      "replace": true,
+      "file": "EM_108_cylinder_railings_var3.glb",
+      "orientation": 0
+    },
+    "108:4x2x1:127,4141,4141,4141,4142,4143,4143,4143": {
+      "replace": true,
+      "file": "EM_108_cylinder_railings_var4.glb",
+      "orientation": 0
+    },
+    "109:1x2x4:127,4144,4145,4146,127,4144,4145,4146": {
+      "replace": true,
+      "file": "EM_109_cylinder_railings_var1.glb",
+      "orientation": 0
+    },
+    "21:4x10x1:3147,3146,3146,3146,-1,3147,3147,3147,-1,3147,3146,-1,-1,3147,3147,-1,-1,3146,-1,-1,-1,3147,-1,-1,-1,3146,-1,-1,-1,3147,-1,-1,-1,3146,-1,-1,-1,3147": {
+      "replace": true,
+      "file": "EM_021_cylinder_vertical_var2.glb",
+      "orientation": 0
+    },
+    "21:1x10x1:3146,3147,3147,3147,3146,3147,3146,3147,3146,3147": {
+      "replace": true,
+      "file": "EM_021_cylinder_vertical_var3.glb",
+      "orientation": 0
+    },
+    "21:1x2x2:-1,3147,3146,3147": {
+      "replace": true,
+      "file": "EM_021_cylinder_vertical_var5.glb",
+      "orientation": 0
+    },
+    "21:1x3x1:3146,3147,3147": {
+      "replace": true,
+      "file": "EM_021_cylinder_vertical_var6.glb",
+      "orientation": 0
+    },
+    "21:1x4x2:-1,3146,3147,3147,3146,3147,3146,3147": {
+      "replace": true,
+      "file": "EM_021_cylinder_vertical_var4.glb",
+      "orientation": 0
+    },
+    "142:1x4x2:3504,3505,3506,3507,3504,3505,3506,3507": {
+      "replace": true,
+      "file": "EM_141_piled_oil_barrels_var1.glb",
+      "orientation": 0
+    },
+    "155:2x2x2:0,3516,3519,3520,3521,3522,3527,3528": {
+      "replace": true,
+      "file": "EM_155_wooden_box_var1.glb",
+      "orientation": 0
+    },
+    "155:5x8x4:0,0,3516,-1,-1,0,0,3517,-1,-1,0,0,3518,-1,-1,0,3519,3520,-1,-1,0,3518,-1,-1,-1,3519,3520,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,3521,3522,-1,-1,-1,3523,3524,-1,-1,3521,3525,3526,-1,-1,3523,3527,3528,-1,-1,3525,3526,-1,-1,-1,3527,3528,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,3516,-1,-1,-1,0,3517,-1,-1,-1,0,3518,-1,-1,-1,3519,3520,0,3516,-1,-1,-1,0,3517,-1,-1,-1,0,3518,-1,-1,-1,3519,3520,-1,-1,-1,-1,-1,-1,3521,3522,-1,-1,-1,3523,3524,-1,-1,-1,3525,3526,-1,-1,-1,3527,3528,3521,3522,-1,-1,-1,3523,3524,-1,-1,-1,3525,3526,-1,-1,-1,3527,3528": {
+      "replace": true,
+      "file": "EM_155_wooden_box_var2.glb",
+      "orientation": 0
+    },
+    "155:4x4x4:-1,-1,0,3516,-1,-1,0,3517,-1,-1,0,3518,-1,-1,3519,3520,0,3516,3521,3522,0,3517,3523,3524,0,3518,3525,3526,3519,3520,3527,3528,0,3516,-1,-1,0,3517,-1,-1,0,3518,-1,-1,3519,3520,-1,-1,3521,3522,-1,-1,3523,3524,-1,-1,3525,3526,-1,-1,3527,3528": {
+      "replace": true,
+      "file": "EM_155_wooden_box_var4.glb",
+      "orientation": 0
+    },
+    "155:2x6x4:-1,-1,-1,-1,0,3516,0,3517,0,3518,3519,3520,-1,-1,-1,-1,3521,3522,3523,3524,3525,3526,3527,3528,0,3516,0,3517,0,3518,3519,3520,-1,-1,-1,-1,3521,3522,3523,3524,3525,3526,3527,3528": {
+      "replace": true,
+      "file": "EM_155_wooden_box_var8.glb",
+      "orientation": 0
+    },
+    "155:4x5x2:0,3516,0,3516,0,3516,0,3517,0,3517,0,3518,0,3518,3519,3520,3519,3520,-1,-1,3521,3522,3521,3522,3521,3522,3523,3524,3523,3524,3525,3526,3525,3526,3527,3528,3527,3528": {
+      "replace": true,
+      "file": "EM_155_wooden_box_var9.glb",
+      "orientation": 0
+    },
+    "155:2x4x1:0,3516,0,3517,0,3518,3519,3520": {
+      "replace": true,
+      "file": "EM_155_wooden_box_var11.glb",
+      "orientation": 0
+    },
+    "155:2x6x4:0,3516,0,3517,0,3518,3519,3520,-1,-1,-1,-1,3521,3522,3523,3524,3525,3526,3527,3528,-1,-1,-1,-1,0,3516,0,3517,0,3518,0,3517,0,3518,3519,3520,3521,3522,3523,3524,3525,3526,3523,3524,3525,3526,3527,3528": {
+      "replace": true,
+      "file": "EM_155_wooden_box_var10.glb",
+      "orientation": 0
+    },
+    "133:2x3x3:0,3397,0,3398,3399,3401,0,127,0,127,3404,3405,3406,3407,3408,3409,3410,3413": {
+      "replace": true,
+      "file": "EM_133_blue_table_var1.glb",
+      "orientation": 0
+    },
+    "133:3x3x3:0,0,3397,0,0,3398,3399,3400,3401,0,0,127,0,0,127,3404,2912,3405,3406,127,3407,3408,127,3409,3410,3411,3413": {
+      "replace": true,
+      "file": "EM_133_blue_table_var2.glb",
+      "orientation": 0
+    },
+    "133:2x3x4:0,3397,0,3398,3399,3401,0,127,0,127,3402,3403,0,127,0,127,3404,3405,3406,3407,3408,3409,3410,3413": {
+      "replace": true,
+      "file": "EM_133_blue_table_var3.glb",
+      "orientation": 0
+    },
+    "133:2x3x2:0,3397,0,3398,3399,3401,3406,3407,3408,3409,3410,3413": {
+      "replace": true,
+      "file": "EM_133_blue_table_var4.glb",
+      "orientation": 0
     }
   },
   "5": {
