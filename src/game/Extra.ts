@@ -336,12 +336,6 @@ export default class Extra {
     update(game: Game, scene: Scene, time: Time) {
         let hitActor = null;
 
-        // skipping LBA1 for now until we have Sprites sorted
-        const isLBA1 = getParams().game === 'lba1';
-        if (isLBA1) {
-            return;
-        }
-
         if (time.elapsed - this.spawnTime > this.lifeTime
             && this.spriteIndex !== SpriteType.KEY) {
             this.flags |= ExtraFlag.TIME_OUT;
