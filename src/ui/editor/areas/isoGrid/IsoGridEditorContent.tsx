@@ -191,7 +191,7 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
             await this.preload();
             this.canvas = document.createElement('canvas');
             this.canvas.tabIndex = 0;
-            const camera = this.state.cameras[1].threeCamera;
+            const camera = this.state.scene.camera.threeCamera;
             this.gizmo = new TransformControls(camera, this.canvas);
             this.gizmo.attach(this.state.cursorObj);
             this.gizmo.addEventListener('mouseDown', () => {
@@ -446,6 +446,9 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
         if (this.cam !== cam && cam !== undefined) {
             this.cam = cam;
             scene.camera = cameras[cam];
+            if (this.gizmo) {
+                this.gizmo.camera = scene.camera.threeCamera;
+            }
             if (cam === 2) {
                 this.resetCameraState();
             }
