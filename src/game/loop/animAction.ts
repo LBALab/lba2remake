@@ -99,9 +99,9 @@ export const THROW = (action: AnimAction, { actor, game, scene }: AnimActionCont
     const throwAngle = (action.alpha * 2 * Math.PI) / 0x1000;
     const position = actor.physics.position.clone();
     const offset = new THREE.Vector3(
-        action.distanceZ,
-        action.distanceY,
-        action.distanceX,
+        0,
+        action.yHeight,
+        0,
     );
     offset.applyEuler(new THREE.Euler(0, destAngle - ANGLE_OFFSET, 0, 'XZY'));
     position.add(offset);
@@ -138,9 +138,9 @@ export const THROW_ALPHA = (action: AnimAction, { actor, game, scene }: AnimActi
     const throwAngle = (action.alpha * 2 * Math.PI) / 0x1000;
     const position = actor.physics.position.clone();
     const offset = new THREE.Vector3(
-        action.distanceZ,
-        action.distanceY,
-        action.distanceX,
+        0,
+        action.yHeight,
+        0,
     );
     offset.applyEuler(new THREE.Euler(0, destAngle - ANGLE_OFFSET, 0, 'XZY'));
     position.add(offset);
