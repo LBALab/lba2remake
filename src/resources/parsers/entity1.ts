@@ -190,7 +190,6 @@ const loadEntityAnim = (data, offset) => {
                 case ACTIONTYPE.SAMPLE_REPEAT:
                     action.sampleIndex = data.getUint16(innerOffset + offset + 2, true);
                     action.repeat = data.getUint16(innerOffset + offset + 4, true);
-                    // innerOffset += 10;
                     innerOffset += 5;
                     break;
                 case ACTIONTYPE.THROW_SEARCH:
@@ -199,7 +198,6 @@ const loadEntityAnim = (data, offset) => {
                     action.unk2 = data.getInt8(innerOffset + offset + 5, true);
                     action.unk3 = data.getInt16(innerOffset + offset + 7, true);
                     action.unk4 = data.getInt8(innerOffset + offset + 8, true);
-                    // innerOffset += 8;
                     innerOffset += 7;
                     break;
                 case ACTIONTYPE.THROW_ALPHA:
@@ -216,7 +214,7 @@ const loadEntityAnim = (data, offset) => {
                     action.sampleIndex = data.getUint8(innerOffset + offset + 2, true);
                     innerOffset += 3;
                     break;
-                case ACTIONTYPE.LEFT_STEP: // only required animFrame
+                case ACTIONTYPE.LEFT_STEP:
                 case ACTIONTYPE.RIGHT_STEP:
                     innerOffset += 1;
                     break;
