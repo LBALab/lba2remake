@@ -190,7 +190,8 @@ const loadEntityAnim = (data, offset) => {
                 case ACTIONTYPE.SAMPLE_REPEAT:
                     action.sampleIndex = data.getUint16(innerOffset + offset + 2, true);
                     action.repeat = data.getUint16(innerOffset + offset + 4, true);
-                    innerOffset += 10;
+                    // innerOffset += 10;
+                    innerOffset += 5;
                     break;
                 case ACTIONTYPE.THROW_SEARCH:
                     action.yHeight = data.getUint16(innerOffset + offset + 2, true) * WORLD_SCALE;
@@ -198,7 +199,8 @@ const loadEntityAnim = (data, offset) => {
                     action.unk2 = data.getInt8(innerOffset + offset + 5, true);
                     action.unk3 = data.getInt16(innerOffset + offset + 7, true);
                     action.unk4 = data.getInt8(innerOffset + offset + 8, true);
-                    innerOffset += 8;
+                    // innerOffset += 8;
+                    innerOffset += 7;
                     break;
                 case ACTIONTYPE.THROW_ALPHA:
                     action.yHeight = data.getInt16(innerOffset + offset + 2, true) * WORLD_SCALE;
