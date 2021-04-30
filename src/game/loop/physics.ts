@@ -47,10 +47,10 @@ function processActorPhysics(game: Game, scene: Scene, actor: Actor, time: Time)
         processCollisionsWithActors(scene, actor);
     }
     if (actor.state.isCarriedBy === -1) {
-        actor.model.mesh.quaternion.copy(actor.physics.orientation);
-        actor.model.mesh.position.copy(actor.physics.position);
+        actor.threeObject.quaternion.copy(actor.physics.orientation);
+        actor.threeObject.position.copy(actor.physics.position);
         if (actor.model.boundingBoxDebugMesh) {
-            actor.model.boundingBoxDebugMesh.quaternion.copy(actor.model.mesh.quaternion);
+            actor.model.boundingBoxDebugMesh.quaternion.copy(actor.threeObject.quaternion);
             actor.model.boundingBoxDebugMesh.quaternion.invert();
         }
     }
@@ -97,8 +97,8 @@ function processCarriedPosition(scene: Scene, actor: Actor) {
     TMP_EULER.setFromQuaternion(actor.physics.orientation, 'XZY');
     actor.physics.temp.angle = TMP_EULER.y;
 
-    actor.model.mesh.quaternion.copy(actor.physics.orientation);
-    actor.model.mesh.position.copy(actor.physics.position);
+    actor.threeObject.quaternion.copy(actor.physics.orientation);
+    actor.threeObject.position.copy(actor.physics.position);
 }
 
 function initCarriedState(scene: Scene, actor: Actor) {
