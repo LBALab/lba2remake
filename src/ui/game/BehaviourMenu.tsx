@@ -17,6 +17,7 @@ import {
 import Game from '../../game/Game';
 import Scene from '../../game/Scene';
 import { getParams } from '../../params';
+import { LBA2Items, LBA1Items } from '../../game/data/inventory';
 
 interface IBehaviourMenuClover {
     boxes: number;
@@ -241,6 +242,11 @@ const BehaviourMenu = ({ game, scene }: IBehaviourMenuProps) => {
     };
     const isLBA1 = getParams().game === 'lba1';
 
+    const hasProtoPack = game.getState().flags.quest[LBA2Items.PROTO_PACK] ||
+        game.getState().flags.quest[LBA1Items.PROTO_PACK];
+    const hasJetpack = game.getState().flags.quest[LBA2Items.PROTO_PACK] === 2;
+    const hasHorn = game.getState().flags.quest[LBA2Items.HORN];
+
     const listener = (event) => {
         let behav = behaviour;
         let action = false;
@@ -254,9 +260,9 @@ const BehaviourMenu = ({ game, scene }: IBehaviourMenuProps) => {
                     if (behav < BehaviourModeType.NORMAL) {
                         behav = BehaviourModeType.DISCRETE;
                     }
-                } else if (!isLBA1 && behav === BehaviourModeType.PROTOPACK) {
+                } else if (!isLBA1 && hasJetpack && behav === BehaviourModeType.PROTOPACK) {
                     behav = BehaviourModeType.JETPACK;
-                } else if (!isLBA1 && behav === BehaviourModeType.JETPACK) {
+                } else if (!isLBA1 && hasProtoPack && behav === BehaviourModeType.JETPACK) {
                     behav = BehaviourModeType.PROTOPACK;
                 }
                 break;
@@ -268,9 +274,9 @@ const BehaviourMenu = ({ game, scene }: IBehaviourMenuProps) => {
                     if (behav > BehaviourModeType.DISCRETE) {
                         behav = BehaviourModeType.NORMAL;
                     }
-                } else if (behav === BehaviourModeType.PROTOPACK) {
+                } else if (!isLBA1 && hasJetpack && behav === BehaviourModeType.PROTOPACK) {
                     behav = BehaviourModeType.JETPACK;
-                } else if (behav === BehaviourModeType.JETPACK) {
+                } else if (!isLBA1 && hasProtoPack && behav === BehaviourModeType.JETPACK) {
                     behav = BehaviourModeType.PROTOPACK;
                 }
                 break;
@@ -278,12 +284,12 @@ const BehaviourMenu = ({ game, scene }: IBehaviourMenuProps) => {
             case 'ArrowUp':
                 action = true;
                 if (behav <= BehaviourModeType.DISCRETE) {
-                    if (isLBA1) {
+                    if (isLBA1 && hasProtoPack) {
                         behav = BehaviourModeType.PROTOPACK;
-                    } else {
+                    } else if (hasHorn) {
                         behav = BehaviourModeType.HORN;
                     }
-                } else if (!isLBA1 && behav === BehaviourModeType.HORN) {
+                } else if (!isLBA1 && hasProtoPack && behav === BehaviourModeType.HORN) {
                     behav = BehaviourModeType.PROTOPACK;
                 } else if (behav === BehaviourModeType.PROTOPACK ||
                          behav === BehaviourModeType.JETPACK) {
@@ -293,13 +299,13 @@ const BehaviourMenu = ({ game, scene }: IBehaviourMenuProps) => {
             case 40:
             case 'ArrowDown':
                 action = true;
-                if (behav <= BehaviourModeType.DISCRETE) {
+                if (hasProtoPack && behav <= BehaviourModeType.DISCRETE) {
                     behav = BehaviourModeType.PROTOPACK;
                 } else if (behav === BehaviourModeType.PROTOPACK ||
                          behav === BehaviourModeType.JETPACK) {
                     if (isLBA1) {
                         behav = BehaviourModeType.NORMAL;
-                    } else {
+                    } else if (hasHorn) {
                         behav = BehaviourModeType.HORN;
                     }
                 } else if (!isLBA1 && behav === BehaviourModeType.HORN) {
@@ -436,7 +442,10 @@ const BehaviourMenu = ({ game, scene }: IBehaviourMenuProps) => {
                     behaviourChanged={behaviour}
                     selected={behaviour === 4}
                 />
-                {!isLBA1 && <BehaviourModeItem
+                {!isLBA1
+                 // hasJetpack
+                 && game.getState().flags.quest[LBA2Items.PROTO_PACK] === 2
+                 && <BehaviourModeItem
                     divRef={itemNodes[8]}
                     behaviour={8}
                     behaviourChanged={behaviour}
