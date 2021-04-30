@@ -6,6 +6,7 @@ const R_OUT = /^( *)out( .*)\r?$/;
 const R_FRAGCOLOR = /^( *)fragColor( .*)\r?$/;
 const R_TEXTURE = /^(.*)texture\((.*)\r?$/;
 const R_PRECISION = /^( *)precision(.*)\r?$/;
+const R_FLAT = /^(.*)flat(.*)\r?$/;
 
 declare global {
     interface Window {
@@ -29,6 +30,7 @@ export function compile(type, source: string) {
                 return null;
             }
             isPreproc = false;
+            line = line.replace(R_FLAT, '$1$2');
             if (type === 'vert') {
                 line = line.replace(R_IN, '$1attribute$2');
                 line = line.replace(R_OUT, '$1varying$2');
