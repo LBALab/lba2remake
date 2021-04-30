@@ -170,7 +170,7 @@ export function createActorLabel(actor: Actor, name, is3DCam) {
     if (is3DCam) {
         sprite.scale.set(0.2, 0.05, 1);
     } else {
-        sprite.scale.set(200, 50, 1);
+        sprite.scale.set(2, 0.5, 1);
     }
     if (actor.model && actor.model.boundingBox) {
         const height = actor.model.boundingBox.max.y - actor.model.boundingBox.min.y;

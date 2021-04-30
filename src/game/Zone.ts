@@ -122,7 +122,7 @@ export default class Zone {
         if (is3DCam) {
             sprite.scale.set(0.3, 0.075, 1);
         } else {
-            sprite.scale.set(200, 50, 1);
+            sprite.scale.set(2, 0.5, 1);
         }
         sprite.renderOrder = 2;
         sprite.name = `label:${this.name}`;

@@ -33,6 +33,7 @@ import { applyAnimationUpdaters } from '../../../../game/scenery/isometric/metad
 import { loadBrickMask } from '../../../../game/scenery/isometric/mask';
 import { getParams } from '../../../../params';
 import { saveTexture, convertTextureForExport } from '../../../../utils/textures';
+import FileSelector from './FileSelector';
 
 interface Props extends TickerProps {
     params: any;
@@ -108,42 +109,11 @@ const mainInfoButton = {
     background: 'rgb(45, 45, 48)'
 };
 
-const fileSelectorWrapper = Object.assign({}, fullscreen, {
-    background: 'rgba(0, 0, 0, 0.75)',
-    padding: 20,
-    textAlign: 'left' as const,
-});
-
-const fileInnerWrapper = {
-    position: 'absolute' as const,
-    right: 20,
-    top: 20,
-    bottom: 20,
-    padding: 20,
-    background: 'grey',
-    overflowY: 'auto' as const
-};
-
-const fileStyle = {
-    cursor: 'pointer' as const,
-    fontSize: 16,
-    lineHeight: '20px',
-};
-
 const dataBlock = {
     display: 'inline-block' as const,
     borderRight: '1px dashed black',
     padding: '5px 10px',
     height: '100%'
-};
-
-const closeStyle = {
-    position: 'absolute' as const,
-    top: 2,
-    right: 8,
-    width: 24,
-    height: 24,
-    cursor: 'pointer' as const
 };
 
 const exporter = new ColladaExporter();
@@ -183,6 +153,7 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
         this.export = this.export.bind(this);
         this.exportTexture = this.exportTexture.bind(this);
         this.replaceByModel = this.replaceByModel.bind(this);
+        this.useFile = this.useFile.bind(this);
         this.closeReplacement = this.closeReplacement.bind(this);
         this.resetToIso = this.resetToIso.bind(this);
         this.changeAngle = this.changeAngle.bind(this);
@@ -278,13 +249,11 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
         if (this.state.library) {
             const key = event.code || event.which || event.keyCode;
             switch (key) {
-                case 37: // left
                 case 'ArrowLeft': {
                     const newLayout = Math.max(0, this.props.sharedState.layout - 1);
                     this.props.stateHandler.setLayout(newLayout);
                     break;
                 }
-                case 39: // right
                 case 'ArrowRight': {
                     const newLayout = Math.min(
                         this.state.library.layouts.length - 1,
@@ -293,16 +262,18 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
                     this.props.stateHandler.setLayout(newLayout);
                     break;
                 }
-                case 27: // escape
                 case 'Escape': {
                     if (this.state.replacementFiles) {
                         this.closeReplacement();
                     }
                     break;
                 }
-                case 77: // Semicolon
                 case 'Semicolon': {
                     this.toggleMirror();
+                    break;
+                }
+                case 'KeyM': {
+                    this.replaceByModel();
                     break;
                 }
             }
@@ -573,6 +544,7 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
     }
 
     render() {
+        const { replacementFiles } = this.state;
         return <div
             id="renderZone"
             style={fullscreen}
@@ -586,7 +558,10 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
             {this.renderInfo()}
             {this.renderApplyButton()}
             <div id="stats" style={{position: 'absolute', top: 0, left: 0, width: '50%'}}/>
-            {this.renderFileSelector()}
+            {replacementFiles
+                && <FileSelector files={replacementFiles}
+                                    useFile={this.useFile}
+                                    close={this.closeReplacement} />}
         </div>;
     }
 
@@ -766,27 +741,6 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
         }
         return null;
     }
-
-    renderFileSelector() {
-        const {replacementFiles} = this.state;
-        if (replacementFiles) {
-            return <div style={fileSelectorWrapper} onClick={e => e.stopPropagation()}>
-                <div style={fileInnerWrapper}>
-                    {replacementFiles.map(f =>
-                        <div key={f}
-                                style={fileStyle}
-                                onClick={this.useFile.bind(this, f)}>
-                            <img src="editor/icons/gltf.svg" style={{height: 20}}/>
-                            {f}
-                        </div>)}
-                </div>
-                <img style={closeStyle}
-                        src="./editor/icons/close.svg"
-                        onClick={this.closeReplacement}/>
-            </div>;
-        }
-        return null;
-    }
 }
 
 async function loadModel(file) : Promise<GLTF> {
@@ -890,7 +844,8 @@ async function loadVariantMesh(library, group, loadForExporting = false) {
             transparent: true,
             uniforms: {
                 library: {value: library.texture}
-            }
+            },
+            glslVersion: Renderer.getGLSLVersion()
         });
     const mesh = new THREE.Mesh(bufferGeometry, material);
 

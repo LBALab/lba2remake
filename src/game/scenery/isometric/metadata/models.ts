@@ -16,7 +16,6 @@ import Scene from '../../../Scene';
 import { Time } from '../../../../datatypes';
 import { getParams } from '../../../../params';
 
-const loader = new GLTFLoader();
 const exporter = new GLTFExporter();
 
 const modelsCache = {};
@@ -26,6 +25,10 @@ export async function loadModel(file: string, useCache: boolean = false) : Promi
         return modelsCache[file];
     }
     const model = await new Promise<GLTF>((resolve) => {
+        const loader = new GLTFLoader();
+        if (!useCache) {
+            loader.setRequestHeader({ 'Cache-Control': 'no-cache' });
+        }
         loader.load(file, (m) => {
             resolve(m);
         });
@@ -44,10 +47,11 @@ interface FullSceneModel {
 export async function loadFullSceneModel(
     entry: number,
     replacementData,
+    isEditor: boolean,
     numActors: number
 ) : Promise<FullSceneModel> {
     const { game } = getParams();
-    const model = await loadModel(`/models/${game}/iso_scenes/${entry}.glb`);
+    const model = await loadModel(`/models/${game}/iso_scenes/${entry}.glb`, !isEditor);
     const threeObject = model.scene.children[0];
     let actorPos = null;
     threeObject.traverse((node) => {
@@ -142,23 +146,26 @@ export async function saveFullSceneModel(replacements, entry) {
             });
         }
     });
-    exporter.parse(threeObject, (gltf: ArrayBuffer) => {
-        const { game } = getParams();
-        // tslint:disable-next-line: no-console
-        console.log(`Saving iso scene replacement ${entry} (${
-                (gltf.byteLength / 1e+6).toFixed(2)
-            }Mb)...`);
-        const req = new XMLHttpRequest();
-        req.open('POST', `/iso_replacements/${game}/${entry}`, true);
-        req.onload = () => {
+    return new Promise((resolve) => {
+        exporter.parse(threeObject, (gltf: ArrayBuffer) => {
+            const { game } = getParams();
             // tslint:disable-next-line: no-console
-            console.log(`Saved iso scene replacement ${game} ${entry}.`);
-        };
-        req.setRequestHeader('Content-Type', 'application/octet-stream');
-        req.send(new Blob([gltf]));
-    }, {
-        binary: true,
-        embedImages: true,
-        animations
+            console.log(`Saving iso scene replacement ${entry} (${
+                    (gltf.byteLength / 1e+6).toFixed(2)
+                }Mb)...`);
+            const req = new XMLHttpRequest();
+            req.open('POST', `/iso_replacements/${game}/${entry}`, true);
+            req.onload = () => {
+                // tslint:disable-next-line: no-console
+                console.log(`Saved iso scene replacement ${game} ${entry}.`);
+                resolve();
+            };
+            req.setRequestHeader('Content-Type', 'application/octet-stream');
+            req.send(new Blob([gltf]));
+        }, {
+            binary: true,
+            embedImages: true,
+            animations
+        });
     });
 }

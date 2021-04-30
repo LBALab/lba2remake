@@ -228,7 +228,7 @@ function loadBillboardSprite(index, sprite, is3DCam) {
     if (is3DCam) {
         threeSprite.scale.set(s.w / 75, s.h / 75, 1);
     } else {
-        threeSprite.scale.set(s.w * 2, s.h * 2, 1);
+        threeSprite.scale.set(s.w / 50, s.h / 50, 1);
     }
     threeSprite.name = 'Sprite';
 

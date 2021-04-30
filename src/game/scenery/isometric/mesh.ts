@@ -13,13 +13,15 @@ import { WORLD_SCALE_B, WORLD_SIZE } from '../../../utils/lba';
 import Game from '../../Game';
 import Scene from '../../Scene';
 import { Time } from '../../../datatypes';
+import Renderer from '../../../renderer';
 
-export async function loadMesh(grid, entry, ambience, is3D, numActors) {
+export async function loadMesh(grid, entry, ambience, is3D, editorData, numActors) {
     const threeObject = new THREE.Object3D();
     const geometries = {
         standard: {
             positions: [],
             uvs: [],
+            flags: [],
             material: new THREE.RawShaderMaterial({
                 vertexShader: compile('vert', brick_vertex),
                 fragmentShader: compile('frag', brick_fragment),
@@ -27,6 +29,8 @@ export async function loadMesh(grid, entry, ambience, is3D, numActors) {
                 uniforms: {
                     library: { value: grid.library.texture }
                 },
+                defines: {},
+                glslVersion: Renderer.getGLSLVersion(),
                 side: THREE.DoubleSide
             })
         },
@@ -38,10 +42,22 @@ export async function loadMesh(grid, entry, ambience, is3D, numActors) {
         entry,
         ambience,
         is3D,
+        !!editorData,
         numActors
     );
-    if (gridMetadata.replacements.threeObject) {
-        threeObject.add(gridMetadata.replacements.threeObject);
+    const replacementMesh = gridMetadata.replacements.threeObject;
+    if (replacementMesh) {
+        threeObject.add(replacementMesh);
+    }
+
+    if (editorData) {
+        const material = geometries.standard.material;
+        const uniforms = material.uniforms;
+        material.defines.GRID_EDITOR = true;
+        uniforms.mode = { value: 0 };
+        editorData.mode = uniforms.mode;
+        editorData.replacementMesh = replacementMesh;
+        editorData.bricksMap = new Map<string, any>();
     }
 
     for (let z = 0; z < 64; z += 1) {
@@ -54,6 +70,8 @@ export async function loadMesh(grid, entry, ambience, is3D, numActors) {
                 x,
                 z,
                 gridMetadata,
+                editorData,
+                is3D,
                 numActors
             );
         }
@@ -63,7 +81,7 @@ export async function loadMesh(grid, entry, ambience, is3D, numActors) {
         if (!geom) {
             return;
         }
-        const {positions, uvs, material} = geom;
+        const {positions, uvs, flags, material} = geom;
         if (positions.length === 0) {
             return;
         }
@@ -77,7 +95,17 @@ export async function loadMesh(grid, entry, ambience, is3D, numActors) {
             'uv',
             new THREE.BufferAttribute(new Float32Array(uvs), 2)
         );
+        if (editorData && flags) {
+            bufferGeometry.setAttribute(
+                'flag',
+                new THREE.BufferAttribute(new Uint8Array(flags), 1)
+            );
+        }
         const mesh = new THREE.Mesh(bufferGeometry, material);
+
+        if (editorData && name === 'standard') {
+            editorData.bricksGeom = bufferGeometry;
+        }
 
         mesh.frustumCulled = false;
         mesh.name = `iso_grid_${name}`;
@@ -91,6 +119,7 @@ export async function loadMesh(grid, entry, ambience, is3D, numActors) {
 
     return {
         threeObject,
+        editorData,
         update: (game: Game, scene: Scene, time: Time) => {
             const { update } = gridMetadata.replacements;
             if (update) {
@@ -113,7 +142,18 @@ export async function loadMesh(grid, entry, ambience, is3D, numActors) {
     };
 }
 
-function buildColumn(grid, library, cells, geometries, x, z, gridMetadata, numActors) {
+function buildColumn(
+    grid,
+    library,
+    cells,
+    geometries,
+    x,
+    z,
+    gridMetadata,
+    editorData,
+    is3D,
+    numActors
+) {
     const h = 0.5;
     const {width, height} = library.texture.image;
     const {replacements, mirrors} = gridMetadata;
@@ -140,11 +180,19 @@ function buildColumn(grid, library, cells, geometries, x, z, gridMetadata, numAc
     for (let y = 0; y < blocks.length; y += 1) {
         const yPos = (y * h) + h;
         if (blocks[y]) {
+            if (is3D && blocks[y].hide && !editorData) {
+                continue;
+            }
             const layout = library.layouts[blocks[y].layout];
             if (layout) {
                 const key = `${x},${y},${z}`;
-                if (replacements && replacements.bricks && replacements.bricks.has(key))
-                    continue;
+                let replaced = false;
+                if (replacements && replacements.bricks && replacements.bricks.has(key)) {
+                    replaced = true;
+                    if (!editorData) {
+                        continue;
+                    }
+                }
 
                 const block = layout.blocks[blocks[y].block];
                 const type = getGeometryType(block);
@@ -167,12 +215,37 @@ function buildColumn(grid, library, cells, geometries, x, z, gridMetadata, numAc
                         })
                     };
                 }
-                const { uvs, positions } = geometries[type];
+                const { uvs, positions, flags } = geometries[type];
                 if (block && block.brick in library.bricksMap) {
                     const {u, v} = library.bricksMap[block.brick];
                     const pushUv = (u0, v0, side) => {
                         const o = OffsetBySide[side];
                         uvs.push((u + u0 + o.x) / width, (v + v0 + o.y) / height);
+                    };
+
+                    let flag = 0;
+                    if (blocks[y].hide) {
+                        flag = 2;
+                    } else if (replaced) {
+                        flag = 1;
+                    }
+
+                    let brickData = null;
+                    if (editorData) {
+                        brickData = {
+                            start: flags.length,
+                            end: flags.length
+                        };
+                        editorData.bricksMap.set(key, brickData);
+                    }
+
+                    const pushNFlags = (num) => {
+                        if (editorData) {
+                            for (let i = 0; i < num; i += 1) {
+                                flags.push(flag);
+                            }
+                            brickData.end += num;
+                        }
                     };
 
                     positions.push(x, yPos, zPos);
@@ -214,8 +287,10 @@ function buildColumn(grid, library, cells, geometries, x, z, gridMetadata, numAc
                     positions.push(x + 1, yPos - h, zPos + 1);
                     pushUv(24, 38.5, Side.RIGHT);
 
+                    pushNFlags(18);
+
                     const mirror = mirrors && mirrors[key];
-                    if (mirror) {
+                    if (mirror && !replaced) {
                         if (mirror[0]) {
                             pushMirror(layout, mirror[0], (pushUvM) => {
                                 positions.push(x, yPos, zPos);
@@ -230,6 +305,7 @@ function buildColumn(grid, library, cells, geometries, x, z, gridMetadata, numAc
                                 pushUvM(24, 38.5, Side.LEFT);
                                 positions.push(x, yPos - h, zPos);
                                 pushUvM(0, 26.5, Side.LEFT);
+                                pushNFlags(6);
                             });
                         }
 
@@ -247,6 +323,7 @@ function buildColumn(grid, library, cells, geometries, x, z, gridMetadata, numAc
                                 pushUvM(24, 23.5, Side.TOP);
                                 positions.push(x + 1, yPos - h, zPos);
                                 pushUvM(0, 11.5, Side.TOP);
+                                pushNFlags(6);
                             });
                         }
 
@@ -264,6 +341,7 @@ function buildColumn(grid, library, cells, geometries, x, z, gridMetadata, numAc
                                 pushUvM(48, 26.5, Side.RIGHT);
                                 positions.push(x + 1, yPos - h, zPos);
                                 pushUvM(24, 38.5, Side.RIGHT);
+                                pushNFlags(6);
                             });
                         }
                     }

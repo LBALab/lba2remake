@@ -16,10 +16,16 @@ import { getCommonResource } from '../../../../resources';
 import { getPartialMatrixWorld } from '../../../../utils/math';
 import { GROUND_TYPES } from '../grid';
 
-export async function initReplacements(entry, metadata, ambience, numActors) {
+export async function initReplacements(
+    entry,
+    metadata,
+    ambience,
+    isEditor: boolean,
+    numActors: number
+) {
     const data = await loadReplacementData(ambience);
     if (metadata.hasFullReplacement) {
-        const { threeObject, update } = await loadFullSceneModel(entry, data, numActors);
+        const { threeObject, update } = await loadFullSceneModel(entry, data, isEditor, numActors);
         return {
             threeObject,
             update,

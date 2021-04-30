@@ -96,6 +96,14 @@ app.post('/lut.dat', function(req, res) {
     });
 });
 
+app.post('/grid_metadata/:game', function(req, res) {
+    const game = req.params.game;
+    fs.writeFile(`./www/metadata/${game}/grids.json`, req.body, () => {
+        console.log(`Saved metadata/${game}/grids.json`);
+        res.end();
+    });
+});
+
 app.post('/iso_replacements/:game/:entry', function(req, res) {
     const entry = Number(req.params.entry);
     const game = req.params.game;

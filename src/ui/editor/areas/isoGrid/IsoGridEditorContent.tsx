@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as THREE from 'three';
+import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
 
 import Renderer from '../../../../renderer';
 import { fullscreen } from '../../../styles/index';
@@ -16,6 +17,8 @@ import {
 import { WORLD_SCALE_B, WORLD_SIZE } from '../../../../utils/lba';
 import DebugData from '../../DebugData';
 import { getParams } from '../../../../params';
+import { hideBrick } from '../../../../game/scenery/isometric/grid';
+import { saveSceneReplacementModel } from '../../../../game/scenery/isometric/metadata';
 
 interface Props extends TickerProps {
     params: any;
@@ -36,9 +39,18 @@ interface State {
     controlsState: {
         cameraLerp: THREE.Vector3;
         cameraLookAtLerp: THREE.Vector3;
+        cameraOrientation: THREE.Quaternion;
+        cameraHeadOrientation: THREE.Quaternion;
+        cameraSpeed: THREE.Vector3;
+        freeCamera: boolean;
     };
-    selectionObj: THREE.Object3D;
+    cursorObj: THREE.Object3D;
+    cursor?: any;
+    showCursorGizmo: boolean;
     selectionData?: any;
+    showOriginal: boolean;
+    highlight: boolean;
+    updateProgress?: string;
 }
 
 const canvasStyle = {
@@ -47,7 +59,8 @@ const canvasStyle = {
     left: 0,
     right: 0,
     bottom: 100,
-    cursor: 'move'
+    cursor: 'move',
+    background: 'black'
 };
 
 const infoStyle = {
@@ -55,14 +68,21 @@ const infoStyle = {
     left: 0,
     right: 0,
     bottom: 0,
-    height: 100
+    height: 100,
+    borderTop: '1px solid white'
 };
 
-const dataBlock = {
-    display: 'inline-block' as const,
-    borderRight: '1px dashed black',
+const applyChangesStyle = {
+    position: 'absolute' as const,
+    left: 0,
+    bottom: 100
+};
+
+const mainInfoButton = {
+    margin: '4px',
     padding: '5px 10px',
-    height: '100%'
+    color: 'white',
+    background: 'rgb(45, 45, 48)'
 };
 
 /*
@@ -82,10 +102,14 @@ const closeStyle = {
 */
 
 const UP = new THREE.Vector3(0, 1, 0);
+const EULER = new THREE.Euler(0.0, 0.0, 0.0, 'YXZ');
+const MAX_X_ANGLE = Math.PI / 2.5;
 
 export default class IsoGridEditorContent extends FrameListener<Props, State> {
     root: HTMLElement;
     canvas: HTMLCanvasElement;
+    gizmo: TransformControls;
+    gizmoEnabled: boolean = false;
     moving: boolean = false;
     isoGridIdx: number = -1;
     loading: boolean = false;
@@ -107,21 +131,30 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
         this.onMouseUp = this.onMouseUp.bind(this);
         this.onMouseMove = this.onMouseMove.bind(this);
         this.onWheel = this.onWheel.bind(this);
+        this.setShowOriginal = this.setShowOriginal.bind(this);
+        this.setShowCursorGizmo = this.setShowCursorGizmo.bind(this);
+        this.setHighlight = this.setHighlight.bind(this);
+        this.applyChanges = this.applyChanges.bind(this);
 
         const isoCamera = getIsometricCamera();
         const iso3DCamera = getIso3DCamera();
-        const cameras = [isoCamera, iso3DCamera];
+        const cameras = [isoCamera, iso3DCamera, iso3DCamera];
         const camera = cameras[this.cam];
         const scene = {
             camera,
             threeScene: new THREE.Scene(),
+            scenery: {},
             target: {
                 threeObject: new THREE.Object3D()
             }
         };
         const controlsState = {
             cameraLerp: new THREE.Vector3(),
-            cameraLookAtLerp: new THREE.Vector3()
+            cameraLookAtLerp: new THREE.Vector3(),
+            cameraOrientation: new THREE.Quaternion(),
+            cameraHeadOrientation: new THREE.Quaternion(),
+            cameraSpeed: new THREE.Vector3(),
+            freeCamera: true,
         };
         scene.threeScene.add(isoCamera.threeCamera);
         scene.threeScene.add(iso3DCamera.controlNode);
@@ -133,9 +166,12 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
             scene,
             clock,
             controlsState,
-            selectionObj,
+            cursorObj: selectionObj,
+            showCursorGizmo: false,
             isoGridIdx: 0,
-            cameras
+            cameras,
+            highlight: false,
+            showOriginal: false
         };
         clock.start();
     }
@@ -155,6 +191,43 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
             await this.preload();
             this.canvas = document.createElement('canvas');
             this.canvas.tabIndex = 0;
+            const camera = this.state.scene.camera.threeCamera;
+            this.gizmo = new TransformControls(camera, this.canvas);
+            this.gizmo.attach(this.state.cursorObj);
+            this.gizmo.addEventListener('mouseDown', () => {
+                this.gizmoEnabled = true;
+            });
+            this.gizmo.addEventListener('mouseUp', () => {
+                this.gizmoEnabled = false;
+            });
+            this.gizmo.addEventListener('objectChange', () => {
+                const position = this.state.cursorObj.position;
+                const OW = WORLD_SCALE_B;
+                const OH = WORLD_SCALE_B * 0.5;
+                const H_OW = OW * 0.5;
+                const H_OH = OH * 0.5;
+                position.set(
+                    Math.round(position.x / OW - H_OW) * OW + H_OW,
+                    Math.round(position.y / OH - H_OH) * OH + H_OH,
+                    Math.round(position.z / OW - H_OW) * OW + H_OW,
+                );
+                const newCursor = {
+                    x: Math.round((position.z / WORLD_SIZE) * 32 - 0.5),
+                    y: Math.round((position.y / WORLD_SIZE) * 64 - 0.5),
+                    z: Math.round(64.5 - (position.x / WORLD_SIZE) * 32),
+                };
+                const { cursor, isoGrid } = this.state;
+                if (cursor &&
+                    (cursor.x !== newCursor.x ||
+                     cursor.y !== newCursor.y ||
+                     cursor.z !== newCursor.z)) {
+                    const newSelection = isoGrid.getBrickInfo(newCursor);
+                    this.select(newSelection, newCursor);
+                }
+            });
+            this.gizmo.enabled = false;
+            this.gizmo.visible = false;
+            this.state.scene.threeScene.add(this.gizmo);
             const renderer = new Renderer(this.canvas, 'iso_grids_editor');
             renderer.threeRenderer.setAnimationLoop(() => {
                 this.props.ticker.frame();
@@ -181,9 +254,7 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
     }
 
     onKeyDown(event) {
-        const key = event.code || event.which || event.keyCode;
-        switch (key) {
-            case 37: // left
+        switch (event.code) {
             case 'ArrowLeft': {
                 const newTick = Date.now();
                 if (newTick - this.lastTick > 400) {
@@ -196,7 +267,6 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
                 }
                 break;
             }
-            case 39: // right
             case 'ArrowRight': {
                 const newTick = Date.now();
                 if (newTick - this.lastTick > 400) {
@@ -206,46 +276,79 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
                 }
                 break;
             }
-            case 38: // up
             case 'ArrowUp': {
-                const { selectionData, isoGrid } = this.state;
-                if (selectionData && isoGrid) {
-                    const { x, y, z } = selectionData;
-                    const newSelection = isoGrid.getBrickInfo({ x, y: y + 1, z });
-                    if (newSelection) {
-                        this.select(newSelection);
+                const { cursor, isoGrid } = this.state;
+                if (cursor && isoGrid) {
+                    const { x, y, z } = cursor;
+                    if (y >= 24) {
+                        break;
                     }
+                    const newCursor = { x, y: y + 1, z };
+                    const newSelection = isoGrid.getBrickInfo(newCursor);
+                    this.select(newSelection, newCursor);
                 }
                 break;
             }
-            case 40: // down
             case 'ArrowDown': {
-                const { selectionData, isoGrid } = this.state;
-                if (selectionData && isoGrid) {
-                    const { x, y, z } = selectionData;
-                    const newSelection = isoGrid.getBrickInfo({ x, y: y - 1, z });
-                    if (newSelection) {
-                        this.select(newSelection);
+                const { cursor, isoGrid } = this.state;
+                if (cursor && isoGrid) {
+                    const { x, y, z } = cursor;
+                    if (y <= 0) {
+                        break;
                     }
+                    const newCursor = { x, y: y - 1, z };
+                    const newSelection = isoGrid.getBrickInfo(newCursor);
+                    this.select(newSelection, newCursor);
                 }
                 break;
             }
-            case 27: // escape
-            case 'Escape': {
+            case 'KeyC':
+                this.props.stateHandler.setCam((this.props.sharedState.cam + 1) % 3);
+            break;
+            case 'KeyW':
+                this.state.controlsState.cameraSpeed.z = 1;
                 break;
-            }
+            case 'KeyS':
+                this.state.controlsState.cameraSpeed.z = -1;
+                break;
+            case 'KeyA':
+                this.state.controlsState.cameraSpeed.x = 1;
+                break;
+            case 'KeyD':
+                this.state.controlsState.cameraSpeed.x = -1;
+                break;
+            case 'KeyH':
+                const s = this.state.selectionData;
+                if (this.state.selectionData && this.state.isoGrid) {
+                    const isoGrid = this.state.isoGrid;
+                    hideBrick(this.isoGridIdx, isoGrid, `${s.x}x${s.y}x${s.z}`);
+                }
+                break;
         }
     }
 
     onKeyUp(event) {
-        const key = event.code || event.which || event.keyCode;
-        switch (key) {
-            case 37: // left
+        switch (event.code) {
             case 'ArrowLeft':
-            case 39: // right
             case 'ArrowRight': {
                 this.lastTick = 0;
             }
+            case 'KeyW':
+                if (this.state.controlsState.cameraSpeed.z === 1)
+                    this.state.controlsState.cameraSpeed.z = 0;
+                break;
+            case 'KeyS':
+                if (this.state.controlsState.cameraSpeed.z === -1)
+                    this.state.controlsState.cameraSpeed.z = 0;
+                break;
+            case 'KeyA':
+                if (this.state.controlsState.cameraSpeed.x === 1)
+                    this.state.controlsState.cameraSpeed.x = 0;
+                break;
+            case 'KeyD':
+                if (this.state.controlsState.cameraSpeed.x === -1)
+                    this.state.controlsState.cameraSpeed.x = 0;
+                break;
         }
     }
 
@@ -263,24 +366,38 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
         }
     }
 
-    select(selectionData) {
+    select(selectionData, cursor = null) {
         if (selectionData) {
             const { x, y, z } = selectionData;
-            this.state.selectionObj.visible = true;
-            this.state.selectionObj.position.set(
+            this.state.cursorObj.visible = true;
+            this.state.cursorObj.position.set(
                 (64.5 - z) / 32,
                 (y + 0.5) / 64,
                 (x + 0.5) / 32
             );
-            this.state.selectionObj.position.multiplyScalar(WORLD_SIZE);
-            this.setState({ selectionData }, this.saveDebugScope);
+            this.state.cursorObj.position.multiplyScalar(WORLD_SIZE);
+            this.setState({
+                selectionData,
+                cursor: { x, y, z }
+            }, this.saveDebugScope);
         } else {
-            this.state.selectionObj.visible = false;
-            this.setState({ selectionData: null }, this.saveDebugScope);
+            if (cursor) {
+                const { x, y, z } = cursor;
+                this.state.cursorObj.visible = true;
+                this.state.cursorObj.position.set(
+                    (64.5 - z) / 32,
+                    (y + 0.5) / 64,
+                    (x + 0.5) / 32
+                );
+                this.state.cursorObj.position.multiplyScalar(WORLD_SIZE);
+            } else {
+                this.state.cursorObj.visible = false;
+            }
+            this.setState({ selectionData: null, cursor }, this.saveDebugScope);
         }
     }
 
-    async loadIsoGrid(isoGridIdx) {
+    async loadIsoGrid(isoGridIdx, repositionCamera = true) {
         if (this.loading) {
             return;
         }
@@ -293,15 +410,17 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
             this.state.scene.threeScene.remove(oldIsoGrid.threeObject);
         }
         this.state.scene.threeScene.add(isoGrid.threeObject);
-        const heroProps = sceneData.actors[0];
-        if (heroProps) {
-            const {pos} = heroProps;
-            this.state.scene.target.threeObject.position.set(
-                pos[0],
-                pos[1],
-                pos[2]
-            );
-            this.state.scene.target.threeObject.updateWorldMatrix();
+        if (repositionCamera) {
+            const heroProps = sceneData.actors[0];
+            if (heroProps) {
+                const {pos} = heroProps;
+                this.state.scene.target.threeObject.position.set(
+                    pos[0],
+                    pos[1],
+                    pos[2]
+                );
+                this.state.scene.target.threeObject.updateWorldMatrix();
+            }
         }
         this.loading = false;
         this.setState({isoGrid, isoGridIdx}, this.saveDebugScope);
@@ -309,7 +428,17 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
     }
 
     frame() {
-        const { renderer, clock, scene, cameras, controlsState } = this.state;
+        const {
+            renderer,
+            clock,
+            scene,
+            cameras,
+            controlsState,
+            isoGrid,
+            highlight,
+            showOriginal,
+            showCursorGizmo,
+        } = this.state;
         const { cam, isoGridIdx } = this.props.sharedState;
         if (this.isoGridIdx !== isoGridIdx && isoGridIdx !== undefined) {
             this.loadIsoGrid(isoGridIdx);
@@ -317,12 +446,34 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
         if (this.cam !== cam && cam !== undefined) {
             this.cam = cam;
             scene.camera = cameras[cam];
+            if (this.gizmo) {
+                this.gizmo.camera = scene.camera.threeCamera;
+            }
+            if (cam === 2) {
+                this.resetCameraState();
+            }
         }
+        controlsState.freeCamera = this.cam === 2;
         this.checkResize();
         const time = {
             delta: Math.min(clock.getDelta(), 0.05),
             elapsed: clock.getElapsedTime()
         };
+        if (isoGrid) {
+            const editorData = isoGrid.editorData;
+            editorData.mode.value = 0;
+            if (showOriginal) {
+                editorData.mode.value = 1;
+            }
+            if (highlight) {
+                editorData.mode.value = 2;
+            }
+            editorData.replacementMesh.visible = !showOriginal;
+        }
+        if (this.gizmo) {
+            this.gizmo.enabled = showCursorGizmo;
+            this.gizmo.visible = showCursorGizmo;
+        }
         renderer.stats.begin();
         scene.camera.update(scene, controlsState, time);
         renderer.render(scene);
@@ -344,8 +495,10 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
     }
 
     onMouseDown() {
-        this.moving = true;
-        this.clickStart = Date.now();
+        if (!this.gizmoEnabled) {
+            this.moving = true;
+            this.clickStart = Date.now();
+        }
     }
 
     INFO = [
@@ -357,25 +510,42 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
 
     onMouseMove(e) {
         if (this.moving) {
-            const tgtObject = this.state.scene.target.threeObject;
-            const speedX = new THREE.Vector3().set(
-                3.6,
-                0,
-                3.6
-            );
-            const info = this.INFO[this.angle];
-            speedX.applyAxisAngle(UP, this.angle * Math.PI / 2);
-            speedX.multiplyScalar(e[info.x] * 0.002 * info.sx);
-            const speedZ = new THREE.Vector3().set(
-                5,
-                0,
-                -5
-            );
-            speedX.applyAxisAngle(UP, this.angle * Math.PI / 2);
-            speedZ.multiplyScalar(e[info.z] * 0.002 * info.sz);
-            tgtObject.position.add(speedZ);
-            tgtObject.position.add(speedX);
-            tgtObject.updateMatrixWorld();
+            if (this.cam === 2) {
+                const movementX = e.movementX || 0;
+                const movementY = -e.movementY || 0;
+
+                EULER.setFromQuaternion(this.state.controlsState.cameraHeadOrientation, 'YXZ');
+                EULER.y = 0;
+                EULER.x = Math.min(
+                    Math.max(EULER.x - (movementY * 0.002), -MAX_X_ANGLE),
+                    MAX_X_ANGLE
+                );
+                this.state.controlsState.cameraHeadOrientation.setFromEuler(EULER);
+                EULER.setFromQuaternion(this.state.controlsState.cameraOrientation, 'YXZ');
+                EULER.x = 0;
+                EULER.y -= movementX * 0.002;
+                this.state.controlsState.cameraOrientation.setFromEuler(EULER);
+            } else {
+                const tgtObject = this.state.scene.target.threeObject;
+                const speedX = new THREE.Vector3().set(
+                    3.6,
+                    0,
+                    3.6
+                );
+                const info = this.INFO[this.angle];
+                speedX.applyAxisAngle(UP, this.angle * Math.PI / 2);
+                speedX.multiplyScalar(e[info.x] * 0.002 * info.sx);
+                const speedZ = new THREE.Vector3().set(
+                    5,
+                    0,
+                    -5
+                );
+                speedX.applyAxisAngle(UP, this.angle * Math.PI / 2);
+                speedZ.multiplyScalar(e[info.z] * 0.002 * info.sz);
+                tgtObject.position.add(speedZ);
+                tgtObject.position.add(speedX);
+                tgtObject.updateMatrixWorld();
+            }
         }
     }
 
@@ -391,6 +561,36 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
         this.zoom = Math.min(Math.max(-1, this.zoom), 8);
     }
 
+    resetCameraState() {
+        const camera = this.state.scene.camera;
+        const controlNode = camera.controlNode;
+        if (!controlNode)
+            return;
+
+        const baseEuler = new THREE.Euler(0.0, 0.0, 0.0, 'YXZ');
+        const headEuler = new THREE.Euler(0.0, 0.0, 0.0, 'YXZ');
+        baseEuler.setFromQuaternion(controlNode.quaternion, 'YXZ');
+        headEuler.copy(baseEuler);
+
+        headEuler.y = 0;
+        this.state.controlsState.cameraHeadOrientation.setFromEuler(headEuler);
+
+        baseEuler.x = 0;
+        this.state.controlsState.cameraOrientation.setFromEuler(baseEuler);
+    }
+
+    setShowOriginal(e) {
+        this.setState({ showOriginal: e.target.checked }, this.saveDebugScope);
+    }
+
+    setShowCursorGizmo(e) {
+        this.setState({ showCursorGizmo: e.target.checked }, this.saveDebugScope);
+    }
+
+    setHighlight(e) {
+        this.setState({ highlight: e.target.checked }, this.saveDebugScope);
+    }
+
     render() {
         return <div
             id="renderZone"
@@ -404,27 +604,90 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
                     onMouseLeave={this.onMouseUp}
                     onWheel={this.onWheel}/>
             {this.renderInfo()}
+            {this.renderApplyButton()}
             <div id="stats" style={{position: 'absolute', top: 0, left: 0, width: '50%'}}/>
         </div>;
     }
 
     renderInfo() {
-        const { selectionData } = this.state;
-        if (selectionData) {
-            return <div style={infoStyle}>
-                <div style={dataBlock}>
-                    <div>Selection:</div><br/>
-                    <div>X: {selectionData.x}</div>
-                    <div>Y: {selectionData.y}</div>
-                    <div>Z: {selectionData.z}</div>
+        const { cursor, selectionData, highlight, showOriginal, showCursorGizmo } = this.state;
+        return <div style={infoStyle}>
+            <div>
+                <div>Cursor:&nbsp;
+                    {cursor ? <span style={{color: '#8a2727'}}>
+                        <span style={{color: '#ff4949'}}>{cursor.x}</span>
+                        x
+                        <span style={{color: '#ff4949'}}>{cursor.y}</span>
+                        x
+                        <span style={{color: '#ff4949'}}>{cursor.z}</span>
+                    </span> : <span style={{color: '#8a2727'}}>Disabled</span>}
                 </div>
-                <div style={dataBlock}>
-                    <div>Layout: {selectionData.block.layout}</div>
-                    <div>Block (in layout): {selectionData.block.block}</div>
-                </div>
-            </div>;
+                {cursor && <div>
+                    <label style={{cursor: 'pointer', userSelect: 'none'}}>
+                        <input type="checkBox"
+                                checked={showCursorGizmo}
+                                onChange={this.setShowCursorGizmo} />
+                        Show gizmo
+                    </label>
+                </div>}
+                <br/>
+                {selectionData
+                ? <React.Fragment>
+                    <div>Layout:&nbsp;
+                        <span style={{color: '#49d2ff'}}>{selectionData.block.layout}</span>
+                    </div>
+                    <div title="(in layout)">Block:&nbsp;
+                        <span style={{color: '#49d2ff'}}>{selectionData.block.block}</span>
+                    </div>
+                </React.Fragment>
+                : cursor && <span style={{color: '#49d2ff'}}>Empty block</span>}
+            </div>
+            <div style={{position: 'absolute', right: 0, top: 2, textAlign: 'right'}}>
+                <label style={{cursor: 'pointer', userSelect: 'none'}}>
+                    <input type="checkBox"
+                            checked={showOriginal}
+                            onChange={this.setShowOriginal} />
+                    Show original bricks
+                </label><br/>
+                <label style={{cursor: 'pointer', userSelect: 'none'}}>
+                    <input type="checkBox"
+                            checked={highlight}
+                            onChange={this.setHighlight} />
+                    Highlight <span style={{color: '#FF0000'}}>replaced</span><br/>
+                    and <span style={{color: '#00FF00'}}>hidden</span> bricks
+                </label><br/>
+            </div>
+        </div>;
+    }
+
+    renderApplyButton() {
+        if (!window.isLocalServer) {
+            return null;
         }
-        return null;
+        const progressStyle = {
+            background: '#222222',
+            color: 'red',
+            padding: 5
+        };
+        return <div style={applyChangesStyle}>
+            {this.state.updateProgress
+                ? <div style={progressStyle}>{this.state.updateProgress}</div>
+                : <button style={mainInfoButton} onClick={this.applyChanges}>
+                    Apply changes
+                </button>
+            }
+        </div>;
+    }
+
+    async applyChanges() {
+        if (!window.isLocalServer) {
+            return;
+        }
+        this.setState({ updateProgress: 'Applying changes...' }, this.saveDebugScope);
+        const sceneData = await getScene(this.isoGridIdx);
+        await saveSceneReplacementModel(this.isoGridIdx, sceneData.ambience);
+        await this.loadIsoGrid(this.isoGridIdx, false);
+        this.setState({ updateProgress: null }, this.saveDebugScope);
     }
 }
 
@@ -432,7 +695,7 @@ function makeSelectionObject() {
     const geometry = new THREE.BoxBufferGeometry(WORLD_SCALE_B, WORLD_SCALE_B * 0.5, WORLD_SCALE_B);
     const edges = new THREE.EdgesGeometry(geometry);
     const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({
-        color: 0xff0000
+        color: 0xffffff
     }));
     return line;
 }

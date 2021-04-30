@@ -87,10 +87,12 @@ export const getCells = (
                 const key = `${x}x${yGrid}x${z}`;
                 if (is3D && gridMetadata && key in gridMetadata) {
                     const replacementBlock = gridMetadata[key];
-                    if (replacementBlock.layout !== -1) {
+                    if ('layout' in replacementBlock
+                        && replacementBlock.layout !== -1) {
                         blocks[blocks.length - 1] = replacementBlock;
-                    } else {
-                        blocks[blocks.length - 1] = null;
+                    }
+                    if (replacementBlock.hide && blocks[blocks.length - 1]) {
+                        blocks[blocks.length - 1].hide = true;
                     }
                     isValid = replacementBlock.layout !== -1;
                     hasReplacement = hasReplacement || isValid;

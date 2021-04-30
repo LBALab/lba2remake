@@ -17,6 +17,7 @@ export default class IsoScenery {
     readonly grid: any;
     private mesh: any;
     private domeEnv?: any;
+    editorData: any;
 
     static async load(game: Game, sceneData): Promise<IsoScenery> {
         const params = getParams();
@@ -31,12 +32,13 @@ export default class IsoScenery {
         return IsoScenery.loadGeneric({
             ...sceneData,
             numActors: 0,
-            is3D: true
+            is3D: true,
+            isGridEditor: true,
         });
     }
 
     private static async loadGeneric(data): Promise<IsoScenery> {
-        const { sceneryIndex, ambience, is3D, numActors } = data;
+        const { sceneryIndex, ambience, is3D, isGridEditor, numActors } = data;
         const [palette, bricks, gridMetadata, mask] = await Promise.all([
             getPalette(),
             getBricks(),
@@ -49,10 +51,13 @@ export default class IsoScenery {
             mask,
             palette,
             is3D,
-            gridMetadata
+            gridMetadata,
+            noCache: isGridEditor
         });
 
-        const mesh = await loadMesh(grid, sceneryIndex, ambience, is3D, numActors);
+        const editorData = isGridEditor ? {} : null;
+
+        const mesh = await loadMesh(grid, sceneryIndex, ambience, is3D, editorData, numActors);
 
         // Dome of the slate
         let domeEnv = null;
@@ -61,10 +66,10 @@ export default class IsoScenery {
             mesh.threeObject.add(domeEnv.threeObject);
         }
 
-        return new IsoScenery(grid, mesh, domeEnv);
+        return new IsoScenery(grid, mesh, domeEnv, editorData);
     }
 
-    constructor(grid, mesh, domeEnv = null) {
+    constructor(grid, mesh, domeEnv = null, editorData = null) {
         this.props = {
             startPosition: [0, 0],
             envInfo: {
@@ -77,6 +82,7 @@ export default class IsoScenery {
         this.threeObject = mesh.threeObject;
         this.physics = new IsoSceneryPhysics(grid);
         this.domeEnv = domeEnv;
+        this.editorData = editorData;
     }
 
     pickBrick(raycaster: THREE.Raycaster) {
@@ -125,7 +131,7 @@ export default class IsoScenery {
 
     getBrickInfo({x, y, z}) {
         const { library, cells } = this.grid;
-        const cell = cells[(x * 64) + z];
+        const cell = cells[(z * 64) + x];
         if (cell) {
             const blocks = cell.blocks;
             if (blocks[y]) {

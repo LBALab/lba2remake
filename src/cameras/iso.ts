@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { WORLD_SIZE } from '../utils/lba';
 
+const BASE_SIZE = WORLD_SIZE / 3;
 const CAMERA_OFFSET = new THREE.Vector3(-1, 0.8, 1);
 CAMERA_OFFSET.multiplyScalar(WORLD_SIZE);
 const ANGLE_LEFT = new THREE.Euler(0, -Math.PI / 2, 0, 'YXZ');
@@ -9,15 +10,15 @@ const ANGLE_RIGHT = new THREE.Euler(0, Math.PI / 2, 0, 'YXZ');
 export function getIsometricCamera() {
     const w = window.innerWidth;
     const h = window.innerHeight;
+    const scale = BASE_SIZE / (w < h ? w : h);
     const camera = new THREE.OrthographicCamera(
-        -w * 0.5,
-        w * 0.5,
-        h * 0.5,
-        -h * 0.5,
+        -w * 0.5 * scale,
+        w * 0.5 * scale,
+        h * 0.5 * scale,
+        -h * 0.5 * scale,
         0,
         42 * WORLD_SIZE
     );
-    setCameraScale(camera, w, h);
     camera.name = 'IsoCamera';
     let actorIndex = 0;
 
@@ -28,11 +29,11 @@ export function getIsometricCamera() {
         actorIndex,
         resize(width, height) {
             if (width !== this.width || height || this.height) {
-                camera.left = -width * 0.5;
-                camera.right = width * 0.5;
-                camera.top = height * 0.5;
-                camera.bottom = -height * 0.5;
-                setCameraScale(camera, width, height);
+                const newScale = BASE_SIZE / (width < height ? width : height);
+                camera.left = -width * 0.5 * newScale;
+                camera.right = width * 0.5 * newScale;
+                camera.top = height * 0.5 * newScale;
+                camera.bottom = -height * 0.5 * newScale;
                 camera.updateProjectionMatrix();
             }
         },
@@ -87,12 +88,6 @@ export function getIsometricCamera() {
             CAMERA_OFFSET.applyEuler(ANGLE_RIGHT);
         }
     };
-}
-
-function setCameraScale(camera, width, height) {
-    const baseSize = WORLD_SIZE / 3;
-    const scale = baseSize / (width < height ? width : height);
-    camera.scale.set(scale, scale, 1);
 }
 
 function getTargetPos(object) {

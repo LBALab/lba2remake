@@ -108,6 +108,11 @@ export default class Renderer {
 
         return this.threeRenderer.xr.isPresenting;
     }
+
+    static getGLSLVersion() {
+        const webgl2 = getParams().webgl2 && window.WebGL2RenderingContext;
+        return webgl2 ? THREE.GLSL3 : THREE.GLSL1;
+    }
 }
 
 function keyListener(event) {

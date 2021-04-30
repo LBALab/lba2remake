@@ -11,16 +11,16 @@ import { getPalette, getGrid, getBricks } from '../../../../resources';
 import { checkVariantMatch } from './matchers/variants';
 import { loadBrickMask } from '../mask';
 
-export async function extractGridMetadata(grid, entry, ambience, is3D, numActors) {
+export async function extractGridMetadata(grid, entry, ambience, is3D, isEditor, numActors) {
     if (!is3D) {
         return {
             replacements: { threeObject: null, update: null },
             mirrors: null
         };
     }
-    const metadata = await loadMetadata(entry, grid.library);
+    const metadata = await loadMetadata(entry, grid.library, isEditor);
 
-    const replacements = await initReplacements(entry, metadata, ambience, numActors);
+    const replacements = await initReplacements(entry, metadata, ambience, isEditor, numActors);
     const mirrorGroups = {};
 
     computeReplacements({grid, metadata, replacements, mirrorGroups, apply: true });
@@ -39,14 +39,21 @@ export async function saveSceneReplacementModel(entry, ambience) {
         loadBrickMask()
     ]);
 
-    const grid = await getGrid(entry, { bricks, mask, palette, is3D: true, gridMetadata });
+    const grid = await getGrid(entry, {
+        bricks,
+        mask,
+        palette,
+        is3D: true,
+        gridMetadata,
+        noCache: true
+    });
 
-    const metadata = await loadMetadata(entry, grid.library, true);
-    const replacements = await initReplacements(entry, metadata, ambience, 0);
+    const metadata = await loadMetadata(entry, grid.library, true, true);
+    const replacements = await initReplacements(entry, metadata, ambience, true, 0);
 
     computeReplacements({grid, metadata, replacements});
     buildReplacementMeshes(replacements);
-    saveFullSceneModel(replacements, entry);
+    await saveFullSceneModel(replacements, entry);
 }
 
 function computeReplacements({ grid, metadata, replacements, mirrorGroups = null, apply = false }) {

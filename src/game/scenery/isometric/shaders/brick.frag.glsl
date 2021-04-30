@@ -1,9 +1,12 @@
-#version 300 es
 precision highp float;
 
 uniform sampler2D library;
 
 in vec2 vUv;
+#ifdef GRID_EDITOR
+    uniform float mode;
+    flat in float vFlag;
+#endif
 
 out vec4 fragColor;
 
@@ -12,5 +15,16 @@ void main() {
     if (fColor.a < 0.5) {
         discard;
     }
+#ifdef GRID_EDITOR
+    if (mode < 0.5 && vFlag > 0.5) {
+        discard;
+    }
+    if (mode < 1.5 && vFlag > 1.5) {
+        discard;
+    }
+    vec3 tColor = mix(vec3(1.0, 0.0, 0.0), vec3(0.0, 1.0, 0.0), vFlag - 1.0);
+    fragColor = mix(fColor, vec4(tColor, fColor.a), min(vFlag, 1.0) * 0.75 * (mode - 1.0));
+#else
     fragColor = fColor;
+#endif
 }
