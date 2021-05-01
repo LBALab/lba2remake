@@ -198,7 +198,7 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
             clock,
             controlsState,
             cursorObj: selectionObj,
-            showCursorGizmo: false,
+            showCursorGizmo: true,
             isoGridIdx: 0,
             cameras,
             highlight: false,
