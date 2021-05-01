@@ -321,7 +321,9 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
                 const s = this.state.selectionData;
                 if (this.state.selectionData && this.state.isoGrid) {
                     const isoGrid = this.state.isoGrid;
-                    hideBrick(this.isoGridIdx, isoGrid, `${s.x}x${s.y}x${s.z}`);
+                    getScene(this.isoGridIdx).then((sceneData) => {
+                        hideBrick(sceneData.sceneryIndex, isoGrid, `${s.x}x${s.y}x${s.z}`);
+                    });
                 }
                 break;
         }
