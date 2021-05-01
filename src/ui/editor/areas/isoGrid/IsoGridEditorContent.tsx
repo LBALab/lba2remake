@@ -268,6 +268,20 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
                     }
                 } else {
                     this.boxHelper.update();
+                    if (this.gizmo.mode === 'rotate') {
+                        const mesh = (this.state.selectionData as ModelData).mesh;
+                        mesh.traverse((node) => {
+                            node.updateMatrix();
+                            node.updateMatrixWorld(true);
+                            if (node instanceof THREE.Mesh &&
+                                node.material instanceof THREE.RawShaderMaterial) {
+                                const material = node.material as THREE.RawShaderMaterial;
+                                material.uniforms.uNormalMatrix.value.setFromMatrix4(
+                                    node.matrixWorld
+                                );
+                            }
+                        });
+                    }
                 }
             });
             this.gizmo.enabled = false;
