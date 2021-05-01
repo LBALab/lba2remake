@@ -227,6 +227,7 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
             this.canvas.tabIndex = 0;
             const camera = this.state.scene.camera.threeCamera;
             this.gizmo = new TransformControls(camera, this.canvas);
+            this.gizmo.setRotationSnap(Math.PI / 2);
             this.gizmo.addEventListener('mouseDown', () => {
                 this.gizmoEnabled = true;
             });
@@ -380,6 +381,17 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
             case 'KeyM':
                 this.add3DModel();
                 break;
+            case 'KeyT':
+                if (this.gizmo.mode === 'translate') {
+                    this.gizmo.setMode('rotate');
+                    this.gizmo.showX = false;
+                    this.gizmo.showZ = false;
+                } else {
+                    this.gizmo.setMode('translate');
+                    this.gizmo.showX = true;
+                    this.gizmo.showZ = true;
+                }
+                break;
             case 'Escape': {
                 if (this.state.replacementFiles) {
                     this.closeReplacement();
@@ -436,30 +448,30 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
     select(selectionData: BlockData, cursor: Cursor = null) {
         if (selectionData) {
             const { x, y, z } = selectionData;
-            this.state.cursorObj.position.set(
-                (64.5 - z) / 32,
-                (y + 0.5) / 64,
-                (x + 0.5) / 32
-            );
-            this.state.cursorObj.position.multiplyScalar(WORLD_SIZE);
-            this.gizmo.attach(this.state.cursorObj);
+            this.setBrickCursor(selectionData);
             this.setState({
                 selectionData,
                 cursor: { type: CursorType.BRICK, x, y, z }
             }, this.saveDebugScope);
         } else {
             if (cursor) {
-                const { x, y, z } = cursor;
-                this.state.cursorObj.position.set(
-                    (64.5 - z) / 32,
-                    (y + 0.5) / 64,
-                    (x + 0.5) / 32
-                );
-                this.state.cursorObj.position.multiplyScalar(WORLD_SIZE);
-                this.gizmo.attach(this.state.cursorObj);
+                this.setBrickCursor(cursor);
             }
             this.setState({ selectionData: null, cursor }, this.saveDebugScope);
         }
+    }
+
+    setBrickCursor({ x, y, z}) {
+        this.state.cursorObj.position.set(
+            (64.5 - z) / 32,
+            (y + 0.5) / 64,
+            (x + 0.5) / 32
+        );
+        this.state.cursorObj.position.multiplyScalar(WORLD_SIZE);
+        this.gizmo.attach(this.state.cursorObj);
+        this.gizmo.setMode('translate');
+        this.gizmo.showX = true;
+        this.gizmo.showZ = true;
     }
 
     pickObject(raycaster: THREE.Raycaster) {
