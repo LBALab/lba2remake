@@ -1,5 +1,6 @@
 import { Resource } from '../load';
 import { makeNewBox, AnimAction } from './entity2';
+import { WORLD_SCALE } from '../../utils/lba';
 
 const ACTIONTYPE = {
     NOP                 : 0,
@@ -170,13 +171,13 @@ const loadEntityAnim = (data, offset) => {
                     innerOffset += 5;
                     break;
                 case ACTIONTYPE.THROW:
-                    action.yHeight = data.getUint16(innerOffset + offset + 2, true);
-                    action.spriteIndex = data.getUint8(innerOffset + offset + 4, true);
-                    action.unk1 = data.getUint16(innerOffset + offset + 5, true);
-                    action.unk2 = data.getUint16(innerOffset + offset + 7, true);
-                    action.unk3 = data.getUint16(innerOffset + offset + 9, true);
-                    action.unk4 = data.getUint8(innerOffset + offset + 11, true);
-                    action.unk5 = data.getUint8(innerOffset + offset + 12, true);
+                    action.yHeight = data.getInt16(innerOffset + offset + 2, true) * WORLD_SCALE;
+                    action.spriteIndex = data.getInt8(innerOffset + offset + 4, true);
+                    action.alpha = data.getInt16(innerOffset + offset + 5, true);
+                    action.beta = data.getInt16(innerOffset + offset + 7, true);
+                    action.speed = data.getInt16(innerOffset + offset + 9, true);
+                    action.weight = data.getInt8(innerOffset + offset + 11, true);
+                    action.strength = data.getInt8(innerOffset + offset + 12, true);
                     innerOffset += 12;
                     break;
                 case ACTIONTYPE.THROW_MAGIC:
@@ -189,31 +190,31 @@ const loadEntityAnim = (data, offset) => {
                 case ACTIONTYPE.SAMPLE_REPEAT:
                     action.sampleIndex = data.getUint16(innerOffset + offset + 2, true);
                     action.repeat = data.getUint16(innerOffset + offset + 4, true);
-                    innerOffset += 10;
+                    innerOffset += 5;
                     break;
                 case ACTIONTYPE.THROW_SEARCH:
-                    action.yHeight = data.getUint16(innerOffset + offset + 2, true);
-                    action.unk1 = data.getUint8(innerOffset + offset + 4, true);
-                    action.unk2 = data.getUint8(innerOffset + offset + 5, true);
-                    action.unk3 = data.getUint16(innerOffset + offset + 7, true);
-                    action.unk4 = data.getUint8(innerOffset + offset + 8, true);
-                    innerOffset += 8;
+                    action.yHeight = data.getUint16(innerOffset + offset + 2, true) * WORLD_SCALE;
+                    action.unk1 = data.getInt8(innerOffset + offset + 4, true);
+                    action.unk2 = data.getInt8(innerOffset + offset + 5, true);
+                    action.unk3 = data.getInt16(innerOffset + offset + 7, true);
+                    action.unk4 = data.getInt8(innerOffset + offset + 8, true);
+                    innerOffset += 7;
                     break;
                 case ACTIONTYPE.THROW_ALPHA:
-                    action.yHeight = data.getUint16(innerOffset + offset + 2, true);
-                    action.spriteIndex = data.getUint8(innerOffset + offset + 4, true);
-                    action.unk1 = data.getUint16(innerOffset + offset + 5, true);
-                    action.unk2 = data.getUint16(innerOffset + offset + 7, true);
-                    action.unk3 = data.getUint16(innerOffset + offset + 9, true);
-                    action.unk4 = data.getUint8(innerOffset + offset + 11, true);
-                    action.unk5 = data.getUint8(innerOffset + offset + 12, true);
+                    action.yHeight = data.getInt16(innerOffset + offset + 2, true) * WORLD_SCALE;
+                    action.spriteIndex = data.getInt8(innerOffset + offset + 4, true);
+                    action.alpha = data.getInt16(innerOffset + offset + 5, true);
+                    action.beta = data.getInt16(innerOffset + offset + 7, true);
+                    action.speed = data.getInt16(innerOffset + offset + 9, true);
+                    action.weight = data.getInt8(innerOffset + offset + 11, true);
+                    action.strength = data.getInt8(innerOffset + offset + 12, true);
                     innerOffset += 12;
                     break;
                 case ACTIONTYPE.SAMPLE_STOP:
                     action.sampleIndex = data.getUint8(innerOffset + offset + 2, true);
                     innerOffset += 3;
                     break;
-                case ACTIONTYPE.LEFT_STEP: // only required animFrame
+                case ACTIONTYPE.LEFT_STEP:
                 case ACTIONTYPE.RIGHT_STEP:
                     innerOffset += 1;
                     break;
@@ -222,25 +223,25 @@ const loadEntityAnim = (data, offset) => {
                     break;
                 case ACTIONTYPE.THROW_3D:
                 case ACTIONTYPE.THROW_3D_ALPHA:
-                    action.distanceX = data.getUint16(innerOffset + offset + 2, true);
-                    action.distanceY = data.getUint16(innerOffset + offset + 4, true);
-                    action.distanceZ = data.getUint16(innerOffset + offset + 6, true);
-                    action.spriteIndex = data.getUint8(innerOffset + offset + 8, true);
-                    action.unk1 = data.getUint16(innerOffset + offset + 7, true);
-                    action.unk2 = data.getUint16(innerOffset + offset + 9, true);
-                    action.unk3 = data.getUint16(innerOffset + offset + 11, true);
-                    action.unk4 = data.getUint8(innerOffset + offset + 11, true);
-                    action.strength = data.getUint8(innerOffset + offset + 12, true);
+                    action.distanceX = data.getInt16(innerOffset + offset + 2, true) * WORLD_SCALE;
+                    action.distanceY = data.getInt16(innerOffset + offset + 4, true) * WORLD_SCALE;
+                    action.distanceZ = data.getInt16(innerOffset + offset + 6, true) * WORLD_SCALE;
+                    action.spriteIndex = data.getInt8(innerOffset + offset + 8, true);
+                    action.alpha = data.getInt16(innerOffset + offset + 7, true);
+                    action.beta = data.getInt16(innerOffset + offset + 9, true);
+                    action.speed = data.getInt16(innerOffset + offset + 11, true);
+                    action.weight = data.getInt8(innerOffset + offset + 11, true);
+                    action.strength = data.getInt8(innerOffset + offset + 12, true);
                     innerOffset += 16;
                     break;
                 case ACTIONTYPE.THROW_3D_SEARCH:
-                    action.distanceX = data.getUint16(innerOffset + offset + 2, true);
-                    action.distanceY = data.getUint16(innerOffset + offset + 4, true);
-                    action.distanceZ = data.getUint16(innerOffset + offset + 6, true);
-                    action.spriteIndex = data.getUint8(innerOffset + offset + 8, true);
-                    action.targetActor = data.getUint8(innerOffset + offset + 9, true);
-                    action.unk1 = data.getUint16(innerOffset + offset + 10, true);
-                    action.unk2 = data.getUint8(innerOffset + offset + 12, true);
+                    action.distanceX = data.getInt16(innerOffset + offset + 2, true) * WORLD_SCALE;
+                    action.distanceY = data.getInt16(innerOffset + offset + 4, true) * WORLD_SCALE;
+                    action.distanceZ = data.getInt16(innerOffset + offset + 6, true) * WORLD_SCALE;
+                    action.spriteIndex = data.getInt8(innerOffset + offset + 8, true);
+                    action.targetActor = data.getInt8(innerOffset + offset + 9, true);
+                    action.unk1 = data.getInt16(innerOffset + offset + 10, true);
+                    action.unk2 = data.getInt8(innerOffset + offset + 12, true);
                     innerOffset += 12;
                     break;
             }

@@ -318,13 +318,13 @@ const loadEntityAnim = (data, offset) => {
                     innerOffset += 16;
                     break;
                 case ACTIONTYPE.THROW_3D_SEARCH:
-                    action.distanceX = data.getUint16(innerOffset + offset + 2, true);
-                    action.distanceY = data.getUint16(innerOffset + offset + 4, true);
-                    action.distanceZ = data.getUint16(innerOffset + offset + 6, true);
-                    action.spriteIndex = data.getUint8(innerOffset + offset + 8, true);
-                    action.targetActor = data.getUint8(innerOffset + offset + 9, true);
-                    action.unk1 = data.getUint16(innerOffset + offset + 10, true);
-                    action.unk2 = data.getUint8(innerOffset + offset + 12, true);
+                    action.distanceX = data.getInt16(innerOffset + offset + 2, true) * WORLD_SCALE;
+                    action.distanceY = data.getInt16(innerOffset + offset + 4, true) * WORLD_SCALE;
+                    action.distanceZ = data.getInt16(innerOffset + offset + 6, true) * WORLD_SCALE;
+                    action.spriteIndex = data.getInt8(innerOffset + offset + 8, true);
+                    action.targetActor = data.getInt8(innerOffset + offset + 9, true);
+                    action.unk1 = data.getInt16(innerOffset + offset + 10, true);
+                    action.unk2 = data.getInt8(innerOffset + offset + 12, true);
                     innerOffset += 12;
                     break;
                 case ACTIONTYPE.THROW_3D_MAGIC:
