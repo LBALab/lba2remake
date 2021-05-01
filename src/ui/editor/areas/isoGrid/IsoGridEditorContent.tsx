@@ -188,9 +188,11 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
             cameraSpeed: new THREE.Vector3(),
             freeCamera: true,
         };
+        scene.threeScene.name = 'GridEditor';
         scene.threeScene.add(isoCamera.threeCamera);
         scene.threeScene.add(iso3DCamera.controlNode);
         const selectionObj = makeSelectionObject();
+        selectionObj.name = 'BricksCursor';
         selectionObj.visible = false;
         scene.threeScene.add(selectionObj);
         const clock = new THREE.Clock(false);
@@ -207,6 +209,7 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
         };
         this.boxHelper = new THREE.BoxHelper(DUMMY_OBJ, 0xffff00);
         this.boxHelper.visible = false;
+        this.boxHelper.name = 'BB';
         scene.threeScene.add(this.boxHelper);
         clock.start();
     }
@@ -302,6 +305,7 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
             });
             this.gizmo.enabled = false;
             this.gizmo.visible = false;
+            this.gizmo.name = 'Gizmo';
             this.state.scene.threeScene.add(this.gizmo);
             const renderer = new Renderer(this.canvas, 'iso_grids_editor');
             renderer.threeRenderer.setAnimationLoop(() => {
