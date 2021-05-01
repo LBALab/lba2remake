@@ -73,6 +73,7 @@ interface ActorPhysics {
         destination: THREE.Vector3;
         angle: number;
         destAngle: number;
+        doorPosition?: [number, number, number];
     };
     carried: {
         position: THREE.Vector3;
@@ -513,6 +514,7 @@ export default class Actor {
         this.state.isTurning = false;
         this.physics.temp.destAngle = this.physics.temp.angle;
         delete this.physics.temp.destination;
+        delete this.physics.temp.doorPosition;
     }
 
     async loadMesh() {

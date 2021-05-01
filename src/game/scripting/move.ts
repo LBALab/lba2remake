@@ -116,50 +116,49 @@ export function WAIT_NUM_DECIMAL_RND(this: ScriptContext, maxNumDsec, _unknown) 
 }
 
 export function OPEN_LEFT(this: ScriptContext, dist) {
-    openDoor.call(this, [0, 0, -dist * WORLD_SCALE]);
+    this.actor.physics.temp.doorPosition = [0, 0, -dist * WORLD_SCALE];
+    WAIT_DOOR.call(this);
 }
 
 export function OPEN_RIGHT(this: ScriptContext, dist) {
-    openDoor.call(this, [0, 0, dist * WORLD_SCALE]);
+    this.actor.physics.temp.doorPosition = [0, 0, dist * WORLD_SCALE];
+    WAIT_DOOR.call(this);
 }
 
 export function OPEN_UP(this: ScriptContext, dist) {
-    openDoor.call(this, [dist * WORLD_SCALE, 0, 0]);
+    this.actor.physics.temp.doorPosition = [dist * WORLD_SCALE, 0, 0];
+    WAIT_DOOR.call(this);
 }
 
 export function OPEN_DOWN(this: ScriptContext, dist) {
-    openDoor.call(this, [-dist * WORLD_SCALE, 0, 0]);
+    this.actor.physics.temp.doorPosition = [-dist * WORLD_SCALE, 0, 0];
+    WAIT_DOOR.call(this);
+}
+
+export function CLOSE(this: ScriptContext) {
+    this.actor.physics.temp.doorPosition = [0, 0, 0];
+    WAIT_DOOR.call(this);
 }
 
 const TGT = new THREE.Vector3();
 
-function openDoor(this: ScriptContext, tgt) {
-    const {pos} = this.actor.props;
-    TGT.set(pos[0] + tgt[0], pos[1] + tgt[1], pos[2] + tgt[2]);
-    const distance = this.actor.gotoSprite(TGT, this.time.delta * 2);
-
-    if (distance > 0.001) {
-        this.state.reentryOffset = this.state.offset;
-        this.state.continue = false;
-    } else {
-        this.actor.stop();
+export function WAIT_DOOR(this: ScriptContext) {
+    if (this.actor.physics.temp.doorPosition) {
+        const tgt = this.actor.physics.temp.doorPosition;
+        const { pos } = this.actor.props;
+        TGT.set(pos[0] + tgt[0], pos[1] + tgt[1], pos[2] + tgt[2]);
+        const distance = this.actor.gotoSprite(
+            TGT,
+            this.time.delta * 2
+        );
+        if (distance > 0.001) {
+            this.state.reentryOffset = this.state.offset;
+            this.state.continue = false;
+        } else {
+            this.actor.stop();
+        }
     }
 }
-
-export function CLOSE(this: ScriptContext) {
-    const {pos} = this.actor.props;
-    TGT.set(pos[0], pos[1], pos[2]);
-    const distance = this.actor.gotoSprite(TGT, this.time.delta * 2);
-
-    if (distance > 0.001) {
-        this.state.reentryOffset = this.state.offset;
-        this.state.continue = false;
-    } else {
-        this.actor.stop();
-    }
-}
-
-export const WAIT_DOOR = unimplemented();
 
 export function SAMPLE_RND(this: ScriptContext, index) {
     const frequency = getRandom(0x800, 0x1000);
