@@ -633,15 +633,20 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
         }
         const { library } = this.props.sharedState;
         const scenes = await findScenesUsingLibrary(library);
+        this.setState({
+            updateProgress: `Applied changes to 0 / ${scenes.length} scenes...`
+        }, this.saveDebugScope);
         const sceneMap = await getSceneMap();
-        for (let i = 0; i < scenes.length; i += 1) {
-            const scene = scenes[i];
-            this.setState({
-                updateProgress: `Updating scene ${i + 1} / ${scenes.length}`
-            }, this.saveDebugScope);
+        let count = 0;
+        const promises = scenes.map(async (scene) => {
             const sceneData = await getScene(scene);
             await saveSceneReplacementModel(sceneMap[scene].sceneryIndex, sceneData.ambience);
-        }
+            count += 1;
+            this.setState({
+                updateProgress: `Applied changes to ${count} / ${scenes.length} scenes...`
+            }, this.saveDebugScope);
+        });
+        await Promise.all(promises);
         this.setState({ updateProgress: null }, this.saveDebugScope);
     }
 
