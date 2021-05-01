@@ -18,7 +18,7 @@ import {
 import { WORLD_SCALE_B, WORLD_SIZE } from '../../../../utils/lba';
 import DebugData from '../../DebugData';
 import { getParams } from '../../../../params';
-import { hideBrick } from '../../../../game/scenery/isometric/grid';
+import { hideBrick, updateGridExtraModels } from '../../../../game/scenery/isometric/grid';
 import { saveSceneReplacementModel } from '../../../../game/scenery/isometric/metadata';
 import FileSelector from '../layouts/FileSelector';
 import { loadModel } from '../../../../game/scenery/isometric/metadata/models';
@@ -235,8 +235,8 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
             this.gizmo.addEventListener('mouseUp', () => {
                 this.gizmoEnabled = false;
             });
-            this.gizmo.addEventListener('objectChange', () => {
-                const { cursor, isoGrid } = this.state;
+            this.gizmo.addEventListener('objectChange', async () => {
+                const { cursor, isoGrid, selectionData } = this.state;
                 const position = this.gizmo.object.position;
                 const OW = cursor.type === CursorType.BRICK
                     ? WORLD_SCALE_B
@@ -268,19 +268,35 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
                     }
                 } else {
                     this.boxHelper.update();
-                    if (this.gizmo.mode === 'rotate') {
-                        const mesh = (this.state.selectionData as ModelData).mesh;
-                        mesh.traverse((node) => {
-                            node.updateMatrix();
-                            node.updateMatrixWorld(true);
-                            if (node instanceof THREE.Mesh &&
-                                node.material instanceof THREE.RawShaderMaterial) {
-                                const material = node.material as THREE.RawShaderMaterial;
-                                material.uniforms.uNormalMatrix.value.setFromMatrix4(
-                                    node.matrixWorld
-                                );
+                    if (selectionData && selectionData.type === 'model') {
+                        const mesh = selectionData.mesh;
+                        let changed = false;
+                        if (this.gizmo.mode === 'rotate') {
+                            if (!mesh.quaternion.equals(mesh.userData.quaternion)) {
+                                mesh.traverse((node) => {
+                                    node.updateMatrix();
+                                    node.updateMatrixWorld(true);
+                                    if (node instanceof THREE.Mesh &&
+                                        node.material instanceof THREE.RawShaderMaterial) {
+                                        const material = node.material as THREE.RawShaderMaterial;
+                                        material.uniforms.uNormalMatrix.value.setFromMatrix4(
+                                            node.matrixWorld
+                                        );
+                                    }
+                                });
+                                changed = true;
+                                mesh.userData.quaternion.copy(mesh.quaternion);
                             }
-                        });
+                        } else {
+                            if (!mesh.position.equals(mesh.userData.position)) {
+                                changed = true;
+                                mesh.userData.position.copy(mesh.position);
+                            }
+                        }
+                        if (changed) {
+                            const sceneData = await getScene(this.state.isoGridIdx);
+                            updateGridExtraModels(sceneData.sceneryIndex, this.models);
+                        }
                     }
                 }
             });
@@ -877,8 +893,11 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
         const shaderData = {lutTexture, paletteTexture, light};
         replaceMaterialsForPreview(mesh, shaderData);
         mesh.name = file;
+        mesh.userData.quaternion = mesh.quaternion.clone();
+        mesh.userData.position = mesh.position.clone();
         this.state.scene.threeScene.add(mesh);
         this.models.add(mesh);
+        updateGridExtraModels(sceneData.sceneryIndex, this.models);
         this.selectModel(mesh);
     }
 

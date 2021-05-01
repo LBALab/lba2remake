@@ -1,4 +1,5 @@
-import {loadBricksMapping} from './mapping';
+import * as THREE from 'three';
+import { loadBricksMapping } from './mapping';
 import { getLibraries } from '../../../resources';
 import { getParams } from '../../../params';
 
@@ -34,11 +35,11 @@ export async function getGridMetadata(entry) {
 
 let saveTimeout = null;
 
-export async function hideBrick(entry, isoGrid, brick) {
-    if (!(entry in globalGridMetadata)) {
-        globalGridMetadata[entry] = { models: [], patches: {} };
+export function hideBrick(gridIndex, isoGrid, brick) {
+    if (!(gridIndex in globalGridMetadata)) {
+        globalGridMetadata[gridIndex] = { models: [], patches: {} };
     }
-    const gridPatches = globalGridMetadata[entry].patches;
+    const gridPatches = globalGridMetadata[gridIndex].patches;
     let hide = true;
     if (brick in gridPatches) {
         const info = gridPatches[brick];
@@ -61,6 +62,25 @@ export async function hideBrick(entry, isoGrid, brick) {
         }
         flagAttr.needsUpdate = true;
     }
+    saveGridMetadataChanges();
+}
+
+export function updateGridExtraModels(gridIndex: number, models: Set<THREE.Object3D>) {
+    if (!(gridIndex in globalGridMetadata)) {
+        globalGridMetadata[gridIndex] = { models: [], patches: {} };
+    }
+    const { game } = getParams();
+    globalGridMetadata[gridIndex].models = Array.from(models).map((model) => {
+        return {
+            file: `/models/${game}/layouts/${model.name}`,
+            position: model.position,
+            quaternion: model.quaternion
+        };
+    });
+    saveGridMetadataChanges();
+}
+
+function saveGridMetadataChanges() {
     if (saveTimeout) {
         clearTimeout(saveTimeout);
     }
