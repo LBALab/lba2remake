@@ -109,6 +109,7 @@ export default class IsoScenery {
                                         const distSq = tgt.distanceToSquared(raycaster.ray.origin);
                                         if (!result || result.distSq > distSq) {
                                             result = {
+                                                type: 'block',
                                                 x,
                                                 y,
                                                 z,
@@ -140,6 +141,7 @@ export default class IsoScenery {
                     const block = layout.blocks[blocks[y].block];
                     if (block && block.brick in library.bricksMap) {
                         return {
+                            type: 'block',
                             x,
                             y,
                             z,
