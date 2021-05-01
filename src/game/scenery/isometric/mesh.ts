@@ -7,7 +7,7 @@ import brick_vertex from './shaders/brick.vert.glsl';
 import brick_fragment from './shaders/brick.frag.glsl';
 import dome_brick_vertex from './shaders/dome_brick.vert.glsl';
 import dome_brick_fragment from './shaders/dome_brick.frag.glsl';
-import { extractGridMetadata } from './metadata';
+import { extractBricksReplacementInfo } from './metadata';
 import { Side, OffsetBySide } from './mapping';
 import { WORLD_SCALE_B, WORLD_SIZE } from '../../../utils/lba';
 import Game from '../../Game';
@@ -37,7 +37,7 @@ export async function loadMesh(grid, entry, ambience, is3D, editorData, numActor
         dome_ground: null
     };
     const {library, cells} = grid;
-    const gridMetadata = await extractGridMetadata(
+    const bricksReplInfo = await extractBricksReplacementInfo(
         grid,
         entry,
         ambience,
@@ -45,7 +45,7 @@ export async function loadMesh(grid, entry, ambience, is3D, editorData, numActor
         !!editorData,
         numActors
     );
-    const replacementMesh = gridMetadata.replacements.threeObject;
+    const replacementMesh = bricksReplInfo.replacements.threeObject;
     if (replacementMesh) {
         threeObject.add(replacementMesh);
     }
@@ -69,7 +69,7 @@ export async function loadMesh(grid, entry, ambience, is3D, editorData, numActor
                 geometries,
                 x,
                 z,
-                gridMetadata,
+                bricksReplInfo,
                 editorData,
                 is3D,
                 numActors
@@ -121,7 +121,7 @@ export async function loadMesh(grid, entry, ambience, is3D, editorData, numActor
         threeObject,
         editorData,
         update: (game: Game, scene: Scene, time: Time) => {
-            const { update } = gridMetadata.replacements;
+            const { update } = bricksReplInfo.replacements;
             if (update) {
                 update(game, scene, time);
             }
@@ -149,14 +149,14 @@ function buildColumn(
     geometries,
     x,
     z,
-    gridMetadata,
+    bricksReplInfo,
     editorData,
     is3D,
     numActors
 ) {
     const h = 0.5;
     const {width, height} = library.texture.image;
-    const {replacements, mirrors} = gridMetadata;
+    const {replacements, mirrors} = bricksReplInfo;
     const blocks = cells[z * 64 + x].blocks;
 
     const pushMirror = (layout, sides, handler) => {

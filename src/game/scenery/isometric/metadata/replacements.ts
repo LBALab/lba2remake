@@ -18,13 +18,13 @@ import { GROUND_TYPES } from '../grid';
 
 export async function initReplacements(
     entry,
-    metadata,
+    layoutsMetadata,
     ambience,
     isEditor: boolean,
     numActors: number
 ) {
     const data = await loadReplacementData(ambience);
-    if (metadata.hasFullReplacement) {
+    if (layoutsMetadata.hasFullReplacement) {
         const { threeObject, update } = await loadFullSceneModel(entry, data, isEditor, numActors);
         return {
             threeObject,
@@ -33,7 +33,7 @@ export async function initReplacements(
             bricks: new Set()
         };
     }
-    if (!metadata.mergeReplacements) {
+    if (!layoutsMetadata.mergeReplacements) {
         return {
             threeObject: null,
             update: null,
