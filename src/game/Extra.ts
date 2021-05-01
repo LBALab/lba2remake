@@ -402,6 +402,7 @@ export default class Extra {
                         hero.keys += 1;
                         this.info = 1;
                         break;
+                    case SpriteType.MONEY:
                     case SpriteType.KASHES:
                         hero.money += this.info;
                         break;
