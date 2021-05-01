@@ -468,7 +468,9 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
             if (highlight) {
                 editorData.mode.value = 2;
             }
-            editorData.replacementMesh.visible = !showOriginal;
+            if (editorData.replacementMesh) {
+                editorData.replacementMesh.visible = !showOriginal;
+            }
         }
         if (this.gizmo) {
             this.gizmo.enabled = showCursorGizmo;
