@@ -117,18 +117,22 @@ export function WAIT_NUM_DECIMAL_RND(this: ScriptContext, maxNumDsec, _unknown) 
 
 export function OPEN_LEFT(this: ScriptContext, dist) {
     this.actor.physics.temp.doorPosition = [0, 0, -dist * WORLD_SCALE];
+    WAIT_DOOR.call(this);
 }
 
 export function OPEN_RIGHT(this: ScriptContext, dist) {
     this.actor.physics.temp.doorPosition = [0, 0, dist * WORLD_SCALE];
+    WAIT_DOOR.call(this);
 }
 
 export function OPEN_UP(this: ScriptContext, dist) {
     this.actor.physics.temp.doorPosition = [dist * WORLD_SCALE, 0, 0];
+    WAIT_DOOR.call(this);
 }
 
 export function OPEN_DOWN(this: ScriptContext, dist) {
     this.actor.physics.temp.doorPosition = [-dist * WORLD_SCALE, 0, 0];
+    WAIT_DOOR.call(this);
 }
 
 export function CLOSE(this: ScriptContext) {
