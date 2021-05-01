@@ -85,8 +85,8 @@ export const getCells = (
                         throw new Error('Unsupported block type');
                 }
                 const key = `${x}x${yGrid}x${z}`;
-                if (is3D && gridMetadata && key in gridMetadata) {
-                    const replacementBlock = gridMetadata[key];
+                if (is3D && gridMetadata && key in gridMetadata.patches) {
+                    const replacementBlock = gridMetadata.patches[key];
                     if ('layout' in replacementBlock
                         && replacementBlock.layout !== -1) {
                         blocks[blocks.length - 1] = replacementBlock;

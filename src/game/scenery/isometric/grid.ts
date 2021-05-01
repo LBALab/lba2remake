@@ -36,20 +36,20 @@ let saveTimeout = null;
 
 export async function hideBrick(entry, isoGrid, brick) {
     if (!(entry in globalGridMetadata)) {
-        globalGridMetadata[entry] = {};
+        globalGridMetadata[entry] = { models: [], patches: {} };
     }
-    const gridMetadata = globalGridMetadata[entry];
+    const gridPatches = globalGridMetadata[entry].patches;
     let hide = true;
-    if (brick in gridMetadata) {
-        const info = gridMetadata[brick];
+    if (brick in gridPatches) {
+        const info = gridPatches[brick];
         if (info.hide) {
-            delete gridMetadata[brick];
+            delete gridPatches[brick];
             hide = false;
         } else {
-            gridMetadata[brick] = { hide: true };
+            gridPatches[brick] = { hide: true };
         }
     } else {
-        gridMetadata[brick] = { hide: true };
+        gridPatches[brick] = { hide: true };
     }
     const editorData = isoGrid.editorData;
     const key = brick.replaceAll('x', ',');
