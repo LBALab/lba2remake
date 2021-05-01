@@ -93,6 +93,10 @@ export const SAMPLE_RND = (action: AnimAction, { actor }: AnimActionContext) => 
     actor.playSample(action.sampleIndex, frequency);
 };
 
+export const SAMPLE_REPEAT = (action: AnimAction, { actor }: AnimActionContext) => {
+    actor.playSample(action.sampleIndex, 0x1000, action.repeat);
+};
+
 export const THROW = (action: AnimAction, { actor, game, scene }: AnimActionContext) => {
     const destAngle = ((action.beta * 2 * Math.PI) / 0x1000)
         + actor.physics.temp.angle - (Math.PI / 2);
@@ -124,10 +128,6 @@ export const THROW_MAGIC = (_action: AnimAction, { actor, game, scene }: AnimAct
     MagicBall.load(game, scene, actor.physics.position).then((mb: MagicBall) => {
         mb.throw(actor.physics.temp.angle, actor.props.entityIndex);
     });
-};
-
-export const SAMPLE_REPEAT = (action: AnimAction, { actor }: AnimActionContext) => {
-    actor.playSample(action.sampleIndex, 0x1000, action.repeat);
 };
 
 export const THROW_SEARCH = unimplemented();

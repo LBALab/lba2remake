@@ -15,6 +15,7 @@ declare global {
 
 const THEME_MENU = 'THEME_MENU';
 const samples = {};
+const samplesPerActor = {};
 
 function createAudioContext() {
     window.AudioContext = window.AudioContext || window.webkitAudioContext; // needed for Safari
@@ -204,11 +205,16 @@ export function createAudioManager(state) {
             index: number,
             frequency: number = 0x1000,
             loopCount: number = 0,
+            actorIndex: number = -1,
             volume: number = state.config.soundFxVolume
         ) => {
             const sampleSource = createSampleSource(context, volume);
             sampleSource.play(index, frequency, loopCount);
             samples[index] = sampleSource;
+            if (!samplesPerActor[actorIndex]) {
+                samplesPerActor[actorIndex] = {};
+            }
+            samplesPerActor[actorIndex][index] = sampleSource;
             return sampleSource;
         },
         isPlayingSample: (index: number) => {
@@ -217,6 +223,15 @@ export function createAudioManager(state) {
                 return sampleSource.isPlaying();
             }
             return false;
+        },
+        isPlayingSampleForActor: (actorIndex: number, sampleIndex: number) => {
+            if (!samplesPerActor[actorIndex]) {
+                return false;
+            }
+            if (!samplesPerActor[actorIndex][sampleIndex]) {
+                return false;
+            }
+            return samplesPerActor[actorIndex][sampleIndex].isPlaying();
         },
         stopSample: (index: number) => {
             const sampleSource = samples[index];
@@ -231,6 +246,14 @@ export function createAudioManager(state) {
                     sampleSource.stop();
                 }
             });
+        },
+        stopSamplesForActor: (actorIndex: number) => {
+            if (!samplesPerActor[actorIndex])
+                return;
+
+            for (const sample in samplesPerActor[actorIndex]) {
+                samplesPerActor[actorIndex][sample].stop();
+            }
         },
 
         // shared

@@ -4,6 +4,7 @@ export const SampleType = {
     FIRE_BALL_THROW: 1,
     BONUS_COLLECTED: 2,
     BONUS_FOUND: 3,
+    JETPACK: 5,
     OBJECT_FOUND: 6,
     MAGIC_BALL_BOUNCE: 7,
     MAGIC_BALL_STOP: 8,
