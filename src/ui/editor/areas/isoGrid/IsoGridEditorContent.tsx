@@ -161,6 +161,7 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
         this.onWheel = this.onWheel.bind(this);
         this.setShowOriginal = this.setShowOriginal.bind(this);
         this.setShowCursorGizmo = this.setShowCursorGizmo.bind(this);
+        this.toggleGizmoRotation = this.toggleGizmoRotation.bind(this);
         this.setHighlight = this.setHighlight.bind(this);
         this.add3DModel = this.add3DModel.bind(this);
         this.closeReplacement = this.closeReplacement.bind(this);
@@ -382,15 +383,7 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
                 this.add3DModel();
                 break;
             case 'KeyT':
-                if (this.gizmo.mode === 'translate') {
-                    this.gizmo.setMode('rotate');
-                    this.gizmo.showX = false;
-                    this.gizmo.showZ = false;
-                } else {
-                    this.gizmo.setMode('translate');
-                    this.gizmo.showX = true;
-                    this.gizmo.showZ = true;
-                }
+                this.toggleGizmoRotation();
                 break;
             case 'Escape': {
                 if (this.state.replacementFiles) {
@@ -398,6 +391,22 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
                 }
                 break;
             }
+        }
+    }
+
+    toggleGizmoRotation() {
+        if (!(this.state.cursor && this.state.cursor.type === CursorType.MODEL)) {
+            return;
+        }
+
+        if (this.gizmo.mode === 'translate') {
+            this.gizmo.setMode('rotate');
+            this.gizmo.showX = false;
+            this.gizmo.showZ = false;
+        } else {
+            this.gizmo.setMode('translate');
+            this.gizmo.showX = true;
+            this.gizmo.showZ = true;
         }
     }
 
@@ -741,6 +750,13 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
                                 onChange={this.setShowCursorGizmo} />
                         Show gizmo
                     </label>
+                    {showCursorGizmo && cursor.type === CursorType.MODEL &&
+                        <React.Fragment>
+                            <br/>
+                            <button onClick={this.toggleGizmoRotation}>
+                                Toggle translate/rotate
+                            </button>
+                        </React.Fragment>}
                 </div>}
                 <br/>
                 {this.renderSelectionData()}
