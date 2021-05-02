@@ -28,6 +28,4 @@ const LBA2SampleType = {
     TWINSEN_LANDING: 129,
 };
 
-export const getSampleType = () => {
-    return isLBA1 ? LBA1SampleType : LBA2SampleType;
-};
+export default isLBA1 ? LBA1SampleType : LBA2SampleType;

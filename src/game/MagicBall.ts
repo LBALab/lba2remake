@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import Game from './Game';
 import Scene from './Scene';
 import { loadSprite } from './scenery/isometric/sprites';
-import { getSampleType } from './data/sampleType';
+import SampleType from './data/sampleType';
 import { BehaviourMode } from './loop/hero';
 import { Time } from '../datatypes';
 import { getParams } from '../params';
@@ -127,20 +127,20 @@ export default class MagicBall {
             this.bounces += 1;
 
             if (this.bounces > this.maxBounces) {
-                this.scene.actors[0].playSample(getSampleType().MAGIC_BALL_STOP);
+                this.scene.actors[0].playSample(SampleType.MAGIC_BALL_STOP);
                 this.scene.removeMagicBall();
                 return;
             }
 
-            this.scene.actors[0].playSample(getSampleType().MAGIC_BALL_BOUNCE);
+            this.scene.actors[0].playSample(SampleType.MAGIC_BALL_BOUNCE);
         }
     }
 
     throw(angle, behaviour) {
         if (this.game.getState().hero.magicball.level < 4) {
-            this.scene.actors[0].playSample(getSampleType().MAGIC_BALL_THROW);
+            this.scene.actors[0].playSample(SampleType.MAGIC_BALL_THROW);
         } else {
-            this.scene.actors[0].playSample(getSampleType().FIRE_BALL_THROW);
+            this.scene.actors[0].playSample(SampleType.FIRE_BALL_THROW);
         }
 
         let direction = new THREE.Vector3(0, 0.1, 1.1);

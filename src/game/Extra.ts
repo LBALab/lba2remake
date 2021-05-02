@@ -2,7 +2,7 @@ import * as THREE from 'three';
 
 import { getRandom, getHtmlColor } from '../utils/lba';
 import { SpriteType } from './data/spriteType';
-import { getSampleType } from './data/sampleType';
+import SampleType from './data/sampleType';
 import { loadSprite } from './scenery/isometric/sprites';
 import { clone } from 'lodash';
 import { MAX_LIFE } from './GameState';
@@ -114,7 +114,7 @@ export default class Extra {
         await extra.loadMesh(scene);
         extra.flags |= ExtraFlag.BONUS;
         extra.init(THREE.MathUtils.degToRad(75), 40, 15); // lbaToDegrees(720)
-        extra.playSample(extra.sound, getSampleType().BONUS_FOUND);
+        extra.playSample(extra.sound, SampleType.BONUS_FOUND);
         scene.addExtra(extra);
         return extra;
     }
@@ -447,8 +447,8 @@ export default class Extra {
     }
 
     private collect(game: Game, scene: Scene) {
-        this.stopSample(this.sound, getSampleType().BONUS_FOUND);
-        this.playSample(this.sound, getSampleType().BONUS_COLLECTED);
+        this.stopSample(this.sound, SampleType.BONUS_FOUND);
+        this.playSample(this.sound, SampleType.BONUS_COLLECTED);
         const itrjId = `extra_${this.index}_${this.info}`;
         const interjections = clone(game.getUiState().interjections);
 
