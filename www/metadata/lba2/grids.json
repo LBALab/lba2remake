@@ -34,6 +34,244 @@
             }
         }
     },
+    "10": {
+        "models": [
+            {
+                "name": "CA_069_wooden_planks_var1.glb",
+                "position": {
+                    "x": 37,
+                    "y": 4,
+                    "z": 56.5
+                },
+                "quaternion": [
+                    0,
+                    -0.7071067811865477,
+                    0,
+                    -0.7071067811865474
+                ]
+            },
+            {
+                "name": "CA_053_054_rail_straight.glb",
+                "position": {
+                    "x": 41.5,
+                    "y": 4.5,
+                    "z": 54.5
+                },
+                "quaternion": [
+                    0,
+                    0,
+                    0,
+                    1
+                ]
+            },
+            {
+                "name": "CA_053_054_rail_straight.glb",
+                "position": {
+                    "x": 41.499999999999986,
+                    "y": 4.5,
+                    "z": 55.50000000000001
+                },
+                "quaternion": [
+                    0,
+                    0,
+                    0,
+                    1
+                ]
+            },
+            {
+                "name": "CA_053_054_rail_straight.glb",
+                "position": {
+                    "x": 41.499999999999986,
+                    "y": 4.5,
+                    "z": 56.50000000000001
+                },
+                "quaternion": [
+                    0,
+                    0,
+                    0,
+                    1
+                ]
+            },
+            {
+                "name": "CA_053_054_rail_straight.glb",
+                "position": {
+                    "x": 41.499999999999986,
+                    "y": 4.5,
+                    "z": 57.50000000000001
+                },
+                "quaternion": [
+                    0,
+                    0,
+                    0,
+                    1
+                ]
+            }
+        ],
+        "patches": {
+            "36x9x57": {
+                "hide": true
+            },
+            "36x9x56": {
+                "hide": true
+            },
+            "37x9x54": {
+                "hide": true
+            },
+            "37x9x53": {
+                "hide": true
+            },
+            "37x9x52": {
+                "hide": true
+            },
+            "38x9x52": {
+                "hide": true
+            },
+            "38x9x53": {
+                "hide": true
+            },
+            "38x9x54": {
+                "hide": true
+            },
+            "39x9x52": {
+                "hide": true
+            },
+            "40x9x52": {
+                "hide": true
+            },
+            "39x9x53": {
+                "hide": true
+            },
+            "40x9x53": {
+                "hide": true
+            },
+            "39x9x54": {
+                "hide": true
+            },
+            "40x9x54": {
+                "hide": true
+            },
+            "37x9x55": {
+                "hide": true
+            },
+            "38x9x55": {
+                "hide": true
+            },
+            "39x9x55": {
+                "hide": true
+            },
+            "40x9x55": {
+                "hide": true
+            },
+            "37x9x56": {
+                "hide": true
+            },
+            "38x9x56": {
+                "hide": true
+            },
+            "39x9x56": {
+                "hide": true
+            },
+            "40x9x56": {
+                "hide": true
+            },
+            "37x9x57": {
+                "hide": true
+            },
+            "38x9x57": {
+                "hide": true
+            },
+            "39x9x57": {
+                "hide": true
+            },
+            "40x9x57": {
+                "hide": true
+            },
+            "37x9x58": {
+                "hide": true
+            },
+            "38x9x58": {
+                "hide": true
+            },
+            "39x9x58": {
+                "hide": true
+            },
+            "40x9x58": {
+                "hide": true
+            },
+            "37x9x59": {
+                "hide": true
+            },
+            "38x9x59": {
+                "hide": true
+            },
+            "39x9x59": {
+                "hide": true
+            },
+            "40x9x59": {
+                "hide": true
+            },
+            "37x9x60": {
+                "hide": true
+            },
+            "38x9x60": {
+                "hide": true
+            },
+            "39x9x60": {
+                "hide": true
+            },
+            "40x9x60": {
+                "hide": true
+            },
+            "40x9x61": {
+                "hide": true
+            },
+            "40x9x62": {
+                "hide": true
+            },
+            "39x9x62": {
+                "hide": true
+            },
+            "39x9x61": {
+                "hide": true
+            },
+            "38x9x62": {
+                "hide": true
+            },
+            "38x9x61": {
+                "hide": true
+            },
+            "37x9x62": {
+                "hide": true
+            },
+            "37x9x61": {
+                "hide": true
+            },
+            "42x9x58": {
+                "hide": true
+            },
+            "41x9x58": {
+                "hide": true
+            },
+            "42x9x57": {
+                "hide": true
+            },
+            "41x9x56": {
+                "hide": true
+            },
+            "41x9x57": {
+                "hide": true
+            },
+            "42x9x56": {
+                "hide": true
+            },
+            "41x9x55": {
+                "hide": true
+            },
+            "42x9x55": {
+                "hide": true
+            }
+        }
+    },
     "12": {
         "models": [],
         "patches": {
