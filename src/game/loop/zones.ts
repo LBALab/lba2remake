@@ -2,7 +2,7 @@ import * as THREE from 'three';
 
 import Actor, { ActorDirMode } from '../Actor';
 import { AnimType } from '../data/animType';
-import { SampleType } from '../data/sampleType';
+import { getSampleType } from '../data/sampleType';
 import { angleTo, angleToRad, getRandom, WORLD_SCALE, BRICK_SIZE, getHtmlColor } from '../../utils/lba';
 import Extra, { getBonus } from '../Extra';
 import Game from '../Game';
@@ -419,7 +419,7 @@ function BONUS(game: Game, scene: Scene, zone: Zone, hero: Actor, time: Time) {
 
         hero.state.isSearching = true;
         hero.setAnimWithCallback(AnimType.ACTION, () => {
-            hero.playSample(SampleType.TWINSEN_LANDING);
+            hero.playSample(getSampleType().TWINSEN_LANDING);
             hero.state.isSearching = false;
 
             if (zone.props.info2) {

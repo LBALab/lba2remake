@@ -2,7 +2,7 @@ import * as THREE from 'three';
 
 import React, { useEffect, useState, useRef } from 'react';
 
-import { SampleType } from '../../game/data/sampleType';
+import { getSampleType } from '../../game/data/sampleType';
 import { GetInventoryMapping, GetInventoryRows, GetInventoryColumns, LBA2WeaponToBodyMapping } from '../../game/data/inventory';
 import { getText } from '../../resources';
 import '../styles/inventory.scss';
@@ -147,7 +147,7 @@ const Inventory = ({ game, closeInventory }: any) => {
                 }
                 closeInventory();
             } else {
-                game.getAudioManager().playSample(SampleType.ERROR);
+                game.getAudioManager().playSample(getSampleType().ERROR);
             }
         }
         if (key === 27 || key === 'Escape' || controlsState?.shift === 1) {

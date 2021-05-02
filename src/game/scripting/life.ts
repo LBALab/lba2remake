@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { clone } from 'lodash';
 import Actor, { ActorDirMode } from '../Actor';
 import { AnimType } from '../data/animType';
-import { SampleType } from '../data/sampleType';
+import { getSampleType } from '../data/sampleType';
 import { LBA2GameFlags } from '../data/gameFlags';
 import { setMagicBallLevel } from '../GameState';
 import { unimplemented } from './utils';
@@ -277,7 +277,7 @@ export function FOUND_OBJECT(this: ScriptContext, cmdState, id) {
         }
 
         this.game.getState().flags.quest[id] = 1;
-        hero.playSample(SampleType.OBJECT_FOUND);
+        hero.playSample(getSampleType().OBJECT_FOUND);
 
         if (FOUND_OBJECT_CALLBACKS[id]) {
             FOUND_OBJECT_CALLBACKS[id](this.game, this.scene);

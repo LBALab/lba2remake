@@ -4,7 +4,7 @@ import { getRandom, distance2D } from '../../utils/lba';
 import { unimplemented } from '../scripting/utils';
 import Extra, { getBonus, ExtraFlag } from '../Extra';
 import { SpriteType } from '../data/spriteType';
-import { SampleType } from '../data/sampleType';
+import { getSampleType } from '../data/sampleType';
 import Actor from '../Actor';
 import { getParams } from '../../params';
 import Game from '../Game';
@@ -55,7 +55,7 @@ export function processHit(
         if (distance2D(a.physics.position, actor.physics.position) < 1) {
             a.hit(actor.index, hitStrength);
             if (a.state.isDead) {
-                a.playSample(SampleType.ACTOR_DYING);
+                a.playSample(getSampleType().ACTOR_DYING);
                 if (a.props.extraType) {
                     const angle = a.physics.temp.angle - Math.PI / 2;
                     Extra.bonus(
