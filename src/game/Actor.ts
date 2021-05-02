@@ -693,7 +693,11 @@ export default class Actor {
             audio.playSound(this.sound, index, frequency, loopCount);
             return;
         }
-        audio.playSample(index, frequency, loopCount);
+        if (audio.isPlayingSampleForActor(this.index, index)) {
+            // Don't play the sample again if this actor is already playing it.
+            return;
+        }
+        audio.playSample(index, frequency, loopCount, this.index);
     }
 
     stopSample(index?: number) {
@@ -703,6 +707,10 @@ export default class Actor {
             return;
         }
         audio.stopSample(index);
+    }
+
+    stopSamples() {
+        this.game.getAudioManager().stopSamplesForActor(this.index);
     }
 
     setSampleVolume(volume: number) {
