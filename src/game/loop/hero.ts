@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import Actor, { ActorDirMode, ActorState } from '../Actor';
 import { AnimType } from '../data/animType';
-import { SampleType } from '../data/sampleType';
+import SampleType from '../data/sampleType';
 import { LBA2BodyType, LBA1BodyType } from '../data/bodyType';
 import { LBA2WeaponToBodyMapping, LBA2Items, LBA1Items, LBA1WeaponToBodyMapping } from '../data/inventory';
 import { WORLD_SIZE } from '../../utils/lba';
