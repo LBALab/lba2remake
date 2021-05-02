@@ -110,6 +110,9 @@ export class SceneManager {
     }
 
     release() {
+        const audio = this.game.getAudioManager();
+        audio.releaseSamples();
+
         releaseSamples();
         releaseAnimations();
         releaseModels();
