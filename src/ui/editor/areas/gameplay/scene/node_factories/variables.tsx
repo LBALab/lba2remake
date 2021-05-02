@@ -81,8 +81,7 @@ export const Var = {
                     }
                     const onKeyDown = (event) => {
                         event.stopPropagation();
-                        const key = event.code || event.which || event.keyCode;
-                        if (key === 'Enter' || key === 13) {
+                        if (event.code === 'Enter') {
                             event.preventDefault();
                             delete varEdits[varDef.key];
                             const v = Number(event.target.value);

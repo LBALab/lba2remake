@@ -19,7 +19,6 @@ export default class Renderer {
     readonly vr: boolean;
     readonly type: string;
     readonly stats: StatsHandler;
-    private keyListener: EventListenerObject;
 
     constructor(
         canvas,
@@ -48,8 +47,6 @@ export default class Renderer {
         const glInfo = `webgl: ${(this.threeRenderer as any).webglVersion}`;
         // tslint:disable-next-line:no-console
         console.log(`[Starting renderer(${type})]\n\t${prInfo}\n\t${glInfo}`);
-        this.keyListener = keyListener.bind(this);
-        window.addEventListener('keydown', this.keyListener);
     }
 
     render(scene) {
@@ -93,12 +90,20 @@ export default class Renderer {
         this.threeRenderer.setSize(width, height);
     }
 
+    switchResolution() {
+        const idx = PIXEL_RATIOS.indexOf(this.pixelRatio);
+        this.pixelRatio = PIXEL_RATIOS[(idx + 1) % PIXEL_RATIOS.length];
+        this.threeRenderer.setPixelRatio(this.pixelRatio);
+        // tslint:disable-next-line:no-console
+        console.log('pixelRatio:', this.pixelRatio);
+        this.resize();
+    }
+
     dispose() {
         // tslint:disable-next-line:no-console
         console.log(`[Stopping renderer(${this.type})]`);
         this.threeRenderer.dispose();
         this.threeRenderer.forceContextLoss();
-        window.removeEventListener('keydown', this.keyListener);
     }
 
     @pure()
@@ -112,17 +117,6 @@ export default class Renderer {
     static getGLSLVersion() {
         const webgl2 = getParams().webgl2 && window.WebGL2RenderingContext;
         return webgl2 ? THREE.GLSL3 : THREE.GLSL1;
-    }
-}
-
-function keyListener(event) {
-    if (event.code === 'KeyR' && !event.ctrlKey && !event.metaKey) {
-        const idx = PIXEL_RATIOS.indexOf(this.pixelRatio);
-        this.pixelRatio = PIXEL_RATIOS[(idx + 1) % PIXEL_RATIOS.length];
-        this.threeRenderer.setPixelRatio(this.pixelRatio);
-        // tslint:disable-next-line:no-console
-        console.log('pixelRatio:', this.pixelRatio);
-        this.resize();
     }
 }
 

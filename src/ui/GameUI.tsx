@@ -93,11 +93,9 @@ export default class GameUI extends React.Component<GameUIProps, GameUIState> {
     isBehaviourKey(key: string | number, controlsState: ControlsState) {
         const isMac = /^Mac/.test(navigator && navigator.platform);
         if (isMac) {
-            return key === 'MetaLeft' || key === 'MetaRight' || key === 91 ||
-                controlsState?.control === 1;
+            return key === 'MetaLeft' || key === 'MetaRight' || controlsState?.control === 1;
         }
-        return key === 'ControlLeft' || key === 'ControlRight' || key === 17 ||
-            controlsState?.control === 1;
+        return key === 'ControlLeft' || key === 'ControlRight' || controlsState?.control === 1;
     }
 
     showHideMenus(key: string | number, controlsState: ControlsState) {
@@ -109,7 +107,7 @@ export default class GameUI extends React.Component<GameUIProps, GameUIState> {
             sharedState
         } = this.props;
         if (!uiState.video) {
-            if (key === 'Escape' || key === 27 || controlsState?.home === 1) {
+            if (key === 'Escape' || controlsState?.home === 1) {
                 if (sharedState && sharedState.objectToAdd) {
                     stateHandler.setAddingObject(null);
                 } else if (uiState.teleportMenu) {
@@ -171,13 +169,11 @@ export default class GameUI extends React.Component<GameUIProps, GameUIState> {
     }
 
     listenerKeyDown(event) {
-        const key = event.code || event.which || event.keyCode;
-        this.showHideMenus(key, null);
+        this.showHideMenus(event.code, null);
     }
 
     listenerKeyUp(event) {
-        const key = event.code || event.which || event.keyCode;
-        this.hideBehaviourMenu(key, null);
+        this.hideBehaviourMenu(event.code, null);
     }
 
     gamepadListener(event) {

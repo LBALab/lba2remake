@@ -29,7 +29,7 @@ export function createControls(
     } else {
         controls = [
             makeFirstPersonMouseControls(params, elem, game),
-            makeKeyboardControls(params, elem, sceneManager, game),
+            makeKeyboardControls(params, elem, sceneManager, game, renderer),
             new GamepadControls(params, sceneManager, game),
         ];
     }
