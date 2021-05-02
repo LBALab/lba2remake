@@ -138,10 +138,12 @@ export function createAudioManager(state) {
         },
         releaseSamples: () => {
             Object.keys(samples).forEach((key) => {
+                samples[key].stop();
                 delete samples[key];
             });
             Object.keys(samplesPerActor).forEach((key) => {
                 Object.keys(samplesPerActor[key]).forEach((kk) => {
+                    samplesPerActor[key][kk].stop();
                     delete samplesPerActor[key][kk];
                 });
                 delete samplesPerActor[key];
