@@ -4,7 +4,7 @@ import { getBricksHQR } from '../../../../resources';
 import { loadLayout } from '../layouts';
 import { getParams } from '../../../../params';
 
-export async function loadMetadata(entry, library, isEditor, mergeReplacements = false) {
+export async function loadLayoutsMetadata(entry, library, isEditor, mergeReplacements = false) {
     const { game } = getParams();
     const bkg = await getBricksHQR();
     const layoutsReq = await fetch(`/metadata/${game}/layouts.json`);

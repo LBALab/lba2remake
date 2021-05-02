@@ -57,7 +57,15 @@ export default class IsoScenery {
 
         const editorData = isGridEditor ? {} : null;
 
-        const mesh = await loadMesh(grid, sceneryIndex, ambience, is3D, editorData, numActors);
+        const mesh = await loadMesh(
+            grid,
+            sceneryIndex,
+            ambience,
+            gridMetadata,
+            is3D,
+            editorData,
+            numActors
+        );
 
         // Dome of the slate
         let domeEnv = null;
@@ -109,6 +117,7 @@ export default class IsoScenery {
                                         const distSq = tgt.distanceToSquared(raycaster.ray.origin);
                                         if (!result || result.distSq > distSq) {
                                             result = {
+                                                type: 'block',
                                                 x,
                                                 y,
                                                 z,
@@ -140,6 +149,7 @@ export default class IsoScenery {
                     const block = layout.blocks[blocks[y].block];
                     if (block && block.brick in library.bricksMap) {
                         return {
+                            type: 'block',
                             x,
                             y,
                             z,

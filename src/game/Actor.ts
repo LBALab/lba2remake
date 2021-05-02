@@ -73,6 +73,7 @@ interface ActorPhysics {
         destination: THREE.Vector3;
         angle: number;
         destAngle: number;
+        doorPosition?: [number, number, number];
     };
     carried: {
         position: THREE.Vector3;
@@ -513,6 +514,7 @@ export default class Actor {
         this.state.isTurning = false;
         this.physics.temp.destAngle = this.physics.temp.angle;
         delete this.physics.temp.destination;
+        delete this.physics.temp.doorPosition;
     }
 
     async loadMesh() {
@@ -691,7 +693,11 @@ export default class Actor {
             audio.playSound(this.sound, index, frequency, loopCount);
             return;
         }
-        audio.playSample(index, frequency, loopCount);
+        if (audio.isPlayingSampleForActor(this.index, index)) {
+            // Don't play the sample again if this actor is already playing it.
+            return;
+        }
+        audio.playSample(index, frequency, loopCount, this.index);
     }
 
     stopSample(index?: number) {
@@ -701,6 +707,10 @@ export default class Actor {
             return;
         }
         audio.stopSample(index);
+    }
+
+    stopSamples() {
+        this.game.getAudioManager().stopSamplesForActor(this.index);
     }
 
     setSampleVolume(volume: number) {

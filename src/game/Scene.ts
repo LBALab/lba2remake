@@ -403,8 +403,9 @@ export default class Scene {
                                 sample.ambience,
                                 sample.frequency,
                                 0,
+                                -1,
                                 Math.random()
-                                * (this.game.getState().config.ambienceVolume - 0.05) + 0.05
+                                * (this.game.getState().config.ambienceVolume - 0.05) + 0.05,
                             );
                         }
                         break;

@@ -7,15 +7,18 @@ import brick_vertex from './shaders/brick.vert.glsl';
 import brick_fragment from './shaders/brick.frag.glsl';
 import dome_brick_vertex from './shaders/dome_brick.vert.glsl';
 import dome_brick_fragment from './shaders/dome_brick.frag.glsl';
-import { extractGridMetadata } from './metadata';
+import { extractBricksReplacementInfo } from './metadata';
 import { Side, OffsetBySide } from './mapping';
 import { WORLD_SCALE_B, WORLD_SIZE } from '../../../utils/lba';
 import Game from '../../Game';
 import Scene from '../../Scene';
 import { Time } from '../../../datatypes';
 import Renderer from '../../../renderer';
+import { loadModel } from './metadata/models';
+import { getParams } from '../../../params';
+import { replaceMaterialsForPreview } from './metadata/preview';
 
-export async function loadMesh(grid, entry, ambience, is3D, editorData, numActors) {
+export async function loadMesh(grid, entry, ambience, gridMetadata, is3D, editorData, numActors) {
     const threeObject = new THREE.Object3D();
     const geometries = {
         standard: {
@@ -37,7 +40,7 @@ export async function loadMesh(grid, entry, ambience, is3D, editorData, numActor
         dome_ground: null
     };
     const {library, cells} = grid;
-    const gridMetadata = await extractGridMetadata(
+    const bricksReplInfo = await extractBricksReplacementInfo(
         grid,
         entry,
         ambience,
@@ -45,7 +48,7 @@ export async function loadMesh(grid, entry, ambience, is3D, editorData, numActor
         !!editorData,
         numActors
     );
-    const replacementMesh = gridMetadata.replacements.threeObject;
+    const replacementMesh = bricksReplInfo.replacements.threeObject;
     if (replacementMesh) {
         threeObject.add(replacementMesh);
     }
@@ -69,7 +72,7 @@ export async function loadMesh(grid, entry, ambience, is3D, editorData, numActor
                 geometries,
                 x,
                 z,
-                gridMetadata,
+                bricksReplInfo,
                 editorData,
                 is3D,
                 numActors
@@ -117,26 +120,75 @@ export async function loadMesh(grid, entry, ambience, is3D, editorData, numActor
     threeObject.position.set(WORLD_SIZE * 2, 0, 0);
     threeObject.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), -Math.PI / 2.0);
 
+    const extra_meshes = [];
+    if (is3D) {
+        const { game } = getParams();
+        if (editorData) {
+            editorData.models = new Set();
+        }
+        const models = gridMetadata ? gridMetadata.models : [];
+        for (const model of models) {
+            const gltf = await loadModel(`/models/${game}/layouts/${model.name}`, false);
+            const mesh = gltf.scene;
+            mesh.name = model.name;
+            mesh.position.copy(model.position);
+            mesh.quaternion.fromArray(model.quaternion);
+            mesh.scale.setScalar(1 / 0.75);
+            threeObject.add(mesh);
+            replaceMaterialsForPreview(mesh, bricksReplInfo.replacements.data);
+            if (editorData) {
+                editorData.models.add(mesh);
+            }
+            mesh.userData.position = mesh.position.clone();
+            mesh.userData.quaternion = mesh.quaternion.clone();
+            extra_meshes.push(mesh);
+        }
+    }
+
+    let frameCount = 0;
+
     return {
         threeObject,
         editorData,
         update: (game: Game, scene: Scene, time: Time) => {
-            const { update } = gridMetadata.replacements;
-            if (update) {
-                update(game, scene, time);
+            // This is a hack to make sure the scene is properly settled
+            // when setting the material. For some reason if done on the
+            // first frame or before, the normals are wrong and lighting
+            // is messed up.
+            if (frameCount < 2) {
+                for (const mesh of extra_meshes) {
+                    mesh.traverse((node) => {
+                        node.updateMatrix();
+                        node.updateMatrixWorld(true);
+                        if (node instanceof THREE.Mesh &&
+                            node.material instanceof THREE.RawShaderMaterial) {
+                            const material = node.material as THREE.RawShaderMaterial;
+                            material.uniforms.uNormalMatrix.value.setFromMatrix4(
+                                node.matrixWorld
+                            );
+                        }
+                    });
+                }
+                frameCount += 1;
             }
-            if (geometries.dome_ground) { // dome
-                const slateUniforms = geometries.dome_ground.material.uniforms;
-                scene.actors.forEach((actor, idx) => {
-                    if (actor.threeObject && !actor.state.isDead) {
-                        slateUniforms.actorPos.value[idx].set(0, 0, 0);
-                        slateUniforms.actorPos.value[idx]
-                            .applyMatrix4(actor.threeObject.matrixWorld);
-                    } else {
-                        // Make it far
-                        slateUniforms.actorPos.value[idx].set(-1000, -1000, -1000);
-                    }
-                });
+            if (game) {
+                const { update } = bricksReplInfo.replacements;
+                if (update) {
+                    update(game, scene, time);
+                }
+                if (geometries.dome_ground) { // dome
+                    const slateUniforms = geometries.dome_ground.material.uniforms;
+                    scene.actors.forEach((actor, idx) => {
+                        if (actor.threeObject && !actor.state.isDead) {
+                            slateUniforms.actorPos.value[idx].set(0, 0, 0);
+                            slateUniforms.actorPos.value[idx]
+                                .applyMatrix4(actor.threeObject.matrixWorld);
+                        } else {
+                            // Make it far
+                            slateUniforms.actorPos.value[idx].set(-1000, -1000, -1000);
+                        }
+                    });
+                }
             }
         }
     };
@@ -149,14 +201,14 @@ function buildColumn(
     geometries,
     x,
     z,
-    gridMetadata,
+    bricksReplInfo,
     editorData,
     is3D,
     numActors
 ) {
     const h = 0.5;
     const {width, height} = library.texture.image;
-    const {replacements, mirrors} = gridMetadata;
+    const {replacements, mirrors} = bricksReplInfo;
     const blocks = cells[z * 64 + x].blocks;
 
     const pushMirror = (layout, sides, handler) => {

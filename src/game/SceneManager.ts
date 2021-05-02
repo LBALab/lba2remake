@@ -73,18 +73,19 @@ export class SceneManager {
             this.scene = sideScene;
             reviveActor(this.scene.actors[0], this.game); // Awake twinsen
             this.scene.isActive = true;
-            audio.stopMusicTheme();
+            audio.stopMusic();
             audio.playMusic(this.scene.props.ambience.musicIndex);
             initSceneDebugData();
             return this.scene;
         }
         this.game.loading(index);
         this.renderer.setClearColor(0x000000);
+        this.cleanUp();
         this.release();
         this.scene = await Scene.load(this.game, this.renderer, this, index);
         this.renderer.applySceneryProps(this.scene.scenery.props);
         this.scene.isActive = true;
-        audio.stopMusicTheme();
+        audio.stopMusic();
         audio.playMusic(this.scene.props.ambience.musicIndex);
         initSceneDebugData();
         this.scene.firstFrame = true;
@@ -97,6 +98,15 @@ export class SceneManager {
 
     unloadScene() {
         this.scene = null;
+    }
+
+    cleanUp() {
+        if (!this.scene)
+            return;
+
+        for (const actor of this.scene.actors) {
+            actor.stopSamples();
+        }
     }
 
     release() {
