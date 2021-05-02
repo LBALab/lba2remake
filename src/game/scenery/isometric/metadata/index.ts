@@ -1,4 +1,4 @@
-import { loadMetadata } from './metadata';
+import { loadLayoutsMetadata } from './layouts';
 import {
     initReplacements,
     applyReplacement,
@@ -11,19 +11,38 @@ import { getPalette, getGrid, getBricks } from '../../../../resources';
 import { checkVariantMatch } from './matchers/variants';
 import { loadBrickMask } from '../mask';
 
-export async function extractGridMetadata(grid, entry, ambience, is3D, isEditor, numActors) {
+export async function extractBricksReplacementInfo(
+    grid,
+    entry,
+    ambience,
+    is3D,
+    isEditor,
+    numActors
+) {
     if (!is3D) {
         return {
-            replacements: { threeObject: null, update: null },
+            replacements: { threeObject: null, update: null, data: null },
             mirrors: null
         };
     }
-    const metadata = await loadMetadata(entry, grid.library, isEditor);
+    const layoutsMetadata = await loadLayoutsMetadata(entry, grid.library, isEditor);
 
-    const replacements = await initReplacements(entry, metadata, ambience, isEditor, numActors);
+    const replacements = await initReplacements(
+        entry,
+        layoutsMetadata,
+        ambience,
+        isEditor,
+        numActors
+    );
     const mirrorGroups = {};
 
-    computeReplacements({grid, metadata, replacements, mirrorGroups, apply: true });
+    computeReplacements({
+        grid,
+        layoutsMetadata,
+        replacements,
+        mirrorGroups,
+        apply: true
+    });
 
     return {
         replacements,
@@ -48,21 +67,27 @@ export async function saveSceneReplacementModel(entry, ambience) {
         noCache: true
     });
 
-    const metadata = await loadMetadata(entry, grid.library, true, true);
-    const replacements = await initReplacements(entry, metadata, ambience, true, 0);
+    const layoutsMetadata = await loadLayoutsMetadata(entry, grid.library, true, true);
+    const replacements = await initReplacements(entry, layoutsMetadata, ambience, true, 0);
 
-    computeReplacements({grid, metadata, replacements});
+    computeReplacements({grid, layoutsMetadata, replacements});
     buildReplacementMeshes(replacements);
     await saveFullSceneModel(replacements, entry);
 }
 
-function computeReplacements({ grid, metadata, replacements, mirrorGroups = null, apply = false }) {
-    for (const variant of metadata.variants) {
-        forEachCell(grid, metadata, (_layoutInfo, layout, x, y, z) => {
+function computeReplacements({
+    grid,
+    layoutsMetadata,
+    replacements,
+    mirrorGroups = null,
+    apply = false
+}) {
+    for (const variant of layoutsMetadata.variants) {
+        forEachCell(grid, layoutsMetadata, (_layoutInfo, layout, x, y, z) => {
             checkVariant(grid, x, y, z, replacements, variant, layout);
         });
     }
-    forEachCell(grid, metadata, (layoutInfo, layout, x, y, z) => {
+    forEachCell(grid, layoutsMetadata, (layoutInfo, layout, x, y, z) => {
         const { mirror, suppress } = layoutInfo;
 
         if (apply) {
