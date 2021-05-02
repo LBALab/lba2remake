@@ -69,12 +69,11 @@ export function updateGridExtraModels(gridIndex: number, models: Set<THREE.Objec
     if (!(gridIndex in globalGridMetadata)) {
         globalGridMetadata[gridIndex] = { models: [], patches: {} };
     }
-    const { game } = getParams();
     globalGridMetadata[gridIndex].models = Array.from(models).map((model) => {
         return {
-            file: `/models/${game}/layouts/${model.name}`,
+            name: model.name,
             position: model.position,
-            quaternion: model.quaternion
+            quaternion: model.quaternion.toArray()
         };
     });
     saveGridMetadataChanges();

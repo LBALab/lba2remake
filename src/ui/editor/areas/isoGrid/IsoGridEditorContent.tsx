@@ -241,22 +241,16 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
             this.gizmo.addEventListener('objectChange', async () => {
                 const { cursor, isoGrid, selectionData } = this.state;
                 const position = this.gizmo.object.position;
-                const OW = cursor.type === CursorType.BRICK
-                    ? WORLD_SCALE_B
-                    : WORLD_SCALE_B * 0.5;
-                const OH = WORLD_SCALE_B * 0.5;
-                const H_OW = cursor.type === CursorType.BRICK
-                    ? OW * 0.5
-                    : 0;
-                const H_OH = cursor.type === CursorType.BRICK
-                    ? OH * 0.5
-                    : 0;
-                position.set(
-                    Math.round(position.x / OW - H_OW) * OW + H_OW,
-                    Math.round(position.y / OH - H_OH) * OH + H_OH,
-                    Math.round(position.z / OW - H_OW) * OW + H_OW,
-                );
                 if (cursor && cursor.type === CursorType.BRICK) {
+                    const OW = WORLD_SCALE_B;
+                    const OH = WORLD_SCALE_B * 0.5;
+                    const H_OW = OW * 0.5;
+                    const H_OH = OH * 0.5;
+                    position.set(
+                        Math.round(position.x / OW - H_OW) * OW + H_OW,
+                        Math.round(position.y / OH - H_OH) * OH + H_OH,
+                        Math.round(position.z / OW - H_OW) * OW + H_OW,
+                    );
                     const newCursor = {
                         type: CursorType.BRICK,
                         x: Math.round((position.z / WORLD_SIZE) * 32 - 0.5),
@@ -270,6 +264,15 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
                         this.select(newSelection, newCursor);
                     }
                 } else {
+                    const OW = WORLD_SCALE_B * 0.75;
+                    const OH = WORLD_SCALE_B * 0.5 * 0.75;
+                    const H_OW = OW * 0.5 * 0.75;
+                    const H_OH = OH * 0.5 * 0.75;
+                    position.set(
+                        Math.round(position.x / OW - H_OW) * OW + H_OW,
+                        Math.round(position.y / OH - H_OH) * OH + H_OH,
+                        Math.round(position.z / OW - H_OW) * OW + H_OW,
+                    );
                     this.boxHelper.update();
                     if (selectionData && selectionData.type === 'model') {
                         const mesh = selectionData.mesh;
@@ -407,10 +410,13 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
             case 'Delete':
                 const { selectionData } = this.state;
                 if (selectionData.type === 'model') {
-                    this.state.scene.threeScene.remove(selectionData.mesh);
+                    this.state.isoGrid.threeObject.remove(selectionData.mesh);
                     this.models.delete(selectionData.mesh);
                     this.gizmo.object = undefined;
                     this.setState({ selectionData: null, cursor: null });
+                    getScene(this.state.isoGridIdx).then((sceneData) => {
+                        updateGridExtraModels(sceneData.sceneryIndex, this.models);
+                    });
                 }
                 break;
             case 'KeyM':
@@ -563,7 +569,7 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
                 this.state.scene.target.threeObject.updateWorldMatrix();
             }
         }
-        this.models.clear();
+        this.models = isoGrid.editorData.models;
         this.loading = false;
         this.setState({isoGrid, isoGridIdx}, this.saveDebugScope);
         return isoGrid;
@@ -614,6 +620,7 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
             if (editorData.replacementMesh) {
                 editorData.replacementMesh.visible = !showOriginal;
             }
+            isoGrid.update();
         }
         if (this.gizmo) {
             const showGizmo = showCursorGizmo && !!cursor;
@@ -882,11 +889,14 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
     async useFile(file) {
         this.setState({ replacementFiles: null }, this.saveDebugScope);
         const { game } = getParams();
+        const gridObject = this.state.isoGrid.threeObject;
         const model = await loadModel(`/models/${game}/layouts/${file}`);
         const mesh = model.scene;
         mesh.position.copy(this.state.cursorObj.position);
         mesh.position.y += WORLD_SCALE_B * 0.25;
-        mesh.scale.setScalar(WORLD_SCALE_B / 0.75);
+        const m = gridObject.matrix.clone().invert();
+        mesh.position.applyMatrix4(m);
+        mesh.scale.setScalar(1 / 0.75);
         const [palette, lutTexture] = await Promise.all([
             getPalette(),
             await loadLUTTexture(),
@@ -895,11 +905,11 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
         const sceneData = await getScene(this.isoGridIdx);
         const light = getLightVector(sceneData.ambience);
         const shaderData = {lutTexture, paletteTexture, light};
+        gridObject.add(mesh);
         replaceMaterialsForPreview(mesh, shaderData);
         mesh.name = file;
         mesh.userData.quaternion = mesh.quaternion.clone();
         mesh.userData.position = mesh.position.clone();
-        this.state.scene.threeScene.add(mesh);
         this.models.add(mesh);
         updateGridExtraModels(sceneData.sceneryIndex, this.models);
         this.selectModel(mesh);

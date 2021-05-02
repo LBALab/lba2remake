@@ -57,7 +57,15 @@ export default class IsoScenery {
 
         const editorData = isGridEditor ? {} : null;
 
-        const mesh = await loadMesh(grid, sceneryIndex, ambience, is3D, editorData, numActors);
+        const mesh = await loadMesh(
+            grid,
+            sceneryIndex,
+            ambience,
+            gridMetadata,
+            is3D,
+            editorData,
+            numActors
+        );
 
         // Dome of the slate
         let domeEnv = null;

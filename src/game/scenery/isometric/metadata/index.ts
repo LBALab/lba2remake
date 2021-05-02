@@ -21,7 +21,7 @@ export async function extractBricksReplacementInfo(
 ) {
     if (!is3D) {
         return {
-            replacements: { threeObject: null, update: null },
+            replacements: { threeObject: null, update: null, data: null },
             mirrors: null
         };
     }

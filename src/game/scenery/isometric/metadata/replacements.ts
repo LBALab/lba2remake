@@ -30,7 +30,8 @@ export async function initReplacements(
             threeObject,
             update,
             geometries: null,
-            bricks: new Set()
+            bricks: new Set(),
+            data
         };
     }
     if (!layoutsMetadata.mergeReplacements) {
@@ -38,7 +39,8 @@ export async function initReplacements(
             threeObject: null,
             update: null,
             geometries: null,
-            bricks: new Set()
+            bricks: new Set(),
+            data
         };
     }
     return {
