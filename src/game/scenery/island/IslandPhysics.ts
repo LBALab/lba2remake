@@ -95,7 +95,7 @@ export default class IslandPhysics {
     }
 
     processCollisions(scene: Scene, obj: Actor | Extra, time: Time) {
-        if (!obj.props.flags.hasCollisionFloor) {
+        if (!obj.props.flags.hasCollisionBricks) {
             return false;
         }
 
