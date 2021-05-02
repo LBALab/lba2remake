@@ -126,7 +126,8 @@ export async function loadMesh(grid, entry, ambience, gridMetadata, is3D, editor
         if (editorData) {
             editorData.models = new Set();
         }
-        for (const model of gridMetadata.models) {
+        const models = gridMetadata ? gridMetadata.models : [];
+        for (const model of models) {
             const gltf = await loadModel(`/models/${game}/layouts/${model.name}`, false);
             const mesh = gltf.scene;
             mesh.name = model.name;

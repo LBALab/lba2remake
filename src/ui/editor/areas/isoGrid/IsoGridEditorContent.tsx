@@ -264,15 +264,7 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
                         this.select(newSelection, newCursor);
                     }
                 } else {
-                    const OW = WORLD_SCALE_B * 0.75;
-                    const OH = WORLD_SCALE_B * 0.5 * 0.75;
-                    const H_OW = OW * 0.5 * 0.75;
-                    const H_OH = OH * 0.5 * 0.75;
-                    position.set(
-                        Math.round(position.x / OW - H_OW) * OW + H_OW,
-                        Math.round(position.y / OH - H_OH) * OH + H_OH,
-                        Math.round(position.z / OW - H_OW) * OW + H_OW,
-                    );
+                    position.multiplyScalar(2).round().multiplyScalar(0.5);
                     this.boxHelper.update();
                     if (selectionData && selectionData.type === 'model') {
                         const mesh = selectionData.mesh;
