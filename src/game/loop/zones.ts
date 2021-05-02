@@ -2,7 +2,7 @@ import * as THREE from 'three';
 
 import Actor, { ActorDirMode } from '../Actor';
 import { AnimType } from '../data/animType';
-import { SampleType } from '../data/sampleType';
+import SampleType from '../data/sampleType';
 import { angleTo, angleToRad, getRandom, WORLD_SCALE, BRICK_SIZE, getHtmlColor } from '../../utils/lba';
 import Extra, { getBonus } from '../Extra';
 import Game from '../Game';

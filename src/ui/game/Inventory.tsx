@@ -2,7 +2,7 @@ import * as THREE from 'three';
 
 import React, { useEffect, useState, useRef } from 'react';
 
-import { SampleType } from '../../game/data/sampleType';
+import SampleType from '../../game/data/sampleType';
 import { GetInventoryMapping, GetInventoryRows, GetInventoryColumns, LBA2WeaponToBodyMapping } from '../../game/data/inventory';
 import { getText } from '../../resources';
 import '../styles/inventory.scss';

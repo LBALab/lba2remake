@@ -47,6 +47,8 @@ export interface SceneProps {
     textBankId: number;
 }
 
+const isLBA1 = getParams().game === 'lba1';
+
 export default class Scene {
     readonly index: number;
     readonly props: SceneProps;
@@ -85,7 +87,6 @@ export default class Scene {
         index: number,
         parent: Scene = null
     ): Promise<Scene> {
-        const isLBA1 = getParams().game === 'lba1';
         const data = await getScene(index);
         if (getParams().editor) {
             await loadSceneMetaData(index);
@@ -132,7 +133,7 @@ export default class Scene {
         this.firstFrame = false;
         this.zoneState = { skipListener: null, ended: false };
         this.vr = renderer.vr;
-        this.is3DCam = data.isIsland || renderer.vr || params.iso3d;
+        this.is3DCam = !isLBA1 && data.isIsland || renderer.vr || params.iso3d;
         this.isSideScene = !!parent;
         this.savedState = null;
         this.sceneManager = sceneManager;

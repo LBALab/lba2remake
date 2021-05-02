@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { clone } from 'lodash';
 import Actor, { ActorDirMode } from '../Actor';
 import { AnimType } from '../data/animType';
-import { SampleType } from '../data/sampleType';
+import SampleType from '../data/sampleType';
 import { LBA2GameFlags } from '../data/gameFlags';
 import { setMagicBallLevel } from '../GameState';
 import { unimplemented } from './utils';

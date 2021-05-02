@@ -2,7 +2,7 @@ import * as THREE from 'three';
 
 import { getRandom, getHtmlColor } from '../utils/lba';
 import { SpriteType } from './data/spriteType';
-import { SampleType } from './data/sampleType';
+import SampleType from './data/sampleType';
 import { loadSprite } from './scenery/isometric/sprites';
 import { clone } from 'lodash';
 import { MAX_LIFE } from './GameState';

@@ -3,9 +3,19 @@ import * as THREE from 'three';
 import Game from './Game';
 import Scene from './Scene';
 import { loadSprite } from './scenery/isometric/sprites';
-import { SampleType } from './data/sampleType';
+import SampleType from './data/sampleType';
 import { BehaviourMode } from './loop/hero';
 import { Time } from '../datatypes';
+import { getParams } from '../params';
+
+const isLBA1 = getParams().game === 'lba1';
+
+const LBA1MagicBallMapping = {
+    8: 1,
+    9: 2,
+    10: 43,
+    11: 13,
+};
 
 const MAGIC_BALL_SPRITE = 8;
 const MAGIC_BALL_SPEED = 6.0;
@@ -45,8 +55,9 @@ export default class MagicBall {
         this.threeObject = new THREE.Object3D();
         this.threeObject.position.copy(this.position);
         const magicLevel = this.game.getState().hero.magicball.level;
+        const type = MAGIC_BALL_SPRITE + (magicLevel - 1);
         const sprite = await loadSprite(
-            MAGIC_BALL_SPRITE + (magicLevel - 1),
+            isLBA1 ? LBA1MagicBallMapping[type] : type,
             false, /* hasSpriteAnim3D */
             true, /* isBillboard */
             this.scene.is3DCam,
