@@ -41,6 +41,8 @@ export function createAudioManager(state) {
         listener.rotateY(Math.PI);
     }
 
+    let queuedMusic = -1;
+
     return {
         context,
         menuContext,
@@ -52,11 +54,31 @@ export function createAudioManager(state) {
         },
 
         // music
-        playMusic: (index: number) => {
+        // Named function to allow a recursive call.
+        playMusic: function f(index: number) {
             menuMusicSource.stop();
             if (!musicSource.isPlaying()) {
-                musicSource.play(index);
+                musicSource.play(index, () => {
+                    if (queuedMusic !== -1) {
+                        f(queuedMusic);
+                        queuedMusic = -1;
+                    }
+                });
             }
+        },
+        queueMusic: (index: number) => {
+            // Corner case where we've walked out of the scene and back in again.
+            // In this case we don't want the music to play twice, and we want
+            // to throw away the previous index since we're not in that scene
+            // anymore.
+            if (musicSource.getPlaying() === index) {
+                queuedMusic = -1;
+                return;
+            }
+            queuedMusic = index;
+        },
+        getPlayingMusic: () => {
+            return musicSource.getPlaying();
         },
         playMusicTheme: () => {
             if (!menuMusicSource.isPlaying()) {
