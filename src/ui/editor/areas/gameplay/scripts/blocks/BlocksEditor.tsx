@@ -119,12 +119,11 @@ export default class BlocksEditor extends FrameListener<Props, State> {
                     this.props.hideVariablesPanel();
                 });
                 ref.addEventListener('keydown', (event) => {
-                    const key = event.code || event.which || event.keyCode;
                     const mod = event.metaKey || event.ctrlKey || event.shiftKey || event.altKey;
-                    if (!mod && (key === 86 || key === 'KeyV')) {
+                    if (!mod && (event.code === 'KeyV')) {
                         this.props.toggleVariablesPanel();
                     }
-                    if (!mod && (key === 66 || key === 'KeyB')) {
+                    if (!mod && (event.code === 'KeyB')) {
                         if (this.toolboxElem.style.transform === 'translateX(0px)') {
                             this.setToolboxVisible(false);
                         } else {

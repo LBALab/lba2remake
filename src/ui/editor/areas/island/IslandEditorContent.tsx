@@ -181,25 +181,21 @@ export default class IslandEditorContent extends FrameListener<Props, State> {
     }
 
     onKeyDown(e) {
-        const key = e.nativeEvent.code || e.which || e.keyCode;
+        const code = e.nativeEvent.code;
         const cameraSpeed = {
             x: this.state.cameraSpeed.x,
             z: this.state.cameraSpeed.z,
         };
-        switch (key) {
-            case 87: // w
+        switch (code) {
             case 'KeyW':
                 cameraSpeed.z = 1;
                 break;
-            case 83: // s
             case 'KeyS':
                 cameraSpeed.z = -1;
                 break;
-            case 65: // a
             case 'KeyA':
                 cameraSpeed.x = 1;
                 break;
-            case 68: // d
             case 'KeyD':
                 cameraSpeed.x = -1;
                 break;
@@ -208,28 +204,24 @@ export default class IslandEditorContent extends FrameListener<Props, State> {
     }
 
     onKeyUp(e) {
-        const key = e.nativeEvent.code || e.which || e.keyCode;
+        const code = e.nativeEvent.code;
         const cameraSpeed = {
             x: this.state.cameraSpeed.x,
             z: this.state.cameraSpeed.z,
         };
-        switch (key) {
-            case 87: // w
+        switch (code) {
             case 'KeyW':
                 if (cameraSpeed.z === 1)
                     cameraSpeed.z = 0;
                 break;
-            case 83: // s
             case 'KeyS':
                 if (cameraSpeed.z === -1)
                     cameraSpeed.z = 0;
                 break;
-            case 65: // a
             case 'KeyA':
                 if (cameraSpeed.x === 1)
                     cameraSpeed.x = 0;
                 break;
-            case 68: // d
             case 'KeyD':
                 if (cameraSpeed.x === -1)
                     cameraSpeed.x = 0;

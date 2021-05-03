@@ -250,9 +250,7 @@ const BehaviourMenu = ({ game, scene }: IBehaviourMenuProps) => {
     const listener = (event) => {
         let behav = behaviour;
         let action = false;
-        const key = event.code || event.which || event.keyCode;
-        switch (key) {
-            case 37:
+        switch (event.code) {
             case 'ArrowLeft':
                 action = true;
                 if (behav <= BehaviourModeType.DISCRETE) {
@@ -266,7 +264,6 @@ const BehaviourMenu = ({ game, scene }: IBehaviourMenuProps) => {
                     behav = BehaviourModeType.PROTOPACK;
                 }
                 break;
-            case 39:
             case 'ArrowRight':
                 action = true;
                 if (behav <= BehaviourModeType.DISCRETE) {
@@ -280,7 +277,6 @@ const BehaviourMenu = ({ game, scene }: IBehaviourMenuProps) => {
                     behav = BehaviourModeType.PROTOPACK;
                 }
                 break;
-            case 38:
             case 'ArrowUp':
                 action = true;
                 if (behav <= BehaviourModeType.DISCRETE) {
@@ -296,7 +292,6 @@ const BehaviourMenu = ({ game, scene }: IBehaviourMenuProps) => {
                     behav = BehaviourModeType.NORMAL;
                 }
                 break;
-            case 40:
             case 'ArrowDown':
                 action = true;
                 if (hasProtoPack && behav <= BehaviourModeType.DISCRETE) {

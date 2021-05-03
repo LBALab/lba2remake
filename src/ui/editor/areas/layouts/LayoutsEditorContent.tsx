@@ -247,8 +247,7 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
 
     listener(event) {
         if (this.state.library) {
-            const key = event.code || event.which || event.keyCode;
-            switch (key) {
+            switch (event.code) {
                 case 'ArrowLeft': {
                     const newLayout = Math.max(0, this.props.sharedState.layout - 1);
                     this.props.stateHandler.setLayout(newLayout);

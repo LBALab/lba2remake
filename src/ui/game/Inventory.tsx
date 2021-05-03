@@ -100,7 +100,7 @@ const Inventory = ({ game, closeInventory }: any) => {
     const listener = (key: string | number, controlsState: ControlsState) => {
         let action = false;
         let newSlot = -1;
-        if (key === 37 || key === 'ArrowLeft' || controlsState?.left === 1) {
+        if (key === 'ArrowLeft' || controlsState?.left === 1) {
             if (selectedSlot % GetInventoryColumns() === 0) {
                 newSlot = selectedSlot + GetInventoryColumns() - 1;
             } else {
@@ -108,7 +108,7 @@ const Inventory = ({ game, closeInventory }: any) => {
             }
             action = true;
         }
-        if (key === 39 || key === 'ArrowRight' || controlsState?.right === 1) {
+        if (key === 'ArrowRight' || controlsState?.right === 1) {
             if ((selectedSlot + 1) % GetInventoryColumns() === 0) {
                 newSlot = selectedSlot - GetInventoryColumns() + 1;
             } else {
@@ -116,7 +116,7 @@ const Inventory = ({ game, closeInventory }: any) => {
             }
             action = true;
         }
-        if (key === 38 || key === 'ArrowUp' || controlsState?.up === 1) {
+        if (key === 'ArrowUp' || controlsState?.up === 1) {
             if (selectedSlot < GetInventoryColumns()) {
                 newSlot = selectedSlot + GetInventoryColumns() * (GetInventoryRows() - 1);
             } else {
@@ -124,7 +124,7 @@ const Inventory = ({ game, closeInventory }: any) => {
             }
             action = true;
         }
-        if (key === 40 || key === 'ArrowDown' || controlsState?.down === 1) {
+        if (key === 'ArrowDown' || controlsState?.down === 1) {
             if (selectedSlot >=
                 GetInventoryColumns() * GetInventoryRows() - GetInventoryColumns()) {
                 newSlot = selectedSlot - GetInventoryColumns() * (GetInventoryRows() - 1);
@@ -133,7 +133,7 @@ const Inventory = ({ game, closeInventory }: any) => {
             }
             action = true;
         }
-        if (key === 13 || key === 'Enter' || controlsState?.action === 1) {
+        if (key === 'Enter' || controlsState?.action === 1) {
             const itemId = GetInventoryMapping()[game.getState().hero.inventorySlot];
             if (game.getState().flags.quest[itemId] >= 1) {
                 game.getState().hero.usingItemId = itemId;
@@ -150,7 +150,7 @@ const Inventory = ({ game, closeInventory }: any) => {
                 game.getAudioManager().playSample(SampleType.ERROR);
             }
         }
-        if (key === 27 || key === 'Escape' || controlsState?.shift === 1) {
+        if (key === 'Escape' || controlsState?.shift === 1) {
             closeInventory();
         }
         if (action) {
@@ -162,8 +162,7 @@ const Inventory = ({ game, closeInventory }: any) => {
     };
 
     const keyboardListener = (event) => {
-        const key = event.code || event.which || event.keyCode;
-        listener(key, null);
+        listener(event.code, null);
     };
 
     const gamepadListener = (event) => {

@@ -97,29 +97,28 @@ export default class Menu extends React.Component<MProps, MState> {
 
     interactMenu(key: string | number, controlState: ControlsState) {
         let selectedIndex = this.state.selectedIndex;
-        if (key === 'ArrowUp' || key === 38 || controlState?.up === 1) {
+        if (key === 'ArrowUp' || controlState?.up === 1) {
             selectedIndex -= 1;
             if (selectedIndex < 0) {
                 selectedIndex = this.state.items.length - 1;
             }
             this.setState({ selectedIndex });
         }
-        if (key === 'ArrowDown' || key === 40 || controlState?.down === 1) {
+        if (key === 'ArrowDown' || controlState?.down === 1) {
             selectedIndex += 1;
             if (selectedIndex > this.state.items.length - 1) {
                 selectedIndex = 0;
             }
             this.setState({ selectedIndex });
         }
-        if (key === 'Enter' || key === 13 || controlState?.action === 1) {
+        if (key === 'Enter' || controlState?.action === 1) {
             this.itemChanged(selectedIndex);
         }
     }
 
     listener(event) {
         if (this.props.showMenu) {
-            const key = event.code || event.which || event.keyCode;
-            this.interactMenu(key, null);
+            this.interactMenu(event.code, null);
         }
     }
 

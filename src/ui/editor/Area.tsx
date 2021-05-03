@@ -154,19 +154,14 @@ export default class Area extends React.Component<AreaProps, AreaState> {
     }
 
     keyDown(event) {
-        const key = event.code || event.which || event.keyCode;
-        switch (key) {
-            case 113:
+        switch (event.code) {
             case 'F2':
-            case 13:
             case 'Enter':
                 this.shortcuts.call('rename');
                 break;
-            case 38: // up
             case 'ArrowUp':
                 this.shortcuts.call('up');
                 break;
-            case 40: // down
             case 'ArrowDown':
                 this.shortcuts.call('down');
                 break;

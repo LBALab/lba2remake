@@ -60,7 +60,7 @@ export default class AskChoice extends React.Component<ACProps, ACState> {
 
     interactMenu(key: string | number, controlsState: ControlsState) {
         let selectedIndex = this.state.selectedIndex;
-        if (key === 'ArrowUp' || key === 38 || controlsState?.up === 1) {
+        if (key === 'ArrowUp' || controlsState?.up === 1) {
             selectedIndex -= 1;
             if (selectedIndex < 0) {
                 selectedIndex = this.props.ask.choices.length - 1;
@@ -68,7 +68,7 @@ export default class AskChoice extends React.Component<ACProps, ACState> {
             this.choiceChanged(selectedIndex);
             this.setState({ selectedIndex });
         }
-        if (key === 'ArrowDown' || key === 40 || controlsState?.down === 1) {
+        if (key === 'ArrowDown' || controlsState?.down === 1) {
             selectedIndex += 1;
             if (selectedIndex > this.props.ask.choices.length - 1) {
                 selectedIndex = 0;
@@ -79,8 +79,7 @@ export default class AskChoice extends React.Component<ACProps, ACState> {
     }
 
     listener(event) {
-        const key = event.code || event.which || event.keyCode;
-        this.interactMenu(key, null);
+        this.interactMenu(event.code, null);
     }
 
     gamepadListener(event) {
