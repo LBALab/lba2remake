@@ -26,7 +26,8 @@ function processActorPhysics(game: Game, scene: Scene, actor: Actor, time: Time)
 
     // If someone is talking who isn't this actor, don't process the physics.
     const currentTalkingActor = game.getState().actorTalking;
-    if (currentTalkingActor > -1 && currentTalkingActor !== actor.index) {
+    if (currentTalkingActor > -1 && currentTalkingActor !== actor.index &&
+        !(game.vr && game.controlsState.firstPerson)) {
         return;
     }
     if (actor.state.isCarriedBy === -1) {

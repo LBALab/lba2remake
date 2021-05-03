@@ -50,12 +50,13 @@ export function MESSAGE_OBJ(this: ScriptContext, cmdState, actor, id, sayMessage
         this.state.continue = false;
         return;
     }
+    const vrFirstPerson = this.game.vr && this.game.controlsState.firstPerson;
 
     const hero = this.scene.actors[0];
     const text = this.scene.props.texts[id];
     if (!cmdState.skipListener) {
         let onVoiceEndedCallback = null;
-        if (this.scene.vr) {
+        if (vrFirstPerson) {
             onVoiceEndedCallback = () => {
                 cmdState.ended = true;
             };
@@ -89,24 +90,24 @@ export function MESSAGE_OBJ(this: ScriptContext, cmdState, actor, id, sayMessage
                 }
             }, 4500);
         } else {
-            hero.props.dirMode = ActorDirMode.NO_MOVE;
-            hero.props.prevEntityIndex = hero.props.entityIndex;
-            hero.props.prevAnimIndex = hero.props.animIndex;
-            hero.props.entityIndex = 0;
-            this.game.getState().actorTalking = actor.index;
-            if (!isLBA1 && actor.index === 0)
-                hero.props.animIndex = AnimType.TALK;
-            else
-                hero.props.animIndex = AnimType.NONE;
-            if (!this.scene.vr) {
-                this.game.setUiState({
-                    text: {
-                        type: text.type === 3 ? 'big' : 'small',
-                        value: text.value,
-                        color: actor.props.textColor
-                    }
-                });
+            if (!vrFirstPerson) {
+                hero.props.dirMode = ActorDirMode.NO_MOVE;
+                hero.props.prevEntityIndex = hero.props.entityIndex;
+                hero.props.prevAnimIndex = hero.props.animIndex;
+                hero.props.entityIndex = 0;
+                if (!isLBA1 && actor.index === 0)
+                    hero.props.animIndex = AnimType.TALK;
+                else
+                    hero.props.animIndex = AnimType.NONE;
             }
+            this.game.setUiState({
+                text: {
+                    type: text.type === 3 ? 'big' : 'small',
+                    value: text.value,
+                    color: actor.props.textColor
+                }
+            });
+            this.game.getState().actorTalking = actor.index;
         }
 
         const that = this;
@@ -120,7 +121,7 @@ export function MESSAGE_OBJ(this: ScriptContext, cmdState, actor, id, sayMessage
                 });
             }
         };
-        if (text.type !== 9) {
+        if (text.type !== 9 && !vrFirstPerson) {
             this.game.controlsState.skipListener = cmdState.skipListener;
         }
     }

@@ -365,16 +365,19 @@ export function getCamVector(zone) {
     return camVector;
 }
 
+const isLBA1 = getParams().game === 'lba1';
+
 function TEXT(game: Game, scene: Scene, zone: Zone, hero: Actor, _time: Time) {
     if (game.controlsState.action === 1) {
         if (!scene.zoneState.skipListener) {
-            const isLBA1 = getParams().game === 'lba1';
-            scene.actors[0].props.dirMode = ActorDirMode.NO_MOVE;
-
-            hero.props.prevEntityIndex = hero.props.entityIndex;
-            hero.props.prevAnimIndex = hero.props.animIndex;
-            hero.props.entityIndex = 0;
-            hero.props.animIndex = isLBA1 ? AnimType.NONE : AnimType.TALK;
+            const vrFirstPerson = game.vr && game.controlsState.firstPerson;
+            if (!vrFirstPerson) {
+                scene.actors[0].props.dirMode = ActorDirMode.NO_MOVE;
+                hero.props.prevEntityIndex = hero.props.entityIndex;
+                hero.props.prevAnimIndex = hero.props.animIndex;
+                hero.props.entityIndex = 0;
+                hero.props.animIndex = isLBA1 ? AnimType.NONE : AnimType.TALK;
+            }
 
             const text = scene.props.texts[zone.props.snap];
             game.setUiState({
@@ -384,20 +387,29 @@ function TEXT(game: Game, scene: Scene, zone: Zone, hero: Actor, _time: Time) {
                     color: getHtmlColor(scene.props.palette, (zone.props.info0 * 16) + 12)
                 }
             });
-            scene.zoneState.skipListener = () => {
-                const skip = game.getUiState().skip;
-                if (skip || scene.vr) {
+
+            if (!vrFirstPerson) {
+                scene.zoneState.skipListener = () => {
+                    const skip = game.getUiState().skip;
+                    if (skip || game.vr) {
+                        scene.zoneState.ended = true;
+                    } else {
+                        game.setUiState({
+                            skip: true
+                        });
+                    }
+                };
+                game.controlsState.skipListener = scene.zoneState.skipListener;
+            }
+
+            let onVoiceEndedCallback = null;
+            if (vrFirstPerson) {
+                onVoiceEndedCallback = () => {
                     scene.zoneState.ended = true;
-                } else {
-                    game.setUiState({
-                        skip: true
-                    });
-                }
-            };
+                };
+            }
 
-            game.controlsState.skipListener = scene.zoneState.skipListener;
-
-            hero.playVoice(text.index, scene.props.textBankId);
+            hero.playVoice(text.index, scene.props.textBankId, onVoiceEndedCallback);
         }
     }
     if (scene.zoneState.ended) {

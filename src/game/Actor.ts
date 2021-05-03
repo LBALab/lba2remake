@@ -261,7 +261,8 @@ export default class Actor {
 
         // Don't update the actor if someone else is talking.
         const currentTalkingActor = game.getState().actorTalking;
-        if (currentTalkingActor > -1 && currentTalkingActor !== this.index) {
+        if (currentTalkingActor > -1 && currentTalkingActor !== this.index &&
+            !(game.vr && game.controlsState.firstPerson)) {
             return;
         }
 
