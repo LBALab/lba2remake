@@ -14,8 +14,9 @@ declare global {
 }
 
 const THEME_MENU = 'THEME_MENU';
-const samples = {};
-const samplesPerActor = {};
+
+let samples = {};
+let samplesPerActor = {};
 
 function createAudioContext() {
     window.AudioContext = window.AudioContext || window.webkitAudioContext; // needed for Safari
@@ -156,6 +157,21 @@ export function createAudioManager(state) {
                 sound.stop();
             }
             // TODO find a way to treat multiple audio sources per actor
+        },
+        releaseSamples: () => {
+            Object.keys(samples).forEach((key) => {
+                samples[key].stop();
+                delete samples[key];
+            });
+            Object.keys(samplesPerActor).forEach((key) => {
+                Object.keys(samplesPerActor[key]).forEach((kk) => {
+                    samplesPerActor[key][kk].stop();
+                    delete samplesPerActor[key][kk];
+                });
+                delete samplesPerActor[key];
+            });
+            samples = {};
+            samplesPerActor = {};
         },
 
         // voice
