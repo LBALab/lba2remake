@@ -2,6 +2,7 @@ import { MotionController } from '@webxr-input-profiles/motion-controllers';
 import { BehaviourMode } from '../../game/loop/hero';
 import Game from '../../game/Game';
 import { getParams } from '../../params';
+import { LBA1Items, LBA2Items } from '../../game/data/inventory';
 
 interface BtnMapping {
     btn: string;
@@ -52,6 +53,8 @@ interface Context {
     scene: any;
 }
 
+const isLBA1 = getParams().game === 'lba1';
+
 export function applyMappings(
     motionController: MotionController,
     mappings: Mappings,
@@ -64,6 +67,28 @@ export function applyMappings(
     const { game, camera, scene } = ctx;
     const { controlsState } = game;
     const { components } = motionController;
+
+    const listBehaviours = [
+        BehaviourMode.NORMAL,
+        BehaviourMode.ATHLETIC,
+        BehaviourMode.AGGRESSIVE,
+        BehaviourMode.DISCRETE,
+    ];
+    let hasProtoPack = !isLBA1 && game.getState().flags.quest[LBA2Items.PROTO_PACK];
+    hasProtoPack |= isLBA1 && game.getState().flags.quest[LBA1Items.PROTO_PACK];
+    const hasJetpack = !isLBA1 && game.getState().flags.quest[LBA2Items.PROTO_PACK] === 2;
+    const hasHorn = !isLBA1 && game.getState().flags.quest[LBA2Items.HORN];
+
+    if (hasProtoPack) {
+        listBehaviours.push(BehaviourMode.PROTOPACK);
+    }
+    if (!isLBA1 && hasJetpack) {
+        listBehaviours.push(BehaviourMode.JETPACK);
+    }
+    if (!isLBA1 && hasHorn) {
+        listBehaviours.push(BehaviourMode.HORN);
+    }
+
     applyMapping(components, mappings, 'action', (enabled) => {
         if (enabled) {
             controlsState.action = 1;
@@ -72,16 +97,16 @@ export function applyMappings(
     applyMapping(components, mappings, 'behaviourAction', (enabled) => {
         if (enabled) {
             switch (game.getState().hero.behaviour) {
-                case 0:
+                case BehaviourMode.NORMAL:
                     controlsState.action = 1;
                     break;
-                case 1:
+                case BehaviourMode.ATHLETIC:
                     controlsState.jump = 1;
                     break;
-                case 2:
+                case BehaviourMode.AGGRESSIVE:
                     controlsState.fight = 1;
                     break;
-                case 3:
+                case BehaviourMode.DISCRETE:
                     controlsState.crouch = 1;
                     break;
             }
@@ -93,21 +118,18 @@ export function applyMappings(
     });
     applyMapping(components, mappings, 'prevBehaviour', (enabled) => {
         if (enabled) {
-            let newBehaviour = Math.max(game.getState().hero.behaviour - 1, 0);
-            if (game.getState().hero.behaviour === BehaviourMode.JETPACK) {
-                newBehaviour = BehaviourMode.PROTOPACK;
-            }
+            const behaviour = game.getState().hero.behaviour;
+            const index = listBehaviours.findIndex(b => b === behaviour);
+            const newBehaviour = listBehaviours[Math.max(index - 1, 0)];
             setBehaviour(game, newBehaviour);
         }
     });
     applyMapping(components, mappings, 'nextBehaviour', (enabled) => {
         if (enabled) {
-            if (game.getState().hero.behaviour === BehaviourMode.PROTOPACK ||
-                game.getState().hero.behaviour === BehaviourMode.JETPACK) {
-                setBehaviour(game, BehaviourMode.JETPACK);
-            } else {
-                setBehaviour(game, Math.min(game.getState().hero.behaviour + 1, 4));
-            }
+            const behaviour = game.getState().hero.behaviour;
+            const index = listBehaviours.findIndex(b => b === behaviour);
+            const newBehaviour = listBehaviours[Math.min(index + 1, listBehaviours.length - 1)];
+            setBehaviour(game, newBehaviour);
         }
     });
     if (controlsState.firstPerson) {

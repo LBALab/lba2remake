@@ -5,12 +5,15 @@ import { createTeleportMenu, updateTeleportMenu } from './vrTeleportMenu';
 import { drawFrame } from './vrUtils';
 import { tr } from '../../lang';
 import { getVideoPath } from '../../resources';
+import { getParams } from '../../params';
 
 let menuNode = null;
 let pickingTarget = null;
 let teleportMenu = null;
 let mainMenu = null;
 let resume = null;
+
+const isLBA1 = getParams().game === 'lba1';
 
 export function createMenu(game, sceneManager, light) {
     menuNode = new THREE.Object3D();
@@ -52,24 +55,30 @@ export function createMenu(game, sceneManager, light) {
                 }
             };
             game.controlsState.skipListener = onEnded;
+
             game.setUiState({
                 showMenu: false,
-                video: {
+                video: isLBA1 ? null : {
                     path: getVideoPath('INTRO'),
                     onEnded
                 }
             });
             history.pushState({id: 'game'}, '');
+            if (isLBA1) {
+                onEnded();
+            }
         }
     }));
-    mainMenu.add(createMenuItem({
-        text: tr('teleport'),
-        y: -150,
-        callback: () => {
-            game.setUiState({ teleportMenu: true });
-            history.pushState({id: 'teleport'}, '');
-        }
-    }));
+    if (!isLBA1) {
+        mainMenu.add(createMenuItem({
+            text: tr('teleport'),
+            y: -150,
+            callback: () => {
+                game.setUiState({ teleportMenu: true });
+                history.pushState({id: 'teleport'}, '');
+            }
+        }));
+    }
 
     mainMenu.add(createOptionMenuItem({
         text: tr('Camera'),
@@ -119,7 +128,7 @@ export function createMenu(game, sceneManager, light) {
         }
         game.setUiState({
             showMenu: true,
-            teleportMenu: event.state && event.state.id === 'teleport',
+            teleportMenu: !isLBA1 && event.state && event.state.id === 'teleport',
             video: null
         });
         game.controlsState.skipListener = null;

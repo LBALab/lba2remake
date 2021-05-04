@@ -10,6 +10,7 @@ import sceneMapping from '../../game/scenery/island/data/sceneMapping';
 import islandOffsets from './data/islandOffsets';
 import {tr} from '../../lang';
 import { WORLD_SCALE_B, WORLD_SIZE } from '../../utils/lba';
+import { getParams } from '../../params';
 
 let islandWrapper = null;
 let activeIsland: Island = null;
@@ -26,29 +27,33 @@ const invWorldMat = new THREE.Matrix4();
 
 const planets = LocationsNode.children;
 
+const isLBA1 = getParams().game === 'lba1';
+
 export function createTeleportMenu(sceneLight) {
     const teleportMenu = new THREE.Object3D();
 
-    for (let i = 0; i < 4; i += 1) {
-        const p = createPlanetItem({
-            idx: i,
-            text: planets[i].name,
-            icon: planets[i].icon,
-            x: -(i - 1.5) * 240,
-            y: 50,
-            callback: () => {
-                if (selectedPlanet !== i) {
-                    selectedPlanet = i;
-                    selectedIsland = 0;
-                    each(planetButtons, pb => pb.draw());
-                    refreshIslandButtons(teleportMenu);
-                    loadIsland(planets[i].children[0].id);
+    if (!isLBA1) {
+        for (let i = 0; i < 4; i += 1) {
+            const p = createPlanetItem({
+                idx: i,
+                text: planets[i].name,
+                icon: planets[i].icon,
+                x: -(i - 1.5) * 240,
+                y: 50,
+                callback: () => {
+                    if (selectedPlanet !== i) {
+                        selectedPlanet = i;
+                        selectedIsland = 0;
+                        each(planetButtons, pb => pb.draw());
+                        refreshIslandButtons(teleportMenu);
+                        loadIsland(planets[i].children[0].id);
+                    }
                 }
-            }
-        });
-        teleportMenu.add(p.mesh);
-        planetButtons.push(p);
-        intersectObjects.push(p.mesh);
+            });
+            teleportMenu.add(p.mesh);
+            planetButtons.push(p);
+            intersectObjects.push(p.mesh);
+        }
     }
 
     refreshIslandButtons(teleportMenu);
