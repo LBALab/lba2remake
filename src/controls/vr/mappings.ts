@@ -74,10 +74,10 @@ export function applyMappings(
         BehaviourMode.AGGRESSIVE,
         BehaviourMode.DISCRETE,
     ];
-    const hasProtoPack = game.getState().flags.quest[LBA2Items.PROTO_PACK] ||
-        game.getState().flags.quest[LBA1Items.PROTO_PACK];
-    const hasJetpack = game.getState().flags.quest[LBA2Items.PROTO_PACK] === 2;
-    const hasHorn = game.getState().flags.quest[LBA2Items.HORN];
+    let hasProtoPack = !isLBA1 && game.getState().flags.quest[LBA2Items.PROTO_PACK];
+    hasProtoPack |= isLBA1 && game.getState().flags.quest[LBA1Items.PROTO_PACK];
+    const hasJetpack = !isLBA1 && game.getState().flags.quest[LBA2Items.PROTO_PACK] === 2;
+    const hasHorn = !isLBA1 && game.getState().flags.quest[LBA2Items.HORN];
 
     if (hasProtoPack) {
         listBehaviours.push(BehaviourMode.PROTOPACK);
