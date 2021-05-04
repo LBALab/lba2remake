@@ -631,7 +631,9 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
             return;
         }
         const { library } = this.props.sharedState;
-        const scenes = await findScenesUsingLibrary(library);
+        const scenes = getParams().game === 'lba1'
+            ? [library]
+            : await findScenesUsingLibrary(library);
         this.setState({
             updateProgress: `Applied changes to 0 / ${scenes.length} scenes...`
         }, this.saveDebugScope);
