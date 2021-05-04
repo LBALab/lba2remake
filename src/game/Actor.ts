@@ -4,7 +4,7 @@ import {cloneDeep} from 'lodash';
 import { loadModel, Model } from '../model';
 import { loadAnimState, resetAnimState, updateKeyframeInterpolation, updateKeyframe } from '../model/animState';
 import { AnimType } from './data/animType';
-import { angleToRad, distance2D, angleTo, getDistanceLba, WORLD_SCALE } from '../utils/lba';
+import { angleToRad, angleTo, getDistanceLba, WORLD_SCALE } from '../utils/lba';
 import {createBoundingBox} from '../utils/rendering';
 import { loadSprite } from './scenery/isometric/sprites';
 
@@ -501,12 +501,12 @@ export default class Actor {
     }
 
     @pure()
-    getDistance(pos) {
-        return distance2D(this.physics.position, pos);
+    getDistance(pos: THREE.Vector3) {
+        return this.physics.position.distanceTo(pos);
     }
 
     @pure()
-    getDistanceLba(pos) {
+    getDistanceLba(pos: THREE.Vector3) {
         return getDistanceLba(this.getDistance(pos));
     }
 
