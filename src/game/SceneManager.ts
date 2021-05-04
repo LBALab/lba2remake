@@ -83,6 +83,7 @@ export class SceneManager {
         }
         this.game.loading(index);
         this.renderer.setClearColor(0x000000);
+        this.game.getState().actorTalking = -1;
         this.cleanUp();
         this.release();
         this.scene = await Scene.load(this.game, this.renderer, this, index);
@@ -112,6 +113,7 @@ export class SceneManager {
 
         for (const actor of this.scene.actors) {
             actor.stopSamples();
+            actor.stopVoice();
         }
     }
 
