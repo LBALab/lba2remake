@@ -7,7 +7,7 @@ function collectLibraries(node, path = null) {
     if (node.type !== 'all' && node.type !== 'planet')
         cPath = path ? `${path}/${node.name}` : node.name;
 
-    if (node.sceneIndex) {
+    if (node.sceneIndex !== undefined) {
         libraries.push({
             name: cPath,
             index: node.sceneIndex,
