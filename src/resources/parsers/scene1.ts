@@ -197,7 +197,7 @@ function loadActors(scene, offset) {
         offset += 2;
         actor.speed = data.getInt16(offset, true) * SPEED_ADJUSTMENT;
         offset += 2;
-        actor.dirMode = data.getInt16(offset);
+        actor.dirMode = data.getInt16(offset, true);
         offset += 2;
 
         actor.info0 = data.getInt16(offset, true);
