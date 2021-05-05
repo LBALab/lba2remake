@@ -556,7 +556,6 @@ export default class Actor {
             this.threeObject.position.copy(this.physics.position);
             this.threeObject.quaternion.copy(this.physics.orientation);
             if (this.props.flags.isSprite) {
-                this.state.hasGravityByAnim = true;
                 const {spriteIndex, flags: { hasSpriteAnim3D } } = this.props;
                 const sprite = await loadSprite(
                     spriteIndex,
