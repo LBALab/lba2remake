@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { unimplemented } from './utils';
-import { WORLD_SCALE, getRandom, distAngle, SPEED_ADJUSTMENT } from '../../utils/lba';
+import { WORLD_SCALE, getRandom, distAngle } from '../../utils/lba';
 import { ScriptContext } from './ScriptContext';
 import Point from '../Point';
 
@@ -73,7 +73,7 @@ export function GOTO_POINT_3D(this: ScriptContext, point: Point) {
     }
     const distance = this.actor.gotoPosition(
         point.physics.position,
-        this.time.delta * WORLD_SCALE * this.actor.props.speed * SPEED_ADJUSTMENT
+        this.time.delta * WORLD_SCALE * this.actor.props.speed
     );
     if (distance > 0.001) {
         this.state.reentryOffset = this.state.offset;
