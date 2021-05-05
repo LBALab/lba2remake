@@ -15,30 +15,40 @@ import {
 import { bits } from '../../../../../utils';
 import { getBricksHQR, getSceneMap } from '../../../../../resources';
 import { loadLayout } from '../../../../../game/scenery/isometric/layouts';
+import { getParams } from '../../../../../params';
 
 export async function findAllVariants(lDef) {
     const { nX, nY, nZ } = lDef.props;
     if (nX === 1 && nY === 1 && nZ === 1) {
         return [];
     }
-    const sceneList = times(222);
-    const sceneMap = await getSceneMap();
     const bkg = await getBricksHQR();
     const layout = loadLayout(bkg, lDef);
-    const variantsByScenes = await Promise.all(
-        map(sceneList, async (scene) => {
-            const indexInfo = sceneMap[scene];
-            if (indexInfo.isIsland) {
-                return [];
-            }
-            return findAllVariantsInScene(
-                bkg,
-                lDef,
-                layout,
-                indexInfo
-            );
-        })
-    );
+    let variantsByScenes: any[];
+    if (getParams().game === 'lba1') {
+        variantsByScenes = [
+            await findAllVariantsInScene(bkg, lDef, layout, {
+                sceneryIndex: lDef.library
+            })
+        ];
+    } else {
+        const sceneList = times(222);
+        const sceneMap = await getSceneMap();
+        variantsByScenes = await Promise.all(
+            map(sceneList, async (scene) => {
+                const indexInfo = sceneMap[scene];
+                if (indexInfo.isIsland) {
+                    return [];
+                }
+                return findAllVariantsInScene(
+                    bkg,
+                    lDef,
+                    layout,
+                    indexInfo
+                );
+            })
+        );
+    }
     const allVariants = flatten(variantsByScenes);
     const scenesByKey = mapValues(
         groupBy(allVariants, 'key'),

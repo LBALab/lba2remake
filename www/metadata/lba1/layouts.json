@@ -1,2 +1,59 @@
 {
+  "0": {
+    "0": {
+      "mirror": true
+    },
+    "1": {
+      "mirror": true
+    },
+    "2": {
+      "mirror": true
+    },
+    "3": {
+      "mirror": true
+    },
+    "22": {
+      "mirror": true
+    },
+    "23": {
+      "mirror": true
+    },
+    "75": {
+      "replace": true,
+      "file": "CI_113_cloth_bench.glb",
+      "orientation": 1
+    },
+    "76": {
+      "replace": true,
+      "file": "CI_113_cloth_bench.glb",
+      "orientation": 0
+    },
+    "83": {
+      "mirror": true
+    },
+    "84": {
+      "mirror": true
+    },
+    "85": {
+      "mirror": true
+    },
+    "105": {
+      "mirror": true
+    },
+    "129": {
+      "mirror": true
+    },
+    "132": {
+      "mirror": true
+    },
+    "163": {
+      "mirror": true
+    },
+    "168": {
+      "mirror": true
+    },
+    "169": {
+      "mirror": false
+    }
+  }
 }
