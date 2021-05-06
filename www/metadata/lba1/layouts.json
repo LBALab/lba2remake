@@ -18,6 +18,11 @@
     "23": {
       "mirror": true
     },
+    "74": {
+      "replace": true,
+      "file": "CI_0_layout_74.glb",
+      "orientation": 0
+    },
     "75": {
       "replace": true,
       "file": "CI_113_cloth_bench.glb",
@@ -54,6 +59,90 @@
     },
     "169": {
       "mirror": false
+    }
+  },
+  "1": {
+    "177": {
+      "replace": true,
+      "file": "CI_0_layout_74.glb",
+      "orientation": 1
+    }
+  },
+  "2": {
+    "177": {
+      "replace": true,
+      "file": "CI_0_layout_74.glb",
+      "orientation": 0
+    }
+  },
+  "3": {
+    "177": {
+      "replace": true,
+      "file": "CI_0_layout_74.glb",
+      "orientation": 0
+    }
+  },
+  "4": {
+    "177": {
+      "replace": true,
+      "file": "CI_0_layout_74.glb",
+      "orientation": 0
+    }
+  },
+  "6": {
+    "177": {
+      "replace": true,
+      "file": "CI_0_layout_74.glb",
+      "orientation": 0
+    }
+  },
+  "9": {
+    "126": {
+      "replace": true,
+      "file": "CI_0_layout_74.glb",
+      "orientation": 0
+    }
+  },
+  "15": {
+    "126": {
+      "replace": true,
+      "file": "CI_0_layout_74.glb",
+      "orientation": 0
+    }
+  },
+  "35": {
+    "177": {
+      "replace": true,
+      "file": "CI_0_layout_74.glb",
+      "orientation": 0
+    }
+  },
+  "62": {
+    "126": {
+      "replace": true,
+      "file": "CI_0_layout_74.glb",
+      "orientation": 0
+    }
+  },
+  "63": {
+    "126": {
+      "replace": true,
+      "file": "CI_0_layout_74.glb",
+      "orientation": 0
+    }
+  },
+  "104": {
+    "177": {
+      "replace": true,
+      "file": "CI_0_layout_74.glb",
+      "orientation": 0
+    }
+  },
+  "118": {
+    "177": {
+      "replace": true,
+      "file": "CI_0_layout_74.glb",
+      "orientation": 0
     }
   }
 }
