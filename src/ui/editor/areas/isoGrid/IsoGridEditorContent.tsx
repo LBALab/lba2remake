@@ -933,7 +933,7 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
         }
         this.setState({ updateProgress: 'Applying changes...' }, this.saveDebugScope);
         const sceneData = await getScene(this.isoGridIdx);
-        await saveSceneReplacementModel(this.isoGridIdx, sceneData.ambience);
+        await saveSceneReplacementModel(sceneData.sceneryIndex, sceneData.ambience);
         await this.loadIsoGrid(this.isoGridIdx, false);
         this.setState({ updateProgress: null }, this.saveDebugScope);
     }
