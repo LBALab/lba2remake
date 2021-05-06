@@ -169,7 +169,6 @@ function loadActors(scene, offset) {
 
         const staticFlags = data.getUint16(offset, true);
         actor.flags = parseStaticFlags(staticFlags);
-        actor.flags.hasCollisionFloor = true; // only used for LBA2
         offset += 2;
 
         actor.entityIndex = data.getInt16(offset, true);
@@ -197,7 +196,7 @@ function loadActors(scene, offset) {
         offset += 2;
         actor.speed = data.getInt16(offset, true) * SPEED_ADJUSTMENT;
         offset += 2;
-        actor.dirMode = data.getInt16(offset);
+        actor.dirMode = data.getInt16(offset, true);
         offset += 2;
 
         actor.info0 = data.getInt16(offset, true);

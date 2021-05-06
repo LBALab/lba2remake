@@ -291,23 +291,13 @@ export default class Actor {
 
         if (this.props.dirMode === ActorDirMode.SAME_XZ) {
             const { followActor } = this.props;
-            if (followActor && followActor !== -1) {
+            if (followActor > -1) {
                 const targetActor = scene.actors[followActor];
-                this.physics.position.copy(targetActor.physics.position);
-                if (this.model && targetActor.model) {
-                    this.model.mesh.quaternion.copy(targetActor.physics.orientation);
-                    this.model.mesh.position.copy(targetActor.physics.position);
-                    if (this.model.boundingBoxDebugMesh) {
-                        this.model.boundingBoxDebugMesh.quaternion.copy(
-                            targetActor.model.mesh.quaternion
-                        );
-                        this.model.boundingBoxDebugMesh.quaternion.invert();
-                    }
-                }
-                if (this.sprite) {
-                    this.sprite.threeObject.quaternion.copy(targetActor.physics.orientation);
-                    this.sprite.threeObject.position.copy(targetActor.physics.position);
-                }
+                const { x, z } = targetActor.physics.position;
+                const y = this.physics.position.y;
+                this.physics.position.set(x, y, z);
+                this.threeObject.quaternion.copy(targetActor.physics.orientation);
+                this.threeObject.position.copy(this.physics.position);
             }
         }
 
@@ -556,7 +546,6 @@ export default class Actor {
             this.threeObject.position.copy(this.physics.position);
             this.threeObject.quaternion.copy(this.physics.orientation);
             if (this.props.flags.isSprite) {
-                this.state.hasGravityByAnim = true;
                 const {spriteIndex, flags: { hasSpriteAnim3D } } = this.props;
                 const sprite = await loadSprite(
                     spriteIndex,
