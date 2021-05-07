@@ -4382,6 +4382,11 @@
     "6": {
       "mirror": true
     },
+    "7": {
+      "replace": true,
+      "file": "OT_007_white_stool.glb",
+      "orientation": 0
+    },
     "10": {
       "mirror": true
     },
