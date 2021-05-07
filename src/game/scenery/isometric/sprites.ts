@@ -326,6 +326,10 @@ export async function loadSpriteReplacement(ambience, {file, fx}) {
             }
             m.scene.traverse((node) => {
                 if (node instanceof THREE.Mesh) {
+                    const material = node.material as THREE.MeshStandardMaterial;
+                    if (material.name.substring(0, 8) === 'keepMat_') {
+                        return;
+                    }
                     const texture = node.material.map;
                     const mColor = node.material.color.clone().convertLinearToGamma();
                     const color = new THREE.Vector4().fromArray(
