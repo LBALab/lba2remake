@@ -49,7 +49,7 @@ export default class IslandPhysics {
 
     getNormal(scene: Scene, position: THREE.Vector3, boundingBox: THREE.Box3) {
         POSITION.copy(position);
-        POSITION.applyMatrix4(scene.sceneNode.matrixWorld);
+        POSITION.add(scene.sceneNode.position);
         const section = this.findSection(POSITION);
         if (!section) {
             return null;
@@ -100,7 +100,7 @@ export default class IslandPhysics {
         }
 
         POSITION.copy(obj.physics.position);
-        POSITION.applyMatrix4(scene.sceneNode.matrixWorld);
+        POSITION.add(scene.sceneNode.position);
 
         const section = this.findSection(POSITION);
 
@@ -232,7 +232,7 @@ export default class IslandPhysics {
 
         const originalPos = new THREE.Vector3();
         originalPos.copy(obj.physics.position);
-        originalPos.applyMatrix4(scene.sceneNode.matrixWorld);
+        originalPos.add(scene.sceneNode.position);
         const minFunc = (a, b) => a > b;
         const floorHeight = this.getFloorHeight(scene, obj, minFunc, DEFAULT_FLOOR_THRESHOLD);
         return originalPos.y - floorHeight;
@@ -282,7 +282,7 @@ export default class IslandPhysics {
     private getFloorHeight(scene: Scene, obj, minFunc, floorThreshold) {
         const originalPos = new THREE.Vector3();
         originalPos.copy(obj.physics.position);
-        originalPos.applyMatrix4(scene.sceneNode.matrixWorld);
+        originalPos.add(scene.sceneNode.position);
         ACTOR_BOX.copy(obj.model.boundingBox);
         ACTOR_BOX.translate(originalPos);
 
@@ -308,7 +308,7 @@ export default class IslandPhysics {
         // Otherwise, check to see if there are any objects under Twinsen which
         // would be considered the floor.
         POSITION.copy(obj.physics.position);
-        POSITION.applyMatrix4(scene.sceneNode.matrixWorld);
+        POSITION.add(scene.sceneNode.position);
         while (true) {
             if (POSITION.y < 0) {
                 break;
