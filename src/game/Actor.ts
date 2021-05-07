@@ -549,6 +549,7 @@ export default class Actor {
                 const {spriteIndex, flags: { hasSpriteAnim3D } } = this.props;
                 const sprite = await loadSprite(
                     spriteIndex,
+                    this.scene.props.ambience,
                     hasSpriteAnim3D,
                     false,
                     false

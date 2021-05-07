@@ -58,6 +58,7 @@ export default class MagicBall {
         const type = MAGIC_BALL_SPRITE + (magicLevel - 1);
         const sprite = await loadSprite(
             isLBA1 ? LBA1MagicBallMapping[type] : type,
+            this.scene.props.ambience,
             false, /* hasSpriteAnim3D */
             true, /* isBillboard */
             this.scene.is3DCam,
