@@ -18,12 +18,7 @@ import { getParams } from '../../../../params';
 
 const exporter = new GLTFExporter();
 
-const modelsCache = {};
-
 export async function loadModel(file: string, useCache: boolean = false) : Promise<GLTF> {
-    if (useCache && file in modelsCache) {
-        return modelsCache[file];
-    }
     const model = await new Promise<GLTF>((resolve) => {
         const loader = new GLTFLoader();
         if (!useCache) {
@@ -33,9 +28,6 @@ export async function loadModel(file: string, useCache: boolean = false) : Promi
             resolve(m);
         });
     });
-    if (useCache) {
-        modelsCache[file] = model;
-    }
     return model;
 }
 
