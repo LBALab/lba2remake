@@ -4451,6 +4451,16 @@
       "file": "OT_166_blue_cash_register.glb",
       "orientation": 0
     },
+    "168": {
+      "replace": true,
+      "file": "OT_168_paper_rolls_container.glb",
+      "orientation": 0
+    },
+    "173": {
+      "replace": true,
+      "file": "OT_173_ancient_pots.glb",
+      "orientation": 0
+    },
     "200": {
       "mirror": true
     }
