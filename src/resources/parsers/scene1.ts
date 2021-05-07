@@ -71,6 +71,10 @@ function loadAmbience(scene, offset) {
         musicIndex: data.getInt8(innerOffset + 32),
     };
 
+    // converting to LBA2 angle values
+    scene.ambience.lightingAlpha = (scene.ambience.lightingAlpha + 0x100) * 0x1000 / 0x400;
+    scene.ambience.lightingBeta = (scene.ambience.lightingBeta) * 0x1000 / 0x400;
+
     innerOffset = 4;
     for (let i = 0; i < 4; i += 1) {
         scene.ambience.samples.push({
