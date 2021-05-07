@@ -1,2 +1,7 @@
 {
+    "sprites": {
+        "47": {
+            "file": "box_sprite.glb"
+        }
+    }
 }

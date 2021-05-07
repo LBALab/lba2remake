@@ -18,6 +18,11 @@
     "23": {
       "mirror": true
     },
+    "74": {
+      "replace": true,
+      "file": "CI_0_layout_74_box.glb",
+      "orientation": 1
+    },
     "75": {
       "replace": true,
       "file": "CI_113_cloth_bench.glb",
@@ -54,6 +59,174 @@
     },
     "169": {
       "mirror": false
+    }
+  },
+  "1": {
+    "177": {
+      "replace": true,
+      "file": "CI_0_layout_74_box.glb",
+      "orientation": 1
+    }
+  },
+  "2": {
+    "177": {
+      "replace": true,
+      "file": "CI_0_layout_74_box.glb",
+      "orientation": 1
+    }
+  },
+  "3": {
+    "177": {
+      "replace": true,
+      "file": "CI_0_layout_74_box.glb",
+      "orientation": 0
+    }
+  },
+  "4": {
+    "177": {
+      "replace": true,
+      "file": "CI_0_layout_74_box.glb",
+      "orientation": 1
+    }
+  },
+  "6": {
+    "177": {
+      "replace": true,
+      "file": "CI_0_layout_74_box.glb",
+      "orientation": 1
+    }
+  },
+  "9": {
+    "126": {
+      "replace": true,
+      "file": "CI_0_layout_74_box.glb",
+      "orientation": 1
+    }
+  },
+  "11": {
+    "177": {
+      "replace": true,
+      "file": "CI_0_layout_74_box.glb",
+      "orientation": 1
+    }
+  },
+  "12": {
+    "177": {
+      "replace": true,
+      "file": "CI_0_layout_74_box.glb",
+      "orientation": 1
+    }
+  },
+  "15": {
+    "126": {
+      "replace": true,
+      "file": "CI_0_layout_74_box.glb",
+      "orientation": 1
+    }
+  },
+  "35": {
+    "177": {
+      "replace": true,
+      "file": "CI_0_layout_74_box.glb",
+      "orientation": 1
+    }
+  },
+  "62": {
+    "126": {
+      "replace": true,
+      "file": "CI_0_layout_74_box.glb",
+      "orientation": 1
+    }
+  },
+  "63": {
+    "126": {
+      "replace": true,
+      "file": "CI_0_layout_74_box.glb",
+      "orientation": 1
+    }
+  },
+  "65": {
+    "126": {
+      "replace": true,
+      "file": "CI_0_layout_74_box.glb",
+      "orientation": 1
+    }
+  },
+  "69": {
+    "126": {
+      "replace": true,
+      "file": "CI_0_layout_74_box.glb",
+      "orientation": 1
+    }
+  },
+  "71": {
+    "126": {
+      "replace": true,
+      "file": "CI_0_layout_74_box.glb",
+      "orientation": 1
+    }
+  },
+  "72": {
+    "126": {
+      "replace": true,
+      "file": "CI_0_layout_74_box.glb",
+      "orientation": 1
+    }
+  },
+  "73": {
+    "126": {
+      "replace": true,
+      "file": "CI_0_layout_74_box.glb",
+      "orientation": 1
+    }
+  },
+  "81": {
+    "126": {
+      "replace": true,
+      "file": "CI_0_layout_74_box.glb",
+      "orientation": 1
+    }
+  },
+  "82": {
+    "126": {
+      "replace": true,
+      "file": "CI_0_layout_74_box.glb",
+      "orientation": 1
+    }
+  },
+  "91": {
+    "126": {
+      "replace": true,
+      "file": "CI_0_layout_74_box.glb",
+      "orientation": 1
+    }
+  },
+  "92": {
+    "126": {
+      "replace": true,
+      "file": "CI_0_layout_74_box.glb",
+      "orientation": 1
+    }
+  },
+  "96": {
+    "126": {
+      "replace": true,
+      "file": "CI_0_layout_74_box.glb",
+      "orientation": 1
+    }
+  },
+  "104": {
+    "177": {
+      "replace": true,
+      "file": "CI_0_layout_74_box.glb",
+      "orientation": 1
+    }
+  },
+  "118": {
+    "177": {
+      "replace": true,
+      "file": "CI_0_layout_74_box.glb",
+      "orientation": 0
     }
   }
 }
