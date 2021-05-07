@@ -4435,6 +4435,11 @@
     "137": {
       "mirror": true
     },
+    "141": {
+      "replace": true,
+      "file": "OT_141_red_fire_extinguisher.glb",
+      "orientation": 0
+    },
     "151": {
       "mirror": true
     },
