@@ -4446,6 +4446,11 @@
     "165": {
       "mirror": true
     },
+    "166": {
+      "replace": true,
+      "file": "OT_166_blue_cash_register.glb",
+      "orientation": 0
+    },
     "200": {
       "mirror": true
     }
