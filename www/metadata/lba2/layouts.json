@@ -4462,7 +4462,14 @@
       "orientation": 0
     },
     "200": {
-      "mirror": true
+      "replace": true,
+      "file": "OT_200_blue_wooden_box.glb",
+      "orientation": 0
+    },
+    "200:2x4x4:0,12677,12680,12681,-1,-1,-1,-1,12682,12683,12688,12689,-1,-1,-1,-1,0,12677,0,12678,0,12679,12680,12681,12682,12683,12684,12685,12686,12687,12688,12689": {
+      "replace": true,
+      "file": "OT_200_blue_wooden_box_var1.glb",
+      "orientation": 0
     }
   },
   "14": {
