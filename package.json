@@ -27,7 +27,7 @@
     "file-saver": "^2.0.2",
     "jest-diff": "^25.5.0",
     "jszip": "^3.4.0",
-    "lodash": "^4.17.19",
+    "lodash": "^4.17.21",
     "react": "16.8.6",
     "react-dom": "16.8.6",
     "react-markdown": "^4.3.1",
