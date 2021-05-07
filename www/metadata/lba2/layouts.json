@@ -4374,6 +4374,11 @@
     "0": {
       "mirror": true
     },
+    "2": {
+      "replace": true,
+      "file": "OT_002_white_chair.glb",
+      "orientation": 0
+    },
     "6": {
       "mirror": true
     },
