@@ -27,8 +27,14 @@
 		"231": {
 			"file": "surveillance_button_off.glb"
 		},
+		"232": {
+			"file": "surveillance_button_on.glb"
+		},
 		"122": {
 			"file": "surveillance_lever_off.glb"
+		},
+		"123": {
+			"file": "surveillance_lever_on.glb"
 		}
     }
 }
