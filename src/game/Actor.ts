@@ -609,6 +609,14 @@ export default class Actor {
         this.resetAnimState();
     }
 
+    setSprite(scene, index) {
+        if (this.props.spriteIndex === index) {
+            return;
+        }
+        this.props.spriteIndex = index;
+        this.reloadModel(scene);
+    }
+
     cancelAnims() {
         // TODO(scottwilliams): There are likely other cases where we should
         // also not cancel the animations e.g. when Twinsen is crawling. Add

@@ -207,7 +207,9 @@ export const ANGLE_RND = unimplemented();
 
 export const REPLACE = unimplemented();
 
-export const SPRITE = unimplemented();
+export function SPRITE(this: ScriptContext, index) {
+    this.actor.setSprite(this.scene, index);
+}
 
 export const SET_FRAME = unimplemented();
 
