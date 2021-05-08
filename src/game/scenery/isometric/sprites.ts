@@ -6,6 +6,10 @@ import { compile } from '../../../utils/shaders';
 import { WORLD_SCALE } from '../../../utils/lba';
 import sprite_vertex from './shaders/sprite.vert.glsl';
 import sprite_fragment from './shaders/sprite.frag.glsl';
+import VERT_OBJECTS_COLORED_SPRITE from './shaders/objects/colored.sprite.vert.glsl';
+import FRAG_OBJECTS_COLORED from './shaders/objects/colored.frag.glsl';
+import VERT_OBJECTS_TEXTURED from './shaders/objects/textured.vert.glsl';
+import FRAG_OBJECTS_TEXTURED from './shaders/objects/textured.frag.glsl';
 import { makeStars, makeStarsMaterial } from './misc/dome_env';
 import {
     getPalette,
@@ -17,6 +21,7 @@ import {
     getModelReplacements
 } from '../../../resources';
 import { getParams } from '../../../params';
+import { loadReplacementData } from './metadata/replacements';
 
 const loader = new GLTFLoader();
 
@@ -43,6 +48,7 @@ async function loadCache() {
 
 export async function loadSprite(
     index,
+    ambience,
     hasSpriteAnim3D = false,
     isBillboard = false,
     is3DCam = false,
@@ -66,7 +72,7 @@ export async function loadSprite(
     let update = (_time) => {};
     const { sprites: replacements } = await getModelReplacements();
     if (replacements && index in replacements) {
-        const replacement = await loadSpriteReplacement(replacements[index]);
+        const replacement = await loadSpriteReplacement(ambience, replacements[index]);
         threeObject = replacement.threeObject;
         update = replacement.update;
     } else if (isBillboard) {
@@ -301,7 +307,8 @@ interface SpriteReplacement {
     update: (time: any) => void;
 }
 
-export async function loadSpriteReplacement({file, fx}) {
+export async function loadSpriteReplacement(ambience, {file, fx}) {
+    const data = await loadReplacementData(ambience);
     return new Promise<SpriteReplacement>((resolve) => {
         const { game } = getParams();
         loader.load(`models/${game}/sprites/${file}`, async (m) => {
@@ -317,6 +324,39 @@ export async function loadSpriteReplacement({file, fx}) {
                 glow.renderOrder = 1;
                 m.scene.add(glow);
             }
+            m.scene.traverse((node) => {
+                if (node instanceof THREE.Mesh) {
+                    const material = node.material as THREE.MeshStandardMaterial;
+                    if (material.name.substring(0, 8) === 'keepMat_') {
+                        return;
+                    }
+                    const texture = node.material.map;
+                    const mColor = node.material.color.clone().convertLinearToGamma();
+                    const color = new THREE.Vector4().fromArray(
+                        [...mColor.toArray(), node.material.opacity]
+                    );
+                    node.material = new THREE.RawShaderMaterial({
+                        vertexShader: compile('vert', texture
+                            ? VERT_OBJECTS_TEXTURED
+                            : VERT_OBJECTS_COLORED_SPRITE),
+                        fragmentShader: compile('frag', texture
+                            ? FRAG_OBJECTS_TEXTURED
+                            : FRAG_OBJECTS_COLORED),
+                        transparent: node.name.substring(0, 12) === 'transparent_',
+                        uniforms: {
+                            uColor: {value: color},
+                            uTexture: texture && { value: texture },
+                            lutTexture: {value: data.lutTexture},
+                            palette: {value: data.paletteTexture},
+                            light: {value: data.light},
+                            uNormalMatrix: {value: new THREE.Matrix3()}
+                        }
+                    });
+                    if (node.material.transparent) {
+                        node.renderOrder = 1;
+                    }
+                }
+            });
             resolve({
                 threeObject: m.scene,
                 update: (time) => {

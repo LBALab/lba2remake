@@ -466,7 +466,7 @@ function appendMeshGeometry(
     }
 }
 
-async function loadReplacementData(ambience) {
+export async function loadReplacementData(ambience) {
     const [lutTexture, ress] = await Promise.all([
         await loadLUTTexture(),
         await getCommonResource()

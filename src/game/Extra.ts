@@ -258,7 +258,13 @@ export default class Extra {
 
         let obj = null;
         if (this.isSprite) {
-            obj = await loadSprite(this.spriteIndex, false, true, scene.is3DCam);
+            obj = await loadSprite(
+                this.spriteIndex,
+                scene.props.ambience,
+                false,
+                true,
+                scene.is3DCam
+            );
         } else {
             obj = await loadInventoryModel(
                 {},
