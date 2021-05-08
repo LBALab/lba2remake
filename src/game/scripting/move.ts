@@ -75,7 +75,7 @@ export function GOTO_POINT_3D(this: ScriptContext, point: Point) {
         point.physics.position,
         this.time.delta * WORLD_SCALE * this.actor.props.speed
     );
-    if (distance > 0.001) {
+    if (distance > 0.01) {
         this.state.reentryOffset = this.state.offset;
         this.state.continue = false;
     } else {
