@@ -23,6 +23,12 @@
         },
         "329": {
             "file": "round_funny_chest_lid.glb"
-        }
+        },
+		"231": {
+			"file": "surveillance_button_off.glb"
+		},
+		"122": {
+			"file": "surveillance_lever_off.glb"
+		}
     }
 }
