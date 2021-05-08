@@ -8,8 +8,8 @@ import Scene from '../../Scene';
 import { Time } from '../../../datatypes';
 import Actor from '../../Actor';
 import Extra from '../../Extra';
+import { processHeightmapCollisions } from './physics/heightmap';
 
-const TGT = new THREE.Vector3();
 const POSITION = new THREE.Vector3();
 const FLAGS = {
     hitObject: false
@@ -165,20 +165,8 @@ export default class IslandPhysics {
             }
 
             isTouchingGround = processBoxIntersections(section, obj, POSITION, isTouchingGround);
-            if (!FLAGS.hitObject) {
-                TGT.copy(obj.physics.position);
-                TGT.sub(obj.threeObject.position);
-                TGT.setY(0);
-                if (TGT.lengthSq() !== 0) {
-                    TGT.normalize();
-                    TGT.multiplyScalar(0.005 * WORLD_SIZE);
-                    TGT.add(obj.threeObject.position);
-                    TGT.applyMatrix4(scene.sceneNode.matrixWorld);
-                    const gInfo = this.getGroundInfo(section, TGT);
-                    if (gInfo && gInfo.collision && isTouchingGround) {
-                        obj.physics.position.copy(obj.threeObject.position);
-                    }
-                }
+            if (isTouchingGround && !FLAGS.hitObject) {
+                processHeightmapCollisions(scene, section, obj);
             }
         }
         obj.state.isTouchingGround = isTouchingGround;
