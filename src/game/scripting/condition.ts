@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { WORLD_SIZE } from '../../utils/lba';
+import { WORLD_SIZE, getDistanceLba } from '../../utils/lba';
 import { ScriptContext } from './ScriptContext';
 import { LBA2GameFlags } from '../data/gameFlags';
 import Actor from '../Actor';
@@ -26,7 +26,10 @@ export function DISTANCE(this: ScriptContext, actor: Actor) {
     if (actor.state.isDead) {
         return Infinity;
     }
-    return this.actor.getDistanceLba(actor.physics.position);
+    if (getDistanceLba(this.actor.physics.position.y - actor.physics.position.y) > 1500) {
+        return Infinity;
+    }
+    return this.actor.getDistanceLba2D(actor.physics.position);
 }
 
 export function ZONE(this: ScriptContext) {
@@ -143,7 +146,13 @@ export function CHAPTER(this: ScriptContext) {
 }
 
 export function DISTANCE_3D(this: ScriptContext, actor: Actor) {
-    return DISTANCE.call(this, actor);
+    if (!this.scene.isActive && (actor.index === 0 || this.actor.index === 0)) {
+        return Infinity;
+    }
+    if (actor.state.isDead) {
+        return Infinity;
+    }
+    return this.actor.getDistanceLba(actor.physics.position);
 }
 
 export function MAGIC_LEVEL(this: ScriptContext) {
