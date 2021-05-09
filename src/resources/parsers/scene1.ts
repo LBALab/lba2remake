@@ -285,6 +285,11 @@ function loadZones(scene, offset) {
         zone.info3 = data.getInt16(offset + 10, true);
         offset += 12;
 
+        // set the ladder like on LBA2
+        if (zone.type === 6 && !zone.info1) {
+            zone.info1 = 1;
+        }
+
         // normalising position
         zone.pos = [
             zone.box.xMin + ((zone.box.xMax - zone.box.xMin) / 2),
