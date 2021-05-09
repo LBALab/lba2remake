@@ -26,7 +26,7 @@ interface AnimActionContext {
 
 const isLBA1 = getParams().game === 'lba1';
 
-const ANGLE_OFFSET = 0.225;
+const ANGLE_OFFSET = isLBA1 ? 0 : 0.225;
 const DART_MODEL = 61;
 const DART_STRENGTH = 8;
 
