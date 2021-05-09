@@ -100,6 +100,11 @@ export default class Extra {
     hitStrength: number;
     hasCollidedWithActor: boolean;
     throwBy: number = -1;
+    /**
+     * This is used to add data meant to be looked
+     * at in the inspector for debugging purposes.
+     */
+    dbg: any = {};
 
     static async bonus(
         game: Game,

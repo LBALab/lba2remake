@@ -173,6 +173,11 @@ export default class Actor {
     label?: any;
     refreshLabel?: Function;
     wagonState?: WagonState;
+    /**
+     * This is used to add data meant to be looked
+     * at in the inspector for debugging purposes.
+     */
+    dbg: any = {};
 
     static async load(
         game: Game,
