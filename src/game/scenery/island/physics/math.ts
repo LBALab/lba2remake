@@ -53,10 +53,12 @@ const R = new THREE.Vector3();
 const S = new THREE.Vector3();
 
 /**
- * Intersects two line segments in 2D space
+ * Intersects two line segments (l1 and l2) in 2D space
  * based on the (x, z) coordinates of the given
  * 3D points. Inspired by:
  * https://stackoverflow.com/a/565282
+ * @returns How far along l1 do the lines intersect (0 to 1),
+ * or -1 if they don't intersect.
  */
 export function intersect2DLines(l1: THREE.Line3, l2: THREE.Line3): number {
     CMP.set(l2.start.x - l1.start.x, 0, l2.start.z - l1.start.z);

@@ -5,6 +5,7 @@ import { IslandSection } from '../IslandLayout';
 
 class GridTriangle {
     readonly index: number;
+    /** Can't walk on this triangle if collision is true */
     collision: boolean;
     points = [
         new THREE.Vector3(),
@@ -17,6 +18,11 @@ class GridTriangle {
     }
 }
 
+/**
+ * Represents a cell in an island's heightmap.
+ * A cell is a square in the heighmap's grid,
+ * containing up to 2 triangles.
+ */
 export default class GridCell {
     valid: boolean;
     triangles = [
@@ -24,8 +30,26 @@ export default class GridCell {
         new GridTriangle(1)
     ];
 
+    /**
+     * Sets the cell value to the cell found at the given
+     * position in the current island section.
+     */
+    setFromPos(section: IslandSection, pos: THREE.Vector3) {
+        this.setFrom(section, Math.floor(pos.x), Math.floor(pos.z));
+    }
+
+    /**
+     * Sets the cell value to the cell found at the given x and z
+     * offset in the current island section.
+     * x and z must be integers between 0 and 64
+     */
     setFrom(section: IslandSection, x: number, z: number) {
         const baseFlags = section.groundMesh.triangles[((x * 64) + z) * 2];
+        if (baseFlags === undefined) {
+            this.valid = false;
+            return;
+        }
+        this.valid = true;
         const orientation = bits(baseFlags, 16, 1);
         for (let t = 0; t < 2; t += 1) {
             const triangle = this.triangles[t];
