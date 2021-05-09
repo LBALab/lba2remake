@@ -173,8 +173,8 @@ const loadEntityAnim = (data, offset) => {
                 case ACTIONTYPE.THROW:
                     action.yHeight = data.getInt16(innerOffset + offset + 2, true) * WORLD_SCALE;
                     action.spriteIndex = data.getInt8(innerOffset + offset + 4, true);
-                    action.alpha = data.getInt16(innerOffset + offset + 5, true);
-                    action.beta = data.getInt16(innerOffset + offset + 7, true);
+                    action.alpha = data.getInt16(innerOffset + offset + 5, true) * 0x1000 / 0x400;
+                    action.beta = data.getInt16(innerOffset + offset + 7, true) * 0x1000 / 0x400;
                     action.speed = data.getInt16(innerOffset + offset + 9, true);
                     action.weight = data.getInt8(innerOffset + offset + 11, true);
                     action.strength = data.getInt8(innerOffset + offset + 12, true);
@@ -203,8 +203,8 @@ const loadEntityAnim = (data, offset) => {
                 case ACTIONTYPE.THROW_ALPHA:
                     action.yHeight = data.getInt16(innerOffset + offset + 2, true) * WORLD_SCALE;
                     action.spriteIndex = data.getInt8(innerOffset + offset + 4, true);
-                    action.alpha = data.getInt16(innerOffset + offset + 5, true);
-                    action.beta = data.getInt16(innerOffset + offset + 7, true);
+                    action.alpha = data.getInt16(innerOffset + offset + 5, true) * 0x1000 / 0x400;
+                    action.beta = data.getInt16(innerOffset + offset + 7, true) * 0x1000 / 0x400;
                     action.speed = data.getInt16(innerOffset + offset + 9, true);
                     action.weight = data.getInt8(innerOffset + offset + 11, true);
                     action.strength = data.getInt8(innerOffset + offset + 12, true);
@@ -227,8 +227,8 @@ const loadEntityAnim = (data, offset) => {
                     action.distanceY = data.getInt16(innerOffset + offset + 4, true) * WORLD_SCALE;
                     action.distanceZ = data.getInt16(innerOffset + offset + 6, true) * WORLD_SCALE;
                     action.spriteIndex = data.getInt8(innerOffset + offset + 8, true);
-                    action.alpha = data.getInt16(innerOffset + offset + 9, true);
-                    action.beta = data.getInt16(innerOffset + offset + 11, true);
+                    action.alpha = data.getInt16(innerOffset + offset + 9, true) * 0x1000 / 0x400;
+                    action.beta = data.getInt16(innerOffset + offset + 11, true) * 0x1000 / 0x400;
                     action.speed = data.getInt16(innerOffset + offset + 13, true);
                     action.weight = data.getInt8(innerOffset + offset + 15, true);
                     action.strength = data.getInt8(innerOffset + offset + 16, true);
