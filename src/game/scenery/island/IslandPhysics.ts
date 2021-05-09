@@ -3,12 +3,12 @@ import { LIQUID_TYPES, getTriangleFromPos } from './ground';
 import { WORLD_SIZE, getPositions } from '../../../utils/lba';
 import { BehaviourMode } from '../../loop/hero';
 import { AnimType } from '../../data/animType';
-import { IslandSection } from './IslandLayout';
+import IslandLayout, { IslandSection } from './IslandLayout';
 import Scene from '../../Scene';
 import { Time } from '../../../datatypes';
 import Actor from '../../Actor';
 import Extra from '../../Extra';
-import { processHeightmapCollisions } from './physics/heightmap';
+import HeightMap from './physics/HeightMap';
 
 const POSITION = new THREE.Vector3();
 const FLAGS = {
@@ -39,12 +39,14 @@ const Y_THRESHOLD = WORLD_SIZE / 1600;
 
 export default class IslandPhysics {
     private sections: Map<string, IslandSection>;
+    private heightmap: HeightMap;
 
-    constructor(layout) {
+    constructor(layout: IslandLayout) {
         this.sections = new Map<string, IslandSection>();
         for (const section of layout.groundSections) {
             this.sections.set(`${section.x},${section.z}`, section);
         }
+        this.heightmap = new HeightMap(layout);
     }
 
     getNormal(scene: Scene, position: THREE.Vector3, boundingBox: THREE.Box3) {
@@ -166,7 +168,7 @@ export default class IslandPhysics {
 
             isTouchingGround = processBoxIntersections(section, obj, POSITION, isTouchingGround);
             if (isTouchingGround && !FLAGS.hitObject) {
-                processHeightmapCollisions(scene, section, obj);
+                this.heightmap.processCollisions(scene, obj);
             }
         }
         obj.state.isTouchingGround = isTouchingGround;
