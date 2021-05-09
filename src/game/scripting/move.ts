@@ -8,6 +8,11 @@ export function GOTO_POINT(this: ScriptContext, point: Point) {
     if (!point) {
         return;
     }
+    if (this.game.getState().actorTalking > -1) {
+        this.state.reentryOffset = this.state.offset;
+        this.state.continue = false;
+        return;
+    }
     if (this.actor.index === 0 && this.game.controlsState.firstPerson) {
         this.actor.physics.position.copy(point.physics.position);
         this.actor.stop();
@@ -69,6 +74,11 @@ export function SAMPLE(this: ScriptContext, index) {
 
 export function GOTO_POINT_3D(this: ScriptContext, point: Point) {
     if (!point) {
+        return;
+    }
+    if (this.game.getState().actorTalking > -1) {
+        this.state.reentryOffset = this.state.offset;
+        this.state.continue = false;
         return;
     }
     const distance = this.actor.gotoPosition(
