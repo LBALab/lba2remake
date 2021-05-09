@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { WORLD_SIZE, getDistanceLba } from '../../utils/lba';
+import { getDistanceLba } from '../../utils/lba';
 import { ScriptContext } from './ScriptContext';
 import { LBA2GameFlags } from '../data/gameFlags';
 import Actor from '../Actor';
@@ -38,21 +38,15 @@ export function ZONE(this: ScriptContext) {
 
 export function ZONE_OBJ(this: ScriptContext, actor: Actor) {
     const pos = actor.physics.position.clone();
-    let halfHeight = 0.005 * WORLD_SIZE;
-    if (actor.model && actor.model.boundingBox) {
-        const bb = actor.model.boundingBox;
-        halfHeight = (bb.max.y - bb.min.y) * 0.5;
-    }
-    pos.y += halfHeight;
     let match: Zone = null;
     for (const zone of this.scene.zones) {
         if (zone.props.type !== 2)
             continue;
 
         const box = zone.props.box;
-        if (pos.x >= box.xMin && pos.x <= box.xMax &&
+        if (pos.x >= box.xMin && pos.x < box.xMax &&
             pos.y >= box.yMin && pos.y <= box.yMax &&
-            pos.z >= box.zMin && pos.z <= box.zMax) {
+            pos.z >= box.zMin && pos.z < box.zMax) {
             if (match) {
                 const szZone = (box.xMax - box.xMin)
                     + (box.yMax - box.yMin)

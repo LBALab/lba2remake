@@ -24,7 +24,7 @@ export function NO_BODY(this: ScriptContext) {
 
 export function POS_POINT(this: ScriptContext, point: Point) {
     this.actor.physics.position.copy(point.physics.position);
-    if (this.actor.model) {
-        this.actor.model.mesh.position.copy(point.physics.position);
+    if (this.actor.threeObject) {
+        this.actor.threeObject.position.copy(point.physics.position);
     }
 }

@@ -60,15 +60,14 @@ export function processZones(game: Game, scene: Scene, time: Time) {
     const hero = scene.actors[0];
     const pos = hero.physics.position.clone();
     game.controlsState.camZone = null;
-    pos.y += 0.005;
     for (const zone of scene.zones) {
         if (zone.props.type === 2)
             continue;
 
         const box = zone.props.box;
-        if (pos.x > box.xMin && pos.x < box.xMax &&
-            pos.y > box.yMin && pos.y < box.yMax &&
-            pos.z > box.zMin && pos.z < box.zMax) {
+        if (pos.x >= box.xMin && pos.x < box.xMax &&
+            pos.y >= box.yMin && pos.y <= box.yMax &&
+            pos.z >= box.zMin && pos.z < box.zMax) {
             const zoneType = ZoneOpcode[zone.props.type];
             if (zoneType !== null && zoneType.handler !== null) {
                 if (zoneType.handler(game, scene, zone, hero, time))
