@@ -25,22 +25,24 @@ const PROTOPACK_OFFSET = 0.1;
 // How fast we reach top vertical height when starting to jetpack.
 const JETPACK_VERTICAL_SPEED = 7.5;
 
-const WORLD_SIZE_M2 = WORLD_SIZE * 2;
+const GRID_SCALE = 32 / WORLD_SIZE;
 const GRID_UNIT = 1 / 64;
 const Y_THRESHOLD = WORLD_SIZE / 1600;
 
 export default class IslandPhysics {
     heightmap: HeightMap;
-    private sections: Map<string, IslandSection>;
+    private sections: IslandSection[] = [];
     private ground = new GroundInfo();
     private ground2 = new GroundInfo();
 
     constructor(layout: IslandLayout) {
-        this.sections = new Map<string, IslandSection>();
         for (const section of layout.groundSections) {
-            this.sections.set(`${section.x},${section.z}`, section);
+            const { x, z } = section;
+            const sX = 16 - (x + 8);
+            const sZ = z + 8;
+            this.sections[sX * 16 + sZ] = section;
         }
-        this.heightmap = new HeightMap(layout);
+        this.heightmap = new HeightMap(this.sections);
     }
 
     getNormal(
@@ -295,9 +297,13 @@ export default class IslandPhysics {
     }
 
     findSection(position): IslandSection {
-        const x = Math.floor((position.x / WORLD_SIZE_M2) - GRID_UNIT);
-        const z = Math.floor(position.z / WORLD_SIZE_M2);
-        return this.sections.get(`${x},${z}`);
+        const x = Math.floor(position.x * GRID_SCALE);
+        const z = Math.floor(position.z * GRID_SCALE);
+        const sX = Math.floor((x - 1) * GRID_UNIT);
+        const sZ = Math.floor(z * GRID_UNIT);
+        const iX = 16 - (sX + 8);
+        const iZ = sZ + 8;
+        return this.sections[iX * 16 + iZ];
     }
 }
 

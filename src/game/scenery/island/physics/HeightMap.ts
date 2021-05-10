@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { times } from 'lodash';
 import { WORLD_SIZE } from '../../../../utils/lba';
-import IslandLayout, { IslandSection } from '../IslandLayout';
+import { IslandSection } from '../IslandLayout';
 import Scene from '../../../Scene';
 import Actor from '../../../Actor';
 import Extra from '../../../Extra';
@@ -26,13 +26,8 @@ export default class HeightMap {
     private vec_tmp = new THREE.Vector3();
     private proj_offset = new THREE.Vector3();
 
-    constructor(layout: IslandLayout) {
-        for (const section of layout.groundSections) {
-            const { x, z } = section;
-            const sX = 16 - (x + 8);
-            const sZ = z + 8;
-            this.sections[sX * 16 + sZ] = section;
-        }
+    constructor(sections: IslandSection[]) {
+        this.sections = sections;
     }
 
     /**
