@@ -25,6 +25,8 @@ const DEFAULT_MAX_BOUNCES = 4;
 const ACTOR_BOX = new THREE.Box3();
 const BALL_BOX = new THREE.Box3();
 
+const TMP_VEC = new THREE.Vector3();
+
 export default class MagicBall {
     readonly game: Game;
     readonly scene: Scene;
@@ -36,6 +38,7 @@ export default class MagicBall {
     sprite?: any;
     bounces: number;
     maxBounces: number;
+    normal = new THREE.Vector3();
 
     static async load(game: Game, scene: Scene, position: THREE.Vector3): Promise<MagicBall> {
         const magicBall = new MagicBall(game, scene, position.clone());
@@ -115,15 +118,21 @@ export default class MagicBall {
             return;
         }
 
-        const normal = this.scene.scenery.physics.getNormal(this.scene, this.position,
-                                                            this.sprite.boundingBox);
-        if (normal) {
+        const ok = this.scene.scenery.physics.getNormal(
+            this.scene,
+            this.position,
+            this.sprite.boundingBox,
+            this.normal
+        );
+        if (ok) {
             // const arrowHelper = new THREE.ArrowHelper( normal, this.position, 2, 0xffff00 );
             // this.scene.addMesh(arrowHelper);
 
             // Move the ball away from the wall to ensure we don't immediately bounce again.
-            this.position.add(normal.clone().multiplyScalar(0.1));
-            this.direction.sub(normal.multiplyScalar(2 * normal.dot(this.direction)));
+            TMP_VEC.copy(this.normal).multiplyScalar(0.1);
+            this.position.add(TMP_VEC);
+            TMP_VEC.copy(this.normal).multiplyScalar(2 * this.normal.dot(this.direction));
+            this.direction.sub(TMP_VEC);
             this.direction.multiplyScalar(0.8);
             this.bounces += 1;
 

@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { LIQUID_TYPES, getTriangleFromPos } from './ground';
+import { LIQUID_TYPES } from './ground';
 import { WORLD_SIZE, getPositions } from '../../../utils/lba';
 import { BehaviourMode } from '../../loop/hero';
 import { AnimType } from '../../data/animType';
@@ -12,6 +12,8 @@ import HeightMap from './physics/HeightMap';
 import GroundInfo from './physics/GroundInfo';
 
 const POSITION = new THREE.Vector3();
+const P0 = new THREE.Vector3();
+const P1 = new THREE.Vector3();
 const FLAGS = {
     hitObject: false
 };
@@ -23,14 +25,13 @@ const PROTOPACK_OFFSET = 0.1;
 // How fast we reach top vertical height when starting to jetpack.
 const JETPACK_VERTICAL_SPEED = 7.5;
 
-const GRID_SCALE = 32 / WORLD_SIZE;
 const WORLD_SIZE_M2 = WORLD_SIZE * 2;
 const GRID_UNIT = 1 / 64;
 const Y_THRESHOLD = WORLD_SIZE / 1600;
 
 export default class IslandPhysics {
+    heightmap: HeightMap;
     private sections: Map<string, IslandSection>;
-    private heightmap: HeightMap;
     private ground = new GroundInfo();
     private ground2 = new GroundInfo();
 
@@ -42,33 +43,31 @@ export default class IslandPhysics {
         this.heightmap = new HeightMap(layout);
     }
 
-    getNormal(scene: Scene, position: THREE.Vector3, boundingBox: THREE.Box3) {
+    getNormal(
+        scene: Scene,
+        position: THREE.Vector3,
+        boundingBox: THREE.Box3,
+        result: THREE.Vector3
+    ) {
         POSITION.copy(position);
         POSITION.add(scene.sceneNode.position);
-        const section = this.findSection(POSITION);
-        if (!section) {
-            return null;
+
+        this.heightmap.getGroundInfo(POSITION, this.ground);
+        if (this.ground.valid && position.y - this.ground.height < 0.1) {
+            const { points } = this.ground;
+            P0.copy(points[1]).sub(points[0]);
+            P1.copy(points[2]).sub(points[0]);
+            result.crossVectors(P0, P1).normalize();
+            return true;
         }
 
-        this.getGround(section, POSITION, this.ground);
-        if (this.ground.points.length === 3 && position.y - this.ground.height < 0.1) {
-            const triangleToWorld = (p: THREE.Vector3) => {
-                return new THREE.Vector3(
-                   WORLD_SIZE_M2 * (section.x + 1) - ((p.x - 1) / GRID_SCALE) + 80,
-                   p.y,
-                   (p.z / GRID_SCALE) + section.z * WORLD_SIZE_M2 + 40,
-                );
-            };
-
-            const worldPoints = this.ground.points.map(triangleToWorld);
-            const a = worldPoints[1].clone().sub(worldPoints[0]);
-            const b = worldPoints[2].clone().sub(worldPoints[0]);
-            return a.cross(b).normalize();
+        if (!this.ground.section) {
+            return false;
         }
 
         ACTOR_BOX.copy(boundingBox);
         ACTOR_BOX.translate(POSITION);
-        for (const obj of section.objects) {
+        for (const obj of this.ground.section.objects) {
             const bb = obj.boundingBox;
             if (ACTOR_BOX.intersectsBox(bb)) {
                 INTERSECTION.copy(ACTOR_BOX);
@@ -79,14 +78,17 @@ export default class IslandPhysics {
                 const dir = CENTER1.sub(CENTER2);
                 if (ACTOR_BOX.min.y < bb.max.y - H_THRESHOLD) {
                     if (ITRS_SIZE.x < ITRS_SIZE.z) {
-                        return new THREE.Vector3(1 * Math.sign(dir.x), 0, 0);
+                        result.set(1 * Math.sign(dir.x), 0, 0);
+                    } else {
+                        result.set(0, 0, 1 * Math.sign(dir.z));
                     }
-                    return new THREE.Vector3(0, 0, 1 * Math.sign(dir.z));
+                } else {
+                    result.set(0, 1 * Math.sign(dir.y), 0);
                 }
-                return new THREE.Vector3(0, 1 * Math.sign(dir.y), 0);
+                return true;
             }
         }
-        return null;
+        return false;
     }
 
     processCollisions(scene: Scene, obj: Actor | Extra, time: Time) {
@@ -183,18 +185,9 @@ export default class IslandPhysics {
         return isTouchingGround;
     }
 
-    getHeightmapGround(position: THREE.Vector3, result: GroundInfo) {
-        const section = this.findSection(position);
-        if (!section) {
-            result.setDefault();
-            return;
-        }
-        return this.getGroundInfo(section, position, result);
-    }
-
     processCameraCollisions(camPosition: THREE.Vector3, groundOffset = 0.15, objOffset = 0.2) {
         const section = this.findSection(camPosition);
-        this.getGroundInfo(section, camPosition, this.ground);
+        this.heightmap.getGroundInfo(camPosition, this.ground);
         camPosition.y = Math.max(this.ground.height + groundOffset * WORLD_SIZE, camPosition.y);
         if (section) {
             for (const obj of section.objects) {
@@ -237,23 +230,11 @@ export default class IslandPhysics {
                 && z >= bb.min.z && z <= bb.max.z
                 && y >= bb.min.y && yMinusThreshold < bb.max.y) {
                 FLAGS.hitObject = true;
-                result.setFromObject(obj);
+                result.setFromIslandObject(section, obj);
                 return;
             }
         }
-        this.getGroundInfo(section, position, result);
-    }
-
-    private getGroundInfo(section: IslandSection, position: THREE.Vector3, result: GroundInfo) {
-        if (!section) {
-            result.setDefault();
-            return;
-        }
-
-        const xLocalUnscaled = (WORLD_SIZE_M2 - (position.x - (section.x * WORLD_SIZE_M2)));
-        const xLocal = (xLocalUnscaled * GRID_SCALE) + 1;
-        const zLocal = (position.z - (section.z * WORLD_SIZE_M2)) * GRID_SCALE;
-        getTriangleFromPos(section, xLocal, zLocal, result);
+        this.heightmap.getGroundInfo(position, result);
     }
 
     // getFloorHeight returns the height of the floor below Twinsen. Note that this

@@ -42,7 +42,7 @@ function processFree3DMovement(controlsState, controlNode, island: Island, time)
     let speedFactor = 0;
     let height = 0;
     if (island) {
-        island.physics.getHeightmapGround(controlNode.position, GROUND);
+        island.physics.heightmap.getGroundInfo(controlNode.position, GROUND);
         height = GROUND.height;
         speedFactor = Math.max(
             0.0,

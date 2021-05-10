@@ -157,12 +157,11 @@ export default class Lightning {
                 0,
                 Math.random() * 400 - 200
             );
-            const section = this.physics.findSection(position);
-            if (section) {
-                this.physics.getHeightmapGround(position, this.ground);
+            this.physics.heightmap.getGroundInfo(position, this.ground);
+            if (this.ground.section) {
                 position.y = this.ground.height;
                 let hitObj = false;
-                for (const obj of section.objects) {
+                for (const obj of this.ground.section.objects) {
                     const bb = obj.boundingBox;
                     if (bb.containsPoint(position)) {
                         position.y = bb.max.y;

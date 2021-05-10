@@ -134,7 +134,7 @@ export function processFree3DMovement(
     let height = 0;
     const { physics } = scene.scenery;
     if (physics instanceof IslandPhysics) {
-        physics.getHeightmapGround(controlNode.position, GROUND);
+        physics.heightmap.getGroundInfo(controlNode.position, GROUND);
         height = GROUND.height;
         speedFactor = Math.max(
             0.0,

@@ -5,8 +5,7 @@ import { IslandSection } from '../IslandLayout';
 
 class HeightMapTriangle {
     readonly index: number;
-    /** Can't walk on this triangle if collision is true */
-    collision: boolean;
+    flags: number;
     points = [
         new THREE.Vector3(),
         new THREE.Vector3(),
@@ -15,6 +14,19 @@ class HeightMapTriangle {
 
     constructor(index: number) {
         this.index = index;
+    }
+
+    /** Can't walk on this triangle if collision is true */
+    get collision(): boolean {
+        return bits(this.flags, 17, 1) === 1;
+    }
+
+    get sound(): number {
+        return bits(this.flags, 8, 4);
+    }
+
+    get liquid(): number {
+        return bits(this.flags, 12, 4);
     }
 }
 
@@ -27,6 +39,7 @@ const INV_64 = 1 / 64;
  */
 export default class HeightMapCell {
     valid: boolean;
+    section: IslandSection;
     triangles = [
         new HeightMapTriangle(0),
         new HeightMapTriangle(1)
@@ -36,8 +49,8 @@ export default class HeightMapCell {
      * Sets the cell value to the cell found at the given
      * position in the current island section.
      */
-    setFromPos(sections: IslandSection[], pos: THREE.Vector3): HeightMapCell {
-        return this.setFrom(sections, Math.floor(pos.x), Math.floor(pos.z));
+    setFromPos(sections: IslandSection[], pos: THREE.Vector3) {
+        this.setFrom(sections, Math.floor(pos.x), Math.floor(pos.z));
     }
 
     /**
@@ -45,32 +58,36 @@ export default class HeightMapCell {
      * offset in the current island section.
      * x and z must be integers between 0 and 64
      */
-    setFrom(sections: IslandSection[], x: number, z: number): HeightMapCell {
+    setFrom(sections: IslandSection[], x: number, z: number) {
         const sX = Math.floor((x - 1) * INV_64);
         const sZ = Math.floor(z * INV_64);
         const iX = 16 - (sX + 8);
         const iZ = sZ + 8;
-        const xLocal = 64 - (x - (sX * 64));
-        const zLocal = z - (sZ * 64);
-        return this.setFromSection(sections[iX * 16 + iZ], xLocal, zLocal);
+
+        const section = sections[iX * 16 + iZ];
+        if (section) {
+            const xLocal = 64 - (x - (sX * 64));
+            const zLocal = z - (sZ * 64);
+            this.setFromSection(section, xLocal, zLocal);
+        } else {
+            this.valid = false;
+        }
     }
 
     private setFromSection(section: IslandSection, x: number, z: number) {
-        if (!section) {
-            return this.setInvalid();
-        }
+        this.section = section;
         const baseIdx = ((x * 64) + z) * 2;
-        const sOffsetX = section.x * 64;
-        const sOffsetZ = section.z * 64;
         const baseFlags = section.groundMesh.triangles[baseIdx];
         if (baseFlags === undefined) {
-            return this.setInvalid();
+            this.valid = false;
+            return;
         }
+        this.valid = true;
         const orientation = bits(baseFlags, 16, 1);
+        const sOffsetX = section.x * 64;
+        const sOffsetZ = section.z * 64;
         for (let t = 0; t < 2; t += 1) {
             const triangle = this.triangles[t];
-            const flags = section.groundMesh.triangles[baseIdx + t];
-            triangle.collision = bits(flags, 17, 1) === 1;
             const { points } = triangle;
             const src_pts = TRIANGLE_POINTS[orientation][t];
             for (let i = 0; i < 3; i += 1) {
@@ -82,14 +99,8 @@ export default class HeightMapCell {
                     sOffsetZ + z + pt.z
                 );
             }
+            triangle.flags = section.groundMesh.triangles[baseIdx + t];
         }
-        this.valid = true;
-        return this;
-    }
-
-    private setInvalid(): HeightMapCell {
-        this.valid = false;
-        return this;
     }
 }
 

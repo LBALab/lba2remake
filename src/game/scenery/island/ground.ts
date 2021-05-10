@@ -1,9 +1,7 @@
 import {map} from 'lodash';
-import * as THREE from 'three';
 import {bits} from '../../../utils';
 import {WORLD_SCALE, WORLD_SCALE_B} from '../../../utils/lba';
 import { IslandSection } from './IslandLayout';
-import GroundInfo from './physics/GroundInfo';
 
 export const LIQUID_TYPES = {
     WATER: 12,
@@ -70,23 +68,6 @@ export function loadGround(section: IslandSection, geometries, tileUsageInfo) {
     }
 }
 
-export function getTriangleFromPos(
-    section: IslandSection,
-    x: number,
-    z: number,
-    result: GroundInfo
-) {
-    const xFloor = Math.floor(x);
-    const zFloor = Math.floor(z);
-    const t0 = loadTriangleForPhysics(section, xFloor, zFloor, x, z, 0);
-    if (t0.height != null) {
-        result.setFromTriangleOld(t0);
-    } else {
-        const t1 = loadTriangleForPhysics(section, xFloor, zFloor, x, z, 1);
-        result.setFromTriangleOld(t1);
-    }
-}
-
 const TRIANGLE_POINTS = [
     [
         makeTrianglePoints(0, 0),
@@ -115,42 +96,6 @@ function loadTriangle(groundMesh, x, z, idx) {
         unk2: bits(flags, 18, 1),
         uvIndex: bits(flags, 19, 13),
         points: TRIANGLE_POINTS[orientation][idx]
-    };
-}
-
-const DOWN = new THREE.Vector3(0, -1, 0);
-const RAY = new THREE.Ray(new THREE.Vector3(), DOWN);
-const TGT = new THREE.Vector3();
-const PTS = [
-    new THREE.Vector3(),
-    new THREE.Vector3(),
-    new THREE.Vector3()
-];
-
-function loadTriangleForPhysics(section: IslandSection, x, z, xTgt, zTgt, idx) {
-    const flags = section.groundMesh.triangles[(((x * 64) + z) * 2) + idx];
-    const baseFlags = idx ? section.groundMesh.triangles[((x * 64) + z) * 2] : flags;
-    const orientation = bits(baseFlags, 16, 1);
-    const src_pts = TRIANGLE_POINTS[orientation][idx];
-
-    for (let i = 0; i < 3; i += 1) {
-        const pt = src_pts[i];
-        const ptIdx = ((x + pt.x) * 65) + z + pt.z;
-        PTS[i].set(
-            x + pt.x,
-            section.groundMesh.heightmap[ptIdx] * WORLD_SCALE,
-            z + pt.z
-        );
-    }
-
-    RAY.origin.set(xTgt, 5 * 24, zTgt);
-    const tgt = RAY.intersectTriangle(PTS[0], PTS[2], PTS[1], true, TGT);
-    return {
-        sound: bits(flags, 8, 4),
-        collision: bits(flags, 17, 1),
-        liquid: bits(flags, 12, 4),
-        height: tgt && tgt.y,
-        points: PTS,
     };
 }
 

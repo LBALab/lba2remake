@@ -5,8 +5,9 @@ import IslandLayout, { IslandSection } from '../IslandLayout';
 import Scene from '../../../Scene';
 import Actor from '../../../Actor';
 import Extra from '../../../Extra';
-import { scanGrid, intersect2DLines, pointInTriangle2D } from './math';
+import { scanGrid, intersect2DLines, pointInTriangle2D, interpolateY } from './math';
 import HeightMapCell from './HeightMapCell';
+import GroundInfo from './GroundInfo';
 
 const MAX_ITERATIONS = 4;
 
@@ -42,8 +43,8 @@ export default class HeightMap {
      * so as to maintain smooth movements.
      */
     processCollisions(scene: Scene, obj: Actor | Extra) {
-        toGridSpace(scene, obj.threeObject.position, this.line.start);
-        toGridSpace(scene, obj.physics.position, this.line.end);
+        sceneSpaceToGridSpace(scene, obj.threeObject.position, this.line.start);
+        sceneSpaceToGridSpace(scene, obj.physics.position, this.line.end);
         let done = false;
         let iteration = 0;
         while (!done && iteration < MAX_ITERATIONS) {
@@ -110,7 +111,7 @@ export default class HeightMap {
                     this.proj_offset.multiplyScalar(0.01);
                     this.line.end.copy(this.projection_points[closestIdx]);
                     this.line.end.add(this.proj_offset);
-                    toSceneSpace(scene, this.line.end, obj.physics.position);
+                    gridSpaceToSceneSpace(scene, this.line.end, obj.physics.position);
                     this.cell.setFromPos(this.sections, this.line.end);
                     for (const tri of this.cell.triangles) {
                         if (tri.collision && pointInTriangle2D(tri.points, this.line.end)) {
@@ -127,6 +128,33 @@ export default class HeightMap {
             iteration += 1;
         }
     }
+
+    getGroundInfo(position: THREE.Vector3, result: GroundInfo) {
+        this.vec_tmp.set(position.x * GRID_SCALE, position.y, position.z * GRID_SCALE);
+        this.cell.setFromPos(this.sections, this.vec_tmp);
+        if (this.cell.valid) {
+            for (const tri of this.cell.triangles) {
+                if (pointInTriangle2D(tri.points, this.vec_tmp)) {
+                    result.valid = true;
+                    result.collision = tri.collision;
+                    result.sound = tri.sound;
+                    result.liquid = tri.liquid;
+                    result.height = interpolateY(tri.points, this.vec_tmp);
+                    result.section = this.cell.section;
+                    for (let i = 0; i < 3; i += 1) {
+                        const pt = tri.points[i];
+                        result.points[i].set(
+                            pt.x * INV_GRID_SCALE,
+                            pt.y,
+                            pt.z * INV_GRID_SCALE
+                        );
+                    }
+                    return;
+                }
+            }
+        }
+        result.setDefault();
+    }
 }
 
 const GRID_SCALE = 32 / WORLD_SIZE;
@@ -138,7 +166,7 @@ const INV_GRID_SCALE = WORLD_SIZE / 32;
  * @param src Input vector in scene space
  * @param tgt Output vector in heightmap grid space
  */
-function toGridSpace(
+function sceneSpaceToGridSpace(
     scene: Scene,
     src: THREE.Vector3,
     tgt: THREE.Vector3
@@ -154,7 +182,7 @@ function toGridSpace(
  * @param src Input vector in heightmap grid space
  * @param tgt Output vector in scene space
  */
-function toSceneSpace(
+function gridSpaceToSceneSpace(
     scene: Scene,
     src: THREE.Vector3,
     tgt: THREE.Vector3

@@ -207,7 +207,7 @@ function handleGroundIntersection(intersect, triggered, {game, sceneManager}) {
     arrow.position.copy(intersect.point);
     POS.copy(intersect.point);
     POS.applyMatrix4(invWorldMat);
-    activeIsland.physics.getHeightmapGround(POS, GROUND);
+    activeIsland.physics.heightmap.getGroundInfo(POS, GROUND);
     arrow.position.y += GROUND.height * (0.5 / WORLD_SIZE);
     POS.y = GROUND.height;
     if (triggered) {

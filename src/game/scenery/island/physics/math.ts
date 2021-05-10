@@ -106,6 +106,24 @@ export function pointInTriangle2D(tri: THREE.Vector3[], pt: THREE.Vector3) {
     return !(has_neg && has_pos);
 }
 
+export function interpolateY(tri: THREE.Vector3[], pt: THREE.Vector3) {
+    const w0Num = (tri[1].z - tri[2].z) * (pt.x - tri[2].x)
+                + (tri[2].x - tri[1].x) * (pt.z - tri[2].z);
+    const w0Den = (tri[1].z - tri[2].z) * (tri[0].x - tri[2].x)
+                + (tri[2].x - tri[1].x) * (tri[0].z - tri[2].z);
+    const w0 = w0Num / w0Den;
+    const w1Num = (tri[2].z - tri[0].z) * (pt.x - tri[2].x)
+                + (tri[0].x - tri[2].x) * (pt.z - tri[2].z);
+    const w1Den = (tri[1].z - tri[2].z) * (tri[0].x - tri[2].x)
+                + (tri[2].x - tri[1].x) * (tri[0].z - tri[2].z);
+    const w1 = w1Num / w1Den;
+    const w2 = 1 - w0 - w1;
+
+    return  w0 * tri[0].y +
+            w1 * tri[1].y +
+            w2 * tri[2].y;
+}
+
 function sign(p1: THREE.Vector3, p2: THREE.Vector3, p3: THREE.Vector3) {
     return (p1.x - p3.x) * (p2.z - p3.z) - (p2.x - p3.x) * (p1.z - p3.z);
 }
