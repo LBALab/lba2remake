@@ -11,6 +11,7 @@ import islandOffsets from './data/islandOffsets';
 import {tr} from '../../lang';
 import { WORLD_SCALE_B, WORLD_SIZE } from '../../utils/lba';
 import { getParams } from '../../params';
+import GroundInfo from '../../game/scenery/island/physics/GroundInfo';
 
 let islandWrapper = null;
 let activeIsland: Island = null;
@@ -199,15 +200,16 @@ export function updateTeleportMenu(game, sceneManager, pickingTarget) {
 }
 
 const POS = new THREE.Vector3();
+const GROUND = new GroundInfo();
 
 function handleGroundIntersection(intersect, triggered, {game, sceneManager}) {
     arrow.visible = true;
     arrow.position.copy(intersect.point);
     POS.copy(intersect.point);
     POS.applyMatrix4(invWorldMat);
-    const groundInfo = activeIsland.physics.getHeightmapGround(POS);
-    arrow.position.y += groundInfo.height * (0.5 / WORLD_SIZE);
-    POS.y = groundInfo.height;
+    activeIsland.physics.getHeightmapGround(POS, GROUND);
+    arrow.position.y += GROUND.height * (0.5 / WORLD_SIZE);
+    POS.y = GROUND.height;
     if (triggered) {
         const section = intersect.object.userData.info;
         const scene = findKey(

@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import {bits} from '../../../utils';
 import {WORLD_SCALE, WORLD_SCALE_B} from '../../../utils/lba';
 import { IslandSection } from './IslandLayout';
+import GroundInfo from './physics/GroundInfo';
 
 export const LIQUID_TYPES = {
     WATER: 12,
@@ -69,11 +70,21 @@ export function loadGround(section: IslandSection, geometries, tileUsageInfo) {
     }
 }
 
-export function getTriangleFromPos(section: IslandSection, x, z) {
+export function getTriangleFromPos(
+    section: IslandSection,
+    x: number,
+    z: number,
+    result: GroundInfo
+) {
     const xFloor = Math.floor(x);
     const zFloor = Math.floor(z);
     const t0 = loadTriangleForPhysics(section, xFloor, zFloor, x, z, 0);
-    return (t0.height != null) ? t0 : loadTriangleForPhysics(section, xFloor, zFloor, x, z, 1);
+    if (t0.height != null) {
+        result.setFromTriangleOld(t0);
+    } else {
+        const t1 = loadTriangleForPhysics(section, xFloor, zFloor, x, z, 1);
+        result.setFromTriangleOld(t1);
+    }
 }
 
 const TRIANGLE_POINTS = [

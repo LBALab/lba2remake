@@ -5,6 +5,7 @@ import Scene from '../game/Scene';
 import { ControlsState } from '../game/ControlsState';
 import { Time } from '../datatypes';
 import IslandPhysics from '../game/scenery/island/IslandPhysics';
+import GroundInfo from '../game/scenery/island/physics/GroundInfo';
 
 const CAMERA_OFFSET = new THREE.Vector3(0, 0.15, -0.2);
 CAMERA_OFFSET.multiplyScalar(WORLD_SIZE);
@@ -121,6 +122,8 @@ function processFollow3DMovement(
     controlNode.lookAt(controlsState.cameraLookAtLerp);
 }
 
+const GROUND = new GroundInfo();
+
 export function processFree3DMovement(
     controlsState: ControlsState,
     controlNode: THREE.Object3D,
@@ -131,11 +134,11 @@ export function processFree3DMovement(
     let height = 0;
     const { physics } = scene.scenery;
     if (physics instanceof IslandPhysics) {
-        const groundInfo = physics.getHeightmapGround(controlNode.position);
-        height = groundInfo.height;
+        physics.getHeightmapGround(controlNode.position, GROUND);
+        height = GROUND.height;
         speedFactor = Math.max(
             0.0,
-            Math.min(1.0, (controlNode.position.y - groundInfo.height) * 0.7)
+            Math.min(1.0, (controlNode.position.y - GROUND.height) * 0.7)
         );
     }
 
