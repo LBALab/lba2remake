@@ -2,6 +2,7 @@ import {map} from 'lodash';
 import {bits} from '../../../utils';
 import {WORLD_SCALE, WORLD_SCALE_B} from '../../../utils/lba';
 import { IslandSection } from './IslandLayout';
+import { TRIANGLE_POINTS } from './data/heightmap';
 
 export const LIQUID_TYPES = {
     WATER: 12,
@@ -68,17 +69,6 @@ export function loadGround(section: IslandSection, geometries, tileUsageInfo) {
     }
 }
 
-const TRIANGLE_POINTS = [
-    [
-        makeTrianglePoints(0, 0),
-        makeTrianglePoints(0, 1)
-    ],
-    [
-        makeTrianglePoints(1, 0),
-        makeTrianglePoints(1, 1)
-    ]
-];
-
 function loadTriangle(groundMesh, x, z, idx) {
     const flags = groundMesh.triangles[(((x * 64) + z) * 2) + idx];
     const orientation = bits(groundMesh.triangles[((x * 64) + z) * 2], 16, 1);
@@ -97,20 +87,6 @@ function loadTriangle(groundMesh, x, z, idx) {
         uvIndex: bits(flags, 19, 13),
         points: TRIANGLE_POINTS[orientation][idx]
     };
-}
-
-function makeTrianglePoints(orientation, idx) {
-    const rOrientation = 1 - orientation;
-    return [{
-        x: idx,
-        z: idx ? rOrientation : orientation
-    }, {
-        x: idx ? orientation : rOrientation,
-        z: idx
-    }, {
-        x: 1 - idx,
-        z: idx ? orientation : rOrientation,
-    }];
 }
 
 function getPositions(section, points) {

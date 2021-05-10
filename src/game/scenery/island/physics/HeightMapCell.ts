@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { bits } from '../../../../utils';
 import { WORLD_SCALE } from '../../../../utils/lba';
 import { IslandSection } from '../IslandLayout';
+import { TRIANGLE_POINTS } from '../data/heightmap';
 
 class HeightMapTriangle {
     readonly index: number;
@@ -103,30 +104,3 @@ export default class HeightMapCell {
         }
     }
 }
-
-const TRIANGLE_POINTS = [
-    [ // Orientation: 0
-        [
-            { x: 0, z: 0 },
-            { x: 1, z: 0 },
-            { x: 1, z: 1 }
-        ],
-        [
-            { x: 1, z: 1 },
-            { x: 0, z: 1 },
-            { x: 0, z: 0 }
-        ]
-    ],
-    [ // Orientation: 1
-        [
-            { x: 0, z: 1 },
-            { x: 0, z: 0 },
-            { x: 1, z: 0 }
-        ],
-        [
-            { x: 1, z: 0 },
-            { x: 1, z: 1 },
-            { x: 0, z: 1 }
-        ]
-    ]
-];
