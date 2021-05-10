@@ -4416,11 +4416,21 @@
     "36": {
       "mirror": true
     },
+    "39": {
+      "replace": true,
+      "file": "OT_039_080_magritte_plants.glb",
+      "orientation": 0
+    },
     "66": {
       "mirror": true
     },
     "67": {
       "mirror": true
+    },
+    "80": {
+      "replace": true,
+      "file": "OT_039_080_magritte_plants.glb",
+      "orientation": 0
     },
     "89": {
       "mirror": true
@@ -4474,6 +4484,16 @@
     "200:2x4x4:0,12677,12680,12681,-1,-1,-1,-1,12682,12683,12688,12689,-1,-1,-1,-1,0,12677,0,12678,0,12679,12680,12681,12682,12683,12684,12685,12686,12687,12688,12689": {
       "replace": true,
       "file": "OT_200_blue_wooden_box_var1.glb",
+      "orientation": 0
+    },
+    "39:2x4x2:0,12735,0,12736,0,127,0,127,12740,12741,12742,12743,127,12744,127,12745": {
+      "replace": true,
+      "file": "OT_039_magritte_plants_var1_var2.glb",
+      "orientation": 0
+    },
+    "39:2x6x2:0,12735,0,12736,0,127,0,127,0,127,12737,12738,12740,12741,12742,12743,127,12744,127,12745,127,12746,12747,12748": {
+      "replace": true,
+      "file": "OT_039_magritte_plants_var1_var2.glb",
       "orientation": 0
     }
   },

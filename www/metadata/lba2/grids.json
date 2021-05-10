@@ -2177,6 +2177,32 @@
             }
         }
     },
+    "81": {
+        "models": [],
+        "patches": {
+            "28x6x37": {
+                "hide": true
+            },
+            "28x1x37": {
+                "hide": true
+            },
+            "28x7x37": {
+                "hide": true
+            },
+            "27x7x37": {
+                "hide": true
+            },
+            "19x1x43": {
+                "hide": true
+            },
+            "27x7x36": {
+                "hide": true
+            },
+            "28x7x36": {
+                "hide": true
+            }
+        }
+    },
     "111": {
         "models": [],
         "patches": {
