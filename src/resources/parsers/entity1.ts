@@ -175,7 +175,8 @@ const loadEntityAnim = (data, offset) => {
                     action.spriteIndex = data.getInt8(innerOffset + offset + 4, true);
                     action.alpha = data.getInt16(innerOffset + offset + 5, true) * 0x1000 / 0x400;
                     action.beta = data.getInt16(innerOffset + offset + 7, true) * 0x1000 / 0x400;
-                    action.speed = data.getInt16(innerOffset + offset + 9, true);
+                    action.speed =
+                        data.getInt16(innerOffset + offset + 9, true) * SPEED_ADJUSTMENT;
                     action.weight = data.getInt8(innerOffset + offset + 11, true);
                     action.strength = data.getInt8(innerOffset + offset + 12, true);
                     innerOffset += 12;
@@ -205,7 +206,7 @@ const loadEntityAnim = (data, offset) => {
                     action.spriteIndex = data.getInt8(innerOffset + offset + 4, true);
                     action.alpha = data.getInt16(innerOffset + offset + 5, true) * 0x1000 / 0x400;
                     action.beta = data.getInt16(innerOffset + offset + 7, true) * 0x1000 / 0x400;
-                    action.speed = data.getInt16(innerOffset + offset + 9, true);
+                    action.speed = data.getInt16(innerOffset + offset + 9, true) * SPEED_ADJUSTMENT;
                     action.weight = data.getInt8(innerOffset + offset + 11, true);
                     action.strength = data.getInt8(innerOffset + offset + 12, true);
                     innerOffset += 12;
@@ -229,7 +230,8 @@ const loadEntityAnim = (data, offset) => {
                     action.spriteIndex = data.getInt8(innerOffset + offset + 8, true);
                     action.alpha = data.getInt16(innerOffset + offset + 9, true) * 0x1000 / 0x400;
                     action.beta = data.getInt16(innerOffset + offset + 11, true) * 0x1000 / 0x400;
-                    action.speed = data.getInt16(innerOffset + offset + 13, true);
+                    action.speed =
+                        data.getInt16(innerOffset + offset + 13, true) * SPEED_ADJUSTMENT;
                     action.weight = data.getInt8(innerOffset + offset + 15, true);
                     action.strength = data.getInt8(innerOffset + offset + 16, true);
                     innerOffset += 16;
@@ -240,7 +242,8 @@ const loadEntityAnim = (data, offset) => {
                     action.distanceZ = data.getInt16(innerOffset + offset + 6, true) * WORLD_SCALE;
                     action.spriteIndex = data.getInt8(innerOffset + offset + 8, true);
                     action.targetActor = data.getInt8(innerOffset + offset + 9, true);
-                    action.speed = data.getInt16(innerOffset + offset + 10, true);
+                    action.speed =
+                        data.getInt16(innerOffset + offset + 10, true) * SPEED_ADJUSTMENT;
                     action.strength = data.getInt8(innerOffset + offset + 12, true);
                     innerOffset += 12;
                     break;
