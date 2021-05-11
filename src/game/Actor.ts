@@ -387,7 +387,7 @@ export default class Actor {
                 this.physics.temp.destAngle = this.physics.temp.angle;
             }
         }
-        if (this.state.isWalking && !this.state.isStuck) {
+        if (this.state.isWalking && !(this.state.isStuck && !this.state.isJumping)) {
             this.physics.temp.position.set(0, 0, 0);
 
             const animIndex = this.props.animIndex;

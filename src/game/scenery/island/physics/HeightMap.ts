@@ -13,6 +13,12 @@ import { Time } from '../../../../datatypes';
 
 const MAX_ITERATIONS = 4;
 
+enum SlidingStatus {
+    SLIDING,
+    STUCK,
+    NONE
+}
+
 export default class HeightMap {
     private sections: IslandSection[] = [];
 
@@ -87,9 +93,13 @@ export default class HeightMap {
                                 // If we have no intersection and the start of the
                                 // directional vector is within a solid triangle,
                                 // we should be sliding down the slope.
-                                isSliding = this.processSliding(scene, tri, obj, time);
-                                if (!isSliding) {
-                                    isStuck = true;
+                                switch (this.processSliding(scene, tri, obj, time)) {
+                                    case SlidingStatus.SLIDING:
+                                        isSliding = true;
+                                        break;
+                                    case SlidingStatus.STUCK:
+                                        isStuck = true;
+                                        break;
                                 }
                                 return true;
                             }
@@ -132,8 +142,12 @@ export default class HeightMap {
             iteration += 1;
         }
         if (obj instanceof Actor) {
-            obj.state.isSliding = isSliding && !obj.state.isJumping;
-            obj.state.isStuck = isStuck && !obj.state.isJumping;
+            obj.state.isSliding = isSliding;
+            obj.state.isStuck = isStuck;
+            if (isSliding || isStuck) {
+                obj.state.isJumping = false;
+                obj.state.hasGravityByAnim = false;
+            }
         }
     }
 
@@ -168,55 +182,80 @@ export default class HeightMap {
         result.setDefault();
     }
 
-    private slideIdx = [-1, -1, -1];
+    private lowSlideIdx = [-1, -1, -1];
+    private highSlideIdx = [-1, -1, -1];
+    private slideSrc = new THREE.Vector3();
     private slideTgt = new THREE.Vector3();
     private groundTmp = new GroundInfo();
 
-    private processSliding(scene: Scene, tri: HeightMapTriangle, actor: Actor, time: Time) {
+    private processSliding(
+        scene: Scene,
+        tri: HeightMapTriangle,
+        actor: Actor,
+        time: Time
+    ): SlidingStatus {
         if (actor.state.isStuck) {
-            return false;
+            return SlidingStatus.STUCK;
         }
         const { points } = tri;
-        // Find the triangle's slope
-        let count = 0;
+        // Find the triangle's slope by finding the set of
+        // lowest points. If all 3 points are the same height,
+        // it means the triangle is flat.
+        let lowCount = 0;
+        let highCount = 0;
         let lowest = Infinity;
         let highest = -Infinity;
-        let highestIdx = -1;
         for (let i = 0; i < 3; i += 1) {
             const pt = points[i];
             if (pt.y < lowest) {
-                this.slideIdx[0] = i;
-                count = 1;
+                this.lowSlideIdx[0] = i;
+                lowCount = 1;
                 lowest = pt.y;
             } else if (pt.y === lowest) {
-                this.slideIdx[count] = i;
-                count += 1;
+                this.lowSlideIdx[lowCount] = i;
+                lowCount += 1;
             }
             if (pt.y > highest) {
-                highestIdx = i;
+                this.highSlideIdx[0] = i;
+                highCount = 1;
                 highest = pt.y;
+            } else if (pt.y === highest) {
+                this.highSlideIdx[highCount] = i;
+                highCount += 1;
             }
         }
-        // Triangle has a slope, we slide in that direction
-        if (count < 3) {
+        // Triangle has a slope, let's slide down
+        // in that slope's direction.
+        if (lowCount < 3 && !actor.state.isStuck) {
             if (!actor.state.isSliding) {
                 actor.slideState.startTime = time.elapsed,
                 actor.slideState.startPos.copy(this.line.start);
             } else if (time.elapsed - actor.slideState.startTime > 0.5) {
                 if (this.line.start.distanceToSquared(actor.slideState.startPos) < 1) {
+                    // Get stuck if we didn't travel enough in half a second
                     actor.physics.position.copy(actor.threeObject.position);
-                    return false;
+                    return SlidingStatus.STUCK;
                 }
                 actor.slideState.startTime = time.elapsed;
                 actor.slideState.startPos.copy(this.line.start);
             }
-            this.slideTgt.set(0, 0, 0);
-            for (let i = 0; i < count; i += 1) {
-                this.slideTgt.add(points[this.slideIdx[i]]);
+            // Slide origin is the average of the high
+            // points of the triangle.
+            this.slideSrc.set(0, 0, 0);
+            for (let i = 0; i < highCount; i += 1) {
+                this.slideSrc.add(points[this.highSlideIdx[i]]);
             }
-            this.slideTgt.divideScalar(count);
+            this.slideSrc.divideScalar(highCount);
+            // Slide target is the average of the low
+            // points of the triangle.
+            this.slideTgt.set(0, 0, 0);
+            for (let i = 0; i < lowCount; i += 1) {
+                this.slideTgt.add(points[this.lowSlideIdx[i]]);
+            }
+            this.slideTgt.divideScalar(lowCount);
+            // Compute normalized vector from high to low point
             this.proj_offset.copy(this.slideTgt);
-            this.proj_offset.sub(points[highestIdx]);
+            this.proj_offset.sub(this.slideSrc);
             this.proj_offset.normalize();
             actor.slideState.direction.copy(this.proj_offset);
             this.proj_offset.multiplyScalar(time.delta * 4);
@@ -232,19 +271,23 @@ export default class HeightMap {
                     : AnimType.SLIDE_BACKWARD);
             }
             this.applyTargetPos(scene, actor, this.proj_offset);
-            return true;
+            return SlidingStatus.SLIDING;
         }
-        // Triangle is flat, keep sliding in the same direction
-        if (actor.state.isSliding) {
+        // Triangle is flat, we were sliding in the previous frame,
+        // let's keep sliding in the same direction.
+        if (actor.state.isSliding && !actor.state.isStuck) {
             this.proj_offset.copy(actor.slideState.direction);
             this.proj_offset.normalize();
             this.proj_offset.multiplyScalar(time.delta * 4);
             this.applyTargetPos(scene, actor, this.proj_offset);
-            return true;
+            return SlidingStatus.SLIDING;
         }
         // Triangle is flat and we weren't sliding. Stop where we are.
-        actor.physics.position.copy(actor.threeObject.position);
-        return false;
+        if (!actor.state.isJumping) {
+            actor.physics.position.copy(actor.threeObject.position);
+            SlidingStatus.STUCK;
+        }
+        return SlidingStatus.NONE;
     }
 
     private applyTargetPos(scene: Scene, actor: Actor, tgt: THREE.Vector3) {
