@@ -391,7 +391,7 @@ export function GIVE_BONUS(this: ScriptContext, canGiveBonus) {
 }
 
 export function CHANGE_CUBE(this: ScriptContext, index) {
-    this.scene.goto(index, false, false, true, true);
+    this.scene.goto(index, true, false, true, true);
 }
 
 export function OBJ_COL(this: ScriptContext, flag) {
