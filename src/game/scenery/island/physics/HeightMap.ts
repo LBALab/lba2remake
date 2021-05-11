@@ -6,8 +6,10 @@ import Scene from '../../../Scene';
 import Actor from '../../../Actor';
 import Extra from '../../../Extra';
 import { scanGrid, intersect2DLines, pointInTriangle2D, interpolateY } from './math';
-import HeightMapCell from './HeightMapCell';
+import HeightMapCell, { HeightMapTriangle } from './HeightMapCell';
 import GroundInfo from './GroundInfo';
+import { AnimType } from '../../../data/animType';
+import { Time } from '../../../../datatypes';
 
 const MAX_ITERATIONS = 4;
 
@@ -37,11 +39,13 @@ export default class HeightMap {
      * It translates the target position (actor.physics.position)
      * so as to maintain smooth movements.
      */
-    processCollisions(scene: Scene, obj: Actor | Extra) {
+    processCollisions(scene: Scene, obj: Actor | Extra, time: Time) {
         sceneSpaceToGridSpace(scene, obj.threeObject.position, this.line.start);
         sceneSpaceToGridSpace(scene, obj.physics.position, this.line.end);
         let done = false;
         let iteration = 0;
+        let isSliding = false;
+        let isStuck = false;
         while (!done && iteration < MAX_ITERATIONS) {
             done = true;
             scanGrid(this.line, (x, z) => {
@@ -78,10 +82,15 @@ export default class HeightMap {
                             }
                         }
                         if (!intersect) {
-                            if (pointInTriangle2D(points, this.line.start)) {
+                            if (obj instanceof Actor
+                                && pointInTriangle2D(points, this.line.start)) {
                                 // If we have no intersection and the start of the
                                 // directional vector is within a solid triangle,
-                                // we should be siding down the slope.
+                                // we should be sliding down the slope.
+                                isSliding = this.processSliding(scene, tri, obj, time);
+                                if (!isSliding) {
+                                    isStuck = true;
+                                }
                                 return true;
                             }
                         }
@@ -122,19 +131,27 @@ export default class HeightMap {
             });
             iteration += 1;
         }
+        if (obj instanceof Actor) {
+            obj.state.isSliding = isSliding && !obj.state.isJumping;
+            obj.state.isStuck = isStuck && !obj.state.isJumping;
+        }
     }
 
     getGroundInfo(position: THREE.Vector3, result: GroundInfo) {
         this.vec_tmp.set(position.x * GRID_SCALE, position.y, position.z * GRID_SCALE);
-        this.cell.setFromPos(this.sections, this.vec_tmp);
+        this.getGroundInfoInGridSpace(this.vec_tmp, result);
+    }
+
+    private getGroundInfoInGridSpace(position: THREE.Vector3, result: GroundInfo) {
+        this.cell.setFromPos(this.sections, position);
         if (this.cell.valid) {
             for (const tri of this.cell.triangles) {
-                if (pointInTriangle2D(tri.points, this.vec_tmp)) {
+                if (pointInTriangle2D(tri.points, position)) {
                     result.valid = true;
                     result.collision = tri.collision;
                     result.sound = tri.sound;
                     result.liquid = tri.liquid;
-                    result.height = interpolateY(tri.points, this.vec_tmp);
+                    result.height = interpolateY(tri.points, position);
                     result.section = this.cell.section;
                     for (let i = 0; i < 3; i += 1) {
                         const pt = tri.points[i];
@@ -149,6 +166,67 @@ export default class HeightMap {
             }
         }
         result.setDefault();
+    }
+
+    private slideIdx = [-1, -1, -1];
+    private slideTgt = new THREE.Vector3();
+    private groundTmp = new GroundInfo();
+
+    private processSliding(scene: Scene, tri: HeightMapTriangle, actor: Actor, time: Time) {
+        const { points } = tri;
+        let count = 0;
+        let lowest = Infinity;
+        let highest = -Infinity;
+        let highestIdx = -1;
+        for (let i = 0; i < 3; i += 1) {
+            const pt = points[i];
+            if (pt.y < lowest) {
+                this.slideIdx[0] = i;
+                count = 1;
+                lowest = pt.y;
+            } else if (pt.y === lowest) {
+                this.slideIdx[count] = i;
+                count += 1;
+            }
+            if (pt.y > highest) {
+                highestIdx = i;
+                highest = pt.y;
+            }
+        }
+        if (count < 3 && !actor.state.isStuck) {
+            if (!actor.state.isSliding) {
+                actor.state.slideStartTime = time.elapsed;
+                actor.state.slideStartPos.copy(this.line.start);
+            } else if (time.elapsed - actor.state.slideStartTime > 0.5) {
+                if (this.line.start.distanceToSquared(actor.state.slideStartPos) < 1) {
+                    return false;
+                }
+                actor.state.slideStartTime = time.elapsed;
+                actor.state.slideStartPos.copy(this.line.start);
+            }
+            actor.setAnim(AnimType.SLIDE_FORWARD);
+            this.slideTgt.set(0, 0, 0);
+            for (let i = 0; i < count; i += 1) {
+                this.slideTgt.add(points[this.slideIdx[i]]);
+            }
+            this.slideTgt.divideScalar(count);
+            this.proj_offset.copy(this.slideTgt);
+            this.proj_offset.sub(points[highestIdx]);
+            this.proj_offset.normalize();
+            this.proj_offset.multiplyScalar(time.delta * 3);
+            this.line.end.copy(this.line.start);
+            this.line.end.add(this.proj_offset);
+            this.getGroundInfoInGridSpace(this.line.end, this.groundTmp);
+            this.line.end.y = this.groundTmp.height;
+            gridSpaceToSceneSpace(
+                scene,
+                this.line.end,
+                actor.physics.position
+            );
+            return true;
+        }
+        actor.physics.position.copy(actor.threeObject.position);
+        return false;
     }
 }
 

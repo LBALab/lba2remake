@@ -85,6 +85,10 @@ export interface ActorState {
     isVisible: boolean;
     isDead: boolean;
     isFalling: boolean;
+    isSliding: boolean;
+    slideStartTime: number;
+    slideStartPos: THREE.Vector3;
+    isStuck: boolean;
     hasGravityByAnim: boolean;
     isJumping: boolean;
     isWalking: boolean;
@@ -761,6 +765,10 @@ export default class Actor {
             isVisible: false,
             isDead: false,
             isFalling: false,
+            isSliding: false,
+            slideStartTime: 0,
+            slideStartPos: new THREE.Vector3(),
+            isStuck: false,
             hasGravityByAnim: false,
             isJumping: false,
             isWalking: false,

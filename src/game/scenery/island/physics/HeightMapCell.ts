@@ -4,7 +4,7 @@ import { WORLD_SCALE } from '../../../../utils/lba';
 import { IslandSection } from '../IslandLayout';
 import { TRIANGLE_POINTS } from '../data/heightmap';
 
-class HeightMapTriangle {
+export class HeightMapTriangle {
     readonly index: number;
     flags: number;
     points = [

@@ -136,12 +136,18 @@ function validPosition(state: ActorState) {
         && !state.isDrowningStars
         && !state.isJumping
         && !state.isFalling
-        && !state.isClimbing;
+        && !state.isClimbing
+        && !state.isSliding
+        && !state.isStuck;
 }
 
 function toggleJump(hero: Actor, value: boolean) {
     hero.state.isJumping = value;
     hero.state.isWalking = value;
+    if (value) {
+        hero.state.isSliding = false;
+        hero.state.isStuck = false;
+    }
     // check in the original game how this is actually set
     hero.state.hasGravityByAnim = value;
 }
@@ -154,7 +160,8 @@ const EULER = new THREE.Euler();
 function processFirstPersonsMovement(game: Game, scene: Scene, hero: Actor, time: Time) {
     const controlsState = game.controlsState;
     if (hero.state.isClimbing ||
-        hero.state.isSearching) {
+        hero.state.isSearching ||
+        hero.state.isSliding) {
         return;
     }
     if (hero.state.isHit) {
@@ -336,7 +343,8 @@ function processActorMovement(
 ) {
     const controlsState = game.controlsState;
     if (hero.state.isClimbing ||
-        hero.state.isSearching) {
+        hero.state.isSearching ||
+        hero.state.isSliding) {
         return;
     }
     if (hero.state.isHit) {
