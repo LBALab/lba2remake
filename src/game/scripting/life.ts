@@ -446,6 +446,9 @@ export function HIT(this: ScriptContext, actor, strength) {
 }
 
 export function PLAY_VIDEO(this: ScriptContext, cmdState, video: string) {
+    if (isLBA1) {
+        return; // skip FLA videos for now
+    }
     if (!cmdState.skipListener) {
         const that = this;
         this.game.pause();
