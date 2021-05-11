@@ -4438,6 +4438,26 @@
     "91": {
       "mirror": true
     },
+    "102": {
+      "replace": true,
+      "file": "OT_102_103_104_105_casino_coin_slot.glb",
+      "orientation": 0
+    },
+    "103": {
+      "replace": true,
+      "file": "OT_102_103_104_105_casino_coin_slot.glb",
+      "orientation": 1
+    },
+    "104": {
+      "replace": true,
+      "file": "OT_102_103_104_105_casino_coin_slot.glb",
+      "orientation": 2
+    },
+    "105": {
+      "replace": true,
+      "file": "OT_102_103_104_105_casino_coin_slot.glb",
+      "orientation": 3
+    },
     "117": {
       "replace": true,
       "file": "OT_117_118_fancy_railings_straight.glb",
