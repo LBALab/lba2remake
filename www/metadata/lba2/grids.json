@@ -2177,6 +2177,35 @@
             }
         }
     },
+    "80": {
+        "models": [
+            {
+                "name": "OT_117_118_fancy_railings_straight.glb",
+                "position": {
+                    "x": 42.5,
+                    "y": 1,
+                    "z": 3.500000000000007
+                },
+                "quaternion": [
+                    0,
+                    0,
+                    0,
+                    1
+                ]
+            }
+        ],
+        "patches": {
+            "42x2x4": {
+                "hide": true
+            },
+            "42x3x4": {
+                "hide": true
+            },
+            "42x4x4": {
+                "hide": true
+            }
+        }
+    },
     "81": {
         "models": [],
         "patches": {

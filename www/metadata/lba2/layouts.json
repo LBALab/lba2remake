@@ -4438,6 +4438,56 @@
     "91": {
       "mirror": true
     },
+    "117": {
+      "replace": true,
+      "file": "OT_117_118_fancy_railings_straight.glb",
+      "orientation": 0
+    },
+    "118": {
+      "replace": true,
+      "file": "OT_117_118_fancy_railings_straight.glb",
+      "orientation": 1
+    },
+    "119": {
+      "replace": true,
+      "file": "OT_119_120_121_122_fancy_railings_corner.glb",
+      "orientation": 0
+    },
+    "120": {
+      "replace": true,
+      "file": "OT_119_120_121_122_fancy_railings_corner.glb",
+      "orientation": 3
+    },
+    "121": {
+      "replace": true,
+      "file": "OT_119_120_121_122_fancy_railings_corner.glb",
+      "orientation": 2
+    },
+    "122": {
+      "replace": true,
+      "file": "OT_119_120_121_122_fancy_railings_corner.glb",
+      "orientation": 1
+    },
+    "123": {
+      "replace": true,
+      "file": "OT_123_124_125_126_fancy_railings_end.glb",
+      "orientation": 1
+    },
+    "124": {
+      "replace": true,
+      "file": "OT_123_124_125_126_fancy_railings_end.glb",
+      "orientation": 0
+    },
+    "125": {
+      "replace": true,
+      "file": "OT_123_124_125_126_fancy_railings_end.glb",
+      "orientation": 3
+    },
+    "126": {
+      "replace": true,
+      "file": "OT_123_124_125_126_fancy_railings_end.glb",
+      "orientation": 2
+    },
     "127": {
       "mirror": true
     },
