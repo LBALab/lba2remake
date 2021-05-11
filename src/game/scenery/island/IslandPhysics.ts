@@ -260,7 +260,7 @@ export default class IslandPhysics {
             const section = this.findSection(pos);
             this.getGround(section, pos, this.ground2);
             if (minFunc(this.ground2.height, overallHeight) || overallHeight === -1) {
-                overallHeight = this.ground.height;
+                overallHeight = this.ground2.height;
             }
         }
         // If Twinsen is touching the ground we don't need to check if any
