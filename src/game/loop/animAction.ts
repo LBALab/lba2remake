@@ -130,8 +130,6 @@ export const THROW_MAGIC = (_action: AnimAction, { actor, game, scene }: AnimAct
     });
 };
 
-export const THROW_SEARCH = unimplemented();
-
 export const THROW_ALPHA = (action: AnimAction, { actor, game, scene }: AnimActionContext) => {
     const destAngle = ((action.beta * 2 * Math.PI) / 0x1000)
         + actor.physics.temp.angle - (Math.PI / 2);
@@ -242,7 +240,53 @@ export const THROW_3D_ALPHA = (action: AnimAction, { actor, game, scene }: AnimA
     );
 };
 
-export const THROW_3D_SEARCH = unimplemented();
+export const THROW_SEARCH = (action: AnimAction, { actor, game, scene }: AnimActionContext) => {
+    const destAngle = scene.actors[action.targetActor].physics.temp.angle;
+    const position = actor.physics.position.clone();
+    const offset = new THREE.Vector3(
+        0,
+        action.yHeight,
+        0,
+    );
+    offset.applyEuler(new THREE.Euler(0, destAngle - ANGLE_OFFSET, 0, 'XZY'));
+    position.add(offset);
+    Extra.throwAiming(
+        actor.index,
+        game,
+        scene,
+        position,
+        destAngle,
+        action.spriteIndex,
+        game.getTime(),
+        action.targetActor,
+        action.speed,
+        action.strength,
+    );
+};
+
+export const THROW_3D_SEARCH = (action: AnimAction, { actor, game, scene }: AnimActionContext) => {
+    const destAngle = scene.actors[action.targetActor].physics.temp.angle - (Math.PI / 2);
+    const position = actor.physics.position.clone();
+    const offset = new THREE.Vector3(
+        action.distanceZ,
+        action.distanceY,
+        action.distanceX,
+    );
+    offset.applyEuler(new THREE.Euler(0, destAngle - ANGLE_OFFSET, 0, 'XZY'));
+    position.add(offset);
+    Extra.throwAiming(
+        actor.index,
+        game,
+        scene,
+        position,
+        destAngle,
+        action.spriteIndex,
+        game.getTime(),
+        action.targetActor,
+        action.speed,
+        action.strength,
+    );
+};
 
 export const THROW_3D_MAGIC = unimplemented();
 

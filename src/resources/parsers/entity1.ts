@@ -1,6 +1,6 @@
 import { Resource } from '../load';
 import { makeNewBox, AnimAction } from './entity2';
-import { WORLD_SCALE } from '../../utils/lba';
+import { WORLD_SCALE, SPEED_ADJUSTMENT } from '../../utils/lba';
 
 const ACTIONTYPE = {
     NOP                 : 0,
@@ -175,7 +175,8 @@ const loadEntityAnim = (data, offset) => {
                     action.spriteIndex = data.getInt8(innerOffset + offset + 4, true);
                     action.alpha = data.getInt16(innerOffset + offset + 5, true) * 0x1000 / 0x400;
                     action.beta = data.getInt16(innerOffset + offset + 7, true) * 0x1000 / 0x400;
-                    action.speed = data.getInt16(innerOffset + offset + 9, true);
+                    action.speed =
+                        data.getInt16(innerOffset + offset + 9, true) * SPEED_ADJUSTMENT;
                     action.weight = data.getInt8(innerOffset + offset + 11, true);
                     action.strength = data.getInt8(innerOffset + offset + 12, true);
                     innerOffset += 12;
@@ -194,18 +195,18 @@ const loadEntityAnim = (data, offset) => {
                     break;
                 case ACTIONTYPE.THROW_SEARCH:
                     action.yHeight = data.getUint16(innerOffset + offset + 2, true) * WORLD_SCALE;
-                    action.unk1 = data.getInt8(innerOffset + offset + 4, true);
-                    action.unk2 = data.getInt8(innerOffset + offset + 5, true);
-                    action.unk3 = data.getInt16(innerOffset + offset + 6, true);
-                    // action.unk4 = data.getInt8(innerOffset + offset + 8, true); ???
-                    innerOffset += 7;
+                    action.spriteIndex = data.getInt8(innerOffset + offset + 4, true);
+                    action.targetActor = data.getInt8(innerOffset + offset + 5, true);
+                    action.speed = data.getInt16(innerOffset + offset + 6, true) * SPEED_ADJUSTMENT;
+                    action.strength = data.getInt8(innerOffset + offset + 8, true);
+                    innerOffset += 8;
                     break;
                 case ACTIONTYPE.THROW_ALPHA:
                     action.yHeight = data.getInt16(innerOffset + offset + 2, true) * WORLD_SCALE;
                     action.spriteIndex = data.getInt8(innerOffset + offset + 4, true);
                     action.alpha = data.getInt16(innerOffset + offset + 5, true) * 0x1000 / 0x400;
                     action.beta = data.getInt16(innerOffset + offset + 7, true) * 0x1000 / 0x400;
-                    action.speed = data.getInt16(innerOffset + offset + 9, true);
+                    action.speed = data.getInt16(innerOffset + offset + 9, true) * SPEED_ADJUSTMENT;
                     action.weight = data.getInt8(innerOffset + offset + 11, true);
                     action.strength = data.getInt8(innerOffset + offset + 12, true);
                     innerOffset += 12;
@@ -229,7 +230,8 @@ const loadEntityAnim = (data, offset) => {
                     action.spriteIndex = data.getInt8(innerOffset + offset + 8, true);
                     action.alpha = data.getInt16(innerOffset + offset + 9, true) * 0x1000 / 0x400;
                     action.beta = data.getInt16(innerOffset + offset + 11, true) * 0x1000 / 0x400;
-                    action.speed = data.getInt16(innerOffset + offset + 13, true);
+                    action.speed =
+                        data.getInt16(innerOffset + offset + 13, true) * SPEED_ADJUSTMENT;
                     action.weight = data.getInt8(innerOffset + offset + 15, true);
                     action.strength = data.getInt8(innerOffset + offset + 16, true);
                     innerOffset += 16;
@@ -240,8 +242,9 @@ const loadEntityAnim = (data, offset) => {
                     action.distanceZ = data.getInt16(innerOffset + offset + 6, true) * WORLD_SCALE;
                     action.spriteIndex = data.getInt8(innerOffset + offset + 8, true);
                     action.targetActor = data.getInt8(innerOffset + offset + 9, true);
-                    action.unk1 = data.getInt16(innerOffset + offset + 10, true);
-                    action.unk2 = data.getInt8(innerOffset + offset + 12, true);
+                    action.speed =
+                        data.getInt16(innerOffset + offset + 10, true) * SPEED_ADJUSTMENT;
+                    action.strength = data.getInt8(innerOffset + offset + 12, true);
                     innerOffset += 12;
                     break;
             }

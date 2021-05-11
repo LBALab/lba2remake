@@ -391,7 +391,7 @@ export function GIVE_BONUS(this: ScriptContext, canGiveBonus) {
 }
 
 export function CHANGE_CUBE(this: ScriptContext, index) {
-    this.scene.goto(index, false, false, true, true);
+    this.scene.goto(index, true, false, true, true);
 }
 
 export function OBJ_COL(this: ScriptContext, flag) {
@@ -446,6 +446,9 @@ export function HIT(this: ScriptContext, actor, strength) {
 }
 
 export function PLAY_VIDEO(this: ScriptContext, cmdState, video: string) {
+    if (isLBA1) {
+        return; // skip FLA videos for now
+    }
     if (!cmdState.skipListener) {
         const that = this;
         this.game.pause();
