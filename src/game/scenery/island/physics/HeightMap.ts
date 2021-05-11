@@ -3,7 +3,7 @@ import { times } from 'lodash';
 import { WORLD_SIZE } from '../../../../utils/lba';
 import { IslandSection } from '../IslandLayout';
 import Scene from '../../../Scene';
-import Actor from '../../../Actor';
+import Actor, { SlideWay } from '../../../Actor';
 import Extra from '../../../Extra';
 import { scanGrid, intersect2DLines, pointInTriangle2D, interpolateY } from './math';
 import HeightMapCell, { HeightMapTriangle } from './HeightMapCell';
@@ -173,7 +173,11 @@ export default class HeightMap {
     private groundTmp = new GroundInfo();
 
     private processSliding(scene: Scene, tri: HeightMapTriangle, actor: Actor, time: Time) {
+        if (actor.state.isStuck) {
+            return false;
+        }
         const { points } = tri;
+        // Find the triangle's slope
         let count = 0;
         let lowest = Infinity;
         let highest = -Infinity;
@@ -193,18 +197,19 @@ export default class HeightMap {
                 highest = pt.y;
             }
         }
-        if (count < 3 && !actor.state.isStuck) {
+        // Triangle has a slope, we slide in that direction
+        if (count < 3) {
             if (!actor.state.isSliding) {
-                actor.state.slideStartTime = time.elapsed;
-                actor.state.slideStartPos.copy(this.line.start);
-            } else if (time.elapsed - actor.state.slideStartTime > 0.5) {
-                if (this.line.start.distanceToSquared(actor.state.slideStartPos) < 1) {
+                actor.slideState.startTime = time.elapsed,
+                actor.slideState.startPos.copy(this.line.start);
+            } else if (time.elapsed - actor.slideState.startTime > 0.5) {
+                if (this.line.start.distanceToSquared(actor.slideState.startPos) < 1) {
+                    actor.physics.position.copy(actor.threeObject.position);
                     return false;
                 }
-                actor.state.slideStartTime = time.elapsed;
-                actor.state.slideStartPos.copy(this.line.start);
+                actor.slideState.startTime = time.elapsed;
+                actor.slideState.startPos.copy(this.line.start);
             }
-            actor.setAnim(AnimType.SLIDE_FORWARD);
             this.slideTgt.set(0, 0, 0);
             for (let i = 0; i < count; i += 1) {
                 this.slideTgt.add(points[this.slideIdx[i]]);
@@ -213,20 +218,45 @@ export default class HeightMap {
             this.proj_offset.copy(this.slideTgt);
             this.proj_offset.sub(points[highestIdx]);
             this.proj_offset.normalize();
-            this.proj_offset.multiplyScalar(time.delta * 3);
-            this.line.end.copy(this.line.start);
-            this.line.end.add(this.proj_offset);
-            this.getGroundInfoInGridSpace(this.line.end, this.groundTmp);
-            this.line.end.y = this.groundTmp.height;
-            gridSpaceToSceneSpace(
-                scene,
-                this.line.end,
-                actor.physics.position
-            );
+            actor.slideState.direction.copy(this.proj_offset);
+            this.proj_offset.multiplyScalar(time.delta * 4);
+            if (!actor.state.isSliding) {
+                this.vec_tmp.copy(this.line.end);
+                this.vec_tmp.sub(this.line.start);
+                const way = this.vec_tmp.dot(this.proj_offset) > 0
+                    ? SlideWay.FORWARD
+                    : SlideWay.BACKWARD;
+                actor.slideState.way = way;
+                actor.setAnim(way === SlideWay.FORWARD
+                    ? AnimType.SLIDE_FORWARD
+                    : AnimType.SLIDE_BACKWARD);
+            }
+            this.applyTargetPos(scene, actor, this.proj_offset);
             return true;
         }
+        // Triangle is flat, keep sliding in the same direction
+        if (actor.state.isSliding) {
+            this.proj_offset.copy(actor.slideState.direction);
+            this.proj_offset.normalize();
+            this.proj_offset.multiplyScalar(time.delta * 4);
+            this.applyTargetPos(scene, actor, this.proj_offset);
+            return true;
+        }
+        // Triangle is flat and we weren't sliding. Stop where we are.
         actor.physics.position.copy(actor.threeObject.position);
         return false;
+    }
+
+    private applyTargetPos(scene: Scene, actor: Actor, tgt: THREE.Vector3) {
+        this.line.end.copy(this.line.start);
+        this.line.end.add(tgt);
+        this.getGroundInfoInGridSpace(this.line.end, this.groundTmp);
+        this.line.end.y = this.groundTmp.height;
+        gridSpaceToSceneSpace(
+            scene,
+            this.line.end,
+            actor.physics.position
+        );
     }
 }
 
