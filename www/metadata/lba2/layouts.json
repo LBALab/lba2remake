@@ -4463,6 +4463,26 @@
       "file": "OT_102_103_104_105_casino_coin_slot.glb",
       "orientation": 3
     },
+    "106": {
+      "replace": true,
+      "file": "OT_106_107_110_111_lemuzard_gambling_barrier.glb",
+      "orientation": 0
+    },
+    "108": {
+      "replace": true,
+      "file": "OT_108_109_lemuzard_gambling_barrier.glb",
+      "orientation": 0
+    },
+    "110": {
+      "replace": true,
+      "file": "OT_106_107_110_111_lemuzard_gambling_barrier.glb",
+      "orientation": 1
+    },
+    "114": {
+      "replace": true,
+      "file": "OT_114_duams_gambling_barrier.glb",
+      "orientation": 0
+    },
     "117": {
       "replace": true,
       "file": "OT_117_118_fancy_railings_straight.glb",
@@ -4571,6 +4591,11 @@
     "39:2x6x2:0,12735,0,12736,0,127,0,127,0,127,12737,12738,12740,12741,12742,12743,127,12744,127,12745,127,12746,12747,12748": {
       "replace": true,
       "file": "OT_039_magritte_plants_var1_var2.glb",
+      "orientation": 0
+    },
+    "112:3x2x1:13035,13036,13037,13039,13040,13041": {
+      "replace": true,
+      "file": "OT_112_lemuzard_gambling_barrier_var1.glb",
       "orientation": 0
     }
   },

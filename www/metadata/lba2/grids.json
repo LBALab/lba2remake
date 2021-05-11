@@ -2215,6 +2215,60 @@
             },
             "18x2x22": {
                 "hide": true
+            },
+            "24x5x14": {
+                "hide": true
+            },
+            "25x5x14": {
+                "hide": true
+            },
+            "26x5x14": {
+                "hide": true
+            },
+            "26x4x14": {
+                "hide": true
+            },
+            "22x5x14": {
+                "hide": true
+            },
+            "22x4x14": {
+                "hide": true
+            },
+            "21x5x14": {
+                "hide": true
+            },
+            "20x5x14": {
+                "hide": true
+            },
+            "19x5x20": {
+                "hide": true
+            },
+            "19x5x21": {
+                "hide": true
+            },
+            "19x5x19": {
+                "hide": true
+            },
+            "19x4x21": {
+                "hide": true
+            },
+            "27x5x19": {
+                "hide": true
+            },
+            "27x4x19": {
+                "hide": true
+            },
+            "27x4x20": {
+                "hide": true
+            },
+            "27x5x20": {
+                "hide": true
+            },
+            "27x5x21": {
+                "hide": true
+            },
+            "27x4x21": {
+                "hide": true
             }
         }
     },
