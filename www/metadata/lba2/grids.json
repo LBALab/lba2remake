@@ -2203,6 +2203,18 @@
             },
             "42x4x4": {
                 "hide": true
+            },
+            "18x5x22": {
+                "hide": true
+            },
+            "18x4x22": {
+                "hide": true
+            },
+            "18x3x22": {
+                "hide": true
+            },
+            "18x2x22": {
+                "hide": true
             }
         }
     },

@@ -4526,7 +4526,9 @@
       "orientation": 0
     },
     "151": {
-      "mirror": true
+      "replace": true,
+      "file": "OT_151_gambler_control_panel.glb",
+      "orientation": 0
     },
     "165": {
       "mirror": true
