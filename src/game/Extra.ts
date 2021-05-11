@@ -21,6 +21,7 @@ export const ExtraFlag = {
     STOP_COL: 1 << 4,
     TAKABLE: 1 << 5,
     FLASH: 1 << 6,
+    AIM: 1 << 7,
     IMPACT: 1 << 8,
     TIME_IN: 1 << 10,
     WAIT_NO_COL: 1 << 13,
@@ -75,6 +76,9 @@ const TRAJECTORY = new THREE.Vector3();
 const TRAJECTORY_EULER = new THREE.Euler();
 const TRAJECTORY_ROT = new THREE.Quaternion();
 
+const G = new THREE.Object3D();
+const P = new THREE.Vector3(0, 0, 0);
+
 export default class Extra {
     readonly type = 'extra';
     readonly game: Game;
@@ -100,6 +104,7 @@ export default class Extra {
     hitStrength: number;
     hasCollidedWithActor: boolean;
     throwBy: number = -1;
+    targetActor: number = -1;
 
     static async bonus(
         game: Game,
@@ -139,7 +144,7 @@ export default class Extra {
             | ExtraFlag.END_COL
             | ExtraFlag.IMPACT
             | ExtraFlag.TIME_IN;
-            extra.hitStrength = strength;
+        extra.hitStrength = strength;
         extra.init(throwAngle, speed, weight);
         scene.addExtra(extra);
         return extra;
@@ -166,8 +171,36 @@ export default class Extra {
             | ExtraFlag.END_COL
             | ExtraFlag.IMPACT
             | ExtraFlag.TIME_IN;
-            extra.hitStrength = strength;
+        extra.hitStrength = strength;
         extra.init(throwAngle, speed, weight);
+        scene.addExtra(extra);
+        return extra;
+    }
+
+    static async throwAiming(
+        throwBy: number,
+        game: Game,
+        scene: Scene,
+        position: THREE.Vector3,
+        destAngle: number,
+        spriteIndex: number,
+        time: Time,
+        targetActor: number,
+        speed: number,
+        strength: number,
+    ): Promise<Extra> {
+        const extra = new Extra(game, position, destAngle, time, spriteIndex, null, null);
+        await extra.loadMesh(scene);
+        extra.throwBy = throwBy;
+        extra.targetActor = targetActor;
+        extra.flags =
+              ExtraFlag.END_OBJ
+            | ExtraFlag.END_COL
+            | ExtraFlag.IMPACT
+            | ExtraFlag.TIME_IN
+            | ExtraFlag.AIM;
+        extra.hitStrength = strength;
+        extra.init(destAngle, speed, 1);
         scene.addExtra(extra);
         return extra;
     }
@@ -197,7 +230,7 @@ export default class Extra {
         };
         const euler = new THREE.Euler(0, angle, 0, 'XZY');
         this.physics.orientation.setFromEuler(euler);
-        this.isSprite = !!spriteIndex;
+        this.isSprite = spriteIndex !== null;
         this.modelIndex = modelIndex;
         this.hasCollidedWithActor = false;
         this.flags = ExtraFlag.STOP_COL
@@ -298,7 +331,9 @@ export default class Extra {
         this.weight = _weight;
         this.throwAngle = angle;
 
-        this.doTrajectory(this.time);
+        if (!((this.flags & ExtraFlag.AIM) === ExtraFlag.AIM)) {
+            this.doTrajectory(this.time);
+        }
     }
 
     playSample(sound: any, index: number) {
@@ -339,6 +374,25 @@ export default class Extra {
         );
     }
 
+    doAiming(scene, time) {
+        const delta = this.speed * time.delta * 0.001;
+
+        const aimingActor = scene.actors[this.targetActor];
+        const bb = aimingActor.getBoundingBox();
+        const halfHeight = (bb.max.y - bb.min.y) * 0.5;
+
+        const position = aimingActor.physics.position.clone();
+        position.y += halfHeight;
+
+        G.position.set(0, 0, 0);
+        P.set(0, 0, 0);
+        P.subVectors(position, this.physics.position).normalize();
+        G.translateOnAxis(P, delta);
+
+        this.threeObject.position.add(G.position);
+        this.physics.position.copy(this.threeObject.position);
+    }
+
     update(game: Game, scene: Scene, time: Time) {
         let hitActor = null;
 
@@ -348,7 +402,11 @@ export default class Extra {
         }
 
         if ((this.flags & ExtraFlag.FLY) === ExtraFlag.FLY) {
-            this.doTrajectory(time);
+            if ((this.flags & ExtraFlag.AIM) === ExtraFlag.AIM) {
+                this.doAiming(scene, time);
+            } else {
+                this.doTrajectory(time);
+            }
         }
 
         if (this.model &&
@@ -366,7 +424,7 @@ export default class Extra {
                     || !(a.props.flags.hasCollisions || a.props.flags.isSprite)) {
                     continue;
                 }
-                const boundingBox = a.model ? a.model.boundingBox : a.sprite.boundingBox;
+                const boundingBox = a.getBoundingBox();
                 INTERSECTION.copy(boundingBox);
                 if (a.model) {
                     INTERSECTION.translate(a.physics.position);
