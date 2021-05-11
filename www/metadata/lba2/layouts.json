@@ -4427,6 +4427,11 @@
     "67": {
       "mirror": true
     },
+    "79": {
+      "replace": true,
+      "file": "OT_079_casino_slot_machine.glb",
+      "orientation": 0
+    },
     "80": {
       "replace": true,
       "file": "OT_039_080_magritte_plants.glb",
