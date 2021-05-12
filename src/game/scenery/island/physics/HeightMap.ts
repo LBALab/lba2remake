@@ -70,27 +70,29 @@ export default class HeightMap {
                     if (tri.collision) {
                         const { points } = tri;
                         let intersect = false;
-                        for (let i = 0; i < 3; i += 1) {
-                            const pt0 = i;
-                            const pt1 = (i + 1) % 3;
-                            this.triangle_side.set(points[pt0], points[pt1]);
-                            const t = intersect2DLines(this.line, this.triangle_side);
-                            if (t !== -1) {
-                                // Found some intersection.
-                                // Push the intersection point and projected point
-                                // (closest point to the target on the interesected edge).
-                                this.intersect_points[idx].copy(this.line.start);
-                                this.vec_tmp.copy(this.line.end);
-                                this.vec_tmp.sub(this.line.start);
-                                this.vec_tmp.multiplyScalar(t);
-                                this.intersect_points[idx].add(this.vec_tmp);
-                                this.triangle_side.closestPointToPoint(
-                                    this.line.end,
-                                    true,
-                                    this.projection_points[idx]
-                                );
-                                idx += 1;
-                                intersect = true;
+                        if (!(obj instanceof Actor && obj.state.isSliding)) {
+                            for (let i = 0; i < 3; i += 1) {
+                                const pt0 = i;
+                                const pt1 = (i + 1) % 3;
+                                this.triangle_side.set(points[pt0], points[pt1]);
+                                const t = intersect2DLines(this.line, this.triangle_side);
+                                if (t !== -1) {
+                                    // Found some intersection.
+                                    // Push the intersection point and projected point
+                                    // (closest point to the target on the interesected edge).
+                                    this.intersect_points[idx].copy(this.line.start);
+                                    this.vec_tmp.copy(this.line.end);
+                                    this.vec_tmp.sub(this.line.start);
+                                    this.vec_tmp.multiplyScalar(t);
+                                    this.intersect_points[idx].add(this.vec_tmp);
+                                    this.triangle_side.closestPointToPoint(
+                                        this.line.end,
+                                        true,
+                                        this.projection_points[idx]
+                                    );
+                                    idx += 1;
+                                    intersect = true;
+                                }
                             }
                         }
                         if (!intersect) {
