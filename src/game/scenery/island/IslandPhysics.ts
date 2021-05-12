@@ -164,8 +164,13 @@ export default class IslandPhysics {
             }
 
             isTouchingGround = processBoxIntersections(section, obj, POSITION, isTouchingGround);
-            if (isTouchingGround && !FLAGS.hitObject) {
-                this.heightmap.processCollisions(scene, obj, time);
+            if ((obj.state.isTouchingGround || isTouchingGround) && !FLAGS.hitObject) {
+                isTouchingGround = this.heightmap.processCollisions(
+                    scene,
+                    obj,
+                    isTouchingGround,
+                    time
+                );
             }
         }
         obj.state.isTouchingGround = isTouchingGround;

@@ -44,13 +44,19 @@ export default class HeightMap {
      * heightmap (such as rocks).
      * It translates the target position (actor.physics.position)
      * so as to maintain smooth movements.
+     * @returns Whether we're touching ground or not.
      */
-    processCollisions(scene: Scene, obj: Actor | Extra, time: Time) {
+    processCollisions(
+        scene: Scene,
+        obj: Actor | Extra,
+        isTouchingGround: boolean,
+        time: Time
+    ): boolean {
         if (obj instanceof Actor
             && obj.state.isJumping
             && obj.physics.temp.position.y >= 0
             && obj.threeObject.position.y - obj.state.jumpStartHeight < 0.8) {
-            return;
+            return isTouchingGround;
         }
         sceneSpaceToGridSpace(scene, obj.threeObject.position, this.line.start);
         sceneSpaceToGridSpace(scene, obj.physics.position, this.line.end);
@@ -143,6 +149,7 @@ export default class HeightMap {
                             done = false;
                         }
                     }
+                    isTouchingGround = true;
                     return true;
                 }
                 return false;
@@ -157,6 +164,7 @@ export default class HeightMap {
                 obj.state.hasGravityByAnim = false;
             }
         }
+        return isTouchingGround;
     }
 
     getGroundInfo(position: THREE.Vector3, result: GroundInfo) {
