@@ -46,6 +46,12 @@ export default class HeightMap {
      * so as to maintain smooth movements.
      */
     processCollisions(scene: Scene, obj: Actor | Extra, time: Time) {
+        if (obj instanceof Actor
+            && obj.state.isJumping
+            && obj.physics.temp.position.y >= 0
+            && obj.threeObject.position.y - obj.state.jumpStartHeight < 0.8) {
+            return;
+        }
         sceneSpaceToGridSpace(scene, obj.threeObject.position, this.line.start);
         sceneSpaceToGridSpace(scene, obj.physics.position, this.line.end);
         let done = false;

@@ -150,6 +150,9 @@ function toggleJump(hero: Actor, value: boolean) {
     }
     // check in the original game how this is actually set
     hero.state.hasGravityByAnim = value;
+    if (value) {
+        hero.state.jumpStartHeight = hero.threeObject.position.y;
+    }
 }
 
 let turnReset = true;

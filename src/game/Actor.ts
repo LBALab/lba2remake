@@ -89,6 +89,7 @@ export interface ActorState {
     isStuck: boolean;
     hasGravityByAnim: boolean;
     isJumping: boolean;
+    jumpStartHeight: number;
     isWalking: boolean;
     isTurning: boolean;
     isFighting: boolean;
@@ -786,6 +787,7 @@ export default class Actor {
             isStuck: false,
             hasGravityByAnim: false,
             isJumping: false,
+            jumpStartHeight: 0,
             isWalking: false,
             isTurning: false,
             isFighting: false,
