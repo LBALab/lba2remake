@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { times } from 'lodash';
-import { WORLD_SIZE } from '../../../../utils/lba';
+import { WORLD_SIZE, normalizeAngle } from '../../../../utils/lba';
 import { IslandSection } from '../IslandLayout';
 import Scene from '../../../Scene';
 import Actor, { SlideWay } from '../../../Actor';
@@ -276,7 +276,7 @@ export default class HeightMap {
                     ? AnimType.SLIDE_FORWARD
                     : AnimType.SLIDE_BACKWARD);
             }
-            this.applyTargetPos(scene, actor, this.proj_offset);
+            this.applyTargetPos(scene, actor, this.proj_offset, time);
             return SlidingStatus.SLIDING;
         }
         // Triangle is flat, we were sliding in the previous frame,
@@ -285,7 +285,7 @@ export default class HeightMap {
             this.proj_offset.copy(actor.slideState.direction);
             this.proj_offset.normalize();
             this.proj_offset.multiplyScalar(time.delta * 4);
-            this.applyTargetPos(scene, actor, this.proj_offset);
+            this.applyTargetPos(scene, actor, this.proj_offset, time);
             return SlidingStatus.SLIDING;
         }
         // Triangle is flat and we weren't sliding. Stop where we are.
@@ -296,9 +296,20 @@ export default class HeightMap {
         return SlidingStatus.NONE;
     }
 
-    private applyTargetPos(scene: Scene, actor: Actor, tgt: THREE.Vector3) {
+    private euler = new THREE.Euler();
+    private tgtQuat = new THREE.Quaternion();
+
+    private applyTargetPos(scene: Scene, actor: Actor, tgt: THREE.Vector3, time: Time) {
         this.line.end.copy(this.line.start);
         this.line.end.add(tgt);
+        let angle = Math.atan2(tgt.x, tgt.z);
+        if (actor.slideState.way === SlideWay.BACKWARD) {
+            angle = normalizeAngle(angle + Math.PI);
+        }
+        actor.physics.temp.angle = angle;
+        this.euler.set(0, angle, 0, 'YXZ');
+        this.tgtQuat.setFromEuler(this.euler);
+        actor.physics.orientation.slerp(this.tgtQuat, time.delta * 4);
         this.getGroundInfoInGridSpace(this.line.end, this.groundTmp);
         this.line.end.y = this.groundTmp.height;
         gridSpaceToSceneSpace(
