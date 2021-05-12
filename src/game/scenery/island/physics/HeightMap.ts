@@ -301,7 +301,7 @@ export default class HeightMap {
         // Triangle is flat and we weren't sliding. Stop where we are.
         if (!actor.state.isJumping) {
             actor.physics.position.copy(actor.threeObject.position);
-            SlidingStatus.STUCK;
+            return SlidingStatus.STUCK;
         }
         return SlidingStatus.NONE;
     }
