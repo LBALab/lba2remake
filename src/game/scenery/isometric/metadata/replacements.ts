@@ -355,7 +355,12 @@ function appendMeshGeometry(
             textureIdCache[texture.uuid] = textureId;
             geomGroup = `textured_${textureId}`;
         }
-        groupType = 'textured';
+        if (baseMaterial.name.substring(0, 12) === 'transparent_') {
+            geomGroup = `transparent_${geomGroup}`;
+            groupType = 'textured_transparent';
+        } else {
+            groupType = 'textured';
+        }
     } else if (baseMaterial.opacity < 1) {
         geomGroup = `transparent_${idCounters.transparentGeomId}`;
         groupType = 'transparent';
@@ -364,6 +369,7 @@ function appendMeshGeometry(
     if (!(geomGroup in geometries)) {
         switch (groupType) {
             case 'textured':
+            case 'textured_transparent':
                 geometries[geomGroup] = {
                     index: [],
                     positions: [],
@@ -371,6 +377,9 @@ function appendMeshGeometry(
                     colors: null,
                     uvs: [],
                     material: new THREE.RawShaderMaterial({
+                        opacity: groupType === 'textured_transparent'
+                            ? baseMaterial.opacity
+                            : 1,
                         vertexShader: compile('vert', VERT_OBJECTS_TEXTURED),
                         fragmentShader: compile('frag', FRAG_OBJECTS_TEXTURED),
                         uniforms: {

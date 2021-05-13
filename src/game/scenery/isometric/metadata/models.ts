@@ -84,6 +84,7 @@ export async function loadFullSceneModel(
                     transparent: node.name.substring(0, 12) === 'transparent_',
                     uniforms: {
                         uTexture: texture && { value: texture },
+                        uOpacity: {value: material.opacity},
                         lutTexture: {value: replacementData.lutTexture},
                         palette: {value: replacementData.paletteTexture},
                         light: {value: replacementData.light},
@@ -133,8 +134,9 @@ export async function saveFullSceneModel(replacements, entry) {
                 return;
             }
             const uTexture = shaderMat.uniforms.uTexture;
-            node.material = new THREE.MeshStandardMaterial(uTexture && {
-                map: uTexture.value
+            node.material = new THREE.MeshStandardMaterial({
+                opacity: shaderMat.opacity,
+                map: uTexture && uTexture.value
             });
         }
     });
