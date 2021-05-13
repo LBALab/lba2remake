@@ -35,6 +35,15 @@
 		},
 		"123": {
 			"file": "surveillance_lever_on.glb"
+		},
+        "228": {
+			"hide": true
+		},
+        "229": {
+			"hide": true
+		},
+        "230": {
+			"hide": true
 		}
     }
 }
