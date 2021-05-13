@@ -325,6 +325,7 @@ export async function loadSpriteReplacement(ambience, {file, fx}) {
                     size: 0.3,
                     sparkle: 0
                 }], await makeStarsMaterial());
+                glow.material.name = 'keepMat_glow';
                 glow.renderOrder = 1;
                 m.scene.add(glow);
             }
