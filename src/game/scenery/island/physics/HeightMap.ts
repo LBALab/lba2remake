@@ -316,10 +316,11 @@ export default class HeightMap {
         if (actor.slideState.way === SlideWay.BACKWARD) {
             angle = normalizeAngle(angle + Math.PI);
         }
-        actor.physics.temp.angle = angle;
         this.euler.set(0, angle, 0, 'YXZ');
         this.tgtQuat.setFromEuler(this.euler);
         actor.physics.orientation.slerp(this.tgtQuat, time.delta * 4);
+        this.euler.setFromQuaternion(actor.physics.orientation, 'YXZ');
+        actor.physics.temp.angle = this.euler.y;
         this.getGroundInfoInGridSpace(this.line.end, this.groundTmp);
         this.line.end.y = this.groundTmp.height;
         gridSpaceToSceneSpace(
