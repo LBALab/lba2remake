@@ -3,7 +3,7 @@ precision highp float;
 varying vec4 vColor;
 varying vec3 vPos;
 
-#require "../dome_floor_effect.frag"
+#require "../../../shaders/dome_floor_effect.frag"
 
 void main() {
     gl_FragColor = vColor;

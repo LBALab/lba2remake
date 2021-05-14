@@ -8,8 +8,8 @@ import VERT_OBJECTS_COLORED from '../shaders/objects/colored.vert.glsl';
 import FRAG_OBJECTS_COLORED from '../shaders/objects/colored.frag.glsl';
 import VERT_OBJECTS_TEXTURED from '../shaders/objects/textured.vert.glsl';
 import FRAG_OBJECTS_TEXTURED from '../shaders/objects/textured.frag.glsl';
-import VERT_OBJECTS_DOME from '../shaders/objects/dome.vert.glsl';
-import FRAG_OBJECTS_DOME from '../shaders/objects/dome.frag.glsl';
+import VERT_OBJECTS_DOME from './fx/shaders/dome.vert.glsl';
+import FRAG_OBJECTS_DOME from './fx/shaders/dome.frag.glsl';
 import { compile } from '../../../../utils/shaders';
 import { loadFullSceneModel } from './models';
 import { getCommonResource } from '../../../../resources';
@@ -176,7 +176,8 @@ async function addReplacementObject(info, replacements, gx, gy, gz) {
     const trackReplacements = {};
 
     threeObject.traverse((node) => {
-        if (node instanceof THREE.Mesh && node.morphTargetInfluences) {
+        if (node instanceof THREE.Mesh &&
+            (node.morphTargetInfluences || node.name.substring(0, 3) === 'fx_')) {
             const newMesh = node.clone();
             const matrixWorld = getPartialMatrixWorld(node, threeObject);
             newMesh.matrix.copy(gTransform);
@@ -186,11 +187,11 @@ async function addReplacementObject(info, replacements, gx, gy, gz) {
                 newMesh.quaternion,
                 newMesh.scale
             );
-            newMesh.name = newMesh.uuid;
+            newMesh.name = `${node.name}_${newMesh.uuid}`;
             newMesh.updateMatrixWorld(true);
             replacements.threeObject.add(newMesh);
             skipMeshes.push(node);
-            if (animations && animations.length) {
+            if (node.morphTargetInfluences && animations && animations.length) {
                 for (const animation of animations) {
                     const {tracks} = animation;
                     for (const track of tracks) {
@@ -335,8 +336,8 @@ function appendMeshGeometry(
     let geomGroup = 'colored';
     let groupType = null;
     if (isDomeFloor) {
-        geomGroup = 'dome_floor';
-        groupType = 'dome_floor';
+        geomGroup = 'fx_dome_floor';
+        groupType = 'fx_dome_floor';
     } else if (baseMaterial.name.substring(0, 8) === 'keepMat_') {
         geomGroup = `original_${idCounters.originalGeomId}`;
         groupType = 'original';
@@ -408,7 +409,7 @@ function appendMeshGeometry(
                     })
                 };
                 break;
-            case 'dome_floor':
+            case 'fx_dome_floor':
                 geometries[geomGroup] = {
                     index: [],
                     positions: [],
