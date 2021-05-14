@@ -14,7 +14,7 @@ declare global {
     }
 }
 
-export function compile(type, source: string) {
+export function compile(type: 'vert' | 'frag', source: string) {
     const lines = source.split('\n');
     const webGL2 = window.WebGL2RenderingContext && getParams().webgl2;
     if (!webGL2) {
