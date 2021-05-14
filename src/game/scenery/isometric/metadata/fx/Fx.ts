@@ -4,6 +4,9 @@ import { Time } from '../../../../../datatypes';
 
 export interface FxProps {
     numActors: number;
+    paletteTexture: THREE.DataTexture;
+    lutTexture: THREE.DataTexture;
+    light: THREE.Vector3;
 }
 
 export interface FxConstructor {

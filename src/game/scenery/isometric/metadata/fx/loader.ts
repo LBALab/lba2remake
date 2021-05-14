@@ -10,13 +10,11 @@ const effects: FxMap = {
 };
 
 export function loadFx(node: THREE.Mesh, props: FxProps): Fx {
-    for (const name in effects) {
-        if (node.name.substring(0, 3 + name.length) === `fx_${name}`) {
-            const FxClass = effects[name];
-            const fx = new FxClass(props);
-            fx.init(node);
-            return fx;
-        }
+    if (node.userData.fx in effects) {
+        const FxClass = effects[node.userData.fx];
+        const fx = new FxClass(props);
+        fx.init(node);
+        return fx;
     }
     return null;
 }

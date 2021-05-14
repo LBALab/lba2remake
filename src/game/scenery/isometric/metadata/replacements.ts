@@ -117,6 +117,9 @@ export function buildReplacementMeshes({ geometries, threeObject }) {
             }
             const mesh = new THREE.Mesh(bufferGeometry, geom.material);
             mesh.name = key;
+            if (geom.fx) {
+                mesh.userData.fx = geom.fx;
+            }
             threeObject.add(mesh);
         }
     });
@@ -177,7 +180,7 @@ async function addReplacementObject(info, replacements, gx, gy, gz) {
 
     threeObject.traverse((node) => {
         if (node instanceof THREE.Mesh &&
-            (node.morphTargetInfluences || node.name.substring(0, 3) === 'fx_')) {
+            (node.morphTargetInfluences || node.userData.fx)) {
             const newMesh = node.clone();
             const matrixWorld = getPartialMatrixWorld(node, threeObject);
             newMesh.matrix.copy(gTransform);
@@ -336,8 +339,8 @@ function appendMeshGeometry(
     let geomGroup = 'colored';
     let groupType = null;
     if (isDomeFloor) {
-        geomGroup = 'fx_dome_floor';
-        groupType = 'fx_dome_floor';
+        geomGroup = 'dome_floor';
+        groupType = 'dome_floor';
     } else if (baseMaterial.name.substring(0, 8) === 'keepMat_') {
         geomGroup = `original_${idCounters.originalGeomId}`;
         groupType = 'original';
@@ -409,8 +412,9 @@ function appendMeshGeometry(
                     })
                 };
                 break;
-            case 'fx_dome_floor':
+            case 'dome_floor':
                 geometries[geomGroup] = {
+                    fx: 'dome_floor',
                     index: [],
                     positions: [],
                     normals: [],

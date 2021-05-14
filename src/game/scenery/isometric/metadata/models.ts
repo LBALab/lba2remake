@@ -57,8 +57,8 @@ export async function loadFullSceneModel(
                 return;
             }
             const texture = material.map;
-            if (node.name.substring(0, 3) === 'fx_') {
-                const fx = loadFx(node, { numActors });
+            if (node.userData.fx) {
+                const fx = loadFx(node, { numActors, ...replacementData });
                 if (fx) {
                     effects.push(fx);
                     return;
