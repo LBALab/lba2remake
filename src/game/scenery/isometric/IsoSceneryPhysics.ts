@@ -32,7 +32,12 @@ export default class IsoSceneryPhysics {
         this.grid = grid;
     }
 
-    getNormal(_scene: Scene, position: THREE.Vector3, boundingBox: THREE.Box3) {
+    getNormal(
+        _scene: Scene,
+        position: THREE.Vector3,
+        boundingBox: THREE.Box3,
+        result: THREE.Vector3
+    ) {
         POSITION.copy(position);
         POSITION.multiplyScalar(STEP);
 
@@ -47,7 +52,8 @@ export default class IsoSceneryPhysics {
                 const minY = i > 0 ? bb.min.y : -Infinity;
                 if (POSITION.y >= minY) {
                     if (POSITION.y < y + 0.01) {
-                        return new THREE.Vector3(0, 1, 0).normalize();
+                        result.set(0, 1, 0);
+                        return true;
                     }
                 }
             }
@@ -77,14 +83,16 @@ export default class IsoSceneryPhysics {
                         BB.getCenter(CENTER2);
                         const dir = CENTER1.sub(CENTER2);
                         if (ITRS_SIZE.x < ITRS_SIZE.z) {
-                            return new THREE.Vector3(1 * Math.sign(dir.x), 0, 0).normalize();
+                            result.set(1 * Math.sign(dir.x), 0, 0).normalize();
+                        } else {
+                            result.set(0, 0, 1 * Math.sign(dir.z)).normalize();
                         }
-                        return new THREE.Vector3(0, 0, 1 * Math.sign(dir.z)).normalize();
+                        return true;
                     }
                 }
             }
         }
-        return null;
+        return false;
     }
 
     getLayoutInfo(position: THREE.Vector3, layoutInfo: LayoutInfo) {

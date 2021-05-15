@@ -6,6 +6,7 @@ import IslandPhysics from '../IslandPhysics';
 import Game from '../../../Game';
 import Scene from '../../../Scene';
 import { Time } from '../../../../datatypes';
+import GroundInfo from '../physics/GroundInfo';
 
 export default class Lightning {
     readonly threeObject: THREE.Mesh;
@@ -13,6 +14,7 @@ export default class Lightning {
     private lightning: LightningInfo;
     private static currentLightning: LightningInfo = null;
     private sound: any;
+    private ground = new GroundInfo();
 
     constructor(props, physics: IslandPhysics) {
         this.physics = physics;
@@ -155,12 +157,11 @@ export default class Lightning {
                 0,
                 Math.random() * 400 - 200
             );
-            const section = this.physics.findSection(position);
-            if (section) {
-                const ground = this.physics.getHeightmapGround(position);
-                position.y = ground.height;
+            this.physics.heightmap.getGroundInfo(position, this.ground);
+            if (this.ground.section) {
+                position.y = this.ground.height;
                 let hitObj = false;
-                for (const obj of section.objects) {
+                for (const obj of this.ground.section.objects) {
                     const bb = obj.boundingBox;
                     if (bb.containsPoint(position)) {
                         position.y = bb.max.y;

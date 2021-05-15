@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import Island from '../../../../../game/scenery/island/Island';
+import GroundInfo from '../../../../../game/scenery/island/physics/GroundInfo';
 
 export function get3DFreeCamera() {
     const camera = new THREE.PerspectiveCamera(
@@ -35,15 +36,17 @@ export function get3DFreeCamera() {
     };
 }
 
+const GROUND = new GroundInfo();
+
 function processFree3DMovement(controlsState, controlNode, island: Island, time) {
     let speedFactor = 0;
     let height = 0;
     if (island) {
-        const groundInfo = island.physics.getHeightmapGround(controlNode.position);
-        height = groundInfo.height;
+        island.physics.heightmap.getGroundInfo(controlNode.position, GROUND);
+        height = GROUND.height;
         speedFactor = Math.max(
             0.0,
-            Math.min(1.0, (controlNode.position.y - groundInfo.height) * 0.7)
+            Math.min(1.0, (controlNode.position.y - GROUND.height) * 0.7)
         );
     }
 

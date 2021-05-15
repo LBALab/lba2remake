@@ -1,16 +1,19 @@
 import * as THREE from 'three';
-import { LIQUID_TYPES, getTriangleFromPos } from './ground';
+import { LIQUID_TYPES } from './ground';
 import { WORLD_SIZE, getPositions } from '../../../utils/lba';
 import { BehaviourMode } from '../../loop/hero';
 import { AnimType } from '../../data/animType';
-import { IslandSection } from './IslandLayout';
+import IslandLayout, { IslandSection } from './IslandLayout';
 import Scene from '../../Scene';
 import { Time } from '../../../datatypes';
 import Actor from '../../Actor';
 import Extra from '../../Extra';
+import HeightMap from './physics/HeightMap';
+import GroundInfo from './physics/GroundInfo';
 
-const TGT = new THREE.Vector3();
 const POSITION = new THREE.Vector3();
+const P0 = new THREE.Vector3();
+const P1 = new THREE.Vector3();
 const FLAGS = {
     hitObject: false
 };
@@ -23,57 +26,50 @@ const PROTOPACK_OFFSET = 0.1;
 const JETPACK_VERTICAL_SPEED = 7.5;
 
 const GRID_SCALE = 32 / WORLD_SIZE;
-const WORLD_SIZE_M2 = WORLD_SIZE * 2;
-
-const DEFAULT_GROUND = {
-    height: 0,
-    sound: null,
-    collision: null,
-    liquid: 0,
-    points: [],
-};
-
 const GRID_UNIT = 1 / 64;
-
 const Y_THRESHOLD = WORLD_SIZE / 1600;
 
 export default class IslandPhysics {
-    private sections: Map<string, IslandSection>;
+    heightmap: HeightMap;
+    private sections: IslandSection[] = [];
+    private ground = new GroundInfo();
+    private ground2 = new GroundInfo();
 
-    constructor(layout) {
-        this.sections = new Map<string, IslandSection>();
+    constructor(layout: IslandLayout) {
         for (const section of layout.groundSections) {
-            this.sections.set(`${section.x},${section.z}`, section);
+            const { x, z } = section;
+            const sX = 16 - (x + 8);
+            const sZ = z + 8;
+            this.sections[sX * 16 + sZ] = section;
         }
+        this.heightmap = new HeightMap(this.sections);
     }
 
-    getNormal(scene: Scene, position: THREE.Vector3, boundingBox: THREE.Box3) {
+    getNormal(
+        scene: Scene,
+        position: THREE.Vector3,
+        boundingBox: THREE.Box3,
+        result: THREE.Vector3
+    ) {
         POSITION.copy(position);
-        POSITION.applyMatrix4(scene.sceneNode.matrixWorld);
-        const section = this.findSection(POSITION);
-        if (!section) {
-            return null;
+        POSITION.add(scene.sceneNode.position);
+
+        this.heightmap.getGroundInfo(POSITION, this.ground);
+        if (this.ground.valid && position.y - this.ground.height < 0.1) {
+            const { points } = this.ground;
+            P0.copy(points[1]).sub(points[0]);
+            P1.copy(points[2]).sub(points[0]);
+            result.crossVectors(P0, P1).normalize();
+            return true;
         }
 
-        const ground = this.getGround(section, POSITION);
-        if (ground.points.length === 3 && position.y - ground.height < 0.1) {
-            const triangleToWorld = (p: THREE.Vector3) => {
-                return new THREE.Vector3(
-                   WORLD_SIZE_M2 * (section.x + 1) - ((p.x - 1) / GRID_SCALE) + 80,
-                   p.y,
-                   (p.z / GRID_SCALE) + section.z * WORLD_SIZE_M2 + 40,
-                );
-            };
-
-            const worldPoints = ground.points.map(triangleToWorld);
-            const a = worldPoints[1].clone().sub(worldPoints[0]);
-            const b = worldPoints[2].clone().sub(worldPoints[0]);
-            return a.cross(b).normalize();
+        if (!this.ground.section) {
+            return false;
         }
 
         ACTOR_BOX.copy(boundingBox);
         ACTOR_BOX.translate(POSITION);
-        for (const obj of section.objects) {
+        for (const obj of this.ground.section.objects) {
             const bb = obj.boundingBox;
             if (ACTOR_BOX.intersectsBox(bb)) {
                 INTERSECTION.copy(ACTOR_BOX);
@@ -84,14 +80,17 @@ export default class IslandPhysics {
                 const dir = CENTER1.sub(CENTER2);
                 if (ACTOR_BOX.min.y < bb.max.y - H_THRESHOLD) {
                     if (ITRS_SIZE.x < ITRS_SIZE.z) {
-                        return new THREE.Vector3(1 * Math.sign(dir.x), 0, 0);
+                        result.set(1 * Math.sign(dir.x), 0, 0);
+                    } else {
+                        result.set(0, 0, 1 * Math.sign(dir.z));
                     }
-                    return new THREE.Vector3(0, 0, 1 * Math.sign(dir.z));
+                } else {
+                    result.set(0, 1 * Math.sign(dir.y), 0);
                 }
-                return new THREE.Vector3(0, 1 * Math.sign(dir.y), 0);
+                return true;
             }
         }
-        return null;
+        return false;
     }
 
     processCollisions(scene: Scene, obj: Actor | Extra, time: Time) {
@@ -100,13 +99,13 @@ export default class IslandPhysics {
         }
 
         POSITION.copy(obj.physics.position);
-        POSITION.applyMatrix4(scene.sceneNode.matrixWorld);
+        POSITION.add(scene.sceneNode.position);
 
         const section = this.findSection(POSITION);
 
         FLAGS.hitObject = false;
-        const ground = this.getGround(section, POSITION);
-        let height = ground.height;
+        this.getGround(section, POSITION, this.ground);
+        let height = this.ground.height;
 
         obj.state.distFromGround = Math.max(obj.physics.position.y - height, 0);
         const distFromFloor = this.getDistFromFloor(scene, obj);
@@ -161,31 +160,24 @@ export default class IslandPhysics {
 
         if (section) {
             if (obj instanceof Actor && obj.animState) {
-                obj.animState.floorSound = ground.sound;
+                obj.animState.floorSound = this.ground.sound;
             }
 
             isTouchingGround = processBoxIntersections(section, obj, POSITION, isTouchingGround);
-            if (!FLAGS.hitObject) {
-                TGT.copy(obj.physics.position);
-                TGT.sub(obj.threeObject.position);
-                TGT.setY(0);
-                if (TGT.lengthSq() !== 0) {
-                    TGT.normalize();
-                    TGT.multiplyScalar(0.005 * WORLD_SIZE);
-                    TGT.add(obj.threeObject.position);
-                    TGT.applyMatrix4(scene.sceneNode.matrixWorld);
-                    const gInfo = this.getGroundInfo(section, TGT);
-                    if (gInfo && gInfo.collision && isTouchingGround) {
-                        obj.physics.position.copy(obj.threeObject.position);
-                    }
-                }
+            if ((obj.state.isTouchingGround || isTouchingGround) && !FLAGS.hitObject) {
+                isTouchingGround = this.heightmap.processCollisions(
+                    scene,
+                    obj,
+                    isTouchingGround,
+                    time
+                );
             }
         }
         obj.state.isTouchingGround = isTouchingGround;
         obj.state.isTouchingFloor = distFromFloor < 0.001;
 
-        if (obj instanceof Actor && isTouchingGround && ground.liquid > 0) {
-            switch (ground.liquid) {
+        if (obj instanceof Actor && isTouchingGround && this.ground.liquid > 0) {
+            switch (this.ground.liquid) {
                 case LIQUID_TYPES.WATER:
                     obj.state.isDrowning = true;
                     break;
@@ -200,18 +192,10 @@ export default class IslandPhysics {
         return isTouchingGround;
     }
 
-    getHeightmapGround(position: THREE.Vector3) {
-        const section = this.findSection(position);
-        if (!section) {
-            return DEFAULT_GROUND;
-        }
-        return this.getGroundInfo(section, position);
-    }
-
     processCameraCollisions(camPosition: THREE.Vector3, groundOffset = 0.15, objOffset = 0.2) {
         const section = this.findSection(camPosition);
-        const ground = this.getGroundInfo(section, camPosition);
-        camPosition.y = Math.max(ground.height + groundOffset * WORLD_SIZE, camPosition.y);
+        this.heightmap.getGroundInfo(camPosition, this.ground);
+        camPosition.y = Math.max(this.ground.height + groundOffset * WORLD_SIZE, camPosition.y);
         if (section) {
             for (const obj of section.objects) {
                 const bb = obj.boundingBox;
@@ -232,15 +216,17 @@ export default class IslandPhysics {
 
         const originalPos = new THREE.Vector3();
         originalPos.copy(obj.physics.position);
-        originalPos.applyMatrix4(scene.sceneNode.matrixWorld);
+        originalPos.add(scene.sceneNode.position);
         const minFunc = (a, b) => a > b;
         const floorHeight = this.getFloorHeight(scene, obj, minFunc, DEFAULT_FLOOR_THRESHOLD);
         return originalPos.y - floorHeight;
     }
 
-    private getGround(section: IslandSection, position: THREE.Vector3) {
-        if (!section)
-            return DEFAULT_GROUND;
+    private getGround(section: IslandSection, position: THREE.Vector3, result: GroundInfo) {
+        if (!section) {
+            result.setDefault();
+            return;
+        }
 
         const { x, y, z } = position;
         const yMinusThreshold = y - Y_THRESHOLD;
@@ -251,28 +237,11 @@ export default class IslandPhysics {
                 && z >= bb.min.z && z <= bb.max.z
                 && y >= bb.min.y && yMinusThreshold < bb.max.y) {
                 FLAGS.hitObject = true;
-                return {
-                    height: bb.max.y,
-                    sound: obj.soundType,
-                    sound2: null,
-                    collision: null,
-                    liquid: 0,
-                    points: [],
-                };
+                result.setFromIslandObject(section, obj);
+                return;
             }
         }
-        return this.getGroundInfo(section, position);
-    }
-
-    private getGroundInfo(section: IslandSection, position: THREE.Vector3) {
-        if (!section) {
-            return DEFAULT_GROUND;
-        }
-
-        const xLocalUnscaled = (WORLD_SIZE_M2 - (position.x - (section.x * WORLD_SIZE_M2)));
-        const xLocal = (xLocalUnscaled * GRID_SCALE) + 1;
-        const zLocal = (position.z - (section.z * WORLD_SIZE_M2)) * GRID_SCALE;
-        return getTriangleFromPos(section, xLocal, zLocal);
+        this.heightmap.getGroundInfo(position, result);
     }
 
     // getFloorHeight returns the height of the floor below Twinsen. Note that this
@@ -282,7 +251,7 @@ export default class IslandPhysics {
     private getFloorHeight(scene: Scene, obj, minFunc, floorThreshold) {
         const originalPos = new THREE.Vector3();
         originalPos.copy(obj.physics.position);
-        originalPos.applyMatrix4(scene.sceneNode.matrixWorld);
+        originalPos.add(scene.sceneNode.position);
         ACTOR_BOX.copy(obj.model.boundingBox);
         ACTOR_BOX.translate(originalPos);
 
@@ -294,9 +263,9 @@ export default class IslandPhysics {
         let overallHeight = -1;
         for (const pos of getPositions(ACTOR_BOX)) {
             const section = this.findSection(pos);
-            const ground = this.getGround(section, pos);
-            if (minFunc(ground.height, overallHeight) || overallHeight === -1) {
-                overallHeight = ground.height;
+            this.getGround(section, pos, this.ground2);
+            if (minFunc(this.ground2.height, overallHeight) || overallHeight === -1) {
+                overallHeight = this.ground2.height;
             }
         }
         // If Twinsen is touching the ground we don't need to check if any
@@ -308,7 +277,7 @@ export default class IslandPhysics {
         // Otherwise, check to see if there are any objects under Twinsen which
         // would be considered the floor.
         POSITION.copy(obj.physics.position);
-        POSITION.applyMatrix4(scene.sceneNode.matrixWorld);
+        POSITION.add(scene.sceneNode.position);
         while (true) {
             if (POSITION.y < 0) {
                 break;
@@ -333,9 +302,13 @@ export default class IslandPhysics {
     }
 
     findSection(position): IslandSection {
-        const x = Math.floor((position.x / WORLD_SIZE_M2) - GRID_UNIT);
-        const z = Math.floor(position.z / WORLD_SIZE_M2);
-        return this.sections.get(`${x},${z}`);
+        const x = Math.floor(position.x * GRID_SCALE);
+        const z = Math.floor(position.z * GRID_SCALE);
+        const sX = Math.floor((x - 1) * GRID_UNIT);
+        const sZ = Math.floor(z * GRID_UNIT);
+        const iX = 16 - (sX + 8);
+        const iZ = sZ + 8;
+        return this.sections[iX * 16 + iZ];
     }
 }
 

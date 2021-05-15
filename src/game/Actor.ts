@@ -85,8 +85,11 @@ export interface ActorState {
     isVisible: boolean;
     isDead: boolean;
     isFalling: boolean;
+    isSliding: boolean;
+    isStuck: boolean;
     hasGravityByAnim: boolean;
     isJumping: boolean;
+    jumpStartHeight: number;
     isWalking: boolean;
     isTurning: boolean;
     isFighting: boolean;
@@ -117,6 +120,18 @@ export interface ActorState {
     floorSound: number;
     floorSound2?: number;
     nextAnim: number;
+}
+
+export enum SlideWay {
+    FORWARD,
+    BACKWARD
+}
+
+interface SlideState {
+    startTime: number;
+    startPos: THREE.Vector3;
+    direction: THREE.Vector3;
+    way: SlideWay;
 }
 
 interface ActorScripts {
@@ -163,6 +178,7 @@ export default class Actor {
     private readonly game: Game;
     private readonly scene: Scene;
     animState: any = null;
+    slideState: SlideState;
     threeObject?: THREE.Object3D = null;
     model?: Model = null;
     sprite?: any = null;
@@ -173,6 +189,11 @@ export default class Actor {
     label?: any;
     refreshLabel?: Function;
     wagonState?: WagonState;
+    /**
+     * This is used to add data meant to be looked
+     * at in the inspector for debugging purposes.
+     */
+    dbg: any = {};
 
     static async load(
         game: Game,
@@ -245,6 +266,12 @@ export default class Actor {
         if (props.dirMode === ActorDirMode.WAGON) {
             this.wagonState = initWagonState(angleToRad(props.angle));
         }
+        this.slideState = {
+            startTime: 0,
+            startPos: new THREE.Vector3(),
+            direction: new THREE.Vector3(),
+            way: SlideWay.FORWARD
+        };
     }
 
     update(game: Game, scene: Scene, time: any) {
@@ -361,7 +388,7 @@ export default class Actor {
                 this.physics.temp.destAngle = this.physics.temp.angle;
             }
         }
-        if (this.state.isWalking) {
+        if (this.state.isWalking && !(this.state.isStuck && !this.state.isJumping)) {
             this.physics.temp.position.set(0, 0, 0);
 
             const animIndex = this.props.animIndex;
@@ -756,8 +783,11 @@ export default class Actor {
             isVisible: false,
             isDead: false,
             isFalling: false,
+            isSliding: false,
+            isStuck: false,
             hasGravityByAnim: false,
             isJumping: false,
+            jumpStartHeight: 0,
             isWalking: false,
             isTurning: false,
             isFighting: false,
