@@ -683,12 +683,6 @@ export default class Actor {
             return;
         }
 
-        // Ensure we don't repeatedly play the hit animation.
-        if (this.state.isHit &&
-            this.props.animIndex === AnimType.HIT) {
-            return;
-        }
-
         let life = -1;
         // TODO(scottwilliams): This doesn't take into account actor armour.
         if (this.index === 0) {
@@ -708,6 +702,12 @@ export default class Actor {
             if (this.threeObject) {
                 this.threeObject.visible = false;
             }
+            return;
+        }
+
+        // Ensure we don't repeatedly play the hit animation.
+        if (this.state.isHit &&
+            this.props.animIndex === AnimType.HIT) {
             return;
         }
 
