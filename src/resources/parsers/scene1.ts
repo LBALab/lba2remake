@@ -210,7 +210,10 @@ function loadActors(scene, offset) {
         actor.info2 = data.getInt16(offset, true);
         offset += 2;
         actor.info3 = data.getInt16(offset, true);
-        actor.followActor = actor.info3;
+        if (actor.dirMode === ActorDirMode.FOLLOW ||
+            actor.dirMode === ActorDirMode.SAME_XZ) {
+            actor.followActor = actor.info3;
+        }
         offset += 2;
 
         actor.extraAmount = data.getInt8(offset);
