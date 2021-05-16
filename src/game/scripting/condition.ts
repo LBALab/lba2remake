@@ -26,7 +26,7 @@ export function DISTANCE(this: ScriptContext, actor: Actor) {
     if (actor.state.isDead) {
         return Infinity;
     }
-    if (getDistanceLba(this.actor.physics.position.y - actor.physics.position.y) > 1500) {
+    if (getDistanceLba(Math.abs(this.actor.physics.position.y - actor.physics.position.y)) > 1500) {
         return Infinity;
     }
     return this.actor.getDistanceLba2D(actor.physics.position);
