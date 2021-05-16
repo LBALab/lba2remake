@@ -513,7 +513,7 @@ export default class Actor {
 
     setAngleRad(angle) {
         this.state.isTurning = true;
-        this.props.angle = angle;
+        this.props.angle = THREE.MathUtils.radToDeg(angle);
         this.physics.temp.destAngle = angle;
     }
 
