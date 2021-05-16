@@ -1,5 +1,7 @@
 import { Fx, FxProps, FxConstructor } from './Fx';
 import DomeFloor from './DomeFloor';
+import RadarTrail from './RadarTrail';
+import RadarRotate from './Rotate';
 
 type FxMap = {
     [key: string]: FxConstructor;
@@ -7,6 +9,7 @@ type FxMap = {
 
 const effects: FxMap = {
     dome_floor: DomeFloor,
+    trail: RadarTrail,
     rotate: RadarRotate
 };
 
