@@ -159,18 +159,6 @@ function processCollisionsWithActors(scene: Scene, actor: Actor) {
     }
     ACTOR_BOX.copy(actor.model.boundingBox);
 
-    // Swap X and Z axis if actor has rotation
-    // TODO to improve how we handle AABB rotation
-    const angleDeg = THREE.MathUtils.radToDeg(actor.physics.temp.angle);
-    if (!(angleDeg < 45 && angleDeg >= 315)) {
-        const x1 = ACTOR_BOX.min.x;
-        const x2 = ACTOR_BOX.max.x;
-        ACTOR_BOX.min.setX(ACTOR_BOX.min.z);
-        ACTOR_BOX.max.setX(ACTOR_BOX.max.z);
-        ACTOR_BOX.min.setZ(x1);
-        ACTOR_BOX.max.setZ(x2);
-    }
-
     ACTOR_BOX.translate(actor.physics.position);
     DIFF.set(0, YSTEP, 0);
     ACTOR_BOX.translate(DIFF);
