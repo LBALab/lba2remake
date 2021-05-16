@@ -120,6 +120,9 @@ export function buildReplacementMeshes({ geometries, threeObject }) {
             if (geom.fx) {
                 mesh.userData.fx = geom.fx;
             }
+            if (geom.render_order) {
+                mesh.userData.render_order = geom.render_order;
+            }
             threeObject.add(mesh);
         }
     });
@@ -184,13 +187,13 @@ async function addReplacementObject(info, replacements, gx, gy, gz) {
                 const newMesh = node.clone();
                 const matrixWorld = getPartialMatrixWorld(node, threeObject);
                 newMesh.matrix.copy(gTransform);
-            newMesh.matrix.multiply(matrixWorld);
-            newMesh.matrix.decompose(
-                newMesh.position,
-                newMesh.quaternion,
-                newMesh.scale
-            );
-            newMesh.name = `${node.name}_${newMesh.uuid}`;
+                newMesh.matrix.multiply(matrixWorld);
+                newMesh.matrix.decompose(
+                    newMesh.position,
+                    newMesh.quaternion,
+                    newMesh.scale
+                );
+                newMesh.name = `${node.name}_${newMesh.uuid}`;
                 newMesh.updateMatrixWorld(true);
                 replacements.threeObject.add(newMesh);
                 skipMeshes.push(node);
@@ -198,10 +201,10 @@ async function addReplacementObject(info, replacements, gx, gy, gz) {
                     for (const animation of animations) {
                         const {tracks} = animation;
                         for (const track of tracks) {
-                        const binding = new THREE.PropertyBinding(threeObject, track.name);
-                        if (binding.node === node) {
-                            trackReplacements[track.name] = `${newMesh.uuid}.${binding.parsedPath.propertyName}`;
-                        }
+                            const binding = new THREE.PropertyBinding(threeObject, track.name);
+                            if (binding.node === node) {
+                                trackReplacements[track.name] = `${newMesh.uuid}.${binding.parsedPath.propertyName}`;
+                            }
                         }
                     }
                 }
@@ -390,6 +393,8 @@ function appendMeshGeometry(
             case 'textured':
             case 'textured_transparent':
                 geometries[geomGroup] = {
+                    fx: node.userData.fx,
+                    render_order: node.userData.render_order,
                     index: [],
                     positions: [],
                     normals: [],

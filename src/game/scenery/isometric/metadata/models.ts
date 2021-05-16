@@ -57,16 +57,16 @@ export async function loadFullSceneModel(
                 return;
             }
             const texture = material.map;
+            let fx;
             if (node.userData.fx) {
-                const fx = loadFx(node, { numActors, ...replacementData });
-                if (fx) {
-                    effects.push(fx);
-                    return;
-                }
+                fx = loadFx(node, { numActors, ...replacementData });
             }
-            node.material = new THREE.RawShaderMaterial({
-                vertexShader: compile('vert', texture
-                    ? VERT_OBJECTS_TEXTURED
+            if (fx) {
+                effects.push(fx);
+            } else {
+                node.material = new THREE.RawShaderMaterial({
+                    vertexShader: compile('vert', texture
+                        ? VERT_OBJECTS_TEXTURED
                     : VERT_OBJECTS_COLORED),
                 fragmentShader: compile('frag', texture
                     ? FRAG_OBJECTS_TEXTURED
@@ -78,10 +78,13 @@ export async function loadFullSceneModel(
                     lutTexture: {value: replacementData.lutTexture},
                     palette: {value: replacementData.paletteTexture},
                     light: {value: replacementData.light},
-                    uNormalMatrix: {value: new THREE.Matrix3()}
-                }
-            });
-            if (node.material.transparent) {
+                        uNormalMatrix: {value: new THREE.Matrix3()}
+                    }
+                });
+            }
+            if (node.userData.render_order) {
+                node.renderOrder = node.userData.render_order;
+            } else if (node.material.transparent) {
                 node.renderOrder = 1;
             }
         }
