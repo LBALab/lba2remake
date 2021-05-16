@@ -179,11 +179,11 @@ async function addReplacementObject(info, replacements, gx, gy, gz) {
     const trackReplacements = {};
 
     threeObject.traverse((node) => {
-        if (node instanceof THREE.Mesh &&
-            (node.morphTargetInfluences || node.userData.fx)) {
-            const newMesh = node.clone();
-            const matrixWorld = getPartialMatrixWorld(node, threeObject);
-            newMesh.matrix.copy(gTransform);
+        if (node instanceof THREE.Mesh) {
+            if (node.morphTargetInfluences) {
+                const newMesh = node.clone();
+                const matrixWorld = getPartialMatrixWorld(node, threeObject);
+                newMesh.matrix.copy(gTransform);
             newMesh.matrix.multiply(matrixWorld);
             newMesh.matrix.decompose(
                 newMesh.position,
@@ -191,19 +191,34 @@ async function addReplacementObject(info, replacements, gx, gy, gz) {
                 newMesh.scale
             );
             newMesh.name = `${node.name}_${newMesh.uuid}`;
-            newMesh.updateMatrixWorld(true);
-            replacements.threeObject.add(newMesh);
-            skipMeshes.push(node);
-            if (node.morphTargetInfluences && animations && animations.length) {
-                for (const animation of animations) {
-                    const {tracks} = animation;
-                    for (const track of tracks) {
+                newMesh.updateMatrixWorld(true);
+                replacements.threeObject.add(newMesh);
+                skipMeshes.push(node);
+                if (animations && animations.length) {
+                    for (const animation of animations) {
+                        const {tracks} = animation;
+                        for (const track of tracks) {
                         const binding = new THREE.PropertyBinding(threeObject, track.name);
                         if (binding.node === node) {
                             trackReplacements[track.name] = `${newMesh.uuid}.${binding.parsedPath.propertyName}`;
                         }
+                        }
                     }
                 }
+            } else if (node.userData.fx) {
+                node.updateMatrix();
+                node.updateMatrixWorld(true);
+                const newMesh = node.clone();
+                newMesh.name = `${node.name}_${newMesh.uuid}`;
+                newMesh.matrix.copy(gTransform);
+                newMesh.matrix.multiply(node.matrixWorld);
+                newMesh.matrix.decompose(
+                    newMesh.position,
+                    newMesh.quaternion,
+                    newMesh.scale
+                );
+                replacements.threeObject.add(newMesh);
+                skipMeshes.push(node);
             }
         }
     });
