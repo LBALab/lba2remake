@@ -6,7 +6,8 @@ type FxMap = {
 };
 
 const effects: FxMap = {
-    dome_floor: DomeFloor
+    dome_floor: DomeFloor,
+    rotate: RadarRotate
 };
 
 export function loadFx(node: THREE.Mesh, props: FxProps): Fx {
