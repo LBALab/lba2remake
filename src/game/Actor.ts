@@ -369,7 +369,7 @@ export default class Actor {
             }
             const baseAngle = Math.min(distanceAnticlockwise,
                                        distanceClockwise) * deltaMS;
-            const angle = baseAngle / (this.props.speed * 10);
+            const angle = (this.props.speed > 0) ? baseAngle / (this.props.speed * 10) : 0;
             const sign = distanceAnticlockwise < distanceClockwise ? 1 : -1;
             this.physics.temp.angle += sign * angle;
 
@@ -513,7 +513,7 @@ export default class Actor {
 
     setAngleRad(angle) {
         this.state.isTurning = true;
-        this.props.angle = angle;
+        this.props.angle = THREE.MathUtils.radToDeg(angle);
         this.physics.temp.destAngle = angle;
     }
 
