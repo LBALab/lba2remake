@@ -19,9 +19,9 @@ highp float rand(vec2 co) {
 }
 
 void main() {
-    float ang = time * tau * 0.075;
-	float ang2 = atan(vPos.x, vPos.z) * 0.25;
-    ang = mod(ang2 + ang, tau * 0.25);
+    float ang = time * tau * 0.0375;
+	float ang2 = atan(vPos.x, vPos.z) * 0.18;
+    ang = mod(ang2 + ang, tau * 0.18);
     float col = smoothstep(1.0, 0.0, ang);
     float rnd = 1.0 + rand(vPos.xz * time) * 1.5;
 #if (SHADE > 0)
@@ -31,10 +31,9 @@ void main() {
     float edge = smoothstep(1.0, 0.0, dist * 6.0 - 4.0);
     vec3 mColor = gblue * l * col * rnd;
     fragColor = vec4(mColor, edge * 0.9);
-    // fragColor = vec4(mix(vec3(1.0, 0.0, 0.0), vec3(0.0, 0.0, 1.0), edge), 1.0);
 #else
     fragColor = vec4(gblue * rnd, col * rnd * 0.2);
 #endif
-    float s = max(col - 0.999, 0.0) * 1000.0;
+    float s = max(col - 0.9992, 0.0) * 1250.0;
     fragColor += vec4(0.7, 0.9, 1.0, 1.0) * s;
 }
