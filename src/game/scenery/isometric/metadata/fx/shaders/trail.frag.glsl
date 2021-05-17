@@ -28,7 +28,7 @@ void main() {
     float dp = dot(vNormal, light);
     float l = 1.0 - (dp * (1.0 - col));
     float dist = distance(vPos.xz, vec2(0));
-    float edge = smoothstep(1.0, 0.0, dist * 4.0 - 1.6);
+    float edge = smoothstep(1.0, 0.0, dist * 6.0 - 4.0);
     vec3 mColor = gblue * l * col * rnd;
     fragColor = vec4(mColor, edge * 0.9);
     // fragColor = vec4(mix(vec3(1.0, 0.0, 0.0), vec3(0.0, 0.0, 1.0), edge), 1.0);
