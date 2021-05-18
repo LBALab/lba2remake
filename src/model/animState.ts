@@ -234,33 +234,28 @@ function updateSkeletonAtKeyframe(state,
                                   numBones,
                                   length = keyframe.length) {
     const interpolation = length > 0 ? state.currentTime / length : 0;
-    try {
-        for (let i = 0; i < numBones; i += 1) {
-            const s = state.skeleton[i];
-            const bf = keyframe.boneframes[i];
-            const nbf = nextkeyframe.boneframes[i];
-            s.type = bf.type;
-            if (bf.type === 0) { // rotation
-                const eulerX = getRotation(nbf.veuler.x, bf.veuler.x, interpolation);
-                const eulerY = getRotation(nbf.veuler.y, bf.veuler.y, interpolation);
-                const eulerZ = getRotation(nbf.veuler.z, bf.veuler.z, interpolation);
-                s.euler.set(eulerX, eulerY, eulerZ);
-            } else { // translation
-                s.pos.x = bf.pos.x + ((nbf.pos.x - bf.pos.x) * interpolation);
-                s.pos.y = bf.pos.y + ((nbf.pos.y - bf.pos.y) * interpolation);
-                s.pos.z = bf.pos.z + ((nbf.pos.z - bf.pos.z) * interpolation);
-            }
-            if (s.parent === 0xFFFF) {
-                state.rotation.set(
-                    bf.pos.x + ((nbf.pos.x - bf.pos.x) * interpolation),
-                    bf.pos.y + ((nbf.pos.y - bf.pos.y) * interpolation),
-                    bf.pos.z + ((nbf.pos.z - bf.pos.z) * interpolation)
-                );
-            }
+    for (let i = 0; i < numBones; i += 1) {
+        const s = state.skeleton[i];
+        const bf = keyframe.boneframes[i];
+        const nbf = nextkeyframe.boneframes[i];
+        s.type = bf.type;
+        if (bf.type === 0) { // rotation
+            const eulerX = getRotation(nbf.veuler.x, bf.veuler.x, interpolation);
+            const eulerY = getRotation(nbf.veuler.y, bf.veuler.y, interpolation);
+            const eulerZ = getRotation(nbf.veuler.z, bf.veuler.z, interpolation);
+            s.euler.set(eulerX, eulerY, eulerZ);
+        } else { // translation
+            s.pos.x = bf.pos.x + ((nbf.pos.x - bf.pos.x) * interpolation);
+            s.pos.y = bf.pos.y + ((nbf.pos.y - bf.pos.y) * interpolation);
+            s.pos.z = bf.pos.z + ((nbf.pos.z - bf.pos.z) * interpolation);
         }
-    } catch (e) {
-        // tslint:disable-next-line:no-console
-        console.debug('ANIM: exception on updateSkeletonAtKeyframe', e);
+        if (s.parent === 0xFFFF) {
+            state.rotation.set(
+                bf.pos.x + ((nbf.pos.x - bf.pos.x) * interpolation),
+                bf.pos.y + ((nbf.pos.y - bf.pos.y) * interpolation),
+                bf.pos.z + ((nbf.pos.z - bf.pos.z) * interpolation)
+            );
+        }
     }
 
     // step translation
