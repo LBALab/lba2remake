@@ -9,7 +9,7 @@ import SceneGraphArea from '../gameplay/sceneGraph/SceneGraphArea';
 const IsoGridEditor = {
     id: 'iso_grid',
     name: 'Iso Grids Editor',
-    icon: 'layout.png',
+    icon: 'grid.png',
     content: IsoGridEditorContent,
     settings: IsoGridEditorSettings,
     mainArea: true,
