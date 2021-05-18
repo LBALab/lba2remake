@@ -17,6 +17,10 @@ export const LabelParams = {
     'oculus-touch-v2': {
         center: new THREE.Vector3(-0.01164, -0.01887, -0.02117),
         radius: 0.0624,
+    },
+    'oculus-touch-v3': {
+        center: new THREE.Vector3(-0.01164, -0.01887, -0.02117),
+        radius: 0.08,
     }
 };
 

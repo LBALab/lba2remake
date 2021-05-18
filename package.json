@@ -20,7 +20,7 @@
     "@types/lodash": "^4.14.150",
     "@types/react-dom": "^16.9.7",
     "@types/three": "^0.127.0",
-    "@webxr-input-profiles/assets": "^1.0.2",
+    "@webxr-input-profiles/assets": "^1.0.8",
     "@webxr-input-profiles/motion-controllers": "^1.0.0",
     "blockly": "^3.20200402.1",
     "color-convert": "^2.0.1",

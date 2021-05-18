@@ -27,6 +27,7 @@ const vrProfiles = [
     'microsoft-mixed-reality',
     'oculus-go',
     'oculus-touch-v2',
+    'oculus-touch-v3',
     'oculus-touch',
     'samsung-gearvr',
     'samsung-odyssey',
