@@ -31,6 +31,7 @@ interface Props extends TickerProps {
         rotateView: boolean;
         wireframe: boolean;
         grid: boolean;
+        playbackSpeed: number;
     };
     stateHandler: any;
 }
@@ -197,7 +198,7 @@ export default class Model extends FrameListener<Props, State> {
 
     frame() {
         const { renderer, animState, clock, model, scene, grid } = this.state;
-        const { entity, body, anim, rotateView, wireframe } = this.props.sharedState;
+        const { entity, body, anim, rotateView, wireframe, playbackSpeed } = this.props.sharedState;
         if (this.entity !== entity || this.body !== body) {
             this.loadModel();
             grid.position.y = 0;
@@ -216,9 +217,10 @@ export default class Model extends FrameListener<Props, State> {
         }
         grid.visible = this.props.sharedState.grid || false;
         this.checkResize();
+        const pbs = playbackSpeed || 1;
         const time = {
-            delta: Math.min(clock.getDelta(), 0.05),
-            elapsed: clock.getElapsedTime()
+            delta: Math.min(clock.getDelta(), 0.05) * pbs,
+            elapsed: clock.getElapsedTime() * pbs
         };
         renderer.stats.begin();
         if (model) {

@@ -19,9 +19,14 @@ export default function ModelEditorSettings(props) {
         props.stateHandler.setGrid(e.target.checked);
     };
 
+    const setPlaybackSpeed = (e) => {
+        props.stateHandler.setPlaybackSpeed(e.target.value);
+    };
+
     const rv = props.sharedState.rotateView;
     const wf = props.sharedState.wireframe;
     const gd = props.sharedState.grid;
+    const pbs = props.sharedState.playbackSpeed;
 
     return <div>
         <div>
@@ -40,6 +45,20 @@ export default function ModelEditorSettings(props) {
             <label style={{cursor: 'pointer'}}>
                 <input type="checkbox" onChange={setRotateView} checked={rv} style={inputStyle}/>
                 Auto-rotate view
+            </label>
+        </div>
+        <br/>
+        <div>
+            <label>
+                Playback speed:&nbsp;
+                <input type="number"
+                    min={0.05}
+                    max={2}
+                    defaultValue={1}
+                    step={0.05}
+                    onChange={setPlaybackSpeed}
+                    value={pbs}
+                    style={inputStyle}/>
             </label>
         </div>
     </div>;
