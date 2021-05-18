@@ -3,6 +3,7 @@ import { BehaviourMode } from '../../game/loop/hero';
 import Game from '../../game/Game';
 import { getParams } from '../../params';
 import { LBA1Items, LBA2Items } from '../../game/data/inventory';
+import { switchStats } from '../../renderer/stats';
 
 interface BtnMapping {
     btn: string;
@@ -20,6 +21,7 @@ interface MainGameControls {
 interface ExtraControls {
     centerCam: BtnMapping;
     menu: BtnMapping;
+    fpsToggle: BtnMapping;
 }
 
 interface FirstPersonMappings {
@@ -154,6 +156,11 @@ export function applyMappings(
            history.back();
         }
     });
+    applyMapping(components, mappings, 'fpsToggle', (enabled) => {
+        if (enabled) {
+            switchStats();
+        }
+    });
 }
 
 function applyMapping(
@@ -277,6 +284,7 @@ function mapExtraControls(
     const { components } = motionController;
     let centerCam: BtnMapping = null;
     let menu: BtnMapping = null;
+    let fpsToggle: BtnMapping = null;
     if ('a-button' in components) {
         centerCam = {
             btn: 'a-button',
@@ -289,9 +297,16 @@ function mapExtraControls(
             handler: handleTapped.bind({})
         };
     }
+    if ('y-button' in components) {
+        fpsToggle = {
+            btn: 'y-button',
+            handler: handleTapped.bind({})
+        };
+    }
     return {
         centerCam,
         menu,
+        fpsToggle,
     };
 }
 
