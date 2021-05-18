@@ -4374,8 +4374,23 @@
     "0": {
       "mirror": true
     },
+    "2": {
+      "replace": true,
+      "file": "OT_002_white_chair.glb",
+      "orientation": 0
+    },
+    "5": {
+      "replace": true,
+      "file": "OT_005_room_divider.glb",
+      "orientation": 0
+    },
     "6": {
       "mirror": true
+    },
+    "7": {
+      "replace": true,
+      "file": "OT_007_white_stool.glb",
+      "orientation": 0
     },
     "10": {
       "mirror": true
@@ -4401,17 +4416,122 @@
     "36": {
       "mirror": true
     },
+    "39": {
+      "replace": true,
+      "file": "OT_039_080_magritte_plants.glb",
+      "orientation": 0
+    },
     "66": {
       "mirror": true
     },
     "67": {
       "mirror": true
     },
+    "79": {
+      "replace": true,
+      "file": "OT_079_casino_slot_machine.glb",
+      "orientation": 0
+    },
+    "80": {
+      "replace": true,
+      "file": "OT_039_080_magritte_plants.glb",
+      "orientation": 0
+    },
     "89": {
       "mirror": true
     },
     "91": {
       "mirror": true
+    },
+    "102": {
+      "replace": true,
+      "file": "OT_102_103_104_105_casino_coin_slot.glb",
+      "orientation": 0
+    },
+    "103": {
+      "replace": true,
+      "file": "OT_102_103_104_105_casino_coin_slot.glb",
+      "orientation": 1
+    },
+    "104": {
+      "replace": true,
+      "file": "OT_102_103_104_105_casino_coin_slot.glb",
+      "orientation": 2
+    },
+    "105": {
+      "replace": true,
+      "file": "OT_102_103_104_105_casino_coin_slot.glb",
+      "orientation": 3
+    },
+    "106": {
+      "replace": true,
+      "file": "OT_106_107_110_111_lemuzard_gambling_barrier.glb",
+      "orientation": 0
+    },
+    "108": {
+      "replace": true,
+      "file": "OT_108_109_lemuzard_gambling_barrier.glb",
+      "orientation": 0
+    },
+    "110": {
+      "replace": true,
+      "file": "OT_106_107_110_111_lemuzard_gambling_barrier.glb",
+      "orientation": 1
+    },
+    "114": {
+      "replace": true,
+      "file": "OT_114_duams_gambling_barrier.glb",
+      "orientation": 0
+    },
+    "117": {
+      "replace": true,
+      "file": "OT_117_118_fancy_railings_straight.glb",
+      "orientation": 0
+    },
+    "118": {
+      "replace": true,
+      "file": "OT_117_118_fancy_railings_straight.glb",
+      "orientation": 1
+    },
+    "119": {
+      "replace": true,
+      "file": "OT_119_120_121_122_fancy_railings_corner.glb",
+      "orientation": 0
+    },
+    "120": {
+      "replace": true,
+      "file": "OT_119_120_121_122_fancy_railings_corner.glb",
+      "orientation": 3
+    },
+    "121": {
+      "replace": true,
+      "file": "OT_119_120_121_122_fancy_railings_corner.glb",
+      "orientation": 2
+    },
+    "122": {
+      "replace": true,
+      "file": "OT_119_120_121_122_fancy_railings_corner.glb",
+      "orientation": 1
+    },
+    "123": {
+      "replace": true,
+      "file": "OT_123_124_125_126_fancy_railings_end.glb",
+      "orientation": 1
+    },
+    "124": {
+      "replace": true,
+      "file": "OT_123_124_125_126_fancy_railings_end.glb",
+      "orientation": 0
+    },
+    "125": {
+      "replace": true,
+      "file": "OT_123_124_125_126_fancy_railings_end.glb",
+      "orientation": 3
+    },
+    "126": {
+      "replace": true,
+      "file": "OT_123_124_125_126_fancy_railings_end.glb",
+      "orientation": 2
     },
     "127": {
       "mirror": true
@@ -4425,14 +4545,58 @@
     "137": {
       "mirror": true
     },
+    "141": {
+      "replace": true,
+      "file": "OT_141_red_fire_extinguisher.glb",
+      "orientation": 0
+    },
     "151": {
-      "mirror": true
+      "replace": true,
+      "file": "OT_151_gambler_control_panel.glb",
+      "orientation": 0
     },
     "165": {
       "mirror": true
     },
+    "166": {
+      "replace": true,
+      "file": "OT_166_blue_cash_register.glb",
+      "orientation": 0
+    },
+    "168": {
+      "replace": true,
+      "file": "OT_168_paper_rolls_container.glb",
+      "orientation": 0
+    },
+    "173": {
+      "replace": true,
+      "file": "OT_173_ancient_pots.glb",
+      "orientation": 0
+    },
     "200": {
-      "mirror": true
+      "replace": true,
+      "file": "OT_200_blue_wooden_box.glb",
+      "orientation": 0
+    },
+    "200:2x4x4:0,12677,12680,12681,-1,-1,-1,-1,12682,12683,12688,12689,-1,-1,-1,-1,0,12677,0,12678,0,12679,12680,12681,12682,12683,12684,12685,12686,12687,12688,12689": {
+      "replace": true,
+      "file": "OT_200_blue_wooden_box_var1.glb",
+      "orientation": 0
+    },
+    "39:2x4x2:0,12735,0,12736,0,127,0,127,12740,12741,12742,12743,127,12744,127,12745": {
+      "replace": true,
+      "file": "OT_039_magritte_plants_var1_var2.glb",
+      "orientation": 0
+    },
+    "39:2x6x2:0,12735,0,12736,0,127,0,127,0,127,12737,12738,12740,12741,12742,12743,127,12744,127,12745,127,12746,12747,12748": {
+      "replace": true,
+      "file": "OT_039_magritte_plants_var1_var2.glb",
+      "orientation": 0
+    },
+    "112:3x2x1:13035,13036,13037,13039,13040,13041": {
+      "replace": true,
+      "file": "OT_112_lemuzard_gambling_barrier_var1.glb",
+      "orientation": 0
     }
   },
   "14": {

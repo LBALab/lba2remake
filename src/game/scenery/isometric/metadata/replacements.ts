@@ -468,7 +468,7 @@ function appendMeshGeometry(
         uvs
     } = geometries[geomGroup];
     if (!baseMaterial.map) {
-        const mColor = baseMaterial.color.clone().convertLinearToGamma();
+        const mColor = baseMaterial.color.clone().convertLinearToGamma(2.1);
         color = new THREE.Vector4().fromArray(
             [...mColor.toArray(), baseMaterial.opacity]
         );

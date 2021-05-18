@@ -51,11 +51,11 @@
                 ]
             },
             {
-                "name": "CA_053_054_rail_straight.glb",
+                "name": "CA_053_054_rail_straight_platforn.glb",
                 "position": {
                     "x": 41.5,
                     "y": 4.5,
-                    "z": 54.5
+                    "z": 57.5
                 },
                 "quaternion": [
                     0,
@@ -65,45 +65,45 @@
                 ]
             },
             {
-                "name": "CA_053_054_rail_straight.glb",
+                "name": "CA_005_iron_fence_var2.glb",
                 "position": {
-                    "x": 41.499999999999986,
-                    "y": 4.5,
-                    "z": 55.50000000000001
+                    "x": 27,
+                    "y": 5,
+                    "z": 50.5
                 },
                 "quaternion": [
                     0,
+                    0.7071067811865475,
                     0,
-                    0,
-                    1
+                    0.7071067811865476
                 ]
             },
             {
-                "name": "CA_053_054_rail_straight.glb",
+                "name": "CA_004_005_iron_fence_grid_var1.glb",
                 "position": {
-                    "x": 41.499999999999986,
-                    "y": 4.5,
-                    "z": 56.50000000000001
+                    "x": 39.5,
+                    "y": 5,
+                    "z": 50.5
                 },
                 "quaternion": [
                     0,
+                    -1,
                     0,
-                    0,
-                    1
+                    6.123233995736766e-17
                 ]
             },
             {
-                "name": "CA_053_054_rail_straight.glb",
+                "name": "CA_004_005_iron_fence_grid_var2.glb",
                 "position": {
-                    "x": 41.499999999999986,
-                    "y": 4.5,
-                    "z": 57.50000000000001
+                    "x": 40.5,
+                    "y": 5,
+                    "z": 50.5
                 },
                 "quaternion": [
                     0,
+                    0.7071067811865475,
                     0,
-                    0,
-                    1
+                    0.7071067811865476
                 ]
             }
         ],
@@ -268,6 +268,424 @@
                 "hide": true
             },
             "42x9x55": {
+                "hide": true
+            },
+            "38x11x51": {
+                "hide": true
+            },
+            "38x12x51": {
+                "hide": true
+            },
+            "38x13x51": {
+                "hide": true
+            },
+            "38x14x51": {
+                "hide": true
+            },
+            "38x15x51": {
+                "hide": true
+            },
+            "39x15x51": {
+                "hide": true
+            },
+            "39x14x51": {
+                "hide": true
+            },
+            "39x13x51": {
+                "hide": true
+            },
+            "39x12x51": {
+                "hide": true
+            },
+            "39x11x51": {
+                "hide": true
+            },
+            "39x10x51": {
+                "hide": true
+            },
+            "38x10x51": {
+                "hide": true
+            },
+            "25x15x51": {
+                "hide": true
+            },
+            "25x14x51": {
+                "hide": true
+            },
+            "25x13x51": {
+                "hide": true
+            },
+            "25x12x51": {
+                "hide": true
+            },
+            "25x11x51": {
+                "hide": true
+            },
+            "25x10x51": {
+                "hide": true
+            },
+            "26x10x51": {
+                "hide": true
+            },
+            "26x11x51": {
+                "hide": true
+            },
+            "26x12x51": {
+                "hide": true
+            },
+            "26x13x51": {
+                "hide": true
+            },
+            "26x14x51": {
+                "hide": true
+            },
+            "26x15x51": {
+                "hide": true
+            },
+            "27x15x51": {
+                "hide": true
+            },
+            "27x14x51": {
+                "hide": true
+            },
+            "27x13x51": {
+                "hide": true
+            },
+            "27x11x51": {
+                "hide": true
+            },
+            "27x10x51": {
+                "hide": true
+            },
+            "27x12x51": {
+                "hide": true
+            },
+            "28x10x51": {
+                "hide": true
+            },
+            "28x11x51": {
+                "hide": true
+            },
+            "28x12x51": {
+                "hide": true
+            },
+            "28x13x51": {
+                "hide": true
+            },
+            "28x14x51": {
+                "hide": true
+            },
+            "28x15x51": {
+                "hide": true
+            },
+            "40x15x50": {
+                "hide": true
+            },
+            "40x14x50": {
+                "hide": true
+            },
+            "40x13x50": {
+                "hide": true
+            },
+            "40x12x50": {
+                "hide": true
+            },
+            "40x11x50": {
+                "hide": true
+            },
+            "40x10x50": {
+                "hide": true
+            }
+        }
+    },
+    "11": {
+        "models": [
+            {
+                "name": "CA_004_005_iron_fence_grid_var1.glb",
+                "position": {
+                    "x": 48.5,
+                    "y": 1,
+                    "z": 33.5
+                },
+                "quaternion": [
+                    0,
+                    -1,
+                    0,
+                    6.123233995736766e-17
+                ]
+            },
+            {
+                "name": "CA_004_005_iron_fence_grid_var1.glb",
+                "position": {
+                    "x": 43.5,
+                    "y": 1,
+                    "z": 38.5
+                },
+                "quaternion": [
+                    0,
+                    0.7071067811865475,
+                    0,
+                    0.7071067811865476
+                ]
+            },
+            {
+                "name": "CA_004_005_iron_fence_grid_var2.glb",
+                "position": {
+                    "x": 43.5,
+                    "y": 2,
+                    "z": 53.5
+                },
+                "quaternion": [
+                    0,
+                    0.7071067811865475,
+                    0,
+                    0.7071067811865476
+                ]
+            },
+            {
+                "name": "CA_004_005_iron_fence.glb",
+                "position": {
+                    "x": 18.5,
+                    "y": 1,
+                    "z": 32.5
+                },
+                "quaternion": [
+                    0,
+                    -1,
+                    0,
+                    6.123233995736766e-17
+                ]
+            },
+            {
+                "name": "CA_004_005_iron_fence.glb",
+                "position": {
+                    "x": 21.5,
+                    "y": 1,
+                    "z": 32.5
+                },
+                "quaternion": [
+                    0,
+                    -1,
+                    0,
+                    6.123233995736766e-17
+                ]
+            }
+        ],
+        "patches": {
+            "42x1x37": {
+                "hide": true
+            },
+            "42x2x38": {
+                "hide": true
+            },
+            "42x3x39": {
+                "hide": true
+            },
+            "18x12x12": {
+                "hide": true
+            },
+            "1x12x17": {
+                "hide": true
+            },
+            "1x12x18": {
+                "hide": true
+            },
+            "47x7x34": {
+                "hide": true
+            },
+            "47x6x34": {
+                "hide": true
+            },
+            "47x5x34": {
+                "hide": true
+            },
+            "47x4x34": {
+                "hide": true
+            },
+            "47x3x34": {
+                "hide": true
+            },
+            "47x2x34": {
+                "hide": true
+            },
+            "48x2x34": {
+                "hide": true
+            },
+            "48x3x34": {
+                "hide": true
+            },
+            "48x4x34": {
+                "hide": true
+            },
+            "48x5x34": {
+                "hide": true
+            },
+            "48x6x34": {
+                "hide": true
+            },
+            "48x7x34": {
+                "hide": true
+            },
+            "43x3x38": {
+                "hide": true
+            },
+            "43x2x38": {
+                "hide": true
+            },
+            "43x4x38": {
+                "hide": true
+            },
+            "43x5x38": {
+                "hide": true
+            },
+            "43x6x38": {
+                "hide": true
+            },
+            "43x7x38": {
+                "hide": true
+            },
+            "43x7x39": {
+                "hide": true
+            },
+            "43x6x39": {
+                "hide": true
+            },
+            "43x5x39": {
+                "hide": true
+            },
+            "43x4x39": {
+                "hide": true
+            },
+            "43x3x39": {
+                "hide": true
+            },
+            "43x2x39": {
+                "hide": true
+            },
+            "43x5x53": {
+                "hide": true
+            },
+            "43x4x53": {
+                "hide": true
+            },
+            "43x6x53": {
+                "hide": true
+            },
+            "43x7x53": {
+                "hide": true
+            },
+            "43x8x53": {
+                "hide": true
+            },
+            "43x9x53": {
+                "hide": true
+            },
+            "17x3x33": {
+                "hide": true
+            },
+            "17x2x33": {
+                "hide": true
+            },
+            "17x4x33": {
+                "hide": true
+            },
+            "17x5x33": {
+                "hide": true
+            },
+            "17x6x33": {
+                "hide": true
+            },
+            "17x7x33": {
+                "hide": true
+            },
+            "18x7x33": {
+                "hide": true
+            },
+            "18x6x33": {
+                "hide": true
+            },
+            "18x5x33": {
+                "hide": true
+            },
+            "18x3x33": {
+                "hide": true
+            },
+            "18x4x33": {
+                "hide": true
+            },
+            "18x2x33": {
+                "hide": true
+            },
+            "19x2x33": {
+                "hide": true
+            },
+            "19x3x33": {
+                "hide": true
+            },
+            "19x4x33": {
+                "hide": true
+            },
+            "19x5x33": {
+                "hide": true
+            },
+            "19x6x33": {
+                "hide": true
+            },
+            "19x7x33": {
+                "hide": true
+            },
+            "20x7x33": {
+                "hide": true
+            },
+            "20x6x33": {
+                "hide": true
+            },
+            "20x5x33": {
+                "hide": true
+            },
+            "20x3x33": {
+                "hide": true
+            },
+            "20x4x33": {
+                "hide": true
+            },
+            "20x2x33": {
+                "hide": true
+            },
+            "21x2x33": {
+                "hide": true
+            },
+            "21x3x33": {
+                "hide": true
+            },
+            "21x4x33": {
+                "hide": true
+            },
+            "21x5x33": {
+                "hide": true
+            },
+            "21x6x33": {
+                "hide": true
+            },
+            "21x7x33": {
+                "hide": true
+            },
+            "22x7x33": {
+                "hide": true
+            },
+            "22x6x33": {
+                "hide": true
+            },
+            "22x5x33": {
+                "hide": true
+            },
+            "22x4x33": {
+                "hide": true
+            },
+            "22x3x33": {
+                "hide": true
+            },
+            "22x2x33": {
                 "hide": true
             }
         }
@@ -2173,6 +2591,159 @@
                 "hide": true
             },
             "48x10x49": {
+                "hide": true
+            }
+        }
+    },
+    "75": {
+        "models": [
+            {
+                "name": "CA_018_spikes_var3.glb",
+                "position": {
+                    "x": 8.5,
+                    "y": 1.5,
+                    "z": 7
+                },
+                "quaternion": [
+                    0,
+                    0,
+                    0,
+                    1
+                ]
+            }
+        ],
+        "patches": {
+            "8x3x8": {
+                "hide": true
+            },
+            "8x4x8": {
+                "hide": true
+            },
+            "8x4x7": {
+                "hide": true
+            },
+            "8x3x7": {
+                "hide": true
+            }
+        }
+    },
+    "80": {
+        "models": [
+            {
+                "name": "OT_117_118_fancy_railings_straight.glb",
+                "position": {
+                    "x": 42.5,
+                    "y": 1,
+                    "z": 3.500000000000007
+                },
+                "quaternion": [
+                    0,
+                    0,
+                    0,
+                    1
+                ]
+            }
+        ],
+        "patches": {
+            "42x2x4": {
+                "hide": true
+            },
+            "42x3x4": {
+                "hide": true
+            },
+            "42x4x4": {
+                "hide": true
+            },
+            "18x5x22": {
+                "hide": true
+            },
+            "18x4x22": {
+                "hide": true
+            },
+            "18x3x22": {
+                "hide": true
+            },
+            "18x2x22": {
+                "hide": true
+            },
+            "24x5x14": {
+                "hide": true
+            },
+            "25x5x14": {
+                "hide": true
+            },
+            "26x5x14": {
+                "hide": true
+            },
+            "26x4x14": {
+                "hide": true
+            },
+            "22x5x14": {
+                "hide": true
+            },
+            "22x4x14": {
+                "hide": true
+            },
+            "21x5x14": {
+                "hide": true
+            },
+            "20x5x14": {
+                "hide": true
+            },
+            "19x5x20": {
+                "hide": true
+            },
+            "19x5x21": {
+                "hide": true
+            },
+            "19x5x19": {
+                "hide": true
+            },
+            "19x4x21": {
+                "hide": true
+            },
+            "27x5x19": {
+                "hide": true
+            },
+            "27x4x19": {
+                "hide": true
+            },
+            "27x4x20": {
+                "hide": true
+            },
+            "27x5x20": {
+                "hide": true
+            },
+            "27x5x21": {
+                "hide": true
+            },
+            "27x4x21": {
+                "hide": true
+            }
+        }
+    },
+    "81": {
+        "models": [],
+        "patches": {
+            "28x6x37": {
+                "hide": true
+            },
+            "28x1x37": {
+                "hide": true
+            },
+            "28x7x37": {
+                "hide": true
+            },
+            "27x7x37": {
+                "hide": true
+            },
+            "19x1x43": {
+                "hide": true
+            },
+            "27x7x36": {
+                "hide": true
+            },
+            "28x7x36": {
                 "hide": true
             }
         }
