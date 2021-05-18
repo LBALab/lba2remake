@@ -614,7 +614,7 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
             if (editorData.replacementMesh) {
                 editorData.replacementMesh.visible = !showOriginal;
             }
-            isoGrid.update();
+            isoGrid.update(null, scene, time);
         }
         if (this.gizmo) {
             const showGizmo = showCursorGizmo && !!cursor;

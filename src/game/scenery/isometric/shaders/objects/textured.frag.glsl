@@ -3,6 +3,7 @@ precision highp float;
 
 uniform sampler2D uTexture;
 uniform vec3 light;
+uniform float uOpacity;
 
 in vec3 vNormal;
 in vec2 vUv;
@@ -19,5 +20,5 @@ float intensity() {
 void main() {
     vec4 texColor = texture(uTexture, vUv);
     vec3 palColor = lutLookup(texColor.rgb, intensity());
-    fragColor = vec4(palColor, texColor.a);
+    fragColor = vec4(palColor, texColor.a * uOpacity);
 }

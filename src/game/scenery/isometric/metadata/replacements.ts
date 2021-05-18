@@ -8,8 +8,8 @@ import VERT_OBJECTS_COLORED from '../shaders/objects/colored.vert.glsl';
 import FRAG_OBJECTS_COLORED from '../shaders/objects/colored.frag.glsl';
 import VERT_OBJECTS_TEXTURED from '../shaders/objects/textured.vert.glsl';
 import FRAG_OBJECTS_TEXTURED from '../shaders/objects/textured.frag.glsl';
-import VERT_OBJECTS_DOME from '../shaders/objects/dome.vert.glsl';
-import FRAG_OBJECTS_DOME from '../shaders/objects/dome.frag.glsl';
+import VERT_OBJECTS_DOME from './fx/shaders/dome.vert.glsl';
+import FRAG_OBJECTS_DOME from './fx/shaders/dome.frag.glsl';
 import { compile } from '../../../../utils/shaders';
 import { loadFullSceneModel } from './models';
 import { getCommonResource } from '../../../../resources';
@@ -117,6 +117,12 @@ export function buildReplacementMeshes({ geometries, threeObject }) {
             }
             const mesh = new THREE.Mesh(bufferGeometry, geom.material);
             mesh.name = key;
+            if (geom.fx) {
+                mesh.userData.fx = geom.fx;
+            }
+            if (geom.render_order) {
+                mesh.userData.render_order = geom.render_order;
+            }
             threeObject.add(mesh);
         }
     });
@@ -176,30 +182,46 @@ async function addReplacementObject(info, replacements, gx, gy, gz) {
     const trackReplacements = {};
 
     threeObject.traverse((node) => {
-        if (node instanceof THREE.Mesh && node.morphTargetInfluences) {
-            const newMesh = node.clone();
-            const matrixWorld = getPartialMatrixWorld(node, threeObject);
-            newMesh.matrix.copy(gTransform);
-            newMesh.matrix.multiply(matrixWorld);
-            newMesh.matrix.decompose(
-                newMesh.position,
-                newMesh.quaternion,
-                newMesh.scale
-            );
-            newMesh.name = newMesh.uuid;
-            newMesh.updateMatrixWorld(true);
-            replacements.threeObject.add(newMesh);
-            skipMeshes.push(node);
-            if (animations && animations.length) {
-                for (const animation of animations) {
-                    const {tracks} = animation;
-                    for (const track of tracks) {
-                        const binding = new THREE.PropertyBinding(threeObject, track.name);
-                        if (binding.node === node) {
-                            trackReplacements[track.name] = `${newMesh.uuid}.${binding.parsedPath.propertyName}`;
+        if (node instanceof THREE.Mesh) {
+            if (node.morphTargetInfluences) {
+                const newMesh = node.clone();
+                const matrixWorld = getPartialMatrixWorld(node, threeObject);
+                newMesh.matrix.copy(gTransform);
+                newMesh.matrix.multiply(matrixWorld);
+                newMesh.matrix.decompose(
+                    newMesh.position,
+                    newMesh.quaternion,
+                    newMesh.scale
+                );
+                newMesh.name = `${node.name}_${newMesh.uuid}`;
+                newMesh.updateMatrixWorld(true);
+                replacements.threeObject.add(newMesh);
+                skipMeshes.push(node);
+                if (animations && animations.length) {
+                    for (const animation of animations) {
+                        const {tracks} = animation;
+                        for (const track of tracks) {
+                            const binding = new THREE.PropertyBinding(threeObject, track.name);
+                            if (binding.node === node) {
+                                trackReplacements[track.name] = `${newMesh.uuid}.${binding.parsedPath.propertyName}`;
+                            }
                         }
                     }
                 }
+            } else if (node.userData.fx) {
+                node.updateMatrix();
+                node.updateMatrixWorld(true);
+                const newMesh = node.clone();
+                newMesh.name = `${node.name}_${newMesh.uuid}`;
+                newMesh.matrix.copy(gTransform);
+                newMesh.matrix.multiply(node.matrixWorld);
+                newMesh.matrix.decompose(
+                    newMesh.position,
+                    newMesh.quaternion,
+                    newMesh.scale
+                );
+                replacements.threeObject.add(newMesh);
+                skipMeshes.push(node);
             }
         }
     });
@@ -355,7 +377,12 @@ function appendMeshGeometry(
             textureIdCache[texture.uuid] = textureId;
             geomGroup = `textured_${textureId}`;
         }
-        groupType = 'textured';
+        if (baseMaterial.name.substring(0, 12) === 'transparent_') {
+            geomGroup = `transparent_${geomGroup}`;
+            groupType = 'textured_transparent';
+        } else {
+            groupType = 'textured';
+        }
     } else if (baseMaterial.opacity < 1) {
         geomGroup = `transparent_${idCounters.transparentGeomId}`;
         groupType = 'transparent';
@@ -364,13 +391,19 @@ function appendMeshGeometry(
     if (!(geomGroup in geometries)) {
         switch (groupType) {
             case 'textured':
+            case 'textured_transparent':
                 geometries[geomGroup] = {
+                    fx: node.userData.fx,
+                    render_order: node.userData.render_order,
                     index: [],
                     positions: [],
                     normals: [],
                     colors: null,
                     uvs: [],
                     material: new THREE.RawShaderMaterial({
+                        opacity: groupType === 'textured_transparent'
+                            ? baseMaterial.opacity
+                            : 1,
                         vertexShader: compile('vert', VERT_OBJECTS_TEXTURED),
                         fragmentShader: compile('frag', FRAG_OBJECTS_TEXTURED),
                         uniforms: {
@@ -401,6 +434,7 @@ function appendMeshGeometry(
                 break;
             case 'dome_floor':
                 geometries[geomGroup] = {
+                    fx: 'dome_floor',
                     index: [],
                     positions: [],
                     normals: [],

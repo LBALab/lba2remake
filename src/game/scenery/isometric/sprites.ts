@@ -72,9 +72,13 @@ export async function loadSprite(
     let update = (_time) => {};
     const { sprites: replacements } = await getModelReplacements();
     if (replacements && index in replacements) {
-        const replacement = await loadSpriteReplacement(ambience, replacements[index]);
-        threeObject = replacement.threeObject;
-        update = replacement.update;
+        if (replacements[index].hide) {
+            threeObject = new THREE.Object3D();
+        } else {
+            const replacement = await loadSpriteReplacement(ambience, replacements[index]);
+            threeObject = replacement.threeObject;
+            update = replacement.update;
+        }
     } else if (isBillboard) {
         threeObject = loadBillboardSprite(index, cache, is3DCam);
     } else {
@@ -321,6 +325,7 @@ export async function loadSpriteReplacement(ambience, {file, fx}) {
                     size: 0.3,
                     sparkle: 0
                 }], await makeStarsMaterial());
+                glow.material.name = 'keepMat_glow';
                 glow.renderOrder = 1;
                 m.scene.add(glow);
             }

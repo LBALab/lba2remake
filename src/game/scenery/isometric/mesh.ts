@@ -250,6 +250,7 @@ function buildColumn(
                 const type = getGeometryType(block);
                 if (type === 'dome_ground' && !geometries.dome_ground) {
                     geometries.dome_ground = {
+                        flags: [],
                         positions: [],
                         uvs: [],
                         material: new THREE.RawShaderMaterial({
