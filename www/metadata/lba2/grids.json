@@ -34,6 +34,216 @@
             }
         }
     },
+    "9": {
+        "models": [
+            {
+                "name": "CI_112_desk.glb",
+                "position": {
+                    "x": 8,
+                    "y": 1.5,
+                    "z": 1
+                },
+                "quaternion": [
+                    0,
+                    0.7071067811865475,
+                    0,
+                    0.7071067811865476
+                ]
+            },
+            {
+                "name": "CI_117_paper_rolls_container.glb",
+                "position": {
+                    "x": 10.5,
+                    "y": 1.5,
+                    "z": 0.5
+                },
+                "quaternion": [
+                    0,
+                    0,
+                    0,
+                    1
+                ]
+            },
+            {
+                "name": "CI_053_054_bed.glb",
+                "position": {
+                    "x": 2.5,
+                    "y": 1.5,
+                    "z": 2
+                },
+                "quaternion": [
+                    0,
+                    0,
+                    0,
+                    1
+                ]
+            }
+        ],
+        "patches": {
+            "9x3x2": {
+                "hide": true
+            },
+            "9x4x2": {
+                "hide": true
+            },
+            "9x7x1": {
+                "hide": true
+            },
+            "7x7x2": {
+                "hide": true
+            },
+            "7x4x2": {
+                "hide": true
+            },
+            "7x5x2": {
+                "hide": true
+            },
+            "6x5x2": {
+                "hide": true
+            },
+            "6x4x2": {
+                "hide": true
+            },
+            "6x3x2": {
+                "hide": true
+            },
+            "6x6x2": {
+                "hide": true
+            },
+            "7x3x2": {
+                "hide": true
+            },
+            "8x5x2": {
+                "hide": true
+            },
+            "8x4x2": {
+                "hide": true
+            },
+            "8x3x2": {
+                "hide": true
+            },
+            "10x6x1": {
+                "hide": true
+            },
+            "9x6x1": {
+                "hide": true
+            },
+            "9x5x2": {
+                "hide": true
+            },
+            "9x5x1": {
+                "hide": true
+            },
+            "9x4x1": {
+                "hide": true
+            },
+            "9x3x1": {
+                "hide": true
+            },
+            "10x4x1": {
+                "hide": true
+            },
+            "10x3x1": {
+                "hide": true
+            },
+            "10x5x1": {
+                "hide": true
+            },
+            "3x6x1": {
+                "hide": true
+            },
+            "2x6x1": {
+                "hide": true
+            },
+            "2x6x2": {
+                "hide": true
+            },
+            "3x6x2": {
+                "hide": true
+            },
+            "1x6x1": {
+                "hide": true
+            },
+            "1x6x2": {
+                "hide": true
+            },
+            "3x5x1": {
+                "hide": true
+            },
+            "3x4x1": {
+                "hide": true
+            },
+            "3x3x2": {
+                "hide": true
+            },
+            "3x4x2": {
+                "hide": true
+            },
+            "3x5x2": {
+                "hide": true
+            },
+            "3x3x1": {
+                "hide": true
+            },
+            "3x3x3": {
+                "hide": true
+            },
+            "3x4x3": {
+                "hide": true
+            },
+            "3x5x3": {
+                "hide": true
+            },
+            "3x6x3": {
+                "hide": true
+            },
+            "2x6x3": {
+                "hide": true
+            },
+            "2x6x4": {
+                "hide": true
+            },
+            "1x6x4": {
+                "hide": true
+            },
+            "1x4x4": {
+                "hide": true
+            },
+            "2x4x4": {
+                "hide": true
+            },
+            "2x5x4": {
+                "hide": true
+            },
+            "1x5x4": {
+                "hide": true
+            },
+            "3x6x4": {
+                "hide": true
+            },
+            "3x5x4": {
+                "hide": true
+            },
+            "3x4x4": {
+                "hide": true
+            },
+            "3x3x4": {
+                "hide": true
+            },
+            "2x3x4": {
+                "hide": true
+            },
+            "1x3x4": {
+                "hide": true
+            },
+            "8x7x1": {
+                "hide": true
+            },
+            "7x6x2": {
+                "hide": true
+            }
+        }
+    },
     "10": {
         "models": [
             {
@@ -1952,6 +2162,193 @@
                 "hide": true
             },
             "60x10x32": {
+                "hide": true
+            }
+        }
+    },
+    "24": {
+        "models": [
+            {
+                "name": "DI_025_plant.glb",
+                "position": {
+                    "x": 15,
+                    "y": 0.5,
+                    "z": 2
+                },
+                "quaternion": [
+                    0,
+                    0.7071067811865475,
+                    0,
+                    0.7071067811865476
+                ]
+            }
+        ],
+        "patches": {
+            "15x5x3": {
+                "hide": true
+            },
+            "14x6x3": {
+                "hide": true
+            },
+            "15x6x2": {
+                "hide": true
+            },
+            "15x6x3": {
+                "hide": true
+            },
+            "14x6x2": {
+                "hide": true
+            },
+            "13x6x3": {
+                "hide": true
+            },
+            "15x5x2": {
+                "hide": true
+            },
+            "15x6x1": {
+                "hide": true
+            },
+            "15x5x1": {
+                "hide": true
+            },
+            "15x4x1": {
+                "hide": true
+            },
+            "15x3x1": {
+                "hide": true
+            },
+            "15x3x2": {
+                "hide": true
+            },
+            "15x4x2": {
+                "hide": true
+            },
+            "15x2x2": {
+                "hide": true
+            },
+            "15x4x3": {
+                "hide": true
+            },
+            "14x5x3": {
+                "hide": true
+            },
+            "13x5x3": {
+                "hide": true
+            },
+            "13x4x3": {
+                "hide": true
+            },
+            "14x4x3": {
+                "hide": true
+            },
+            "13x3x3": {
+                "hide": true
+            },
+            "14x2x3": {
+                "hide": true
+            },
+            "14x3x3": {
+                "hide": true
+            },
+            "13x2x3": {
+                "hide": true
+            },
+            "14x1x3": {
+                "hide": true
+            },
+            "15x1x2": {
+                "hide": true
+            },
+            "15x3x3": {
+                "hide": true
+            },
+            "15x2x3": {
+                "hide": true
+            },
+            "15x1x3": {
+                "hide": true
+            }
+        }
+    },
+    "29": {
+        "models": [
+            {
+                "name": "DI_025_plant.glb",
+                "position": {
+                    "x": 3.5,
+                    "y": 1.5,
+                    "z": 16.5
+                },
+                "quaternion": [
+                    0,
+                    0.7071067811865475,
+                    0,
+                    0.7071067811865476
+                ]
+            }
+        ],
+        "patches": {
+            "3x7x17": {
+                "hide": true
+            },
+            "3x6x16": {
+                "hide": true
+            },
+            "3x5x16": {
+                "hide": true
+            },
+            "3x5x17": {
+                "hide": true
+            },
+            "3x6x17": {
+                "hide": true
+            },
+            "3x7x16": {
+                "hide": true
+            },
+            "3x8x17": {
+                "hide": true
+            },
+            "3x8x16": {
+                "hide": true
+            },
+            "3x8x18": {
+                "hide": true
+            },
+            "3x4x17": {
+                "hide": true
+            },
+            "3x3x17": {
+                "hide": true
+            },
+            "3x6x18": {
+                "hide": true
+            },
+            "3x7x18": {
+                "hide": true
+            },
+            "2x8x17": {
+                "hide": true
+            },
+            "1x8x18": {
+                "hide": true
+            },
+            "2x8x18": {
+                "hide": true
+            },
+            "2x7x18": {
+                "hide": true
+            },
+            "1x7x18": {
+                "hide": true
+            },
+            "3x5x18": {
+                "hide": true
+            },
+            "3x4x18": {
+                "hide": true
+            },
+            "3x3x18": {
                 "hide": true
             }
         }
