@@ -75,8 +75,7 @@ export default function ChangeLog(props) {
         <div style={wrapper_style} onClick={e => e.stopPropagation()}>
             <div className="changelog" style={content_style}>
                 <ReactMarkdown
-                    source={changelog}
-                    escapeHtml={false}
+                    children={changelog}
                     skipHtml={false}
                     linkTarget="_blank"
                 />

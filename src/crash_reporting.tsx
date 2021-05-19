@@ -79,7 +79,7 @@ const center_vert = extend({}, center, {
     left: 0,
     right: 0,
     transform: 'translate(0, -50%)',
-    textAlign: 'center'
+    textAlign: 'center' as const
 });
 
 const reload = () => location.reload();

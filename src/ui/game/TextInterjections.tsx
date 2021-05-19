@@ -3,7 +3,7 @@ import {extend, map} from 'lodash';
 import * as THREE from 'three';
 
 const baseStyle = {
-    position: 'absolute',
+    position: 'absolute' as const,
     fontFamily: 'LBA',
     textShadow: 'black 4px 4px',
     fontSize: '2.5em',
