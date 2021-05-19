@@ -529,6 +529,7 @@ export const lba_flow_point = action((_block, field) => {
 
 export const lba_shadow_obj = action((_block, field) => {
     field('(?) shadow obj');
+    field(new FieldActor(), 'actor');
     field(new Blockly.FieldNumber(), 'arg_0');
     field(new Blockly.FieldNumber(), 'arg_1');
 });
@@ -540,6 +541,7 @@ export const lba_anim_set = action((_block, field) => {
 
 export const lba_pcx_mess_obj = action((_block, field) => {
     field('(?) pcx mess obj');
+    field(new FieldActor(), 'actor');
     field(new Blockly.FieldNumber(), 'arg_0');
     field(new Blockly.FieldNumber(), 'arg_1');
 });
@@ -551,17 +553,20 @@ export const lba_set_frame = action((_block, field) => {
 
 export const lba_flow_obj = action((_block, field) => {
     field('(?) flow obj');
+    field(new FieldActor(), 'actor');
     field(new Blockly.FieldNumber(), 'arg_0');
 });
 
 export const lba_impact_obj = action((_block, field) => {
     field('(?) impact obj');
+    field(new FieldActor(), 'actor');
     field(new Blockly.FieldNumber(), 'arg_0');
     field(new Blockly.FieldNumber(), 'arg_1');
 });
 
 export const lba_pos_obj_around = action((_block, field) => {
     field('(?) pos object around');
+    field(new FieldActor(), 'actor');
     field(new Blockly.FieldNumber(), 'arg_0');
     field(new Blockly.FieldNumber(), 'arg_1');
 });
