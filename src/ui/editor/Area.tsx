@@ -11,7 +11,7 @@ import { getParams } from '../../params';
 const menuHeight = 26;
 
 const menuStyle = (numIcons, main) => extend({
-    position: 'absolute',
+    position: 'absolute' as const,
     top: 0,
     left: 0,
     right: 0,
@@ -19,12 +19,12 @@ const menuStyle = (numIcons, main) => extend({
     borderBottom: '1px solid rgb(0,122,204)',
     paddingRight: (24 * numIcons) + 2,
     lineHeight: `${menuHeight - 1}px`,
-    userSelect: 'none',
-    overflow: 'hidden'
+    userSelect: 'none' as const,
+    overflow: 'hidden' as const
 }, editor.base, { background: main ? 'black' : 'rgb(45,45,48)' });
 
 const contentStyle = extend({
-    position: 'absolute',
+    position: 'absolute' as const,
     top: menuHeight,
     left: 0,
     right: 0,
@@ -33,7 +33,7 @@ const contentStyle = extend({
 }, editor.base);
 
 const settingsWrapper = extend({}, editor.base, {
-    position: 'absolute',
+    position: 'absolute' as const,
     top: menuHeight,
     left: 0,
     right: 0,

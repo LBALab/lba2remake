@@ -352,9 +352,9 @@ export default class TextEditor extends FrameListener<Props, State> {
 }
 
 const lineNumBaseStyle = {
-    display: 'inline-block',
-    textAlign: 'right',
-    fontWeight: 'bold'
+    display: 'inline-block' as const,
+    textAlign: 'right' as const,
+    fontWeight: 'bold' as const
 };
 
 function LineNumber({line, command, nDigits, toggleBreakpoint}) {
@@ -654,9 +654,9 @@ function Arg({arg, data}) {
 }
 
 const lineBaseStyle = {
-    whiteSpace: 'nowrap',
+    whiteSpace: 'nowrap' as const,
     lineHeight: '20px',
-    fontWeight: 'normal',
+    fontWeight: 'normal' as const,
     fontSize: 14
 };
 

@@ -187,7 +187,7 @@ export class InspectorAreaContent extends React.Component<Props, State> {
         const watchesStyle = extend({}, mainStyle, {
             background: watches.length > 0 ? 'black' : 'inherit',
             padding: 0,
-            overflowY: 'auto'
+            overflowY: 'auto' as const
         });
         return <div style={watchesStyle}>
             {(!watches || watches.length === 0) && <div style={{margin: 25, textAlign: 'center'}}>
@@ -511,11 +511,13 @@ export class InspectorAreaContent extends React.Component<Props, State> {
         const kindSelection = allowedKinds.length > 1 ?
             <select onChange={onSelectKind}
                     value={selectedKind}
-                    style={extend({float: 'right'}, editor.select)}>
+                    style={extend({float: 'right' as const}, editor.select)}>
                 {map(allowedKinds, kind =>
                     <option key={kind} value={kind}>{prettyKind[kind]}</option>)}
             </select>
-            : <span style={{fontStyle: 'italic', float: 'right'}}>{prettyKind[selectedKind]}</span>;
+            : <span style={{fontStyle: 'italic', float: 'right' as const}}>
+                {prettyKind[selectedKind]}
+            </span>;
 
         return <div key={idx} style={itemStyle}>
             <div>
