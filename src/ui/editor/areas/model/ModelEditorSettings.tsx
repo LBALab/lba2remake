@@ -54,10 +54,9 @@ export default function ModelEditorSettings(props) {
                 <input type="number"
                     min={0.05}
                     max={2}
-                    defaultValue={1}
                     step={0.05}
                     onChange={setPlaybackSpeed}
-                    value={pbs}
+                    value={pbs || 1}
                     style={inputStyle}/>
             </label>
         </div>
