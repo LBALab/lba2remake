@@ -120,7 +120,7 @@ function handleBehaviourChanges(scene: Scene, hero: Actor, behaviour: number) {
         hero.props.entityIndex = behaviour;
         hero.reloadModel(scene);
         toggleJump(hero, false);
-        hero.resetAnimState();
+        hero.animState.reset();
     }
 }
 
@@ -252,7 +252,7 @@ function processFirstPersonsMovement(game: Game, scene: Scene, hero: Actor, time
     }
     if (hero.props.animIndex !== animIndex) {
         hero.props.animIndex = animIndex;
-        hero.resetAnimState();
+        hero.animState.reset();
     }
 }
 
@@ -515,14 +515,10 @@ function processActorMovement(
                     animIndex = controlsState.controlVector.x === 1
                         ? AnimType.RIGHT
                         : AnimType.LEFT;
-                    let dy = 0;
-                    if (hero.animState.keyframeLength) {
-                        const rotationSpeed =
-                            (isLBA1 || hero.props.entityIndex === BehaviourMode.DISCRETE) ? 65 : 24;
-                        const rotY = (hero.animState.rotation.y * rotationSpeed) / WORLD_SIZE;
-                        dy = (rotY * time.delta * 1000) / hero.animState.keyframeLength;
-                    }
-                    euler.y += dy;
+                    const rotationSpeed =
+                        (isLBA1 || hero.props.entityIndex === BehaviourMode.DISCRETE) ? 65 : 24;
+                    const rotY = (hero.animState.rotation.y * rotationSpeed) / WORLD_SIZE;
+                    euler.y += rotY * time.delta;
                 } else {
                     euler.y -= controlsState.controlVector.x * time.delta * 2.0;
                 }

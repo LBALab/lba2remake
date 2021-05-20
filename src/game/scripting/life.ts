@@ -31,7 +31,6 @@ export function ANIM_OBJ(this: ScriptContext, actor: Actor, animIndex: number) {
         return;
     }
     actor.setAnim(animIndex);
-    actor.animState.interpolationFrame = 0;
 }
 
 export const SET_CAMERA = unimplemented();

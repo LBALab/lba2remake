@@ -13,6 +13,7 @@ import MagicBall from '../MagicBall';
 import { Time } from '../../datatypes';
 import { AnimAction } from '../../resources/parsers/entity2';
 import { LBA2Items } from '../data/inventory';
+import AnimState from '../../model/anim/AnimState';
 
 interface AnimActionContext {
     time: Time;
@@ -20,7 +21,7 @@ interface AnimActionContext {
     scene: Scene;
     actor: Actor;
     model?: any;
-    animState?: any;
+    animState?: AnimState;
     entityAnim?: any;
 }
 

@@ -2,10 +2,9 @@ import * as THREE from 'three';
 
 import { get3DOrbitCamera } from '../editor/areas/model/utils/orbitCamera';
 import Renderer from '../../renderer';
-import { updateKeyframeInterpolation, updateKeyframe } from '../../model/animState';
+import AnimState from '../../model/anim/AnimState';
 import { loadModel } from '../../model';
 import { loadInventoryModel } from '../../model/inventory';
-import { getAnimationsSync } from '../../resources';
 
 const envInfo = {
     skyColor: [0, 0, 0]
@@ -80,29 +79,15 @@ const loadSceneInventoryModel = async (sce, invId) => {
     return m;
 };
 
-const updateAnimModel = (m, anims, entityIdx, animIdx, time) => {
-    let interpolate = false;
-    const anim = getAnimationsSync(animIdx, entityIdx);
-    anims.loopFrame = anim.loopFrame;
-    if (anims.prevRealAnimIdx !== -1 && anim.index !== anims.prevRealAnimIdx) {
-        updateKeyframeInterpolation(anim, anims, time, anim.index);
-        interpolate = true;
-    }
-    if (anim.index === anims.realAnimIdx || anims.realAnimIdx === -1) {
-        updateKeyframe(anim, anims, time, anim.index);
-    }
+const updateAnimModel = (m, animState: AnimState, entityIdx, animIdx, time) => {
+    animState.update(time, entityIdx, animIdx);
     const q = new THREE.Quaternion();
-    const delta = time.delta * 1000;
-    let angle = 0;
-    if (anims.keyframeLength > 0) {
-        angle = (anims.rotation.y * delta) / anims.keyframeLength;
-    }
+    const angle = animState.rotation.y * time.delta;
     q.setFromAxisAngle(
         new THREE.Vector3(0, 1, 0),
         angle
     );
     m.mesh.quaternion.multiply(q);
-    return interpolate;
 };
 
 export {

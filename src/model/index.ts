@@ -1,10 +1,7 @@
 import * as THREE from 'three';
 
 import { Entity } from './entity';
-import {
-    initSkeleton,
-    createSkeleton,
-} from './animState';
+import AnimState from './anim/AnimState';
 import { loadMesh } from './geometries';
 import { createBoundingBox } from '../utils/rendering';
 import { loadLUTTexture } from '../utils/lut';
@@ -26,6 +23,7 @@ export interface Model {
     mesh: THREE.Object3D;
     boundingBox?: THREE.Box3;
     boundingBoxDebugMesh?: THREE.Object3D;
+    matrixRotation: THREE.Matrix4;
 }
 
 export async function loadModel(
@@ -68,7 +66,7 @@ function loadModelData(
     entityIdx,
     bodyIdx,
     animIdx,
-    animState: any,
+    animState: AnimState,
     envInfo: any,
     ambience: any,
     lutTexture: THREE.Texture
@@ -80,7 +78,6 @@ function loadModelData(
     const entities = resources.entities;
     const texture = resources.texture;
     const body = resources.body;
-    const anim = resources.anim;
 
     const model = {
         palette,
@@ -95,16 +92,15 @@ function loadModelData(
         boundingBox: null,
         boundingBoxDebugMesh: null,
         entity: entities[entityIdx],
-        materials: []
+        materials: [],
+        matrixRotation: null
     };
 
-    const skeleton = createSkeleton(body);
-    initSkeleton(animState, skeleton, anim.loopFrame);
-    const { object, materials } = loadMesh(
+    const bones = animState.attachBody(body);
+    const { object, materials, matrixRotation } = loadMesh(
         body,
         model.texture,
-        animState.bones,
-        animState.matrixRotation,
+        bones,
         model.palette,
         model.lutTexture,
         envInfo,
@@ -112,6 +108,7 @@ function loadModelData(
     );
     model.mesh = object;
     model.materials = materials;
+    model.matrixRotation = matrixRotation;
 
     if (model.mesh) {
         model.boundingBox = body.boundingBox;

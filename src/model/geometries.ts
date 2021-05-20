@@ -144,12 +144,12 @@ export function loadMesh(
     body,
     texture,
     bones,
-    matrixRotation,
     palette,
     lutTexture,
     envInfo,
     ambience
 ) {
+    const matrixRotation = new THREE.Matrix4();
     const materials = [];
     const geometries = loadGeometry(
         body,
@@ -264,7 +264,7 @@ export function loadMesh(
             materials.push(material);
         }
     });
-    return {object, materials};
+    return {object, materials, matrixRotation};
 }
 
 function loadGeometry(

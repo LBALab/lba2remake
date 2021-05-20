@@ -1,6 +1,8 @@
 import { omit } from 'lodash';
 import { getLanguageConfig } from '../lang';
 import { getParams } from '../params';
+import Actor from './Actor';
+import AnimState from '../model/anim/AnimState';
 
 export interface GameConfig {
     displayText: boolean;
@@ -58,12 +60,12 @@ export function createGameState(): GameState {
             quest: createQuestFlags(),
             holomap: createHolomapFlags()
         },
-        save(hero) {
+        save(hero: Actor) {
             this.hero.position = hero.physics.position;
-            this.hero.animState = hero.animState;
+            this.hero.animState = hero.animState.toJSON();
             return JSON.stringify(omit(this, ['save', 'load', 'config']));
         },
-        load(savedState, hero) {
+        load(savedState, hero: Actor) {
             const state = JSON.parse(savedState);
             if (!state) {
                 return;
@@ -74,34 +76,10 @@ export function createGameState(): GameState {
             // Merge the current animState with the saved one, overwritting
             // things like the currentFrame etc. to ensure we e.g. continue to
             // fly the jetpack if we drown whilst using it.
-            hero.animState = {
-                ...hero.animState,
-                // Obmit any objects with functions since they aren't preserved
-                // through the stringify process.
-                ...omit(state.hero.animState, [
-                    'skeleton',
-                    'bones',
-                    'matrixRotation',
-                    'step',
-                    'rotation',
-                ]),
-            };
-
-            if (hero.animState.matrixRotation) {
-                hero.animState.matrixRotation.fromArray(
-                    state.hero.animState.matrixRotation.elements
-                );
+            if (!hero.animState) {
+                hero.animState = new AnimState();
             }
-            if (hero.animState.step) {
-                hero.animState.step.x = state.hero.animState.step.x;
-                hero.animState.step.y = state.hero.animState.step.y;
-                hero.animState.step.z = state.hero.animState.step.z;
-            }
-            if (hero.animState.rotation) {
-                hero.animState.rotation.x = state.hero.animState.rotation.x;
-                hero.animState.rotation.y = state.hero.animState.rotation.y;
-                hero.animState.rotation.z = state.hero.animState.rotation.z;
-            }
+            hero.animState.setFromJSON(state.hero.animState);
 
             Object.assign(this, state);
         }
