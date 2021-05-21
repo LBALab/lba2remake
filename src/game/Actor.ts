@@ -435,7 +435,6 @@ export default class Actor {
     }
 
     reset(scene) {
-        this.animState.reset();
         this.resetPhysics();
         compileScripts(this.game, scene, this);
         this.state.isDead = false;
@@ -614,7 +613,6 @@ export default class Actor {
             return;
         }
         this.props.animIndex = index;
-        this.animState.reset();
     }
 
     setSprite(scene, index) {
@@ -644,7 +642,6 @@ export default class Actor {
             return;
         }
         this.props.animIndex = index;
-        this.animState.reset();
         this.animState.onAnimEnd = callback;
     }
 

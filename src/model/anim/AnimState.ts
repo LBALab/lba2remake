@@ -38,17 +38,6 @@ export default class AnimState {
         return this.pose.rotation;
     }
 
-    constructor() {
-        this.reset();
-    }
-
-    reset() {
-        if (this.onAnimEnd) {
-            this.onAnimEnd();
-        }
-        this.onAnimEnd = null;
-    }
-
     attachBody(body): BoneBindings {
         const skeleton = Skeleton.fromBody(body);
         this.pose = new Pose(skeleton);

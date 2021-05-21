@@ -120,7 +120,6 @@ function handleBehaviourChanges(scene: Scene, hero: Actor, behaviour: number) {
         hero.props.entityIndex = behaviour;
         hero.reloadModel(scene);
         toggleJump(hero, false);
-        hero.animState.reset();
     }
 }
 
@@ -252,7 +251,6 @@ function processFirstPersonsMovement(game: Game, scene: Scene, hero: Actor, time
     }
     if (hero.props.animIndex !== animIndex) {
         hero.props.animIndex = animIndex;
-        hero.animState.reset();
     }
 }
 

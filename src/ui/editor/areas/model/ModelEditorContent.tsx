@@ -201,9 +201,6 @@ export default class Model extends FrameListener<Props, State> {
         if (this.anim !== anim) {
             grid.position.y = 0;
             this.anim = anim;
-            if (animState) {
-                animState.reset();
-            }
         }
         if (this.wireframe !== wireframe && model) {
             model.mesh.traverse((obj) => {
