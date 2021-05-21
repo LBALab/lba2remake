@@ -117,7 +117,7 @@ export interface ActorState {
     fallDistance: number;
     hasCollidedWithActor: number;
     floorSound: number;
-    floorSound2?: number;
+    floorSound2: number;
     nextAnim: number;
 }
 
@@ -798,7 +798,7 @@ export default class Actor {
             fallDistance: 0,
             hasCollidedWithActor: -1,
             floorSound: -1,
-            floorSound2: null,
+            floorSound2: -1,
             nextAnim: null,
         };
     }

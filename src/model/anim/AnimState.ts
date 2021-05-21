@@ -8,8 +8,6 @@ import Pose from './Pose';
 export default class AnimState {
     noInterpolate: boolean;
     callback: Function;
-    floorSound: number;
-    floorSound2: number;
     private pose: Pose;
     private interpolating: boolean;
     private savedPose = new Pose();
@@ -51,8 +49,6 @@ export default class AnimState {
             this.pose.step.set(0, 0, 0);
             this.pose.rotation.set(0, 0, 0);
         }
-        this.floorSound = -1;
-        this.floorSound2 = null;
         this.noInterpolate = false;
         if (this.callback) {
             this.callback();
