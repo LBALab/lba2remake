@@ -16,6 +16,7 @@ export default class AnimState {
     private _keyframeChanged: boolean;
     private loopFrame: number;
     private currentTime: number;
+    private bodyIndex: number = -1;
     readonly kfs: KeyFrame[] = [null, null];
 
     get hasEnded() {
@@ -39,8 +40,11 @@ export default class AnimState {
     }
 
     attachBody(body): BoneBindings {
-        const skeleton = Skeleton.fromBody(body);
-        this.pose = new Pose(skeleton);
+        if (this.bodyIndex !== body.index) {
+            const skeleton = Skeleton.fromBody(body);
+            this.pose = new Pose(skeleton);
+            this.bodyIndex = body.index;
+        }
         return this.pose.skeleton.createBindings();
     }
 
