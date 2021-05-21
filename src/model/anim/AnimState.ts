@@ -11,7 +11,7 @@ export default class AnimState {
     private pose: Pose;
     private interpolating: boolean;
     private savedPose = new Pose();
-    private _hasEnded: boolean;
+    private _hasEnded: boolean = false;
     private anim: Anim;
     private _currentFrame: number;
     private _keyframeChanged: boolean;
@@ -44,11 +44,6 @@ export default class AnimState {
     }
 
     reset() {
-        this._hasEnded = false;
-        if (this.pose) {
-            this.pose.step.set(0, 0, 0);
-            this.pose.rotation.set(0, 0, 0);
-        }
         this.noInterpolate = false;
         if (this.callback) {
             this.callback();
