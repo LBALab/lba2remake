@@ -98,16 +98,8 @@ export default class AnimState {
 
     private updateKeyFrames() {
         this.kfs[0] = this.anim.keyframes[this.currentFrame];
-        if (this.currentFrame === this.anim.numKeyframes - 1) {
-            if (this.callback) {
-                // Not sure about this, I suspect the
-                // callback is not used as intented here.
-                this.callback();
-                this.callback = null;
-            }
-        }
-
-        if (!this.kfs[0]) return;
+        if (!this.kfs[0])
+            return;
 
         this._keyframeChanged = false;
         if (this.currentTime > this.kfs[0].duration) {
@@ -121,7 +113,6 @@ export default class AnimState {
                 if (this._currentFrame >= this.anim.numKeyframes - 1) {
                     this._currentFrame = 0;
                 }
-                this._hasEnded = true;
             }
             this.kfs[0] = this.anim.keyframes[this._currentFrame];
         }
@@ -133,7 +124,18 @@ export default class AnimState {
                 nextFrame = 0;
             }
         }
+        if (this._keyframeChanged && (nextFrame === this.loopFrame || nextFrame === 0)) {
+            this.notifyAnimEnd();
+        }
         this.kfs[1] = this.anim.keyframes[nextFrame];
+    }
+
+    private notifyAnimEnd() {
+        this._hasEnded = true;
+        if (this.callback) {
+            this.callback();
+            this.callback = null;
+        }
     }
 
     toJSON(): AnimStateJSON {
