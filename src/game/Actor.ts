@@ -645,7 +645,7 @@ export default class Actor {
         }
         this.props.animIndex = index;
         this.animState.reset();
-        this.animState.callback = callback;
+        this.animState.onAnimEnd = callback;
     }
 
     reloadModel(scene: Scene) {

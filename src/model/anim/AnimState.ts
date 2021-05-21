@@ -6,7 +6,7 @@ import Skeleton from './Skeleton';
 import Pose from './Pose';
 
 export default class AnimState {
-    callback: Function;
+    onAnimEnd: Function;
     private pose: Pose;
     private interpolating: boolean;
     private savedPose = new Pose();
@@ -43,10 +43,10 @@ export default class AnimState {
     }
 
     reset() {
-        if (this.callback) {
-            this.callback();
+        if (this.onAnimEnd) {
+            this.onAnimEnd();
         }
-        this.callback = null;
+        this.onAnimEnd = null;
     }
 
     attachBody(body): BoneBindings {
@@ -82,6 +82,10 @@ export default class AnimState {
             this.pose.setFromKeyFrames(this.kfs, this.currentTime);
         }
         this.pose.skeleton.updateHierarchy();
+        if (this._hasEnded && this.onAnimEnd) {
+            this.onAnimEnd();
+            this.onAnimEnd = null;
+        }
     }
 
     private setAnim(anim: Anim) {
@@ -123,17 +127,9 @@ export default class AnimState {
             }
         }
         if (this._keyframeChanged && (nextFrame === this.loopFrame || nextFrame === 0)) {
-            this.notifyAnimEnd();
+            this._hasEnded = true;
         }
         this.kfs[1] = this.anim.keyframes[nextFrame];
-    }
-
-    private notifyAnimEnd() {
-        this._hasEnded = true;
-        if (this.callback) {
-            this.callback();
-            this.callback = null;
-        }
     }
 
     toJSON(): AnimStateJSON {
