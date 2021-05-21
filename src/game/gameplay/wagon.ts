@@ -260,9 +260,9 @@ function moveAxletrees(scene: Scene, wagon: Actor, time: Time) {
     }
 
     const angle = (time.elapsed * wagon.props.speed * 0.005) % (Math.PI * 2);
-    const { kf } = wagon.animState;
-    adjustAxletreesBones(kf[0], AXLE_OFFSET, angle);
-    adjustAxletreesBones(kf[1], AXLE_OFFSET, angle);
+    const { kfs } = wagon.animState;
+    adjustAxletreesBones(kfs[0], AXLE_OFFSET, angle);
+    adjustAxletreesBones(kfs[1], AXLE_OFFSET, angle);
 }
 
 const POSITION = new THREE.Vector3();

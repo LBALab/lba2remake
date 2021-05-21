@@ -1,26 +1,9 @@
-import * as THREE from 'three';
-
 import { Time } from '../../datatypes';
 import { getAnimationsSync } from '../../resources';
 import { KeyFrame, Anim, AnimStateJSON, BoneBindings } from './types';
 import { ResourceName, getResource } from '../../resources/load';
 import Skeleton from './Skeleton';
-
-class Pose {
-    readonly skeleton: Skeleton;
-    readonly step = new THREE.Vector3();
-    readonly rotation = new THREE.Vector3();
-
-    constructor(skeleton = null) {
-        this.skeleton = skeleton || Skeleton.makeEmpty();
-    }
-
-    copy(other: Pose) {
-        this.skeleton.copy(other.skeleton);
-        this.step.copy(other.step);
-        this.rotation.copy(other.rotation);
-    }
-}
+import Pose from './Pose';
 
 export default class AnimState {
     noInterpolate: boolean;
@@ -36,7 +19,7 @@ export default class AnimState {
     private _keyframeChanged: boolean;
     private loopFrame: number;
     private currentTime: number;
-    readonly kf: KeyFrame[] = [null, null];
+    readonly kfs: KeyFrame[] = [null, null];
 
     get hasEnded() {
         return this._hasEnded;
@@ -98,16 +81,16 @@ export default class AnimState {
         this.currentTime += time.delta * 1000;
 
         if (this.interpolating) {
-            if (this.currentTime > this.kf[0].duration) {
+            if (this.currentTime > this.kfs[0].duration) {
                 this.currentTime = 0;
                 this.interpolating = false;
             } else {
-                this.updateInterpolation();
+                this.pose.setFromBasePoseAndKeyframe(this.savedPose, this.kfs[0], this.currentTime);
             }
         }
         if (!this.interpolating) {
             this.updateKeyFrames();
-            this.updatePose();
+            this.pose.setFromKeyFrames(this.kfs, this.currentTime);
         }
         this.pose.skeleton.updateHierarchy();
     }
@@ -117,13 +100,13 @@ export default class AnimState {
         this._currentFrame = 0;
         this.loopFrame = anim ? anim.loopFrame : -1;
         this.currentTime = 0;
-        this.kf[0] = anim.keyframes[0];
-        this.kf[1] = null;
+        this.kfs[0] = anim.keyframes[0];
+        this.kfs[1] = null;
         this._keyframeChanged = false;
     }
 
     private updateKeyFrames() {
-        this.kf[0] = this.anim.keyframes[this.currentFrame];
+        this.kfs[0] = this.anim.keyframes[this.currentFrame];
         if (this.currentFrame === this.anim.numKeyframes - 1) {
             if (this.callback) {
                 // Not sure about this, I suspect the
@@ -133,10 +116,10 @@ export default class AnimState {
             }
         }
 
-        if (!this.kf[0]) return;
+        if (!this.kfs[0]) return;
 
         this._keyframeChanged = false;
-        if (this.currentTime > this.kf[0].duration) {
+        if (this.currentTime > this.kfs[0].duration) {
             this.currentTime = 0;
             this._currentFrame += 1;
             if (!this._keyframeChanged) {
@@ -149,7 +132,7 @@ export default class AnimState {
                 }
                 this._hasEnded = true;
             }
-            this.kf[0] = this.anim.keyframes[this._currentFrame];
+            this.kfs[0] = this.anim.keyframes[this._currentFrame];
         }
 
         let nextFrame = this._currentFrame + 1;
@@ -159,53 +142,7 @@ export default class AnimState {
                 nextFrame = 0;
             }
         }
-        this.kf[1] = this.anim.keyframes[nextFrame];
-    }
-
-    private updatePose() {
-        const { kf, pose } = this;
-        const duration = kf[0].duration;
-        const alpha = duration > 0
-            ? this.currentTime / duration
-            : 0;
-        const stepFactor = duration > 0
-            ? 1000 / duration
-            : 0;
-        pose.skeleton.lerpKeyFrames(kf[0].boneframes, kf[1].boneframes, alpha);
-        const rootA = kf[0].boneframes[0];
-        const rootB = kf[1].boneframes[0];
-        if (rootA && rootB) {
-            pose.rotation.lerpVectors(rootA.pos, rootB.pos, alpha);
-            pose.rotation.multiplyScalar(stepFactor);
-        }
-
-        pose.step.lerpVectors(kf[0].step, kf[1].step, alpha);
-        pose.step.multiplyScalar(stepFactor);
-    }
-
-    private _tmpRot = new THREE.Vector3();
-    private _tmpPos = new THREE.Vector3();
-
-    private updateInterpolation() {
-        const { kf, pose, savedPose } = this;
-        const duration = kf[0].duration;
-        const alpha = duration > 0
-            ? this.currentTime / duration
-            : 0;
-        const stepFactor = duration > 0
-            ? 1000 / duration
-            : 0;
-        pose.skeleton.lerpSkeletonAndKeyFrame(savedPose.skeleton, kf[0].boneframes, alpha);
-        const rootBf = kf[0].boneframes[0];
-        if (rootBf) {
-            this._tmpRot.copy(rootBf.pos);
-            this._tmpRot.multiplyScalar(stepFactor);
-            pose.rotation.lerpVectors(savedPose.rotation, this._tmpRot, alpha);
-        }
-
-        this._tmpPos.copy(kf[0].step);
-        this._tmpPos.multiplyScalar(stepFactor);
-        pose.step.lerpVectors(savedPose.step, this._tmpPos, alpha);
+        this.kfs[1] = this.anim.keyframes[nextFrame];
     }
 
     toJSON(): AnimStateJSON {
