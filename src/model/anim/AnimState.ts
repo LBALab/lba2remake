@@ -6,7 +6,6 @@ import Skeleton from './Skeleton';
 import Pose from './Pose';
 
 export default class AnimState {
-    noInterpolate: boolean;
     callback: Function;
     private pose: Pose;
     private interpolating: boolean;
@@ -44,7 +43,6 @@ export default class AnimState {
     }
 
     reset() {
-        this.noInterpolate = false;
         if (this.callback) {
             this.callback();
         }
@@ -141,7 +139,6 @@ export default class AnimState {
     toJSON(): AnimStateJSON {
         return {
             interpolating: this.interpolating,
-            noInterpolate: this.noInterpolate,
             hasEnded: this._hasEnded,
             step: this.pose.step.toArray(),
             rotation: this.pose.rotation.toArray(),
@@ -155,7 +152,6 @@ export default class AnimState {
 
     setFromJSON(data: AnimStateJSON) {
         this.interpolating = data.interpolating;
-        this.noInterpolate = data.noInterpolate;
         this._hasEnded = data.hasEnded;
         this.pose.step.fromArray(data.step);
         this.pose.rotation.fromArray(data.rotation);

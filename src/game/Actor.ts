@@ -111,7 +111,6 @@ export interface ActorState {
     isSearching: boolean;
     isToppingOutUp: boolean;
     isDrawingSword: boolean;
-    noInterpolateNext: boolean;
     distFromGround: number;
     distFromFloor: number;
     fallDistance: number;
@@ -279,7 +278,6 @@ export default class Actor {
 
         if (this.state.nextAnim !== null) {
             this.setAnim(this.state.nextAnim);
-            this.animState.noInterpolate = true;
             this.state.nextAnim = null;
         }
 
@@ -700,7 +698,6 @@ export default class Actor {
             }
             this.state.isHit = false;
         });
-        this.animState.noInterpolate = true;
         this.state.isHit = true;
         this.state.wasHitBy = hitBy;
     }
@@ -792,7 +789,6 @@ export default class Actor {
             isSearching: false,
             isToppingOutUp: false,
             isDrawingSword: false,
-            noInterpolateNext: false,
             distFromFloor: 0,
             distFromGround: 0,
             fallDistance: 0,

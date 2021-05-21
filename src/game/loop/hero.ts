@@ -331,9 +331,7 @@ function processFall(scene: Scene, hero: Actor) {
         hero.setAnimWithCallback(animIndex, () => {
             hero.state.isFalling = false;
             hero.state.fallDistance = 0;
-            hero.state.noInterpolateNext = true;
         });
-        hero.animState.noInterpolate = true;
     }
 }
 
@@ -547,10 +545,6 @@ function processActorMovement(
         return;
     }
     hero.setAnim(animIndex);
-    if (hero.state.noInterpolateNext) {
-        hero.animState.noInterpolate = true;
-        hero.state.noInterpolateNext = false;
-    }
 }
 
 function checkDrowningAnim(game: Game, scene: Scene, hero: Actor, time: Time) {
@@ -592,9 +586,7 @@ function checkDrowningAnim(game: Game, scene: Scene, hero: Actor, time: Time) {
         hero.state.isDrowning = false;
         hero.state.isDrowningLava = false;
         hero.state.isDrowningStars = false;
-        hero.state.noInterpolateNext = true;
     });
-    hero.animState.noInterpolate = true;
     return true;
 }
 
