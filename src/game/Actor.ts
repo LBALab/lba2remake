@@ -431,8 +431,8 @@ export default class Actor {
     runScripts(time) {
         if (this.scripts) {
             const params = getParams();
-            runScript(params, this.scripts.life, time);
             runScript(params, this.scripts.move, time);
+            runScript(params, this.scripts.life, time);
         }
     }
 
