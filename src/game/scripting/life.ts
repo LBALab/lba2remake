@@ -18,20 +18,19 @@ const isLBA1 = getParams().game === 'lba1';
 
 export const PALETTE = unimplemented();
 
-export function BODY_OBJ(this: ScriptContext, actor, bodyIndex) {
+export function BODY_OBJ(this: ScriptContext, actor: Actor, bodyIndex) {
     if (bodyIndex === -1) {
         return;
     }
-    actor.isVisible = true;
+    actor.state.isVisible = true;
     actor.setBody(this.scene, bodyIndex);
 }
 
-export function ANIM_OBJ(this: ScriptContext, actor, animIndex) {
+export function ANIM_OBJ(this: ScriptContext, actor: Actor, animIndex: number) {
     if (animIndex === -1) {
         return;
     }
     actor.setAnim(animIndex);
-    actor.animState.interpolationFrame = 0;
 }
 
 export const SET_CAMERA = unimplemented();
@@ -42,7 +41,13 @@ export function MESSAGE(this: ScriptContext, cmdState, id) {
     MESSAGE_OBJ.call(this, cmdState, this.actor, id);
 }
 
-export function MESSAGE_OBJ(this: ScriptContext, cmdState, actor, id, sayMessage: boolean = false) {
+export function MESSAGE_OBJ(
+    this: ScriptContext,
+    cmdState,
+    actor: Actor,
+    id,
+    sayMessage: boolean = false
+) {
     // If someone else is already talking, we wait for them to finish first.
     if (this.game.getState().actorTalking > -1 &&
         this.game.getState().actorTalking !== actor.index) {
@@ -426,21 +431,21 @@ export function SUB_MAGIC_POINT(this: ScriptContext, points) {
     this.game.getState().hero.magic = (magic > 0) ? magic : 0;
 }
 
-export function SET_LIFE_POINT_OBJ(this: ScriptContext, actor, value) {
+export function SET_LIFE_POINT_OBJ(this: ScriptContext, actor: Actor, value) {
     actor.props.life = value;
     if (actor.props.life > 0) {
         actor.state.isDead = false;
     }
 }
 
-export function SUB_LIFE_POINT_OBJ(this: ScriptContext, actor, value) {
+export function SUB_LIFE_POINT_OBJ(this: ScriptContext, actor: Actor, value) {
     actor.props.life -= value;
     if (actor.props.life < 0) {
         actor.props.life = 0;
     }
 }
 
-export function HIT(this: ScriptContext, actor, strength) {
+export function HIT(this: ScriptContext, actor: Actor, strength) {
     actor.state.wasHitBy = this.actor.index;
     actor.props.life -= strength;
 }
@@ -507,7 +512,7 @@ export function ASK_CHOICE(this: ScriptContext, cmdState, index) {
     ASK_CHOICE_OBJ.call(this, cmdState, this.actor, index);
 }
 
-export function ASK_CHOICE_OBJ(this: ScriptContext, cmdState, actor, index) {
+export function ASK_CHOICE_OBJ(this: ScriptContext, cmdState, actor: Actor, index) {
     const hero = this.scene.actors[0];
     if (!cmdState.skipListener) {
         const text = this.scene.props.texts[index];
@@ -796,7 +801,7 @@ export function SAY_MESSAGE(this: ScriptContext, cmdState, id) {
     MESSAGE_OBJ.call(this, cmdState, this.actor, id, true);
 }
 
-export function SAY_MESSAGE_OBJ(this: ScriptContext, cmdState, actor, id) {
+export function SAY_MESSAGE_OBJ(this: ScriptContext, cmdState, actor: Actor, id) {
     MESSAGE_OBJ.call(this, cmdState, actor, id, true);
 }
 

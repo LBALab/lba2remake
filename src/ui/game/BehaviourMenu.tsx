@@ -5,7 +5,7 @@ import useMedia from '../hooks/useMedia';
 import { BehaviourMode as BehaviourModeType } from '../../game/loop/hero';
 import { MAX_LIFE } from '../../game/GameState';
 
-import { loadAnimState } from '../../model/animState';
+import AnimState from '../../model/anim/AnimState';
 import {
     createOverlayScene,
     createOverlayClock,
@@ -59,7 +59,7 @@ let canvas = null;
 let renderer = null;
 const bScenes = [];
 const model = [];
-const animState = [];
+const animStates: AnimState[] = [];
 
 const initBehaviourRenderer = async () => {
     bScenes.push(createOverlayScene());
@@ -94,7 +94,7 @@ const renderLoop = (time, behaviour, selected, item) => {
         return;
     }
 
-    const anims = animState[behaviour];
+    const animState = animStates[behaviour];
     const s = bScenes[behaviour];
 
     const canvasClip = canvas.getBoundingClientRect();
@@ -111,7 +111,7 @@ const renderLoop = (time, behaviour, selected, item) => {
     const itemBottom = canvasClip.bottom - bottom - 10;
 
     if (selected) {
-        updateAnimModel(m, anims, behaviour, 0, time);
+        updateAnimModel(m, animState, behaviour, 0, time);
     }
     renderer.stats.begin();
 
@@ -357,11 +357,11 @@ const BehaviourMenu = ({ game, scene }: IBehaviourMenuProps) => {
         bScenes[b].camera.setAngle(heroAngle + Math.PI - (Math.PI / 4));
         const bodyIndex = scene.actors[0].props.bodyIndex;
         // load models
-        if (!animState[b]) {
-            animState[b] = loadAnimState();
+        if (!animStates[b]) {
+            animStates[b] = new AnimState();
         }
-        model[b] = await loadSceneModel(bScenes[b], b, bodyIndex, animState[b]);
-        updateAnimModel(model[b], animState[b], b, 0, {delta: 0, elapsed: 0});
+        model[b] = await loadSceneModel(bScenes[b], b, bodyIndex, animStates[b]);
+        updateAnimModel(model[b], animStates[b], b, 0, {delta: 0, elapsed: 0});
     };
 
     useEffect(() => {

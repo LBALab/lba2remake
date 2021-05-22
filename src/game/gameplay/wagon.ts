@@ -5,6 +5,7 @@ import IsoScenery from '../scenery/isometric/IsoScenery';
 import IsoSceneryPhysics from '../scenery/isometric/IsoSceneryPhysics';
 import { Time } from '../../datatypes';
 import { WORLD_SIZE } from '../../utils/lba';
+import { KeyFrame } from '../../model/anim/types';
 
 /*
 **                       ----
@@ -258,10 +259,10 @@ function moveAxletrees(scene: Scene, wagon: Actor, time: Time) {
         AXLE_OFFSET.set(0, 0);
     }
 
-    const angle = (time.elapsed * wagon.props.speed * 3.4) % 0x1000;
-    const { prevKeyframe, currentKeyframe } = wagon.animState;
-    adjustAxletreesBones(prevKeyframe, AXLE_OFFSET, angle);
-    adjustAxletreesBones(currentKeyframe, AXLE_OFFSET, angle);
+    const angle = (time.elapsed * wagon.props.speed * 0.005) % (Math.PI * 2);
+    const { kfs } = wagon.animState;
+    adjustAxletreesBones(kfs[0], AXLE_OFFSET, angle);
+    adjustAxletreesBones(kfs[1], AXLE_OFFSET, angle);
 }
 
 const POSITION = new THREE.Vector3();
@@ -279,7 +280,9 @@ function getHeightAtOffset(scene: Scene, wagon: Actor, offset: number) {
     return h - wagon.physics.position.y;
 }
 
-function adjustAxletreesBones(keyframe, axleOffset: THREE.Vector2, angle: number) {
+const axleAxis = new THREE.Vector3(1, 0, 0);
+
+function adjustAxletreesBones(keyframe: KeyFrame, axleOffset: THREE.Vector2, angle: number) {
     if (!keyframe) {
         return;
     }
@@ -289,8 +292,8 @@ function adjustAxletreesBones(keyframe, axleOffset: THREE.Vector2, angle: number
     boneframes[1].type = 1;
     boneframes[2].pos.set(0, axleOffset.y, 0);
     boneframes[2].type = 1;
-    boneframes[3].veuler.set(angle, 0, 0);
-    boneframes[4].veuler.set(angle, 0, 0);
+    boneframes[3].quat.setFromAxisAngle(axleAxis, angle);
+    boneframes[4].quat.setFromAxisAngle(axleAxis, angle);
 }
 
 const UGRailLayout = {

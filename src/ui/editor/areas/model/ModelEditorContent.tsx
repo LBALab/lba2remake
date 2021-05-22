@@ -5,18 +5,13 @@ import Renderer from '../../../../renderer';
 import { fullscreen } from '../../../styles/index';
 import FrameListener from '../../../utils/FrameListener';
 import { loadModel } from '../../../../model/index';
-import {
-    loadAnimState,
-    updateKeyframe,
-    updateKeyframeInterpolation
-} from '../../../../model/animState';
+import AnimState from '../../../../model/anim/AnimState';
 import fmod from './utils/fmod';
 import {get3DOrbitCamera} from './utils/orbitCamera';
 import { TickerProps } from '../../../utils/Ticker';
 import {
     registerResources,
     preloadResources,
-    getAnimationsSync,
 } from '../../../../resources';
 import { loadEntities } from './browser/entitities';
 import DebugData from '../../DebugData';
@@ -31,6 +26,7 @@ interface Props extends TickerProps {
         rotateView: boolean;
         wireframe: boolean;
         grid: boolean;
+        playbackSpeed: number;
     };
     stateHandler: any;
 }
@@ -41,7 +37,7 @@ interface State {
     scene: any;
     clock: THREE.Clock;
     grid: any;
-    animState?: any;
+    animState?: AnimState;
 }
 
 export default class Model extends FrameListener<Props, State> {
@@ -144,7 +140,7 @@ export default class Model extends FrameListener<Props, State> {
         }
         this.entity = this.props.sharedState.entity;
         this.body = this.props.sharedState.body;
-        const animState = loadAnimState();
+        const animState = new AnimState();
         const envInfo = {
             skyColor: [0, 0, 0]
         };
@@ -197,7 +193,7 @@ export default class Model extends FrameListener<Props, State> {
 
     frame() {
         const { renderer, animState, clock, model, scene, grid } = this.state;
-        const { entity, body, anim, rotateView, wireframe } = this.props.sharedState;
+        const { entity, body, anim, rotateView, wireframe, playbackSpeed } = this.props.sharedState;
         if (this.entity !== entity || this.body !== body) {
             this.loadModel();
             grid.position.y = 0;
@@ -216,68 +212,47 @@ export default class Model extends FrameListener<Props, State> {
         }
         grid.visible = this.props.sharedState.grid || false;
         this.checkResize();
+        const pbs = playbackSpeed || 1;
         const time = {
-            delta: Math.min(clock.getDelta(), 0.05),
-            elapsed: clock.getElapsedTime()
+            delta: Math.min(clock.getDelta(), 0.05) * pbs,
+            elapsed: clock.getElapsedTime() * pbs
         };
         renderer.stats.begin();
         if (model) {
-            const interpolate = this.updateModel(
+            this.updateModel(
                 model,
                 animState,
                 entity,
                 anim,
                 time
             );
-            this.updateMovement(grid, animState, time, interpolate, model.mesh.quaternion);
+            this.updateMovement(grid, animState, time, model.mesh.quaternion);
         }
         scene.camera.update(model, rotateView, this.mouseSpeed, this.zoom, time);
         renderer.render(scene);
         renderer.stats.end();
     }
 
-    updateModel(model, animState, entityIdx, animIdx, time) {
-        let interpolate = false;
-        const anim = getAnimationsSync(animIdx, entityIdx);
-        animState.loopFrame = anim.loopFrame;
-        if (animState.prevRealAnimIdx !== -1 && anim.index !== animState.prevRealAnimIdx) {
-            updateKeyframeInterpolation(anim, animState, time, anim.index);
-            interpolate = true;
-        }
-        if (anim.index === animState.realAnimIdx || animState.realAnimIdx === -1) {
-            updateKeyframe(anim, animState, time, anim.index);
-        }
+    updateModel(model, animState: AnimState, entityIdx, animIdx, time) {
+        animState.update(time, entityIdx, animIdx);
         const q = new THREE.Quaternion();
-        const delta = time.delta * 1000;
-        let angle = 0;
-        if (animState.keyframeLength > 0) {
-            angle = (animState.rotation.y * delta) / animState.keyframeLength;
-        }
+        const angle = animState.rotation.y * time.delta;
         q.setFromAxisAngle(
             new THREE.Vector3(0, 1, 0),
             angle
         );
         model.mesh.quaternion.multiply(q);
-        return interpolate;
     }
 
-    updateMovement(grid, animState, time, interpolate, rotation) {
-        const delta = time.delta * 1000;
+    updateMovement(grid, animState, time, rotation) {
         const speed = new THREE.Vector3();
-        if (animState.keyframeLength > 0) {
-            speed.set(
-                ((animState.step.x * delta) / animState.keyframeLength),
-                ((animState.step.y * delta) / animState.keyframeLength),
-                ((animState.step.z * delta) / animState.keyframeLength)
-            );
-            speed.applyQuaternion(rotation);
-        }
+        speed.copy(animState.step);
+        speed.multiplyScalar(time.delta);
+        speed.applyQuaternion(rotation);
         const ts = 0.96;
         const inRange = v => fmod(v + (ts * 4.5), ts * 9) - (ts * 4.5);
 
-        if (!interpolate) {
-            grid.position.y = inRange(grid.position.y - speed.y);
-        }
+        grid.position.y = inRange(grid.position.y - speed.y);
         each(grid.children, (tile) => {
             const pos = tile.position;
             pos.x = inRange(pos.x - speed.x);

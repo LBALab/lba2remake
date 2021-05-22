@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import {cloneDeep} from 'lodash';
 
 import { loadModel, Model } from '../model';
-import { loadAnimState, resetAnimState, updateKeyframeInterpolation, updateKeyframe } from '../model/animState';
+import AnimState from '../model/anim/AnimState';
 import { AnimType } from './data/animType';
 import { angleToRad, angleTo, getDistanceLba, WORLD_SCALE, distance2D } from '../utils/lba';
 import {createBoundingBox} from '../utils/rendering';
@@ -20,7 +20,6 @@ import Scene from './Scene';
 import { pure } from '../utils/decorators';
 import { updateHero } from './loop/hero';
 import { Time } from '../datatypes';
-import { getAnimationsSync } from '../resources';
 import { getAnim } from '../model/entity';
 import { processAnimAction } from './loop/animAction';
 import { computeWagonMovement, WagonState, initWagonState } from './gameplay/wagon';
@@ -112,13 +111,12 @@ export interface ActorState {
     isSearching: boolean;
     isToppingOutUp: boolean;
     isDrawingSword: boolean;
-    noInterpolateNext: boolean;
     distFromGround: number;
     distFromFloor: number;
     fallDistance: number;
     hasCollidedWithActor: number;
     floorSound: number;
-    floorSound2?: number;
+    floorSound2: number;
     nextAnim: number;
 }
 
@@ -177,7 +175,7 @@ export default class Actor {
     readonly soundVoice: any;
     private readonly game: Game;
     private readonly scene: Scene;
-    animState: any = null;
+    animState: AnimState = null;
     slideState: SlideState;
     threeObject?: THREE.Object3D = null;
     model?: Model = null;
@@ -248,7 +246,7 @@ export default class Actor {
         };
         const skipModel = scene.isSideScene && this.index === 0;
         if (!skipModel) {
-            this.animState = loadAnimState();
+            this.animState = new AnimState();
         }
 
         if (this.game.getState().config.positionalAudio) {
@@ -280,7 +278,6 @@ export default class Actor {
 
         if (this.state.nextAnim !== null) {
             this.setAnim(this.state.nextAnim);
-            this.animState.noInterpolate = true;
             this.state.nextAnim = null;
         }
 
@@ -297,20 +294,18 @@ export default class Actor {
             && this.threeObject
             && (this.threeObject.visible || this.index === 0)) {
             const model = this.model;
-            this.animState.matrixRotation.makeRotationFromQuaternion(this.physics.orientation);
+            model.matrixRotation.makeRotationFromQuaternion(this.physics.orientation);
             this.updateModel(
                 game,
                 scene,
                 model,
                 time
             );
-            if (this.animState.isPlaying) {
-                const firstPerson = game.controlsState.firstPerson
-                    && scene.isActive
-                    && this.index === 0;
-                const behaviour = game.getState().hero.behaviour;
-                this.updateMovements(firstPerson, behaviour, time);
-            }
+            const firstPerson = game.controlsState.firstPerson
+                && scene.isActive
+                && this.index === 0;
+            const behaviour = game.getState().hero.behaviour;
+            this.updateMovements(firstPerson, behaviour, time);
         }
         if (this.sprite) {
             this.sprite.update(time);
@@ -393,13 +388,10 @@ export default class Actor {
 
             const animIndex = this.props.animIndex;
             const useVrSteps = (firstPerson && behaviour < 4 && animIndex in vrFPsteps[behaviour]);
+            const step = useVrSteps ? vrFPsteps[behaviour][animIndex] : this.animState.step;
 
-            const speedZ = useVrSteps
-                ? vrFPsteps[behaviour][animIndex].z * time.delta
-                : (this.animState.step.z * deltaMS) / this.animState.keyframeLength;
-            const speedX = useVrSteps
-                ? vrFPsteps[behaviour][animIndex].x * time.delta
-                : (this.animState.step.x * deltaMS) / this.animState.keyframeLength;
+            const speedZ = step.z * time.delta;
+            const speedX = step.x * time.delta;
 
             this.physics.temp.position.x += Math.sin(this.physics.temp.angle) * speedZ;
             this.physics.temp.position.z += Math.cos(this.physics.temp.angle) * speedZ;
@@ -407,8 +399,7 @@ export default class Actor {
             this.physics.temp.position.x -= Math.cos(this.physics.temp.angle) * speedX;
             this.physics.temp.position.z += Math.sin(this.physics.temp.angle) * speedX;
 
-            this.physics.temp.position.y +=
-                (this.animState.step.y * deltaMS) / (this.animState.keyframeLength);
+            this.physics.temp.position.y += this.animState.step.y * time.delta;
         } else {
             this.physics.temp.position.set(0, 0, 0);
         }
@@ -417,14 +408,7 @@ export default class Actor {
     updateModel(game: Game, scene: Scene, model: any, time: Time) {
         const animState = this.animState;
         const { entityIndex, animIndex } = this.props;
-        const anim = getAnimationsSync(animIndex, entityIndex);
-        animState.loopFrame = anim.loopFrame;
-        if (animState.prevRealAnimIdx !== -1 && anim.index !== animState.prevRealAnimIdx) {
-            updateKeyframeInterpolation(anim, animState, time, anim.index);
-        }
-        if (anim.index === animState.realAnimIdx || animState.realAnimIdx === -1) {
-            updateKeyframe(anim, animState, time, anim.index);
-        }
+        animState.update(time, entityIndex, animIndex);
         if (scene.isActive) {
             const entity = model.entities[entityIndex];
             const entityAnim = getAnim(entity, animIndex);
@@ -445,21 +429,16 @@ export default class Actor {
     runScripts(time) {
         if (this.scripts) {
             const params = getParams();
-            runScript(params, this.scripts.life, time);
             runScript(params, this.scripts.move, time);
+            runScript(params, this.scripts.life, time);
         }
     }
 
     reset(scene) {
-        this.resetAnimState();
         this.resetPhysics();
         compileScripts(this.game, scene, this);
         this.state.isDead = false;
         this.state.floorSound = -1;
-    }
-
-    resetAnimState() {
-        resetAnimState(this.animState);
     }
 
     resetPhysics() {
@@ -634,7 +613,6 @@ export default class Actor {
             return;
         }
         this.props.animIndex = index;
-        this.resetAnimState();
     }
 
     setSprite(scene, index) {
@@ -664,8 +642,7 @@ export default class Actor {
             return;
         }
         this.props.animIndex = index;
-        this.resetAnimState();
-        this.animState.callback = callback;
+        this.animState.onAnimEnd = callback;
     }
 
     reloadModel(scene: Scene) {
@@ -718,7 +695,6 @@ export default class Actor {
             }
             this.state.isHit = false;
         });
-        this.animState.noInterpolate = true;
         this.state.isHit = true;
         this.state.wasHitBy = hitBy;
     }
@@ -810,13 +786,12 @@ export default class Actor {
             isSearching: false,
             isToppingOutUp: false,
             isDrawingSword: false,
-            noInterpolateNext: false,
             distFromFloor: 0,
             distFromGround: 0,
             fallDistance: 0,
             hasCollidedWithActor: -1,
             floorSound: -1,
-            floorSound2: null,
+            floorSound2: -1,
             nextAnim: null,
         };
     }

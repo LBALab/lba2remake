@@ -162,9 +162,9 @@ export default class IsoSceneryPhysics {
         const dz = Math.floor(position.z * 32);
         const cell = this.grid.cells[(dx * 64) + dz];
 
-        if (obj instanceof Actor && obj.animState) { // if it's an actor
-            obj.animState.floorSound = -1;
-            obj.animState.floorSound2 = null;
+        if (obj instanceof Actor) { // if it's an actor
+            obj.state.floorSound = -1;
+            obj.state.floorSound2 = -1;
         }
 
         let isTouchingGround = false;
@@ -177,9 +177,9 @@ export default class IsoSceneryPhysics {
                 const bb = column.box;
                 const y = getColumnY(column, position);
 
-                if (obj instanceof Actor && obj.animState) { // if it's an actor
-                    obj.animState.floorSound = column.sound;
-                    obj.animState.floorSound2 = column.sound2;
+                if (obj instanceof Actor) {
+                    obj.state.floorSound = column.sound;
+                    obj.state.floorSound2 = column.sound2;
                 }
                 const minY = i > 0 ? bb.min.y : -Infinity;
                 if (basePos.y >= minY) {

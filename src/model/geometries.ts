@@ -10,6 +10,7 @@ import {loadPaletteTexture, loadSubTextureRGBA} from '../texture';
 import {compile} from '../utils/shaders';
 import { WORLD_SIZE, PolygonType } from '../utils/lba';
 import Lightning from '../game/scenery/island/environment/Lightning';
+import Renderer from '../renderer';
 
 const push = Array.prototype.push;
 
@@ -61,6 +62,9 @@ function prepareGeometries(texture, bones, matrixRotation, palette, lutTexture, 
             material: new THREE.RawShaderMaterial({
                 vertexShader: compile('vert', VERT_COLORED),
                 fragmentShader: compile('frag', FRAG_COLORED),
+                defines: {
+                    OPACITY: '1.0'
+                },
                 uniforms: {
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
@@ -71,7 +75,41 @@ function prepareGeometries(texture, bones, matrixRotation, palette, lutTexture, 
                     bonePos: { value: bones.position },
                     boneRot: { value: bones.rotation },
                     rotationMatrix: { value: matrixRotation }
-                }
+                },
+                glslVersion: Renderer.getGLSLVersion()
+            })
+        },
+        colored_transparent: {
+            positions: [],
+            normals: [],
+            colors: [],
+            intensities: [],
+            bones: [],
+            polyTypes: [],
+            linePositions: [],
+            lineNormals: [],
+            lineColors: [],
+            lineIntensities: [],
+            lineBones: [],
+            material: new THREE.RawShaderMaterial({
+                transparent: true,
+                vertexShader: compile('vert', VERT_COLORED),
+                fragmentShader: compile('frag', FRAG_COLORED),
+                defines: {
+                    OPACITY: '0.5'
+                },
+                uniforms: {
+                    fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
+                    fogDensity: {value: envInfo.fogDensity},
+                    worldScale: {value: worldScale},
+                    palette: {value: paletteTexture},
+                    noise: {value: fakeNoise},
+                    light: {value: light},
+                    bonePos: { value: bones.position },
+                    boneRot: { value: bones.rotation },
+                    rotationMatrix: { value: matrixRotation }
+                },
+                glslVersion: Renderer.getGLSLVersion()
             })
         },
         textured: {
@@ -144,12 +182,12 @@ export function loadMesh(
     body,
     texture,
     bones,
-    matrixRotation,
     palette,
     lutTexture,
     envInfo,
     ambience
 ) {
+    const matrixRotation = new THREE.Matrix4();
     const materials = [];
     const geometries = loadGeometry(
         body,
@@ -264,7 +302,7 @@ export function loadMesh(
             materials.push(material);
         }
     });
-    return {object, materials};
+    return {object, materials, matrixRotation};
 }
 
 function loadGeometry(
@@ -303,7 +341,7 @@ function loadFaceGeometry(geometries, body) {
         const faceNormal = getFaceNormal(body, p);
         const addVertex = (j) => {
             const vertexIndex = p.vertex[j];
-            if (p.hasTransparency || p.hasTex) {
+            if ((p.hasTransparency && p.polyType !== PolygonType.TRANS) || p.hasTex) {
                 createSubgroupGeometry(geometries, group, baseGroup, uvGroup);
                 push.apply(geometries[group].positions, getPosition(body, vertexIndex));
                 push.apply(geometries[group].normals, faceNormal || getNormal(body, vertexIndex));
@@ -314,12 +352,13 @@ function loadFaceGeometry(geometries, body) {
                 geometries[group].colors.push(p.colour);
                 geometries[group].intensities.push(p.intensity);
             } else {
-                push.apply(geometries.colored.positions, getPosition(body, vertexIndex));
-                push.apply(geometries.colored.normals, faceNormal || getNormal(body, vertexIndex));
-                push.apply(geometries.colored.bones, getBone(body, vertexIndex));
-                geometries.colored.polyTypes.push(p.polyType);
-                geometries.colored.colors.push(p.colour);
-                geometries.colored.intensities.push(p.intensity);
+                const cGroup = p.polyType === PolygonType.TRANS ? 'colored_transparent' : 'colored';
+                push.apply(geometries[cGroup].positions, getPosition(body, vertexIndex));
+                push.apply(geometries[cGroup].normals, faceNormal || getNormal(body, vertexIndex));
+                push.apply(geometries[cGroup].bones, getBone(body, vertexIndex));
+                geometries[cGroup].polyTypes.push(p.polyType);
+                geometries[cGroup].colors.push(p.colour);
+                geometries[cGroup].intensities.push(p.intensity);
             }
         };
         for (let j = 0; j < 3; j += 1) {

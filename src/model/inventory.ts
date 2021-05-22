@@ -1,10 +1,6 @@
 import * as THREE from 'three';
 
-import {
-    initSkeleton,
-    createSkeleton,
-    loadAnimState,
-} from './animState';
+import AnimState from './anim/AnimState';
 import { loadMesh } from './geometries';
 import { createBoundingBox } from '../utils/rendering';
 import { loadLUTTexture } from '../utils/lut';
@@ -68,15 +64,13 @@ function loadInventoryModelData(params: any,
         materials: []
     };
 
-    const animState = loadAnimState();
-    const skeleton = createSkeleton(body);
-    initSkeleton(animState, skeleton, 0);
+    const animState = new AnimState();
+    const bones = animState.attachBody(body);
 
     const { object, materials } = loadMesh(
         body,
         model.texture,
-        animState.bones,
-        animState.matrixRotation,
+        bones,
         model.palette,
         model.lutTexture,
         envInfo,

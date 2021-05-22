@@ -115,8 +115,8 @@ export const getCells = (
                         )
                     ),
                     groundType: (blockData && blockData.groundType),
-                    sound: (blockData && blockData.sound) || -1,
-                    sound2: (blockData && blockData.sound2) || null
+                    sound: (blockData && blockData.sound !== -1) ? blockData.sound : -1,
+                    sound2: (blockData && blockData.sound2 !== -1) ? blockData.sound2 : -1
                 });
             }
             baseHeight += height;
@@ -152,8 +152,8 @@ export const getBlockData = (library, blocks: any[]) => {
         return {
             shape: block.block,
             groundType: (prevBlock && prevBlock.groundType),
-            sound: (prevBlock && prevBlock.sound) || -1,
-            sound2: (prevBlock && prevBlock.sound2) || null
+            sound: (prevBlock && prevBlock.sound !== -1) ? prevBlock.sound : -1,
+            sound2: (prevBlock && prevBlock.sound2 !== -1) ? prevBlock.sound2 : -1
         };
     }
 
