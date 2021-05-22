@@ -8,6 +8,185 @@
             }
         }
     },
+    "3": {
+        "models": [
+            {
+                "name": "GB_counter_chez_luc.glb",
+                "position": {
+                    "x": 6,
+                    "y": 2,
+                    "z": 22
+                },
+                "quaternion": [
+                    0,
+                    0,
+                    0,
+                    1
+                ]
+            }
+        ],
+        "patches": {
+            "5x4x27": {
+                "hide": true
+            },
+            "5x5x27": {
+                "hide": true
+            },
+            "5x6x27": {
+                "hide": true
+            },
+            "4x6x27": {
+                "hide": true
+            },
+            "4x5x27": {
+                "hide": true
+            },
+            "4x4x27": {
+                "hide": true
+            },
+            "3x4x27": {
+                "hide": true
+            },
+            "3x5x27": {
+                "hide": true
+            },
+            "3x6x27": {
+                "hide": true
+            },
+            "2x6x27": {
+                "hide": true
+            },
+            "2x5x27": {
+                "hide": true
+            },
+            "2x4x27": {
+                "hide": true
+            },
+            "1x4x27": {
+                "hide": true
+            },
+            "1x5x27": {
+                "hide": true
+            },
+            "1x6x27": {
+                "hide": true
+            },
+            "1x6x26": {
+                "hide": true
+            },
+            "2x6x26": {
+                "hide": true
+            },
+            "3x6x26": {
+                "hide": true
+            },
+            "4x6x26": {
+                "hide": true
+            },
+            "5x6x26": {
+                "hide": true
+            },
+            "5x5x26": {
+                "hide": true
+            },
+            "5x4x26": {
+                "hide": true
+            },
+            "5x4x25": {
+                "hide": true
+            },
+            "5x5x25": {
+                "hide": true
+            },
+            "5x6x25": {
+                "hide": true
+            },
+            "5x6x24": {
+                "hide": true
+            },
+            "5x5x24": {
+                "hide": true
+            },
+            "5x4x24": {
+                "hide": true
+            },
+            "5x4x23": {
+                "hide": true
+            },
+            "5x5x23": {
+                "hide": true
+            },
+            "5x6x23": {
+                "hide": true
+            },
+            "5x6x22": {
+                "hide": true
+            },
+            "5x5x22": {
+                "hide": true
+            },
+            "5x4x22": {
+                "hide": true
+            },
+            "5x4x21": {
+                "hide": true
+            },
+            "5x5x21": {
+                "hide": true
+            },
+            "5x6x21": {
+                "hide": true
+            },
+            "5x6x20": {
+                "hide": true
+            },
+            "5x5x20": {
+                "hide": true
+            },
+            "5x4x20": {
+                "hide": true
+            },
+            "5x4x19": {
+                "hide": true
+            },
+            "5x5x19": {
+                "hide": true
+            },
+            "5x6x19": {
+                "hide": true
+            },
+            "5x6x18": {
+                "hide": true
+            },
+            "5x5x18": {
+                "hide": true
+            },
+            "5x4x18": {
+                "hide": true
+            },
+            "4x6x18": {
+                "hide": true
+            },
+            "3x6x18": {
+                "hide": true
+            },
+            "3x6x19": {
+                "hide": true
+            },
+            "4x6x19": {
+                "hide": true
+            },
+            "4x5x19": {
+                "hide": true
+            },
+            "3x5x19": {
+                "hide": true
+            },
+            "3x4x19": {
+                "hide": true
+            }
+        }
+    },
     "7": {
         "models": [],
         "patches": {
@@ -1830,6 +2009,131 @@
             }
         }
     },
+    "14": {
+        "models": [
+            {
+                "name": "GB_counter_shop_bazoo.glb",
+                "position": {
+                    "x": 9,
+                    "y": 2,
+                    "z": 8
+                },
+                "quaternion": [
+                    0,
+                    0,
+                    0,
+                    1
+                ]
+            }
+        ],
+        "patches": {
+            "8x4x8": {
+                "hide": true
+            },
+            "8x5x8": {
+                "hide": true
+            },
+            "8x6x8": {
+                "hide": true
+            },
+            "8x6x7": {
+                "hide": true
+            },
+            "8x5x7": {
+                "hide": true
+            },
+            "8x4x7": {
+                "hide": true
+            },
+            "8x4x6": {
+                "hide": true
+            },
+            "8x5x6": {
+                "hide": true
+            },
+            "8x6x6": {
+                "hide": true
+            },
+            "8x6x5": {
+                "hide": true
+            },
+            "8x5x5": {
+                "hide": true
+            },
+            "8x4x5": {
+                "hide": true
+            },
+            "7x4x5": {
+                "hide": true
+            },
+            "7x5x5": {
+                "hide": true
+            },
+            "7x6x5": {
+                "hide": true
+            },
+            "7x6x4": {
+                "hide": true
+            },
+            "8x4x4": {
+                "hide": true
+            },
+            "8x5x4": {
+                "hide": true
+            },
+            "8x6x4": {
+                "hide": true
+            },
+            "7x6x8": {
+                "hide": true
+            },
+            "7x5x8": {
+                "hide": true
+            },
+            "7x4x8": {
+                "hide": true
+            },
+            "6x4x8": {
+                "hide": true
+            },
+            "6x5x8": {
+                "hide": true
+            },
+            "6x6x8": {
+                "hide": true
+            },
+            "5x6x8": {
+                "hide": true
+            },
+            "5x5x8": {
+                "hide": true
+            },
+            "5x4x8": {
+                "hide": true
+            },
+            "4x4x8": {
+                "hide": true
+            },
+            "4x5x8": {
+                "hide": true
+            },
+            "4x6x8": {
+                "hide": true
+            },
+            "4x6x7": {
+                "hide": true
+            },
+            "5x4x7": {
+                "hide": true
+            },
+            "5x5x7": {
+                "hide": true
+            },
+            "5x6x7": {
+                "hide": true
+            }
+        }
+    },
     "15": {
         "models": [],
         "patches": {
@@ -1857,6 +2161,113 @@
             "30x8x47": {
                 "layout": 28,
                 "block": 2
+            }
+        }
+    },
+    "22": {
+        "models": [
+            {
+                "name": "GB_counter_pharmacy.glb",
+                "position": {
+                    "x": 6.5,
+                    "y": 2,
+                    "z": 7
+                },
+                "quaternion": [
+                    0,
+                    0,
+                    0,
+                    1
+                ]
+            }
+        ],
+        "patches": {
+            "9x4x7": {
+                "hide": true
+            },
+            "9x5x7": {
+                "hide": true
+            },
+            "9x6x7": {
+                "hide": true
+            },
+            "9x6x6": {
+                "hide": true
+            },
+            "9x5x6": {
+                "hide": true
+            },
+            "9x4x6": {
+                "hide": true
+            },
+            "8x6x6": {
+                "hide": true
+            },
+            "8x6x7": {
+                "hide": true
+            },
+            "8x5x7": {
+                "hide": true
+            },
+            "8x4x7": {
+                "hide": true
+            },
+            "7x4x7": {
+                "hide": true
+            },
+            "7x5x7": {
+                "hide": true
+            },
+            "7x6x7": {
+                "hide": true
+            },
+            "6x6x7": {
+                "hide": true
+            },
+            "6x5x7": {
+                "hide": true
+            },
+            "6x4x7": {
+                "hide": true
+            },
+            "5x4x7": {
+                "hide": true
+            },
+            "5x5x7": {
+                "hide": true
+            },
+            "5x6x7": {
+                "hide": true
+            },
+            "4x6x7": {
+                "hide": true
+            },
+            "4x5x7": {
+                "hide": true
+            },
+            "4x4x7": {
+                "hide": true
+            },
+            "3x4x7": {
+                "hide": true
+            },
+            "3x5x7": {
+                "hide": true
+            },
+            "3x6x7": {
+                "hide": true
+            },
+            "3x6x6": {
+                "hide": true
+            },
+            "4x4x6": {
+                "hide": true
+            },
+            "4x5x6": {
+                "hide": true
+            },
+            "4x6x6": {
+                "hide": true
             }
         }
     },
