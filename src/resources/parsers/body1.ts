@@ -8,12 +8,12 @@ export const parseModelLBA1 = (resource, index, bodyProps) => {
     const bodyFlag = data.getInt16(0x00, true);
     const obj = {
         bodyFlag,
-        xMin: data.getInt16(0x02, true),
-        xMax: data.getInt16(0x04, true),
+        xMin: data.getInt16(0x02, true) / 1.5,
+        xMax: data.getInt16(0x04, true) / 1.5,
         yMin: data.getInt16(0x06, true),
         yMax: data.getInt16(0x08, true),
-        zMin: data.getInt16(0x0A, true),
-        zMax: data.getInt16(0x0C, true),
+        zMin: data.getInt16(0x0A, true) / 1.5,
+        zMax: data.getInt16(0x0C, true) / 1.5,
         version: bodyFlag & 0xff,
         hasAnimation: bodyFlag & (1 << 8),
         noSort: bodyFlag & (1 << 9),

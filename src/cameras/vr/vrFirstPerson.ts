@@ -1,8 +1,11 @@
 import * as THREE from 'three';
 import { WORLD_SIZE } from '../../utils/lba';
 import sharedData from './sharedData';
+import { getParams } from '../../params';
 
-const HERO_TARGET_POS = new THREE.Vector3(0, 1.43, 0);
+const isLBA1 = getParams().game === 'lba1';
+
+const HERO_TARGET_POS = new THREE.Vector3(0, isLBA1 ? 1.30 : 1.43, 0);
 
 export function getVrFirstPersonCamera(renderer) {
     const camera = new THREE.PerspectiveCamera(
