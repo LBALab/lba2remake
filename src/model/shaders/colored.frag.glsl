@@ -1,4 +1,3 @@
-#version 300 es
 precision highp float;
 
 in vec3 vPosition;
@@ -18,7 +17,7 @@ out vec4 fragColor;
 
 void main() {
     vec3 color;
-    if (vPolyType < 0.5)
+    if (vPolyType < 0.5 || (vPolyType > 1.5 && vPolyType < 2.5))
     {
         const vec2 halfPixV = vec2(0.0, 0.03125);
         vec2 uv = vec2(vIntensity, vColor) * 0.0625 + halfPixV;
@@ -30,5 +29,5 @@ void main() {
     }
     vec3 colWithFog = fog(color);
     vec3 colWithLightning = lightning(colWithFog);
-    fragColor = vec4(colWithLightning, 1.0);
+    fragColor = vec4(colWithLightning, OPACITY);
 }

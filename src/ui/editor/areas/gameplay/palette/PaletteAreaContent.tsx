@@ -19,12 +19,12 @@ import Renderer from '../../../../../renderer';
 import Scene from '../../../../../game/Scene';
 
 const style = extend({
-    overflowY: 'auto',
-    overflowX: 'hidden',
+    overflowY: 'auto' as const,
+    overflowX: 'hidden' as const,
     padding: 8,
-    userSelect: 'none',
-    cursor: 'default',
-    fontWeight: 'normal'
+    userSelect: 'none' as const,
+    cursor: 'default' as const,
+    fontWeight: 'normal' as const
 }, fullscreen);
 
 const buttonStyle = extend({}, editor.button, {

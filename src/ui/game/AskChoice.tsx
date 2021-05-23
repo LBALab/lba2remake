@@ -115,14 +115,14 @@ export default class AskChoice extends React.Component<ACProps, ACState> {
 }
 
 const styleChoice = {
-    position: 'relative',
+    position: 'relative' as const,
     fontFamily: 'LBA',
     textShadow: 'black 4px 4px',
     paddingBottom: 5,
     border: '2px outset #61cece',
     borderRadius: 15,
     fontSize: '2.5em',
-    textAlign: 'center',
+    textAlign: 'center' as const,
     width: '100%'
 };
 

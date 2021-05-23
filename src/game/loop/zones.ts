@@ -121,9 +121,6 @@ function LADDER(game: Game, scene: Scene, zone: Zone, hero: Actor, _time: Time) 
                     hero.state.isClimbing = false;
                     hero.state.isToppingOutUp = false;
                 });
-                // The topout animation doesn't require any interpolation, we're
-                // already in the exact correct position.
-                hero.animState.interpolationFrame = 0;
                 return false;
             }
         } else {

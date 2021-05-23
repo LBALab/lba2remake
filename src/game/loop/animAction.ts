@@ -13,6 +13,7 @@ import MagicBall from '../MagicBall';
 import { Time } from '../../datatypes';
 import { AnimAction } from '../../resources/parsers/entity2';
 import { LBA2Items } from '../data/inventory';
+import AnimState from '../../model/anim/AnimState';
 
 interface AnimActionContext {
     time: Time;
@@ -20,7 +21,7 @@ interface AnimActionContext {
     scene: Scene;
     actor: Actor;
     model?: any;
-    animState?: any;
+    animState?: AnimState;
     entityAnim?: any;
 }
 
@@ -163,9 +164,9 @@ export const SAMPLE_STOP = (_action, { actor }) => {
 
 export const ZV = unimplemented();
 
-export const LEFT_STEP = (_action: AnimAction, { actor, scene, animState }: AnimActionContext) => {
-    const floorSound = animState.floorSound;
-    if (floorSound !== undefined && floorSound !== -1) {
+export const LEFT_STEP = (_action: AnimAction, { actor, scene }: AnimActionContext) => {
+    const floorSound = actor.state.floorSound;
+    if (floorSound !== -1) {
         const offset = isLBA1 ? 126 : (scene.props.isIsland ? 30 : 60);
         const sampleIndex = floorSound + offset;
         const frequency = getRandom(0, 0x1000) + 3596;
@@ -173,12 +174,11 @@ export const LEFT_STEP = (_action: AnimAction, { actor, scene, animState }: Anim
     }
 };
 
-export const RIGHT_STEP = (_action: AnimAction, { actor, scene, animState }: AnimActionContext) => {
-    let floorSound = animState.floorSound;
-    if (animState.floorSound2) {
-        floorSound = animState.floorSound2;
-    }
-    if (floorSound !== undefined && floorSound !== -1) {
+export const RIGHT_STEP = (_action: AnimAction, { actor, scene }: AnimActionContext) => {
+    const floorSound = actor.state.floorSound2 !== -1
+        ? actor.state.floorSound2
+        : actor.state.floorSound;
+    if (floorSound !== -1) {
         const offset = isLBA1 ? 141 : (scene.props.isIsland ? 45 : 75);
         const sampleIndex = floorSound + offset;
         const frequency = getRandom(0, 0x1000) + 3596;

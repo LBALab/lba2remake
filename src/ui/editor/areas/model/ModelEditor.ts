@@ -23,7 +23,8 @@ const ModelEditor = {
         anim: 0,
         rotateView: true,
         wireframe: false,
-        grid: true
+        grid: true,
+        playbackSpeed: 1
     }),
     stateHandler: {
         setRotateView(rotateView) {
@@ -47,6 +48,9 @@ const ModelEditor = {
         },
         setAnim(anim) {
             this.setState({ anim });
+        },
+        setPlaybackSpeed(playbackSpeed) {
+            this.setState({ playbackSpeed });
         }
     },
     toolAreas: [

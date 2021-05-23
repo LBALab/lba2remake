@@ -154,13 +154,13 @@ export default class IslandPhysics {
 
         POSITION.y = obj.physics.position.y;
 
-        if (obj instanceof Actor && obj.animState) {
-            obj.animState.floorSound = -1;
+        if (obj instanceof Actor) {
+            obj.state.floorSound = -1;
         }
 
         if (section) {
-            if (obj instanceof Actor && obj.animState) {
-                obj.animState.floorSound = this.ground.sound;
+            if (obj instanceof Actor) {
+                obj.state.floorSound = this.ground.sound;
             }
 
             isTouchingGround = processBoxIntersections(section, obj, POSITION, isTouchingGround);

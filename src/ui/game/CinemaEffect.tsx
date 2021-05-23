@@ -5,7 +5,7 @@ const height = '12.5%';
 const duration = 3;
 
 const bannerBase = {
-    position: 'absolute',
+    position: 'absolute' as const,
     left: 0,
     right: 0,
     background: 'black',
