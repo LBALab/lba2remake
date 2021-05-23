@@ -33,7 +33,9 @@ _Unreleased_
 
 #### Replacement 3D models
 
-- Various models placement improvements
+- Remaining layout replacements for Gray Buildings and Sewers sets
+- Layout replacements for Desert Island and Emerald Moon sets
+- Improved layout replacements for Citadel Islands set
 
 #### Compatibility
 
