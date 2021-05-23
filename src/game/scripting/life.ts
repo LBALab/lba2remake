@@ -95,12 +95,12 @@ export function MESSAGE_OBJ(
                 }
             }, 4500);
         } else {
-            if (!vrFirstPerson) {
+            if (!vrFirstPerson && actor.index === 0) {
                 hero.props.dirMode = ActorDirMode.NO_MOVE;
                 hero.props.prevEntityIndex = hero.props.entityIndex;
                 hero.props.prevAnimIndex = hero.props.animIndex;
                 hero.props.entityIndex = 0;
-                if (!isLBA1 && actor.index === 0)
+                if (!isLBA1)
                     hero.props.animIndex = AnimType.TALK;
                 else
                     hero.props.animIndex = AnimType.NONE;
@@ -137,7 +137,9 @@ export function MESSAGE_OBJ(
         if (text.type !== 9) {
             this.game.setUiState({ text: null, skip: false, });
             this.game.controlsState.skipListener = null;
-            hero.props.dirMode = ActorDirMode.MANUAL;
+            if (actor.index === 0) {
+                hero.props.dirMode = ActorDirMode.MANUAL;
+            }
         }
         delete cmdState.skipListener;
         delete cmdState.ended;
