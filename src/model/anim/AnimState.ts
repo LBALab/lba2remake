@@ -75,7 +75,7 @@ export default class AnimState {
             this.pose.setFromKeyFrames(this.kfs, this.currentTime);
         }
         this.pose.skeleton.updateHierarchy();
-        if (this._hasEnded && this.onAnimEnd) {
+        if (this._currentFrame === this.anim.numKeyframes - 1 && this.onAnimEnd) {
             this.onAnimEnd();
             this.onAnimEnd = null;
         }
