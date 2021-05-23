@@ -14,6 +14,7 @@ _Unreleased_
 - Camera zone transitions during Cinema mode
 - Throw Magicball and weapon selection
 - Various gameplay fixes - the game is more playable throughout the story
+- Music playback now mirrors original game
 
 #### UI
 
