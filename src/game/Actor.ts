@@ -613,6 +613,10 @@ export default class Actor {
             return;
         }
         this.props.animIndex = index;
+        if (this.animState.onAnimEnd) {
+            this.animState.onAnimEnd();
+        }
+        this.animState.onAnimEnd = null;
     }
 
     setSprite(scene, index) {
