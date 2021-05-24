@@ -3219,6 +3219,200 @@
             }
         }
     },
+    "36": {
+        "models": [
+            {
+                "name": "DI_counter_shop.glb",
+                "position": {
+                    "x": 8,
+                    "y": 0.5,
+                    "z": 7
+                },
+                "quaternion": [
+                    0,
+                    0,
+                    0,
+                    1
+                ]
+            }
+        ],
+        "patches": {
+            "10x3x10": {
+                "hide": true
+            },
+            "10x2x10": {
+                "hide": true
+            },
+            "10x1x10": {
+                "hide": true
+            },
+            "10x3x9": {
+                "hide": true
+            },
+            "10x2x9": {
+                "hide": true
+            },
+            "10x1x9": {
+                "hide": true
+            },
+            "10x3x8": {
+                "hide": true
+            },
+            "10x2x8": {
+                "hide": true
+            },
+            "10x1x8": {
+                "hide": true
+            },
+            "10x3x7": {
+                "hide": true
+            },
+            "10x2x7": {
+                "hide": true
+            },
+            "10x1x7": {
+                "hide": true
+            },
+            "10x3x6": {
+                "hide": true
+            },
+            "10x2x6": {
+                "hide": true
+            },
+            "10x1x6": {
+                "hide": true
+            },
+            "10x1x5": {
+                "hide": true
+            },
+            "10x2x5": {
+                "hide": true
+            },
+            "10x3x5": {
+                "hide": true
+            },
+            "9x3x5": {
+                "hide": true
+            },
+            "9x2x5": {
+                "hide": true
+            },
+            "9x1x5": {
+                "hide": true
+            },
+            "8x1x5": {
+                "hide": true
+            },
+            "8x2x5": {
+                "hide": true
+            },
+            "8x3x5": {
+                "hide": true
+            },
+            "7x3x5": {
+                "hide": true
+            },
+            "7x1x5": {
+                "hide": true
+            },
+            "7x2x5": {
+                "hide": true
+            },
+            "6x2x5": {
+                "hide": true
+            },
+            "6x3x5": {
+                "hide": true
+            },
+            "6x1x5": {
+                "hide": true
+            },
+            "5x3x5": {
+                "hide": true
+            },
+            "5x3x6": {
+                "hide": true
+            },
+            "5x2x6": {
+                "hide": true
+            },
+            "5x1x6": {
+                "hide": true
+            },
+            "5x1x7": {
+                "hide": true
+            },
+            "5x2x7": {
+                "hide": true
+            },
+            "5x3x7": {
+                "hide": true
+            },
+            "5x3x8": {
+                "hide": true
+            },
+            "5x2x8": {
+                "hide": true
+            },
+            "5x1x8": {
+                "hide": true
+            },
+            "5x1x9": {
+                "hide": true
+            },
+            "5x2x9": {
+                "hide": true
+            },
+            "5x3x9": {
+                "hide": true
+            },
+            "5x3x10": {
+                "hide": true
+            },
+            "5x2x10": {
+                "hide": true
+            },
+            "5x1x10": {
+                "hide": true
+            },
+            "6x1x10": {
+                "hide": true
+            },
+            "6x2x10": {
+                "hide": true
+            },
+            "6x3x10": {
+                "hide": true
+            },
+            "7x3x10": {
+                "hide": true
+            },
+            "7x2x10": {
+                "hide": true
+            },
+            "7x1x10": {
+                "hide": true
+            },
+            "8x1x10": {
+                "hide": true
+            },
+            "8x2x10": {
+                "hide": true
+            },
+            "8x3x10": {
+                "hide": true
+            },
+            "9x3x10": {
+                "hide": true
+            },
+            "9x2x10": {
+                "hide": true
+            },
+            "9x1x10": {
+                "hide": true
+            }
+        }
+    },
     "43": {
         "models": [],
         "patches": {
