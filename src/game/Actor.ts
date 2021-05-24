@@ -649,13 +649,25 @@ export default class Actor {
         this.animState.onAnimEnd = callback;
     }
 
-    reloadModel(scene: Scene) {
+    private reloadCalls = 0;
+
+    async reloadModel(scene: Scene) {
+        this.reloadCalls += 1;
+        if (this.reloadCalls > 1) {
+            return;
+        }
+        while (this.reloadCalls > 0) {
+            await this.doReloadModel(scene);
+            this.reloadCalls -= 1;
+        }
+    }
+
+    private async doReloadModel(scene: Scene) {
         const oldObject = this.threeObject;
-        this.loadMesh().then(() => {
-            scene.addMesh(this.threeObject);
-            scene.removeMesh(oldObject);
-            this.threeObject.updateMatrixWorld();
-        });
+        await this.loadMesh();
+        scene.removeMesh(oldObject);
+        scene.addMesh(this.threeObject);
+        this.threeObject.updateMatrixWorld();
     }
 
     hit(hitBy, hitStrength) {
