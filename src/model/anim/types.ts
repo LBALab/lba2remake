@@ -55,7 +55,7 @@ export interface BoneBindings {
 export interface AnimStateJSON {
     interpolating: boolean;
     hasEnded: boolean;
-    wentThroughLastFrame: boolean;
+    reachedLastFrame: boolean;
     step: number[];
     rotation: number[];
     animIndex: number;

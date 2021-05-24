@@ -18,7 +18,7 @@ export default class AnimState {
     private loopFrame: number;
     private currentTime: number;
     private bodyIndex: number = -1;
-    private wentThroughLastFrame: boolean = false;
+    private reachedLastFrame: boolean = false;
     private _hasEnded: boolean = false;
     private _currentFrame: number;
     private _keyframeChanged: boolean;
@@ -106,7 +106,7 @@ export default class AnimState {
         this.kfs[0] = anim.keyframes[0];
         this.kfs[1] = null;
         this._keyframeChanged = false;
-        this.wentThroughLastFrame = false;
+        this.reachedLastFrame = false;
     }
 
     /**
@@ -153,12 +153,12 @@ export default class AnimState {
         // For reaching the end of the anim, we still have to interpolate
         // between the one but last keyframe and the last keyframe.
         if (nextFrame === this.anim.numKeyframes - 1) {
-            this.wentThroughLastFrame = true;
+            this.reachedLastFrame = true;
         }
 
         // Check if anim has ended.
         if (this._keyframeChanged
-            && ((this.wentThroughLastFrame && nextFrame === this.loopFrame)
+            && ((this.reachedLastFrame && nextFrame === this.loopFrame)
                 || nextFrame === 0)) {
             this._hasEnded = true;
         }
@@ -168,7 +168,7 @@ export default class AnimState {
         return {
             interpolating: this.interpolating,
             hasEnded: this._hasEnded,
-            wentThroughLastFrame: this.wentThroughLastFrame,
+            reachedLastFrame: this.reachedLastFrame,
             step: this.pose.step.toArray(),
             rotation: this.pose.rotation.toArray(),
             animIndex: this.anim ? this.anim.index : -1,
@@ -182,7 +182,7 @@ export default class AnimState {
     setFromJSON(data: AnimStateJSON) {
         this.interpolating = data.interpolating;
         this._hasEnded = data.hasEnded;
-        this.wentThroughLastFrame = data.wentThroughLastFrame;
+        this.reachedLastFrame = data.reachedLastFrame;
         this.pose.step.fromArray(data.step);
         this.pose.rotation.fromArray(data.rotation);
         this.anim = getResource(ResourceName.ANIM, data.animIndex);
