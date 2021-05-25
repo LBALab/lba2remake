@@ -1,3 +1,7 @@
+// This is a padding comment to workaround
+// a shader compilation issue on WebGL1
+// when specifying shader version in
+// JS instead of on the first line of the shader.
 precision highp float;
 
 uniform sampler2D library;
