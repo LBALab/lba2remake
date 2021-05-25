@@ -150,7 +150,8 @@ async function loadIsland(name) {
         new THREE.Euler(0, THREE.MathUtils.degToRad(offset.angle), 0)
     );
     islandWrapper.updateMatrixWorld();
-    invWorldMat.getInverse(islandWrapper.matrixWorld);
+    invWorldMat.copy(islandWrapper.matrixWorld);
+    invWorldMat.invert();
 
     loading = false;
 }

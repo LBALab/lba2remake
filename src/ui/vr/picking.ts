@@ -66,7 +66,8 @@ function menuHandler(intersect, triggered, ctx) {
     ctx.pickingTarget.visible = true;
     ctx.pickingTarget.position.copy(intersect.point);
     if (ctx.scene) {
-        invTransform.getInverse(ctx.scene.camera.controlNode.matrixWorld);
+        invTransform.copy(ctx.scene.camera.controlNode.matrixWorld);
+        invTransform.invert();
         ctx.pickingTarget.position.applyMatrix4(invTransform);
     }
     if (triggered) {
