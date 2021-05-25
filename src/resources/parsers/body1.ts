@@ -7,6 +7,7 @@ export const parseModelLBA1 = (resource, index, bodyProps) => {
     const data = new DataView(buffer);
     const bodyFlag = data.getInt16(0x00, true);
     const obj = {
+        index,
         bodyFlag,
         xMin: data.getInt16(0x02, true) / 1.5,
         xMax: data.getInt16(0x04, true) / 1.5,

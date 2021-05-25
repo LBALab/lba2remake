@@ -174,10 +174,12 @@ export default class Scene {
                 return actor;
             }
 
+            const bodyIndex = getBodyFromGameState(game);
+
             return {
                 ...actor,
                 entityIndex: game.getState().hero.behaviour,
-                bodyIndex: getBodyFromGameState(game)
+                bodyIndex: bodyIndex !== -1 ? bodyIndex : actor.bodyIndex
             };
         }
 

@@ -9,6 +9,10 @@ const START_LOCATION_OVERRIDES = {
     10: {
         pos: [5.320, 2.813, 18.409],
         angle: 1024,
+    },
+    15: {
+        pos: [23.732, 3.125, 15.117],
+        angle: 1024,
     }
 };
 
