@@ -26,6 +26,7 @@ export const LabelParams = {
 
 const keys1stPerson = ['fpMove', 'fpTurn'];
 const keys3rdPerson = ['move', 'centerCam'];
+const exclude = ['fpsToggle'];
 
 export default class ControllerModel {
     motionController: MotionController;
@@ -186,7 +187,7 @@ export default class ControllerModel {
         const { components } = this.motionController;
         each(mappings, (mapping, key) => {
             const component = mapping && components[mapping.btn];
-            if (!component) {
+            if (!component || exclude.includes(key)) {
                 return;
             }
 
