@@ -32,7 +32,7 @@ interface GameWindowProps extends TickerProps {
 export default class GameWindow extends FrameListener<GameWindowProps, UIState> {
     readonly canvas: HTMLCanvasElement;
     readonly game: Game;
-    readonly renderer: any;
+    readonly renderer: Renderer;
     readonly sceneManager: SceneManager;
     readonly preloadPromise: Promise<void>;
     controls?: any[];
