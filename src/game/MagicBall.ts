@@ -39,6 +39,7 @@ export default class MagicBall {
     bounces: number;
     maxBounces: number;
     normal = new THREE.Vector3();
+    private thrown = false;
 
     static async load(game: Game, scene: Scene, position: THREE.Vector3): Promise<MagicBall> {
         const magicBall = new MagicBall(game, scene, position.clone());
@@ -74,6 +75,10 @@ export default class MagicBall {
     }
 
     update(time: Time) {
+        if (!this.thrown) {
+            return;
+        }
+
         this.position.add(this.direction.clone().multiplyScalar(time.delta * MAGIC_BALL_SPEED));
 
         if (this.isFetchingKey) {
@@ -187,5 +192,44 @@ export default class MagicBall {
         } else {
             this.game.getState().hero.magic -= 1;
         }
+        this.thrown = true;
+    }
+
+    throwVR(angle, behaviour) {
+        if (this.game.getState().hero.magicball.level < 4) {
+            this.scene.actors[0].playSample(SampleType.MAGIC_BALL_THROW);
+        } else {
+            this.scene.actors[0].playSample(SampleType.FIRE_BALL_THROW);
+        }
+
+        let direction = new THREE.Vector3(0, 0.1, 1.1);
+        switch (behaviour) {
+            case BehaviourMode.AGGRESSIVE:
+                direction.z = 1.2;
+                break;
+            case BehaviourMode.DISCRETE:
+                direction.y = 0.5;
+                direction.z = 0.3;
+                break;
+        }
+        const euler = new THREE.Euler(0, angle, 0, 'XZY');
+        direction.applyEuler(euler);
+
+        this.threeObject.position.copy(this.position);
+        if (this.isFetchingKey) {
+            const key = this.scene.getKeys()[0];
+            const keyPos = key.physics.position;
+            direction = keyPos.clone().sub(this.position).normalize();
+        }
+
+        this.direction = direction;
+        this.bounces = 0;
+        this.maxBounces = DEFAULT_MAX_BOUNCES;
+        if (this.game.getState().hero.magic === 0) {
+            this.maxBounces = 0;
+        } else {
+            this.game.getState().hero.magic -= 1;
+        }
+        this.thrown = true;
     }
 }

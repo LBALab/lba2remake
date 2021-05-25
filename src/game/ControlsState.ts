@@ -38,6 +38,7 @@ export interface ControlsState {
     vrTriggerButton: boolean;
     vrControllerPositions: THREE.Vector3[];
     vrControllerVelocities: number[];
+    vrWeaponControllerIndex: number;
     skipListener?: Function;
 }
 
@@ -73,6 +74,7 @@ export function initControlsState(vr: boolean): ControlsState {
         vrTriggerButton: false,
         vrControllerPositions: [],
         vrControllerVelocities: [],
+        vrWeaponControllerIndex: -1
     };
 }
 

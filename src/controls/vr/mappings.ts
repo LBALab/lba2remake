@@ -16,6 +16,8 @@ export interface Mappings {
     move: BtnMapping;
     prevBehaviour: BtnMapping;
     nextBehaviour: BtnMapping;
+    weaponLeft: BtnMapping;
+    weaponRight: BtnMapping;
     centerCam: BtnMapping;
     menu: BtnMapping;
     fpsToggle: BtnMapping;
@@ -35,6 +37,8 @@ export function getControllerMappings(
     let move: BtnMapping = null;
     let prevBehaviour: BtnMapping = null;
     let nextBehaviour: BtnMapping = null;
+    let weaponLeft: BtnMapping = null;
+    let weaponRight: BtnMapping = null;
     let centerCam: BtnMapping = null;
     let menu: BtnMapping = null;
     let fpsToggle: BtnMapping = null;
@@ -54,19 +58,19 @@ export function getControllerMappings(
             };
         }
     }
-    // if ('xr-standard-squeeze') {
-    //     if (numControllers === 1 || handedness === 'right') {
-    //         nextBehaviour = {
-    //             btn: 'xr-standard-squeeze',
-    //             handler: handleTapped.bind({})
-    //         };
-    //     } else if (handedness === 'left') {
-    //         prevBehaviour = {
-    //             btn: 'xr-standard-squeeze',
-    //             handler: handleTapped.bind({})
-    //         };
-    //     }
-    // }
+    if ('xr-standard-squeeze' in components) {
+        if (numControllers === 1 || handedness === 'left') {
+            weaponLeft = {
+                btn: 'xr-standard-squeeze',
+                handler: handlePressed
+            };
+        } else if (handedness === 'right') {
+            weaponRight = {
+                btn: 'xr-standard-squeeze',
+                handler: handlePressed
+            };
+        }
+    }
     const useForMove = numControllers === 1 || handedness === 'left';
     if (useForMove) {
         if ('xr-standard-thumbstick' in components) {
@@ -157,6 +161,8 @@ export function getControllerMappings(
         move,
         prevBehaviour,
         nextBehaviour,
+        weaponLeft,
+        weaponRight,
         centerCam,
         menu,
         fpsToggle,
@@ -176,7 +182,8 @@ const isLBA1 = getParams().game === 'lba1';
 export function applyMappings(
     motionController: MotionController,
     mappings: Mappings,
-    ctx: Context
+    ctx: Context,
+    controllerIndex
 ) {
     if (!mappings) {
         return;
@@ -248,6 +255,18 @@ export function applyMappings(
             const index = listBehaviours.findIndex(b => b === behaviour);
             const newBehaviour = listBehaviours[Math.min(index + 1, listBehaviours.length - 1)];
             setBehaviour(game, newBehaviour);
+        }
+    });
+    applyMapping(components, mappings, 'weaponLeft', (enabled) => {
+        if (enabled) {
+            controlsState.weapon = 1;
+            controlsState.vrWeaponControllerIndex = controllerIndex;
+        }
+    });
+    applyMapping(components, mappings, 'weaponRight', (enabled) => {
+        if (enabled) {
+            controlsState.weapon = 1;
+            controlsState.vrWeaponControllerIndex = controllerIndex;
         }
     });
     if (controlsState.firstPerson) {

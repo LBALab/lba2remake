@@ -68,6 +68,7 @@ export class VRControls {
             showController
         };
         controlsState.action = 0;
+        controlsState.weapon = 0;
         each(this.controllers, (controller, i) => {
             if (!(controller.info.xrInputSource as any).gamepad) {
                 return;
@@ -75,7 +76,7 @@ export class VRControls {
             this.ctx.game.controlsState.activeType = ControlActiveType.VRCONTROLS;
             controller.info.updateFromGamepad();
             controller.model.update(ctx);
-            applyMappings(controller.info, controller.mappings, ctx);
+            applyMappings(controller.info, controller.mappings, ctx, i);
 
             controller.model.handMesh.getWorldPosition(
                 this.ctx.game.controlsState.vrControllerPositions[i]);

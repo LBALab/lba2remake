@@ -12,6 +12,7 @@ import Game from '../Game';
 import { Time } from '../../datatypes';
 import { ControlsState } from '../ControlsState';
 import { getParams } from '../../params';
+import MagicBall from '../MagicBall';
 
 export const BehaviourMode = {
     NORMAL: 0,
@@ -243,6 +244,7 @@ function processFirstPersonsMovement(game: Game, scene: Scene, hero: Actor, time
             }
         }
     }
+    firstPersonMagicball(game, scene, hero);
     if (!hero.state.isJumping) {
         const threeCamera = scene.camera.threeCamera;
         Q.setFromRotationMatrix(threeCamera.matrixWorld);
@@ -290,6 +292,33 @@ function firstPersonPunching(game: Game, scene: Scene, time: Time) {
                 punched[a.index][i] = false;
             }
         }
+    }
+}
+
+let fpMagicballOn = false;
+let fpMagicball: MagicBall = null;
+
+function firstPersonMagicball(game: Game, scene: Scene, hero: Actor) {
+    const handPositions = game.controlsState.vrControllerPositions;
+    const posIdx = game.controlsState.vrWeaponControllerIndex;
+    if (game.controlsState.weapon === 1) {
+        if (!fpMagicballOn) {
+            fpMagicball = null;
+            MagicBall.load(game, scene, handPositions[posIdx]).then((mb: MagicBall) => {
+                fpMagicball = mb;
+            });
+            fpMagicballOn = true;
+        }
+        if (fpMagicball) {
+            fpMagicball.position.copy(handPositions[posIdx]);
+            fpMagicball.threeObject.position.copy(handPositions[posIdx]);
+        }
+    } else {
+        if (fpMagicballOn && fpMagicball) {
+            fpMagicball.throwVR(hero.physics.temp.angle, hero.props.entityIndex);
+        }
+        fpMagicballOn = false;
+        fpMagicball = null;
     }
 }
 
