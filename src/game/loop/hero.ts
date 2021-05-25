@@ -247,8 +247,9 @@ function processFirstPersonsMovement(game: Game, scene: Scene, hero: Actor, time
         const threeCamera = scene.camera.threeCamera;
         Q.setFromRotationMatrix(threeCamera.matrixWorld);
         Q.multiply(BASE_ANGLE);
-        const orientation = onlyY(Q);
-        EULER.setFromQuaternion(orientation, 'YXZ');
+        EULER.setFromQuaternion(Q, 'YXZ');
+        EULER.x = 0;
+        EULER.z = 0;
         hero.physics.orientation.setFromEuler(EULER);
         hero.physics.temp.angle = EULER.y;
     }
@@ -589,14 +590,6 @@ function checkDrowningAnim(game: Game, scene: Scene, hero: Actor, time: Time) {
         hero.state.isDrowningStars = false;
     });
     return true;
-}
-
-function onlyY(src) {
-    const euler = new THREE.Euler();
-    euler.setFromQuaternion(src, 'YXZ');
-    euler.x = 0;
-    euler.z = 0;
-    return new THREE.Quaternion().setFromEuler(euler);
 }
 
 const FLAT_CAM = new THREE.Object3D();
