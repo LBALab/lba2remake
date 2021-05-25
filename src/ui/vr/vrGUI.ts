@@ -109,7 +109,7 @@ function createItem({x, y, text, callback}) {
     });
     const draw = (hovering = false) => {
         drawFrame(ctx, 0, 0, width, height, hovering);
-        ctx.font = '50px LBA';
+        ctx.font = '40px LBA';
         ctx.fillStyle = 'white';
         ctx.shadowColor = 'black';
         ctx.shadowOffsetX = 4;
