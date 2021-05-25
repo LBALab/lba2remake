@@ -61,55 +61,58 @@ function handleBodyChanges(game: Game, scene: Scene, hero: Actor) {
         return;
     }
 
+    const body = getBodyFromGameState(game);
+    if (body === -1) {
+        return;
+    }
+    hero.setBody(scene, body);
+
+    const equippedItem = game.getState().hero.equippedItemId;
+    const drawSwordLBA1 = isLBA1
+        && equippedItem === LBA1Items.FUNFROCK_SABER
+        && hero.props.bodyIndex !== LBA1WeaponToBodyMapping[equippedItem];
+    const drawSwordLBA2 = !isLBA1
+        && equippedItem === LBA2Items.SWORD
+        && hero.props.bodyIndex !== LBA2WeaponToBodyMapping[equippedItem];
+
+    if (drawSwordLBA1 || drawSwordLBA2) {
+        hero.setAnimWithCallback(AnimType.SWORD_DRAW, () => {
+            hero.setAnim(AnimType.NONE);
+            hero.state.isDrawingSword = false;
+        });
+        hero.state.isDrawingSword = true;
+    }
+}
+
+export function getBodyFromGameState(game: Game): number {
     const equippedItem = game.getState().hero.equippedItemId;
     if (equippedItem < 0) {
         // Corner case for when Twinsen hasn't yet picked up the magic ball.
         if (isLBA1) {
             if (game.getState().flags.quest[LBA1Items.SENDELLS_MEDALLION]) {
-                hero.setBody(scene, LBA1BodyType.TWINSEN_TUNIC);
-            } else if (game.getState().flags.quest[LBA1Items.TUNIC]) {
-                hero.setBody(scene, LBA1BodyType.TWINSEN_TUNIC_NO_MEDALLION);
+                return LBA1BodyType.TWINSEN_TUNIC;
+            }
+            if (game.getState().flags.quest[LBA1Items.TUNIC]) {
+                return LBA1BodyType.TWINSEN_TUNIC_NO_MEDALLION;
             }
             // Prison or Nurse bodies are set in script instead
-        } else {
-            if (game.getState().flags.quest[LBA2Items.TUNIC]) {
-                hero.setBody(scene, LBA2BodyType.TWINSEN_TUNIC);
-            } else {
-                hero.setBody(scene, LBA2BodyType.TWINSEN_NO_TUNIC);
-            }
+            return -1;
         }
-        return;
+        if (game.getState().flags.quest[LBA2Items.TUNIC]) {
+            return LBA2BodyType.TWINSEN_TUNIC;
+        }
+        return LBA2BodyType.TWINSEN_NO_TUNIC;
     }
 
     if (isLBA1) {
-        if (hero.props.bodyIndex !== LBA1WeaponToBodyMapping[equippedItem]) {
-            const body = LBA1WeaponToBodyMapping[equippedItem];
-            hero.setBody(scene, body);
-            if (equippedItem === LBA1Items.FUNFROCK_SABER) {
-                hero.setAnimWithCallback(AnimType.SWORD_DRAW, () => {
-                    hero.setAnim(AnimType.NONE);
-                    hero.state.isDrawingSword = false;
-                });
-                hero.state.isDrawingSword = true;
-            }
-        }
-    } else {
-        if (hero.props.bodyIndex !== LBA2WeaponToBodyMapping[equippedItem]) {
-            let body = LBA2WeaponToBodyMapping[equippedItem];
-            if (body === LBA2BodyType.TWINSEN_TUNIC &&
-                !game.getState().flags.quest[LBA2Items.TUNIC]) {
-                body = LBA2BodyType.TWINSEN_NO_TUNIC;
-            }
-            hero.setBody(scene, body);
-            if (equippedItem === LBA2Items.SWORD) {
-                hero.setAnimWithCallback(AnimType.SWORD_DRAW, () => {
-                    hero.setAnim(AnimType.NONE);
-                    hero.state.isDrawingSword = false;
-                });
-                hero.state.isDrawingSword = true;
-            }
-        }
+        return LBA1WeaponToBodyMapping[equippedItem];
     }
+
+    const body = LBA2WeaponToBodyMapping[equippedItem];
+    if (body === LBA2BodyType.TWINSEN_TUNIC && !game.getState().flags.quest[LBA2Items.TUNIC]) {
+        return LBA2BodyType.TWINSEN_NO_TUNIC;
+    }
+    return body;
 }
 
 function handleBehaviourChanges(scene: Scene, hero: Actor, behaviour: number) {

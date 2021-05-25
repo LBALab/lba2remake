@@ -26,6 +26,7 @@ import { Time } from '../datatypes';
 import { processPhysicsFrame } from './loop/physics';
 import { SpriteType } from './data/spriteType';
 import { LBA2PointOffsets } from './scripting/data/lba2/points';
+import { getBodyFromGameState } from './loop/hero';
 
 export interface SceneProps {
     index: number;
@@ -100,7 +101,7 @@ export default class Scene {
             scenery,
             parent
         );
-        await scene.loadObjects();
+        await scene.loadObjects(game);
 
         // Little keys are scene relative.
         game.getState().hero.keys = 0;
@@ -167,13 +168,25 @@ export default class Scene {
         this.initSceneNode();
     }
 
-    async loadObjects() {
+    async loadObjects(game: Game) {
+        function mapHeroProps(actor: ActorProps) {
+            if (actor.index !== 0) {
+                return actor;
+            }
+
+            return {
+                ...actor,
+                entityIndex: game.getState().hero.behaviour,
+                bodyIndex: getBodyFromGameState(game)
+            };
+        }
+
         const actors = await Promise.all<Actor>(
             this.props.actors.map(
                 actor => Actor.load(
                     this.game,
                     this,
-                    actor
+                    mapHeroProps(actor)
                 )
             )
         );
