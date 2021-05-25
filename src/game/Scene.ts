@@ -347,7 +347,7 @@ export default class Scene {
             }
         }
         if (this.vrGUI) {
-            updateVRGUI(this.game, this, this.vrGUI);
+            updateVRGUI(this.game, this, this.vrGUI, time);
         }
         // Make sure Twinsen is hidden if VR first person.
         // This should probably be moved somewhere else
