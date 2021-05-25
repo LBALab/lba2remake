@@ -6,6 +6,7 @@ export const parseModelLBA2 = (resource, index, bodyProps) => {
     const data = new DataView(buffer);
     const bodyFlag = data.getInt32(0x00, true);
     const obj = {
+        index,
         bodyFlag,
         xMin: data.getInt32(0x08, true),
         xMax: data.getInt32(0x0C, true),
