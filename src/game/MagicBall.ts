@@ -151,14 +151,8 @@ export default class MagicBall {
         }
     }
 
-    throw(angle, behaviour) {
-        if (this.game.getState().hero.magicball.level < 4) {
-            this.scene.actors[0].playSample(SampleType.MAGIC_BALL_THROW);
-        } else {
-            this.scene.actors[0].playSample(SampleType.FIRE_BALL_THROW);
-        }
-
-        let direction = new THREE.Vector3(0, 0.1, 1.1);
+    throw(angle: number, behaviour: number) {
+        const direction = new THREE.Vector3(0, 0.1, 1.1);
         switch (behaviour) {
             case BehaviourMode.AGGRESSIVE:
                 direction.z = 1.2;
@@ -177,52 +171,25 @@ export default class MagicBall {
         const perpendicularDirection = new THREE.Vector3(0, 0, 0.25).applyEuler(perpendicularEluer);
         this.position.add(perpendicularDirection.clone().multiplyScalar(0.5));
 
-        this.threeObject.position.copy(this.position);
-        if (this.isFetchingKey) {
-            const key = this.scene.getKeys()[0];
-            const keyPos = key.physics.position;
-            direction = keyPos.clone().sub(this.position).normalize();
-        }
-
-        this.direction = direction;
-        this.bounces = 0;
-        this.maxBounces = DEFAULT_MAX_BOUNCES;
-        if (this.game.getState().hero.magic === 0) {
-            this.maxBounces = 0;
-        } else {
-            this.game.getState().hero.magic -= 1;
-        }
-        this.thrown = true;
+        this.throwTowards(direction);
     }
 
-    throwVR(angle, behaviour) {
+    throwTowards(direction: THREE.Vector3) {
         if (this.game.getState().hero.magicball.level < 4) {
             this.scene.actors[0].playSample(SampleType.MAGIC_BALL_THROW);
         } else {
             this.scene.actors[0].playSample(SampleType.FIRE_BALL_THROW);
         }
 
-        let direction = new THREE.Vector3(0, 0.1, 1.1);
-        switch (behaviour) {
-            case BehaviourMode.AGGRESSIVE:
-                direction.z = 1.2;
-                break;
-            case BehaviourMode.DISCRETE:
-                direction.y = 0.5;
-                direction.z = 0.3;
-                break;
-        }
-        const euler = new THREE.Euler(0, angle, 0, 'XZY');
-        direction.applyEuler(euler);
-
         this.threeObject.position.copy(this.position);
         if (this.isFetchingKey) {
             const key = this.scene.getKeys()[0];
             const keyPos = key.physics.position;
-            direction = keyPos.clone().sub(this.position).normalize();
+            this.direction = keyPos.clone().sub(this.position).normalize();
+        } else {
+            this.direction = direction.clone();
         }
 
-        this.direction = direction;
         this.bounces = 0;
         this.maxBounces = DEFAULT_MAX_BOUNCES;
         if (this.game.getState().hero.magic === 0) {

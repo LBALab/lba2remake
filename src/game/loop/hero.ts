@@ -244,7 +244,7 @@ function processFirstPersonsMovement(game: Game, scene: Scene, hero: Actor, time
             }
         }
     }
-    firstPersonMagicball(game, scene, hero);
+    firstPersonMagicball(game, scene, time);
     if (!hero.state.isJumping) {
         const threeCamera = scene.camera.threeCamera;
         Q.setFromRotationMatrix(threeCamera.matrixWorld);
@@ -296,26 +296,72 @@ function firstPersonPunching(game: Game, scene: Scene, time: Time) {
 }
 
 let fpMagicballOn = false;
+let sPosIdx = -1;
 let fpMagicball: MagicBall = null;
+const lastPosition = new THREE.Vector3();
+const velocityHistory = [
+    new THREE.Vector3(),
+    new THREE.Vector3(),
+    new THREE.Vector3(),
+    new THREE.Vector3(),
+    new THREE.Vector3(),
+];
+const deltaHistory = [0, 0, 0, 0, 0];
+const TOTAL_WEIGHTS = 5 + 4 + 3 + 2 + 1;
+const WMA = new THREE.Vector3();
+const TMP_VEC = new THREE.Vector3();
 
-function firstPersonMagicball(game: Game, scene: Scene, hero: Actor) {
+const THROW_MB_THRESHOLD = 0.06;
+
+function firstPersonMagicball(game: Game, scene: Scene, time: Time) {
     const handPositions = game.controlsState.vrControllerPositions;
-    const posIdx = game.controlsState.vrWeaponControllerIndex;
     if (game.controlsState.weapon === 1) {
-        if (!fpMagicballOn) {
+        const posIdx = game.controlsState.vrWeaponControllerIndex;
+        if (!fpMagicballOn || sPosIdx !== posIdx) {
             fpMagicball = null;
+            for (let i = 0; i < velocityHistory.length; i += 1) {
+                velocityHistory[i].set(0, 0, 0);
+                deltaHistory[i] = 0;
+            }
+            lastPosition.copy(handPositions[posIdx]);
             MagicBall.load(game, scene, handPositions[posIdx]).then((mb: MagicBall) => {
                 fpMagicball = mb;
             });
             fpMagicballOn = true;
         }
         if (fpMagicball) {
+            velocityHistory[0].copy(handPositions[posIdx]);
+            velocityHistory[0].sub(lastPosition);
+            deltaHistory[0] = time.delta;
+            for (let i = 1; i < velocityHistory.length; i += 1) {
+                velocityHistory[i].copy(velocityHistory[i - 1]);
+                deltaHistory[i] = deltaHistory[i - 1];
+            }
             fpMagicball.position.copy(handPositions[posIdx]);
             fpMagicball.threeObject.position.copy(handPositions[posIdx]);
         }
+        lastPosition.copy(handPositions[posIdx]);
+        sPosIdx = posIdx;
     } else {
         if (fpMagicballOn && fpMagicball) {
-            fpMagicball.throwVR(hero.physics.temp.angle, hero.props.entityIndex);
+            let dta = 0;
+            WMA.set(0, 0, 0);
+            for (let i = 0; i < velocityHistory.length; i += 1) {
+                const w = velocityHistory.length - i;
+                TMP_VEC.copy(velocityHistory[i]);
+                TMP_VEC.multiplyScalar(w);
+                WMA.add(TMP_VEC);
+                dta += deltaHistory[i] * w;
+            }
+            WMA.divideScalar(TOTAL_WEIGHTS);
+            dta / TOTAL_WEIGHTS;
+            const strength = WMA.length() / dta;
+            if (strength > THROW_MB_THRESHOLD) {
+                WMA.normalize();
+                fpMagicball.throwTowards(WMA);
+            } else {
+                scene.removeMagicBall();
+            }
         }
         fpMagicballOn = false;
         fpMagicball = null;
