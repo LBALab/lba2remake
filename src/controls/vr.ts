@@ -81,6 +81,9 @@ export class VRControls {
             controller.model.handMesh.getWorldPosition(
                 this.ctx.game.controlsState.vrControllerPositions[i]);
 
+            controller.model.handMesh.getWorldQuaternion(
+                this.ctx.game.controlsState.vrControllerRotations[i]);
+
             if (performance.now() - controller.lastUpdateTime > VELOCITY_UPDATE_TIME) {
                 controller.lastUpdateTime = performance.now();
                 let velocity = controller.lastPosition.distanceToSquared(
@@ -138,6 +141,7 @@ export class VRControls {
     initializeVRController(index) {
         const vrControllerGrip = this.xr.getControllerGrip(index);
         this.ctx.game.controlsState.vrControllerPositions[index] = new THREE.Vector3();
+        this.ctx.game.controlsState.vrControllerRotations[index] = new THREE.Quaternion();
 
         vrControllerGrip.addEventListener('connected', async (event) => {
             if (!event.data.gamepad) {
@@ -154,6 +158,7 @@ export class VRControls {
                 lastPosition: new THREE.Vector3(),
                 lastUpdateTime: 0,
             };
+            this.ctx.game.controlsState.vrHandSide[index] = event.data.handedness;
             this.updateMappings();
         });
 

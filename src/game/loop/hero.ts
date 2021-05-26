@@ -310,6 +310,7 @@ const deltaHistory = [0, 0, 0, 0, 0];
 const TOTAL_WEIGHTS = 5 + 4 + 3 + 2 + 1;
 const WMA = new THREE.Vector3();
 const TMP_VEC = new THREE.Vector3();
+const BALL_POSITION = new THREE.Vector3;
 
 const THROW_MB_THRESHOLD = 0.06;
 
@@ -318,9 +319,15 @@ const THROW_MB_THRESHOLD = 0.06;
  * the VR controllers in first person.
  */
 function firstPersonMagicball(game: Game, scene: Scene, time: Time) {
-    const handPositions = game.controlsState.vrControllerPositions;
     if (game.controlsState.weapon === 1) {
         const posIdx = game.controlsState.vrWeaponControllerIndex;
+        const handPositions = game.controlsState.vrControllerPositions;
+        const handRotations = game.controlsState.vrControllerRotations;
+        const handSide = game.controlsState.vrHandSide;
+        const sign = handSide[posIdx] === 'left' ? 1 : -1;
+        BALL_POSITION.set(sign * 0.08, -0.05, -0.05);
+        BALL_POSITION.applyQuaternion(handRotations[posIdx]);
+        BALL_POSITION.add(handPositions[posIdx]);
         // Make the magicball appear in the selected hand
         if (!fpMagicballOn || sPosIdx !== posIdx) {
             fpMagicball = null;
@@ -328,8 +335,8 @@ function firstPersonMagicball(game: Game, scene: Scene, time: Time) {
                 velocityHistory[i].set(0, 0, 0);
                 deltaHistory[i] = 0;
             }
-            lastPosition.copy(handPositions[posIdx]);
-            MagicBall.load(game, scene, handPositions[posIdx]).then((mb: MagicBall) => {
+            lastPosition.copy(BALL_POSITION);
+            MagicBall.load(game, scene, BALL_POSITION).then((mb: MagicBall) => {
                 fpMagicball = mb;
             });
             fpMagicballOn = true;
@@ -337,18 +344,18 @@ function firstPersonMagicball(game: Game, scene: Scene, time: Time) {
         // Update the hand motion's history
         // for computing a moving average
         if (fpMagicball) {
-            velocityHistory[0].copy(handPositions[posIdx]);
+            velocityHistory[0].copy(BALL_POSITION);
             velocityHistory[0].sub(lastPosition);
             deltaHistory[0] = time.delta;
             for (let i = 1; i < velocityHistory.length; i += 1) {
                 velocityHistory[i].copy(velocityHistory[i - 1]);
                 deltaHistory[i] = deltaHistory[i - 1];
             }
-            fpMagicball.position.copy(handPositions[posIdx]);
+            fpMagicball.position.copy(BALL_POSITION);
             fpMagicball.position.sub(scene.sceneNode.position);
             fpMagicball.threeObject.position.copy(fpMagicball.position);
         }
-        lastPosition.copy(handPositions[posIdx]);
+        lastPosition.copy(BALL_POSITION);
         sPosIdx = posIdx;
     } else {
         // Throw ball

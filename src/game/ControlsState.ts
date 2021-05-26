@@ -37,7 +37,9 @@ export interface ControlsState {
     vrPointerTransform: THREE.Matrix4;
     vrTriggerButton: boolean;
     vrControllerPositions: THREE.Vector3[];
+    vrControllerRotations: THREE.Quaternion[];
     vrControllerVelocities: number[];
+    vrHandSide: string[];
     vrWeaponControllerIndex: number;
     skipListener?: Function;
 }
@@ -73,7 +75,9 @@ export function initControlsState(vr: boolean): ControlsState {
         vrPointerTransform: new THREE.Matrix4(),
         vrTriggerButton: false,
         vrControllerPositions: [],
+        vrControllerRotations: [],
         vrControllerVelocities: [],
+        vrHandSide: [],
         vrWeaponControllerIndex: -1
     };
 }
