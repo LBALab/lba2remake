@@ -313,10 +313,15 @@ const TMP_VEC = new THREE.Vector3();
 
 const THROW_MB_THRESHOLD = 0.06;
 
+/**
+ * Checks if the magiball is being held and thrown with
+ * the VR controllers in first person.
+ */
 function firstPersonMagicball(game: Game, scene: Scene, time: Time) {
     const handPositions = game.controlsState.vrControllerPositions;
     if (game.controlsState.weapon === 1) {
         const posIdx = game.controlsState.vrWeaponControllerIndex;
+        // Make the magicball appear in the selected hand
         if (!fpMagicballOn || sPosIdx !== posIdx) {
             fpMagicball = null;
             for (let i = 0; i < velocityHistory.length; i += 1) {
@@ -329,6 +334,8 @@ function firstPersonMagicball(game: Game, scene: Scene, time: Time) {
             });
             fpMagicballOn = true;
         }
+        // Update the hand motion's history
+        // for computing a moving average
         if (fpMagicball) {
             velocityHistory[0].copy(handPositions[posIdx]);
             velocityHistory[0].sub(lastPosition);
@@ -344,7 +351,9 @@ function firstPersonMagicball(game: Game, scene: Scene, time: Time) {
         lastPosition.copy(handPositions[posIdx]);
         sPosIdx = posIdx;
     } else {
+        // Throw ball
         if (fpMagicballOn && fpMagicball) {
+            // Compute hand motion's moving average
             let dta = 0;
             WMA.set(0, 0, 0);
             for (let i = 0; i < velocityHistory.length; i += 1) {
@@ -357,6 +366,7 @@ function firstPersonMagicball(game: Game, scene: Scene, time: Time) {
             WMA.divideScalar(TOTAL_WEIGHTS);
             dta / TOTAL_WEIGHTS;
             const strength = WMA.length() / dta;
+            // Throw only if the motion is strong enough
             if (strength > THROW_MB_THRESHOLD) {
                 WMA.normalize();
                 fpMagicball.throwTowards(WMA);
