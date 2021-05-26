@@ -338,7 +338,8 @@ function firstPersonMagicball(game: Game, scene: Scene, time: Time) {
                 deltaHistory[i] = deltaHistory[i - 1];
             }
             fpMagicball.position.copy(handPositions[posIdx]);
-            fpMagicball.threeObject.position.copy(handPositions[posIdx]);
+            fpMagicball.position.sub(scene.sceneNode.position);
+            fpMagicball.threeObject.position.copy(fpMagicball.position);
         }
         lastPosition.copy(handPositions[posIdx]);
         sPosIdx = posIdx;
