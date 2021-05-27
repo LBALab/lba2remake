@@ -371,7 +371,7 @@ function firstPersonMagicball(game: Game, scene: Scene, time: Time) {
             WMA.normalize();
             MagicBall.instance.throwTowards(WMA);
         } else {
-            scene.removeMagicBall();
+            MagicBall.instance.reset(true);
         }
     }
 }

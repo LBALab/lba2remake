@@ -5,6 +5,7 @@
 precision highp float;
 
 uniform vec3 color;
+uniform float opacity;
 
 in float vDist;
 
@@ -12,5 +13,5 @@ out vec4 fragColor;
 
 void main() {
     float r = clamp(vDist * 0.7, 0.0, 1.0);
-    fragColor = vec4(color, r);
+    fragColor = vec4(color, r * opacity);
 }
