@@ -28,7 +28,6 @@ const LBA1MagicBallMapping = {
 const MAGIC_BALL_SPRITE = 8;
 const MAGIC_BALL_SPEED = 6.0;
 const GRAVITY_ACC = 0.015;
-const DEFAULT_MAX_BOUNCES = 4;
 
 const ACTOR_BOX = new THREE.Box3();
 const BALL_BOX = new THREE.Box3();
@@ -213,8 +212,8 @@ export default class MagicBall {
         }
 
         this.bounces = 0;
-        this.maxBounces = DEFAULT_MAX_BOUNCES;
-        if (this.game.getState().hero.magic === 0) {
+        this.maxBounces = this.game.getState().hero.magicball.maxBounces;
+        if (this.game.getState().hero.magic <= 0) {
             this.maxBounces = 0;
         } else {
             this.game.getState().hero.magic -= 1;

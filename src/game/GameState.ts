@@ -1,8 +1,10 @@
+import * as THREE from 'three';
 import { omit } from 'lodash';
 import { getLanguageConfig } from '../lang';
 import { getParams } from '../params';
 import Actor from './Actor';
 import AnimState from '../model/anim/AnimState';
+import { AnimStateJSON } from '../model/anim/types';
 
 export interface GameConfig {
     displayText: boolean;
@@ -13,9 +15,40 @@ export interface GameConfig {
     positionalAudio: boolean;
 }
 
+export interface CloverState {
+    leafs: number;
+    boxes: number;
+}
+
+export interface MagicBallState {
+    level: number;
+    strength: number;
+    maxBounces: number;
+}
+
+export interface HeroState {
+    behaviour: number;
+    prevBehaviour: number;
+    usingItemId: number;
+    equippedItemId: number;
+    inventorySlot: number;
+    clover: CloverState;
+    life: number;
+    keys: number;
+    money: number;
+    magic: number;
+    fuel: number;
+    pinguin: number;
+    magicball: MagicBallState;
+    handStrength: number;
+    lastValidPosTime: number;
+    position: THREE.Vector3;
+    animState?: AnimStateJSON;
+}
+
 export interface GameState {
     config: GameConfig;
-    hero: any;
+    hero: HeroState;
     // The actor index who is currently talking.
     actorTalking: number;
     flags: any;
@@ -25,9 +58,10 @@ export interface GameState {
 
 export const MAX_LIFE = 255;
 const INITIAL_LIFE = 200;
+const MAGICBALL_MAX_BOUNCES = 4;
 
 export function createGameState(): GameState {
-    return {
+    const gameState = {
         config: Object.assign({
             displayText: true,
             musicVolume: 0.30,
@@ -46,7 +80,7 @@ export function createGameState(): GameState {
             fuel: 0,
             pinguin: 0,
             clover: { boxes: 2, leafs: 1 },
-            magicball: { level: 1, strength: 10 },
+            magicball: null,
             handStrength: 5, // LVL_0
             position: null,
             lastValidPosTime: 0,
@@ -84,6 +118,8 @@ export function createGameState(): GameState {
             Object.assign(this, state);
         }
     };
+    setMagicBallLevel(gameState, 1);
+    return gameState;
 }
 
 function createQuestFlags() {
@@ -113,7 +149,7 @@ function createHolomapFlags() {
 }
 
 export function setMagicBallLevel(state: GameState, index: number) {
-    const magicball = { level: 0, strength: 0 };
+    const magicball = { level: 0, strength: 0, maxBounces: 0 };
 
     magicball.level = index;
 
@@ -126,18 +162,22 @@ export function setMagicBallLevel(state: GameState, index: number) {
             break;
         case 1:
             magicball.strength = 10;
+            magicball.maxBounces = MAGICBALL_MAX_BOUNCES;
             handStrength = 8;
             break;
         case 2:
             magicball.strength = 20;
+            magicball.maxBounces = MAGICBALL_MAX_BOUNCES;
             handStrength = 18;
             break;
         case 3:
             magicball.strength = 30;
+            magicball.maxBounces = MAGICBALL_MAX_BOUNCES;
             handStrength = 28;
             break;
         case 4:
             magicball.strength = 40;
+            magicball.maxBounces = MAGICBALL_MAX_BOUNCES;
             handStrength = 38;
             break;
     }
