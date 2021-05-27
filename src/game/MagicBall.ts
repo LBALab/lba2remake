@@ -6,7 +6,15 @@ import { loadSprite } from './scenery/isometric/sprites';
 import SampleType from './data/sampleType';
 import { BehaviourMode } from './loop/hero';
 import { Time } from '../datatypes';
+import { compile } from '../utils/shaders';
+import Renderer from '../renderer';
 import { getParams } from '../params';
+import INNER_VERT from './shaders/magicball/inner.vert.glsl';
+import INNER_FRAG from './shaders/magicball/inner.frag.glsl';
+import GLOW_VERT from './shaders/magicball/glow.vert.glsl';
+import GLOW_FRAG from './shaders/magicball/glow.frag.glsl';
+import CLOUD_VERT from './shaders/magicball/cloud.vert.glsl';
+import CLOUD_FRAG from './shaders/magicball/cloud.frag.glsl';
 
 const isLBA1 = getParams().game === 'lba1';
 
@@ -27,6 +35,9 @@ const BALL_BOX = new THREE.Box3();
 
 const TMP_VEC = new THREE.Vector3();
 
+const ROTATION_AXIS = new THREE.Vector3(0, 1, 0);
+
+const textureLoader = new THREE.TextureLoader();
 export default class MagicBall {
     readonly game: Game;
     readonly scene: Scene;
@@ -56,25 +67,33 @@ export default class MagicBall {
     }
 
     private async loadMesh() {
-        this.threeObject = new THREE.Object3D();
-        this.threeObject.position.copy(this.position);
-        const magicLevel = this.game.getState().hero.magicball.level;
-        const type = MAGIC_BALL_SPRITE + (magicLevel - 1);
-        const sprite = await loadSprite(
-            isLBA1 ? LBA1MagicBallMapping[type] : type,
-            this.scene.props.ambience,
-            false, /* hasSpriteAnim3D */
-            true, /* isBillboard */
-            this.scene.is3DCam,
-        );
-        sprite.threeObject.scale.multiplyScalar(1);
-        this.threeObject.add(sprite.threeObject);
+        if (this.game.vr && this.game.controlsState.firstPerson) {
+            this.threeObject = await MagicBall.makeBallModel();
+        } else {
+            this.threeObject = new THREE.Object3D();
+            this.threeObject.position.copy(this.position);
+            const magicLevel = this.game.getState().hero.magicball.level;
+            const type = MAGIC_BALL_SPRITE + (magicLevel - 1);
+            const sprite = await loadSprite(
+                isLBA1 ? LBA1MagicBallMapping[type] : type,
+                this.scene.props.ambience,
+                false, /* hasSpriteAnim3D */
+                true, /* isBillboard */
+                this.scene.is3DCam,
+            );
+            sprite.threeObject.scale.multiplyScalar(1);
+            this.threeObject.add(sprite.threeObject);
+            this.sprite = sprite;
+        }
         this.threeObject.name = 'magicball';
         this.threeObject.visible = true;
-        this.sprite = sprite;
     }
 
     update(time: Time) {
+        if (!this.sprite) {
+            MagicBall.updateBallModel(this.threeObject, time);
+        }
+
         if (!this.thrown) {
             return;
         }
@@ -94,7 +113,10 @@ export default class MagicBall {
         this.direction.y -= GRAVITY_ACC;
         this.threeObject.position.copy(this.position);
 
-        BALL_BOX.copy(this.sprite.boundingBox);
+        const bb = this.sprite
+            ? this.sprite.boundingBox
+            : this.threeObject.userData.bb;
+        BALL_BOX.copy(bb);
         BALL_BOX.translate(this.position);
         let hitActor = null;
         for (let i = 1 /* skip hero */; i < this.scene.actors.length; i += 1) {
@@ -126,7 +148,7 @@ export default class MagicBall {
         const ok = this.scene.scenery.physics.getNormal(
             this.scene,
             this.position,
-            this.sprite.boundingBox,
+            bb,
             this.normal
         );
         if (ok) {
@@ -198,5 +220,68 @@ export default class MagicBall {
             this.game.getState().hero.magic -= 1;
         }
         this.thrown = true;
+    }
+
+    static async updateBallModel(ball: THREE.Object3D, time: Time) {
+        const cloudLayer = ball.children[2];
+        cloudLayer.quaternion.setFromAxisAngle(ROTATION_AXIS, time.elapsed * 0.5);
+    }
+
+    private static cloudTexture: THREE.Texture = null;
+    private static sphereGeometry: THREE.IcosahedronGeometry = null;
+    private static glowMaterial: THREE.RawShaderMaterial = null;
+    private static cloudMaterial: THREE.RawShaderMaterial = null;
+    private static innerMaterial: THREE.RawShaderMaterial = null;
+
+    static async makeBallModel(): Promise<THREE.Object3D> {
+        if (!this.cloudTexture) {
+            this.cloudTexture = await textureLoader.loadAsync('images/magicball_clouds.png');
+            this.sphereGeometry = new THREE.IcosahedronGeometry(0.1, 5);
+            this.sphereGeometry.computeBoundingBox();
+            this.glowMaterial = new THREE.RawShaderMaterial({
+                vertexShader: compile('vert', GLOW_VERT),
+                fragmentShader: compile('frag', GLOW_FRAG),
+                transparent: true,
+                side: THREE.BackSide,
+                uniforms: {
+                    color: { value: new THREE.Color('#f4bc20') },
+                },
+                glslVersion: Renderer.getGLSLVersion()
+            });
+            this.cloudMaterial = new THREE.RawShaderMaterial({
+                vertexShader: compile('vert', CLOUD_VERT),
+                fragmentShader: compile('frag', CLOUD_FRAG),
+                transparent: true,
+                uniforms: {
+                    color: { value: new THREE.Color('#f4bc20') },
+                    clouds: { value: this.cloudTexture }
+                },
+                glslVersion: Renderer.getGLSLVersion()
+            });
+            this.innerMaterial = new THREE.RawShaderMaterial({
+                vertexShader: compile('vert', INNER_VERT),
+                fragmentShader: compile('frag', INNER_FRAG),
+                uniforms: {
+                    color1: { value: new THREE.Color('#fdfd2d') },
+                    color2: { value: new THREE.Color('#f4bc20') },
+                    color3: { value: new THREE.Color('#845810') },
+                },
+                glslVersion: Renderer.getGLSLVersion()
+            });
+        }
+        const ball = new THREE.Object3D();
+        const cloudLayer = new THREE.Mesh(this.sphereGeometry, this.cloudMaterial);
+        const glow = new THREE.Mesh(this.sphereGeometry, this.glowMaterial);
+        const innerBall = new THREE.Mesh(this.sphereGeometry, this.innerMaterial);
+        glow.scale.setScalar(1.2);
+        glow.renderOrder = 1;
+        innerBall.scale.setScalar(0.92);
+        innerBall.renderOrder = 2;
+        cloudLayer.renderOrder = 3;
+        ball.add(innerBall);
+        ball.add(glow);
+        ball.add(cloudLayer);
+        ball.userData.bb = this.sphereGeometry.boundingBox;
+        return ball;
     }
 }
