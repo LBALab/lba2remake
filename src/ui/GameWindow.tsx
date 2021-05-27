@@ -22,6 +22,7 @@ import DebugData from './editor/DebugData';
 import { getParams } from '../params';
 import UIState, { initUIState } from './UIState';
 import { updateVRScene, loadVRScene } from './vr/vrScene';
+import MagicBall from '../game/MagicBall';
 
 interface GameWindowProps extends TickerProps {
     sharedState?: any;
@@ -78,7 +79,8 @@ export default class GameWindow extends FrameListener<GameWindowProps, UIState> 
             renderer: this.renderer,
             sceneManager: this.sceneManager,
             controls: this.controls,
-            uiState: this.state
+            uiState: this.state,
+            magicBall: MagicBall.instance
         };
         DebugData.sceneManager = this.sceneManager;
 
