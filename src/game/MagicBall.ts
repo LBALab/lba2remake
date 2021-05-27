@@ -37,6 +37,34 @@ const TMP_VEC = new THREE.Vector3();
 const ROTATION_AXIS = new THREE.Vector3(0, 1, 0);
 
 const textureLoader = new THREE.TextureLoader();
+
+const colorsPerLevel = {
+    0: [
+        new THREE.Color('#ffffd0'),
+        new THREE.Color('#fdfd2d'),
+        new THREE.Color('#f4bc20'),
+        new THREE.Color('#845810'),
+    ],
+    1: [
+        new THREE.Color('#d1e7be'),
+        new THREE.Color('#80dc31'),
+        new THREE.Color('#37a92f'),
+        new THREE.Color('#15591e'),
+    ],
+    2: [
+        new THREE.Color('#f9b381'),
+        new THREE.Color('#fe791a'),
+        new THREE.Color('#e8210a'),
+        new THREE.Color('#832e1a'),
+    ],
+    3: [
+        new THREE.Color('#000000'),
+        new THREE.Color('#ffff00'),
+        new THREE.Color('#ff9400'),
+        new THREE.Color('#7a0d00'),
+    ]
+};
+
 export default class MagicBall {
     readonly game: Game;
     readonly scene: Scene;
@@ -66,13 +94,13 @@ export default class MagicBall {
     }
 
     private async loadMesh() {
+        const magicLevel = Math.max(1, this.game.getState().hero.magicball.level) - 1;
         if (this.game.vr && this.game.controlsState.firstPerson) {
-            this.threeObject = await MagicBall.makeBallModel();
+            this.threeObject = await MagicBall.makeBallModel(magicLevel);
         } else {
             this.threeObject = new THREE.Object3D();
             this.threeObject.position.copy(this.position);
-            const magicLevel = this.game.getState().hero.magicball.level;
-            const type = MAGIC_BALL_SPRITE + (magicLevel - 1);
+            const type = MAGIC_BALL_SPRITE + magicLevel;
             const sprite = await loadSprite(
                 isLBA1 ? LBA1MagicBallMapping[type] : type,
                 this.scene.props.ambience,
@@ -236,7 +264,7 @@ export default class MagicBall {
     private static cloudMaterial: THREE.RawShaderMaterial = null;
     private static innerMaterial: THREE.RawShaderMaterial = null;
 
-    static async makeBallModel(): Promise<THREE.Object3D> {
+    static async makeBallModel(magicLevel: number): Promise<THREE.Object3D> {
         if (!this.cloudTexture) {
             this.cloudTexture = await textureLoader.loadAsync('images/magicball_clouds.png');
             this.sphereGeometry = new THREE.IcosahedronGeometry(0.1, 5);
@@ -247,7 +275,7 @@ export default class MagicBall {
                 transparent: true,
                 side: THREE.BackSide,
                 uniforms: {
-                    color: { value: new THREE.Color('#f4bc20') },
+                    color: { value: new THREE.Color() },
                 },
                 glslVersion: Renderer.getGLSLVersion()
             });
@@ -256,7 +284,7 @@ export default class MagicBall {
                 fragmentShader: compile('frag', CLOUD_FRAG),
                 transparent: true,
                 uniforms: {
-                    color: { value: new THREE.Color('#f4bc20') },
+                    color: { value: new THREE.Color() },
                     clouds: { value: this.cloudTexture },
                     uNormalMatrix: { value: new THREE.Matrix3() }
                 },
@@ -266,13 +294,19 @@ export default class MagicBall {
                 vertexShader: compile('vert', INNER_VERT),
                 fragmentShader: compile('frag', INNER_FRAG),
                 uniforms: {
-                    color1: { value: new THREE.Color('#fdfd2d') },
-                    color2: { value: new THREE.Color('#f4bc20') },
-                    color3: { value: new THREE.Color('#845810') },
+                    color1: { value: new THREE.Color() },
+                    color2: { value: new THREE.Color() },
+                    color3: { value: new THREE.Color() },
                 },
                 glslVersion: Renderer.getGLSLVersion()
             });
         }
+        const colors = colorsPerLevel[magicLevel];
+        this.cloudMaterial.uniforms.color.value.copy(colors[0]);
+        this.glowMaterial.uniforms.color.value.copy(colors[2]);
+        this.innerMaterial.uniforms.color1.value.copy(colors[1]);
+        this.innerMaterial.uniforms.color2.value.copy(colors[2]);
+        this.innerMaterial.uniforms.color3.value.copy(colors[3]);
         const ball = new THREE.Object3D();
         const cloudLayer = new THREE.Mesh(this.sphereGeometry, this.cloudMaterial);
         const glow = new THREE.Mesh(this.sphereGeometry, this.glowMaterial);
