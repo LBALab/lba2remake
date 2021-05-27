@@ -223,8 +223,12 @@ export default class MagicBall {
     }
 
     static async updateBallModel(ball: THREE.Object3D, time: Time) {
-        const cloudLayer = ball.children[2];
+        const cloudLayer = ball.children[2] as THREE.Mesh;
         cloudLayer.quaternion.setFromAxisAngle(ROTATION_AXIS, time.elapsed * 0.5);
+        const material = cloudLayer.material as THREE.RawShaderMaterial;
+        material.uniforms.uNormalMatrix.value.setFromMatrix4(
+            cloudLayer.matrixWorld
+        );
     }
 
     private static cloudTexture: THREE.Texture = null;
@@ -254,7 +258,8 @@ export default class MagicBall {
                 transparent: true,
                 uniforms: {
                     color: { value: new THREE.Color('#f4bc20') },
-                    clouds: { value: this.cloudTexture }
+                    clouds: { value: this.cloudTexture },
+                    uNormalMatrix: { value: new THREE.Matrix3() }
                 },
                 glslVersion: Renderer.getGLSLVersion()
             });
