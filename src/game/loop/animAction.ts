@@ -125,10 +125,11 @@ export const THROW = (action: AnimAction, { actor, game, scene }: AnimActionCont
     );
 };
 
-export const THROW_MAGIC = (_action: AnimAction, { actor, game, scene }: AnimActionContext) => {
-    MagicBall.load(game, scene, actor.physics.position).then((mb: MagicBall) => {
-        mb.throw(actor.physics.temp.angle, actor.props.entityIndex);
-    });
+export const THROW_MAGIC = async (_action: AnimAction, ctx: AnimActionContext) => {
+    const { actor, game, scene } = ctx;
+    await MagicBall.instance.init(game, scene);
+    MagicBall.instance.setPosition(actor.physics.position);
+    MagicBall.instance.throw(actor.physics.temp.angle, actor.props.entityIndex);
 };
 
 export const THROW_ALPHA = (action: AnimAction, { actor, game, scene }: AnimActionContext) => {

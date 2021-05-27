@@ -12,7 +12,7 @@ import Game from '../Game';
 import { Time } from '../../datatypes';
 import { ControlsState } from '../ControlsState';
 import { getParams } from '../../params';
-import MagicBall from '../MagicBall';
+import MagicBall, { MagicballStatus } from '../MagicBall';
 
 export const BehaviourMode = {
     NORMAL: 0,
@@ -295,9 +295,7 @@ function firstPersonPunching(game: Game, scene: Scene, time: Time) {
     }
 }
 
-let fpMagicballOn = false;
 let sPosIdx = -1;
-let fpMagicball: MagicBall = null;
 const lastPosition = new THREE.Vector3();
 const velocityHistory = [
     new THREE.Vector3(),
@@ -311,6 +309,7 @@ const TOTAL_WEIGHTS = 5 + 4 + 3 + 2 + 1;
 const WMA = new THREE.Vector3();
 const TMP_VEC = new THREE.Vector3();
 const BALL_POSITION = new THREE.Vector3;
+const BALL_POSITION_IN_SCENE = new THREE.Vector3;
 
 const THROW_MB_THRESHOLD = 0.06;
 
@@ -325,25 +324,20 @@ function firstPersonMagicball(game: Game, scene: Scene, time: Time) {
         const handRotations = game.controlsState.vrControllerRotations;
         const handSide = game.controlsState.vrHandSide;
         const sign = handSide[posIdx] === 'left' ? 1 : -1;
-        BALL_POSITION.set(sign * 0.08, -0.05, -0.05);
+        BALL_POSITION.set(sign * 0.08, -0.05, -0.05); // offset relative to hand
         BALL_POSITION.applyQuaternion(handRotations[posIdx]);
         BALL_POSITION.add(handPositions[posIdx]);
-        // Make the magicball appear in the selected hand
-        if (!fpMagicballOn || sPosIdx !== posIdx) {
-            fpMagicball = null;
+        if (MagicBall.instance.status === MagicballStatus.IDLE || sPosIdx !== posIdx) {
+            // Reset the motion history when throwing again or changing hands
             for (let i = 0; i < velocityHistory.length; i += 1) {
                 velocityHistory[i].set(0, 0, 0);
                 deltaHistory[i] = 0;
             }
             lastPosition.copy(BALL_POSITION);
-            MagicBall.load(game, scene, BALL_POSITION).then((mb: MagicBall) => {
-                fpMagicball = mb;
-            });
-            fpMagicballOn = true;
-        }
-        // Update the hand motion's history
-        // for computing a moving average
-        if (fpMagicball) {
+            MagicBall.instance.init(game, scene);
+        } else {
+            // Update the hand motion's history
+            // for computing a moving average
             velocityHistory[0].copy(BALL_POSITION);
             velocityHistory[0].sub(lastPosition);
             deltaHistory[0] = time.delta;
@@ -351,38 +345,34 @@ function firstPersonMagicball(game: Game, scene: Scene, time: Time) {
                 velocityHistory[i].copy(velocityHistory[i - 1]);
                 deltaHistory[i] = deltaHistory[i - 1];
             }
-            fpMagicball.position.copy(BALL_POSITION);
-            fpMagicball.position.sub(scene.sceneNode.position);
-            fpMagicball.threeObject.position.copy(fpMagicball.position);
         }
         lastPosition.copy(BALL_POSITION);
+        BALL_POSITION_IN_SCENE.copy(BALL_POSITION);
+        BALL_POSITION_IN_SCENE.sub(scene.sceneNode.position);
+        MagicBall.instance.setPosition(BALL_POSITION_IN_SCENE);
+
         sPosIdx = posIdx;
-    } else {
-        // Throw ball
-        if (fpMagicballOn && fpMagicball) {
-            // Compute hand motion's moving average
-            let dta = 0;
-            WMA.set(0, 0, 0);
-            for (let i = 0; i < velocityHistory.length; i += 1) {
-                const w = velocityHistory.length - i;
-                TMP_VEC.copy(velocityHistory[i]);
-                TMP_VEC.multiplyScalar(w);
-                WMA.add(TMP_VEC);
-                dta += deltaHistory[i] * w;
-            }
-            WMA.divideScalar(TOTAL_WEIGHTS);
-            dta / TOTAL_WEIGHTS;
-            const strength = WMA.length() / dta;
-            // Throw only if the motion is strong enough
-            if (strength > THROW_MB_THRESHOLD) {
-                WMA.normalize();
-                fpMagicball.throwTowards(WMA);
-            } else {
-                scene.removeMagicBall();
-            }
+    } else if (MagicBall.instance.status === MagicballStatus.HOLDING_IN_HAND) {
+        // Compute hand motion's moving average
+        let dta = 0;
+        WMA.set(0, 0, 0);
+        for (let i = 0; i < velocityHistory.length; i += 1) {
+            const w = velocityHistory.length - i;
+            TMP_VEC.copy(velocityHistory[i]);
+            TMP_VEC.multiplyScalar(w);
+            WMA.add(TMP_VEC);
+            dta += deltaHistory[i] * w;
         }
-        fpMagicballOn = false;
-        fpMagicball = null;
+        WMA.divideScalar(TOTAL_WEIGHTS);
+        dta / TOTAL_WEIGHTS;
+        const strength = WMA.length() / dta;
+        // Throw only if the motion is strong enough
+        if (strength > THROW_MB_THRESHOLD) {
+            WMA.normalize();
+            MagicBall.instance.throwTowards(WMA);
+        } else {
+            scene.removeMagicBall();
+        }
     }
 }
 
