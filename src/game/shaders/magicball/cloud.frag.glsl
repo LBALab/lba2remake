@@ -13,7 +13,7 @@ in vec2 vUv;
 out vec4 fragColor;
 
 void main() {
-    float r = clamp(vDist * vDist, 0.0, 1.0);
+    float r = clamp(vDist * vDist * 1.2, 0.0, 1.0);
     float p = texture(clouds, vUv).r;
     float t = p * (1.0 - r);
     fragColor = vec4(mix(vec3(1.0), color, 0.3), t);
