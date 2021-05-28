@@ -26,8 +26,11 @@ const LBA1MagicBallMapping = {
 };
 
 const MAGIC_BALL_SPRITE = 8;
-const MAGIC_BALL_SPEED = 6.0;
-const GRAVITY_ACC = 0.015;
+const INITIAL_SPEED = 6.0;
+const COME_BACK_SPEED = 18.0;
+const FETCH_KEY_SPEED = 8.0;
+const SPEED_LIMIT = 10.0;
+const GRAVITY_ACC = 0.002;
 
 const ACTOR_BOX = new THREE.Box3();
 const BALL_BOX = new THREE.Box3();
@@ -143,7 +146,7 @@ export default class MagicBall {
             this.direction.y += 1;
             this.direction.sub(this.position);
             this.direction.normalize();
-            this.direction.multiplyScalar(time.delta * MAGIC_BALL_SPEED * 3);
+            this.direction.multiplyScalar(time.delta * COME_BACK_SPEED);
             this.position.add(this.direction);
             if (this.position.distanceTo(hero.physics.position) < 1.5) {
                 this.stopBall();
@@ -152,7 +155,10 @@ export default class MagicBall {
             return;
         }
 
-        this.position.add(this.direction.clone().multiplyScalar(time.delta * MAGIC_BALL_SPEED));
+        TMP_VEC.copy(this.direction);
+        TMP_VEC.multiplyScalar(time.delta);
+        this.position.add(TMP_VEC);
+        this._threeObject.position.copy(this.position);
 
         if (this.isFetchingKey) {
             const key = this.scene.getKeys()[0];
@@ -160,12 +166,12 @@ export default class MagicBall {
                 key.collectKey(this.game, this.scene);
                 this.triggerComeBack();
             }
-            this._threeObject.position.copy(this.position);
             return;
         }
 
-        this.direction.y -= GRAVITY_ACC;
-        this._threeObject.position.copy(this.position);
+        this.direction.y -= GRAVITY_ACC / time.delta;
+
+        this.applySpeedLimit();
 
         const bb = this.sprite
             ? this.sprite.boundingBox
@@ -280,6 +286,8 @@ export default class MagicBall {
         const perpendicularDirection = new THREE.Vector3(0, 0, 0.25).applyEuler(perpendicularEluer);
         this.position.add(perpendicularDirection.clone().multiplyScalar(0.5));
 
+        direction.multiplyScalar(INITIAL_SPEED);
+
         return this.throwTowards(direction);
     }
 
@@ -305,9 +313,13 @@ export default class MagicBall {
         if (this.isFetchingKey) {
             const key = this.scene.getKeys()[0];
             const keyPos = key.physics.position;
-            this.direction = keyPos.clone().sub(this.position).normalize();
+            this.direction = keyPos.clone()
+                .sub(this.position)
+                .normalize()
+                .multiplyScalar(FETCH_KEY_SPEED);
         } else {
             this.direction = direction.clone();
+            this.applySpeedLimit();
         }
 
         this.bounces = 0;
@@ -319,6 +331,13 @@ export default class MagicBall {
         }
         this._status = MagicballStatus.THROWING;
         return true;
+    }
+
+    private applySpeedLimit() {
+        const speed = this.direction.length();
+        if (speed > SPEED_LIMIT) {
+            this.direction.normalize().multiplyScalar(SPEED_LIMIT);
+        }
     }
 
     private async loadModel() {
