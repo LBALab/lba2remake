@@ -30,6 +30,12 @@ const DebugData = {
     sceneManager: null
 };
 
+declare global {
+    var DebugData: any;
+}
+
+window.DebugData = DebugData;
+
 export default DebugData;
 
 export function initSceneDebugData() {

@@ -12,6 +12,7 @@ import Game from '../Game';
 import { Time } from '../../datatypes';
 import { ControlsState } from '../ControlsState';
 import { getParams } from '../../params';
+import MagicBall, { MagicballStatus } from '../MagicBall';
 
 export const BehaviourMode = {
     NORMAL: 0,
@@ -243,6 +244,7 @@ function processFirstPersonsMovement(game: Game, scene: Scene, hero: Actor, time
             }
         }
     }
+    firstPersonMagicball(game, scene, time);
     if (!hero.state.isJumping) {
         const threeCamera = scene.camera.threeCamera;
         Q.setFromRotationMatrix(threeCamera.matrixWorld);
@@ -289,6 +291,71 @@ function firstPersonPunching(game: Game, scene: Scene) {
             } else if (!intersect) {
                 punched[a.index][i] = false;
             }
+        }
+    }
+}
+
+const THROW_SPEED_THRESHOLD = 0.3;
+const THROW_FORCE_MULTIPLIER = 3;
+
+let savedPosIdx = -1;
+const LAST_POS = new THREE.Vector3();
+const MOMENTUM = new THREE.Vector3();
+const TGT_BALL_POSITION = new THREE.Vector3;
+const BALL_POSITION = new THREE.Vector3;
+
+/**
+ * Checks if the magiball is being held and thrown with
+ * the VR controllers in first person.
+ */
+function firstPersonMagicball(game: Game, scene: Scene, time: Time) {
+    const hasMagicball =
+        (isLBA1 && game.getState().flags.quest[LBA1Items.MAGIC_BALL] === 1) ||
+        (!isLBA1 && game.getState().flags.quest[LBA2Items.MAGIC_BALL] === 1);
+    if (!hasMagicball) {
+        return;
+    }
+    if (game.controlsState.weapon === 1) {
+        const posIdx = game.controlsState.vrWeaponControllerIndex;
+        const handPositions = game.controlsState.vrControllerPositions;
+        const handRotations = game.controlsState.vrControllerRotations;
+        const handSide = game.controlsState.vrHandSide;
+
+        // Place ball in scene
+        const sign = handSide[posIdx] === 'left' ? 1 : -1;
+        TGT_BALL_POSITION.set(sign * 0.15, -0.08, -0.08); // offset relative to hand
+        TGT_BALL_POSITION.applyQuaternion(handRotations[posIdx]);
+        TGT_BALL_POSITION.add(handPositions[posIdx]);
+        TGT_BALL_POSITION.sub(scene.sceneNode.position);
+        if (MagicBall.instance.status === MagicballStatus.IDLE || savedPosIdx !== posIdx) {
+            // Reset momentum when making the ball appear or switching hands
+            MOMENTUM.set(0, 0, 0);
+            if (MagicBall.instance.status === MagicballStatus.IDLE) {
+                BALL_POSITION.copy(TGT_BALL_POSITION);
+            }
+            LAST_POS.copy(BALL_POSITION);
+            MagicBall.instance.init(game, scene);
+        } else {
+            // Lerp formula inspired by:
+            // https://www.construct.net/en/blogs/ashleys-blog-2/using-lerp-delta-time-924
+            BALL_POSITION.lerp(TGT_BALL_POSITION, 1 - Math.pow(0.0005, time.delta));
+
+            // Update the ball's momentum
+            MOMENTUM.copy(BALL_POSITION);
+            MOMENTUM.sub(LAST_POS);
+            MOMENTUM.divideScalar(time.delta);
+
+            LAST_POS.copy(BALL_POSITION);
+        }
+
+        MagicBall.instance.setPosition(BALL_POSITION);
+        savedPosIdx = posIdx;
+    } else if (MagicBall.instance.status === MagicballStatus.HOLDING_IN_HAND) {
+        if (MOMENTUM.length() > THROW_SPEED_THRESHOLD) {
+            MOMENTUM.multiplyScalar(THROW_FORCE_MULTIPLIER);
+            MagicBall.instance.throwTowards(MOMENTUM);
+        } else {
+            MagicBall.instance.reset(true);
         }
     }
 }

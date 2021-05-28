@@ -3,7 +3,7 @@ import React, { useEffect, useState, useRef, Component } from 'react';
 import '../styles/behaviour.scss';
 import useMedia from '../hooks/useMedia';
 import { BehaviourMode as BehaviourModeType } from '../../game/loop/hero';
-import { MAX_LIFE } from '../../game/GameState';
+import { MAX_LIFE, MagicBallState, CloverState } from '../../game/GameState';
 
 import AnimState from '../../model/anim/AnimState';
 import {
@@ -19,17 +19,6 @@ import Scene from '../../game/Scene';
 import { getParams } from '../../params';
 import { LBA2Items, LBA1Items } from '../../game/data/inventory';
 
-interface IBehaviourMenuClover {
-    boxes: number;
-    leafs: number;
-}
-
-interface IBehaviourMenuMagicBall {
-    level: number;
-    strength: number;
-    bounce: number;
-}
-
 interface IBehaviourMenuProps {
     game: Game;
     scene: Scene;
@@ -41,8 +30,8 @@ interface IBehaviourMenu {
     money: number;
     magic: number;
     keys: number;
-    clover: IBehaviourMenuClover;
-    magicball: IBehaviourMenuMagicBall;
+    clover: CloverState;
+    magicball: MagicBallState;
 }
 
 interface IBehaviourItem {
@@ -198,7 +187,7 @@ const BehavourPointProgress = ({ type, value, maxValue, size }
     );
 };
 
-const BehaviourClovers = ({ boxes, leafs}: IBehaviourMenuClover) => {
+const BehaviourClovers = ({ boxes, leafs}: CloverState) => {
     const clovers = [];
     for (let b = 0; b < boxes; b += 1) {
         if (leafs > b) {

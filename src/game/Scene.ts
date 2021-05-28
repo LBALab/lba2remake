@@ -481,16 +481,16 @@ export default class Scene {
     }
 
     addMagicBall(magicBall: MagicBall) {
-        if (this.magicBall) {
-            this.removeMagicBall();
-        }
+        this.removeMagicBall();
         this.magicBall = magicBall;
         this.addMesh(magicBall.threeObject);
     }
 
     removeMagicBall() {
-        this.removeMesh(this.magicBall.threeObject);
-        this.magicBall = null;
+        if (this.magicBall) {
+            this.removeMesh(this.magicBall.threeObject);
+            this.magicBall = null;
+        }
     }
 
     removeExtra(extra: Extra) {

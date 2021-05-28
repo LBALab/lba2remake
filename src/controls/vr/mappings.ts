@@ -10,42 +10,164 @@ interface BtnMapping {
     handler: (component: any) => any;
 }
 
-interface MainGameControls {
+export interface Mappings {
     action: BtnMapping;
     behaviourAction: BtnMapping;
     move: BtnMapping;
     prevBehaviour: BtnMapping;
     nextBehaviour: BtnMapping;
-}
-
-interface ExtraControls {
+    weaponLeft: BtnMapping;
+    weaponRight: BtnMapping;
     centerCam: BtnMapping;
     menu: BtnMapping;
     fpsToggle: BtnMapping;
+    fpTurn: BtnMapping;
+    fpMove: BtnMapping;
 }
-
-interface FirstPersonMappings {
-    fpTurn?: BtnMapping;
-    fpMove?: BtnMapping;
-}
-
-export interface Mappings
-    extends MainGameControls,
-            ExtraControls,
-            FirstPersonMappings
-            {}
 
 export function getControllerMappings(
     motionController: MotionController,
     numControllers: number
 ) : Mappings {
-    const mainGameControls = mapMainGameControls(motionController, numControllers);
-    const extraControls = mapExtraControls(motionController, numControllers);
-    const firstPersonMovements = mapFirstPersonMovements(motionController, numControllers);
+    const { components, xrInputSource } = motionController;
+    const handedness = (xrInputSource as any).handedness;
+
+    let behaviourAction: BtnMapping = null;
+    let action: BtnMapping = null;
+    let move: BtnMapping = null;
+    let prevBehaviour: BtnMapping = null;
+    let nextBehaviour: BtnMapping = null;
+    let weaponLeft: BtnMapping = null;
+    let weaponRight: BtnMapping = null;
+    let centerCam: BtnMapping = null;
+    let menu: BtnMapping = null;
+    let fpsToggle: BtnMapping = null;
+    let fpMove: BtnMapping = null;
+    let fpTurn: BtnMapping = null;
+
+    if ('xr-standard-trigger' in components) {
+        if (numControllers === 1 || handedness === 'left') {
+            behaviourAction = {
+                btn: 'xr-standard-trigger',
+                handler: handlePressed
+            };
+        } else if (handedness === 'right') {
+            action = {
+                btn: 'xr-standard-trigger',
+                handler: handlePressed
+            };
+        }
+    }
+    if ('xr-standard-squeeze' in components) {
+        if (numControllers === 1 || handedness === 'left') {
+            weaponLeft = {
+                btn: 'xr-standard-squeeze',
+                handler: handlePressed
+            };
+        } else if (handedness === 'right') {
+            weaponRight = {
+                btn: 'xr-standard-squeeze',
+                handler: handlePressed
+            };
+        }
+    }
+    const useForMove = numControllers === 1 || handedness === 'left';
+    if (useForMove) {
+        if ('xr-standard-thumbstick' in components) {
+            move = {
+                btn: 'xr-standard-thumbstick',
+                handler: stickHandler.bind({})
+            };
+        } else if ('xr-standard-touchpad' in components) {
+            move = {
+                btn: 'xr-standard-touchpad',
+                handler: stickHandler.bind({})
+            };
+        } else if ('touchpad' in components) {
+            move = {
+                btn: 'touchpad',
+                handler: stickHandler.bind({})
+            };
+        }
+    }
+    if ('x-button' in components) {
+        prevBehaviour = {
+            btn: 'x-button',
+            handler: handleTapped.bind({})
+        };
+    }
+    if ('a-button' in components) {
+        nextBehaviour = {
+            btn: 'a-button',
+            handler: handleTapped.bind({})
+        };
+    }
+    if ('b-button' in components) {
+        menu = {
+            btn: 'b-button',
+            handler: handleTapped.bind({})
+        };
+    }
+    if ('y-button' in components) {
+        centerCam = {
+            btn: 'y-button',
+            handler: handleTapped.bind({})
+        };
+        fpsToggle = {
+            btn: 'y-button',
+            handler: handleLongPress.bind({})
+        };
+    }
+
+    if (handedness === 'left') {
+        if ('xr-standard-thumbstick' in components) {
+            fpMove = {
+                btn: 'xr-standard-thumbstick',
+                handler: component => -component.values.yAxis
+            };
+        } else if ('xr-standard-touchpad' in components) {
+            fpMove = {
+                btn: 'xr-standard-touchpad',
+                handler: component => -component.values.yAxis
+            };
+        } else if ('touchpad' in components) {
+            fpMove = {
+                btn: 'touchpad',
+                handler: component => -component.values.yAxis
+            };
+        }
+    } else if (handedness === 'right') {
+        if ('xr-standard-thumbstick' in components) {
+            fpTurn = {
+                btn: 'xr-standard-thumbstick',
+                handler: component => component.values.xAxis
+            };
+        } else if ('xr-standard-touchpad' in components) {
+            fpTurn = {
+                btn: 'xr-standard-touchpad',
+                handler: component => component.values.xAxis
+            };
+        } else if ('touchpad' in components) {
+            fpTurn = {
+                btn: 'touchpad',
+                handler: component => component.values.xAxis
+            };
+        }
+    }
+
     return {
-        ...mainGameControls,
-        ...firstPersonMovements,
-        ...extraControls
+        behaviourAction,
+        action,
+        move,
+        prevBehaviour,
+        nextBehaviour,
+        weaponLeft,
+        weaponRight,
+        centerCam,
+        menu,
+        fpsToggle,
+        fpMove,
+        fpTurn
     };
 }
 
@@ -60,7 +182,8 @@ const isLBA1 = getParams().game === 'lba1';
 export function applyMappings(
     motionController: MotionController,
     mappings: Mappings,
-    ctx: Context
+    ctx: Context,
+    controllerIndex
 ) {
     if (!mappings) {
         return;
@@ -132,6 +255,18 @@ export function applyMappings(
             const index = listBehaviours.findIndex(b => b === behaviour);
             const newBehaviour = listBehaviours[Math.min(index + 1, listBehaviours.length - 1)];
             setBehaviour(game, newBehaviour);
+        }
+    });
+    applyMapping(components, mappings, 'weaponLeft', (enabled) => {
+        if (enabled) {
+            controlsState.weapon = 1;
+            controlsState.vrWeaponControllerIndex = controllerIndex;
+        }
+    });
+    applyMapping(components, mappings, 'weaponRight', (enabled) => {
+        if (enabled) {
+            controlsState.weapon = 1;
+            controlsState.vrWeaponControllerIndex = controllerIndex;
         }
     });
     if (controlsState.firstPerson) {
@@ -212,149 +347,17 @@ function handleTapped(component) {
     return value;
 }
 
-function mapMainGameControls(
-    motionController: MotionController,
-    numControllers: number
-) : MainGameControls {
-    const { components, xrInputSource } = motionController;
-    const handedness = (xrInputSource as any).handedness;
-    let behaviourAction: BtnMapping = null;
-    let action: BtnMapping = null;
-    let move: BtnMapping = null;
-    let prevBehaviour: BtnMapping = null;
-    let nextBehaviour: BtnMapping = null;
-    if ('xr-standard-trigger' in components) {
-        if (numControllers === 1 || handedness === 'left') {
-            behaviourAction = {
-                btn: 'xr-standard-trigger',
-                handler: handlePressed
-            };
-        } else if (handedness === 'right') {
-            action = {
-                btn: 'xr-standard-trigger',
-                handler: handlePressed
-            };
-        }
+function handleLongPress(component) {
+    let value = false;
+    const now = Date.now();
+    if (component.values.state === 'pressed' && this.state !== 'pressed') {
+        this.start = now;
+        this.toggled = false;
     }
-    if ('xr-standard-squeeze') {
-        if (numControllers === 1 || handedness === 'right') {
-            nextBehaviour = {
-                btn: 'xr-standard-squeeze',
-                handler: handleTapped.bind({})
-            };
-        } else if (handedness === 'left') {
-            prevBehaviour = {
-                btn: 'xr-standard-squeeze',
-                handler: handleTapped.bind({})
-            };
-        }
+    this.state = component.values.state;
+    if (this.state === 'pressed' && !this.toggled && now - this.start > 1000) {
+        value = true;
+        this.toggled = true;
     }
-    const useForMove = numControllers === 1 || handedness === 'left';
-    if (useForMove) {
-        if ('xr-standard-thumbstick' in components) {
-            move = {
-                btn: 'xr-standard-thumbstick',
-                handler: stickHandler.bind({})
-            };
-        } else if ('xr-standard-touchpad' in components) {
-            move = {
-                btn: 'xr-standard-touchpad',
-                handler: stickHandler.bind({})
-            };
-        } else if ('touchpad' in components) {
-            move = {
-                btn: 'touchpad',
-                handler: stickHandler.bind({})
-            };
-        }
-    }
-    return {
-        behaviourAction,
-        action,
-        move,
-        prevBehaviour,
-        nextBehaviour
-    };
-}
-
-function mapExtraControls(
-    motionController: MotionController,
-    _numControllers: number
-) : ExtraControls {
-    const { components } = motionController;
-    let centerCam: BtnMapping = null;
-    let menu: BtnMapping = null;
-    let fpsToggle: BtnMapping = null;
-    if ('a-button' in components) {
-        centerCam = {
-            btn: 'a-button',
-            handler: handleTapped.bind({})
-        };
-    }
-    if ('b-button' in components) {
-        menu = {
-            btn: 'b-button',
-            handler: handleTapped.bind({})
-        };
-    }
-    if ('y-button' in components) {
-        fpsToggle = {
-            btn: 'y-button',
-            handler: handleTapped.bind({})
-        };
-    }
-    return {
-        centerCam,
-        menu,
-        fpsToggle,
-    };
-}
-
-function mapFirstPersonMovements(
-    motionController: MotionController,
-    _numControllers: number
-) : FirstPersonMappings {
-    const { components, xrInputSource } = motionController;
-    const handedness = (xrInputSource as any).handedness;
-    let fpMove: BtnMapping = null;
-    let fpTurn: BtnMapping = null;
-    if (handedness === 'left') {
-        if ('xr-standard-thumbstick' in components) {
-            fpMove = {
-                btn: 'xr-standard-thumbstick',
-                handler: component => -component.values.yAxis
-            };
-        } else if ('xr-standard-touchpad' in components) {
-            fpMove = {
-                btn: 'xr-standard-touchpad',
-                handler: component => -component.values.yAxis
-            };
-        } else if ('touchpad' in components) {
-            fpMove = {
-                btn: 'touchpad',
-                handler: component => -component.values.yAxis
-            };
-        }
-    } else if (handedness === 'right') {
-        if ('xr-standard-thumbstick' in components) {
-            fpTurn = {
-                btn: 'xr-standard-thumbstick',
-                handler: component => component.values.xAxis
-            };
-        } else if ('xr-standard-touchpad' in components) {
-            fpTurn = {
-                btn: 'xr-standard-touchpad',
-                handler: component => component.values.xAxis
-            };
-        } else if ('touchpad' in components) {
-            fpTurn = {
-                btn: 'touchpad',
-                handler: component => component.values.xAxis
-            };
-        }
-    }
-    return {
-        fpMove,
-        fpTurn
-    };
+    return value;
 }
