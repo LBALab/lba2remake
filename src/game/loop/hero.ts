@@ -309,12 +309,12 @@ const BALL_POSITION = new THREE.Vector3;
  * the VR controllers in first person.
  */
 function firstPersonMagicball(game: Game, scene: Scene, time: Time) {
-    // const hasMagicball =
-    //     (isLBA1 && game.getState().flags.quest[LBA1Items.MAGIC_BALL] === 1) ||
-    //     (!isLBA1 && game.getState().flags.quest[LBA2Items.MAGIC_BALL] === 1);
-    // if (!hasMagicball) {
-    //     return;
-    // }
+    const hasMagicball =
+        (isLBA1 && game.getState().flags.quest[LBA1Items.MAGIC_BALL] === 1) ||
+        (!isLBA1 && game.getState().flags.quest[LBA2Items.MAGIC_BALL] === 1);
+    if (!hasMagicball) {
+        return;
+    }
     if (game.controlsState.weapon === 1) {
         const posIdx = game.controlsState.vrWeaponControllerIndex;
         const handPositions = game.controlsState.vrControllerPositions;
