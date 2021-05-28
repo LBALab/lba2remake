@@ -204,7 +204,10 @@ export default class IsoSceneryPhysics {
                                         obj.state.isDrowningLava = true;
                                         break;
                                     case GROUND_TYPES.CAVE_SPIKES:
-                                        if (obj.animState && !obj.state.isJumping) {
+                                        if (obj.animState
+                                            && !obj.state.isJumping
+                                            && !obj.state.isHit
+                                            && obj.props.animIndex !== AnimType.HIT) {
                                             obj.hit(-1, 5);
                                         }
                                         break;
