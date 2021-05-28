@@ -165,6 +165,10 @@ export default class MagicBall {
 
         if (this.isFetchingKey) {
             const key = this.scene.getKeys()[0];
+            if (!key) {
+                this.reset();
+                return;
+            }
             if (this.position.distanceTo(key.physics.position) < 0.1) {
                 key.collectKey(this.game, this.scene);
                 this.triggerComeBack();
@@ -315,6 +319,10 @@ export default class MagicBall {
         }
         if (this.isFetchingKey) {
             const key = this.scene.getKeys()[0];
+            if (!key) {
+                this.reset();
+                return;
+            }
             const keyPos = key.physics.position;
             this.direction = keyPos.clone()
                 .sub(this.position)
