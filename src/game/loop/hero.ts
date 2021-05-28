@@ -311,7 +311,7 @@ const TMP_VEC = new THREE.Vector3();
 const BALL_POSITION = new THREE.Vector3;
 const BALL_POSITION_IN_SCENE = new THREE.Vector3;
 
-const THROW_MB_THRESHOLD = 0.06;
+const THROW_MB_THRESHOLD = 0.9;
 
 /**
  * Checks if the magiball is being held and thrown with
@@ -364,7 +364,7 @@ function firstPersonMagicball(game: Game, scene: Scene, time: Time) {
             dta += deltaHistory[i] * w;
         }
         WMA.divideScalar(TOTAL_WEIGHTS);
-        dta / TOTAL_WEIGHTS;
+        dta = dta / TOTAL_WEIGHTS;
         const strength = WMA.length() / dta;
         // Throw only if the motion is strong enough
         if (strength > THROW_MB_THRESHOLD) {
