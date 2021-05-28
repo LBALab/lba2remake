@@ -23,6 +23,7 @@ import { Time } from '../datatypes';
 import { getAnim } from '../model/entity';
 import { processAnimAction } from './loop/animAction';
 import { computeWagonMovement, WagonState, initWagonState } from './gameplay/wagon';
+import Extra, { getBonus } from './Extra';
 
 interface ActorFlags {
     hasCollisions: boolean;
@@ -694,6 +695,18 @@ export default class Actor {
             this.state.isVisible = false;
             if (this.threeObject) {
                 this.threeObject.visible = false;
+            }
+            if (this.props.extraType) {
+                const angle = this.physics.temp.angle - Math.PI / 2;
+                Extra.bonus(
+                    this.game,
+                    this.scene,
+                    this.physics.position,
+                    angle,
+                    getBonus(this.props.extraType),
+                    this.props.extraAmount,
+                    this.game.getTime(),
+                );
             }
             return;
         }

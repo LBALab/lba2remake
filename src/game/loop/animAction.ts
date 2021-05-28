@@ -2,7 +2,7 @@ import * as THREE from 'three';
 
 import { getRandom, distance2D } from '../../utils/lba';
 import { unimplemented } from '../scripting/utils';
-import Extra, { getBonus, ExtraFlag } from '../Extra';
+import Extra, { ExtraFlag } from '../Extra';
 import { SpriteType } from '../data/spriteType';
 import SampleType from '../data/sampleType';
 import Actor from '../Actor';
@@ -44,9 +44,7 @@ export const ANIP = unimplemented();
 export function processHit(
     actor: Actor,
     hitStrength: number,
-    game: Game,
     scene: Scene,
-    time: Time
 ) {
     for (const a of scene.actors) {
         if (a.index === actor.index || !a.state.isVisible || a.state.isDead) {
@@ -57,29 +55,17 @@ export function processHit(
             a.hit(actor.index, hitStrength);
             if (a.state.isDead) {
                 a.playSample(SampleType.ACTOR_DYING);
-                if (a.props.extraType) {
-                    const angle = a.physics.temp.angle - Math.PI / 2;
-                    Extra.bonus(
-                        game,
-                        scene,
-                        a.physics.position,
-                        angle,
-                        getBonus(a.props.extraType),
-                        a.props.extraAmount,
-                        time
-                    );
-                }
             }
         }
     }
 }
 
-export const HIT = (action: AnimAction,  { actor, scene, game, time }: AnimActionContext) => {
-    processHit(actor, action.strength, game, scene, time);
+export const HIT = (action: AnimAction,  { actor, scene }: AnimActionContext) => {
+    processHit(actor, action.strength, scene);
 };
 
-export const HIT_HERO = (_action: AnimAction, { game, scene, time }: AnimActionContext) => {
-    processHit(scene.actors[0], game.getState().hero.handStrength, game, scene, time);
+export const HIT_HERO = (_action: AnimAction, { scene, game }: AnimActionContext) => {
+    processHit(scene.actors[0], game.getState().hero.handStrength, scene);
 };
 
 export const SAMPLE = (action: AnimAction, { actor }: AnimActionContext) => {
@@ -291,8 +277,8 @@ export const THROW_3D_SEARCH = (action: AnimAction, { actor, game, scene }: Anim
 
 export const THROW_3D_MAGIC = unimplemented();
 
-export const SUPER_HIT = (action: AnimAction,  { actor, scene, game, time }: AnimActionContext) => {
-    processHit(actor, action.strength, game, scene, time);
+export const SUPER_HIT = (action: AnimAction,  { actor, scene }: AnimActionContext) => {
+    processHit(actor, action.strength, scene);
 };
 
 export const THROW_OBJ_3D = (action: AnimAction, { actor, game, scene }: AnimActionContext) => {
