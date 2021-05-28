@@ -107,7 +107,7 @@ export default class MagicBall {
      * from which it will be thrown.
      * @param position
      */
-    async init(game: Game, scene: Scene) {
+    async init(game: Game, scene: Scene, position: THREE.Vector3 = null) {
         this.game = game;
         if (this.scene !== scene) {
             // Reset when changing scenes
@@ -120,6 +120,9 @@ export default class MagicBall {
         }
         this.isFetchingKey = (scene.getKeys().length > 0);
         this._status = MagicballStatus.HOLDING_IN_HAND;
+        if (position) {
+            this.setPosition(position);
+        }
         scene.addMagicBall(this);
     }
 

@@ -113,8 +113,7 @@ export const THROW = (action: AnimAction, { actor, game, scene }: AnimActionCont
 
 export const THROW_MAGIC = async (_action: AnimAction, ctx: AnimActionContext) => {
     const { actor, game, scene } = ctx;
-    await MagicBall.instance.init(game, scene);
-    MagicBall.instance.setPosition(actor.physics.position);
+    await MagicBall.instance.init(game, scene, actor.physics.position);
     MagicBall.instance.throw(actor.physics.temp.angle, actor.props.entityIndex);
 };
 
