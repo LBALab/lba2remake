@@ -1,7 +1,7 @@
 # Version history
 
 ## [v0.5.0](https://github.com/agrande/lba2remake/compare/v0.4.0...v0.5.0) Big update!
-_Unreleased_
+_May 29th, 2021_
 
 #### Gameplay
 
@@ -12,9 +12,16 @@ _Unreleased_
     * Tested with Razer Kishi Controller on Android
     * Tested with Steelwhell Nimbus Controller on Mac
 - Camera zone transitions during Cinema mode
-- Throw Magicball and weapon selection
+- Throw Magicball and Weapon selection
+- Projectiles
 - Various gameplay fixes - the game is more playable throughout the story
 - Music playback now mirrors original game
+- Temple of Bu Wagon
+
+#### VR
+
+- Magicball
+- LBA1 Support
 
 #### UI
 
@@ -30,6 +37,7 @@ _Unreleased_
 - LBA1 Gameplay Editor
 - LBA1 Model Viewer
 - LBA1 Scene Metadata
+- Grid and Layout Editor Enhacements
 
 #### Replacement 3D models
 
