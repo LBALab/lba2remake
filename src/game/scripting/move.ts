@@ -3,6 +3,9 @@ import { unimplemented } from './utils';
 import { WORLD_SCALE, getRandom, distAngle } from '../../utils/lba';
 import { ScriptContext } from './ScriptContext';
 import Point from '../Point';
+import { getParams } from '../../params';
+
+const isLBA1 = getParams().game === 'lba1';
 
 const EULER = new THREE.Euler();
 const EULER2 = new THREE.Euler();
@@ -55,7 +58,26 @@ export function GOTO_POINT(this: ScriptContext, point: Point) {
     if (this.actor.index === 0 && this.game.controlsState.firstPerson) {
         adjustFPAngle(this);
     }
-    const distance = this.actor.goto(point.physics.position);
+
+    // dirty fix for LBA1 Grobo in Twinsen's House that get stuck in the stairs
+    // this will unblock the game to be played further
+    if (isLBA1 && this.scene.index === 5 && this.actor.index === 4 &&
+        this.state.trackIndex === 2 && point.props.index === 2) {
+        this.actor.physics.position.copy(point.physics.position);
+        this.actor.stop();
+        return;
+    }
+
+    let distance = 0;
+    if (this.actor.props.flags.isSprite) {
+        distance = this.actor.gotoPosition(
+            point.physics.position,
+            this.time.delta * WORLD_SCALE * this.actor.props.speed
+        );
+    } else {
+        distance = this.actor.goto(point.physics.position);
+    }
+
     if (distance > 0.55) {
         this.state.reentryOffset = this.state.offset;
         this.state.continue = false;
