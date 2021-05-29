@@ -4,6 +4,45 @@ import { WORLD_SCALE, getRandom, distAngle } from '../../utils/lba';
 import { ScriptContext } from './ScriptContext';
 import Point from '../Point';
 
+const EULER = new THREE.Euler();
+const EULER2 = new THREE.Euler();
+const Q = new THREE.Quaternion();
+const BASE_ANGLE = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI);
+
+function adjustFPAngle(ctx: ScriptContext, force = false) {
+    if (!force
+        && ctx.state.lastVRAngleAdjust
+        && Date.now() - ctx.state.lastVRAngleAdjust < 2000) {
+        // Only adjust every 2 seconds
+        return;
+    }
+    const { controlNode, threeCamera } = ctx.scene.camera;
+    EULER.setFromQuaternion(controlNode.quaternion, 'YXZ');
+    const oldAngle = EULER.y;
+    EULER.y = 0;
+    for (let i = 0; i < 16; i += 1) {
+        controlNode.quaternion.setFromEuler(EULER);
+        controlNode.updateMatrix();
+        controlNode.updateMatrixWorld();
+        threeCamera.updateMatrix();
+        threeCamera.updateMatrixWorld();
+        Q.setFromRotationMatrix(threeCamera.matrixWorld);
+        Q.multiply(BASE_ANGLE);
+        EULER2.setFromQuaternion(Q, 'YXZ');
+        EULER2.x = 0;
+        EULER2.z = 0;
+        Q.setFromEuler(EULER2);
+        const angle = ctx.actor.physics.orientation.angleTo(Q);
+        if (Math.abs(angle) <= Math.PI / 16) {
+            break;
+        }
+        EULER.y += Math.PI / 8;
+    }
+    if (Math.abs(EULER.y - oldAngle) < 0.0001) {
+        ctx.state.lastVRAngleAdjust = Date.now();
+    }
+}
+
 export function GOTO_POINT(this: ScriptContext, point: Point) {
     if (!point) {
         return;
@@ -14,16 +53,17 @@ export function GOTO_POINT(this: ScriptContext, point: Point) {
         return;
     }
     if (this.actor.index === 0 && this.game.controlsState.firstPerson) {
-        this.actor.physics.position.copy(point.physics.position);
-        this.actor.stop();
-        return;
+        adjustFPAngle(this);
     }
     const distance = this.actor.goto(point.physics.position);
     if (distance > 0.55) {
         this.state.reentryOffset = this.state.offset;
         this.state.continue = false;
+        this.state.goingToPoint = true;
     } else {
         this.actor.stop();
+        this.state.goingToPoint = false;
+        delete this.state.lastVRAngleAdjust;
     }
 }
 
@@ -42,6 +82,9 @@ export function ANGLE(this: ScriptContext, angle) {
         this.state.reentryOffset = this.state.offset;
         this.state.continue = false;
     } else {
+        if (this.actor.index === 0 && this.game.controlsState.firstPerson) {
+            adjustFPAngle(this, true);
+        }
         this.actor.stop();
     }
 }
