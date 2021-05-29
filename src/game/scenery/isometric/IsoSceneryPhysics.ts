@@ -185,6 +185,12 @@ export default class IsoSceneryPhysics {
                 if (column.shape >= 2 && column.shape <= 5) {
                     minY = -Infinity;
                 }
+                // dirty fix for LBA1 Twinsen's house
+                // of the bricks seem to have the wrong shape attached
+                // requires more investigation
+                if (isLBA1 && scene.index === 4) {
+                    minY = i > 0 ? bb.min.y : -Infinity;
+                }
                 if (basePos.y >= minY) {
                     groundHeight = y;
                     if (position.y < y) {
