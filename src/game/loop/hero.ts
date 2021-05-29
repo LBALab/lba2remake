@@ -39,6 +39,10 @@ export function updateHero(game: Game, scene: Scene, hero: Actor, time: Time) {
     handleBodyChanges(game, scene, hero);
 
     if (hero.props.dirMode !== ActorDirMode.MANUAL) {
+        if (game.controlsState.firstPerson
+            && !hero.scripts.move.context.state.goingToPoint) {
+            processFirstPersonsTurning(game, scene);
+        }
         return;
     }
 
@@ -163,6 +167,18 @@ const BASE_ANGLE = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 
 const Q = new THREE.Quaternion();
 const EULER = new THREE.Euler();
 
+function processFirstPersonsTurning(game: Game, scene: Scene) {
+    const controlsState = game.controlsState;
+    if (Math.abs(controlsState.altControlVector.x) > 0.6 && turnReset) {
+        EULER.setFromQuaternion(scene.camera.controlNode.quaternion, 'YXZ');
+        EULER.y -= Math.sign(controlsState.altControlVector.x) * Math.PI / 8;
+        scene.camera.controlNode.quaternion.setFromEuler(EULER);
+        turnReset = false;
+    } else if (Math.abs(controlsState.altControlVector.x) < 0.3) {
+        turnReset = true;
+    }
+}
+
 function processFirstPersonsMovement(game: Game, scene: Scene, hero: Actor, time: Time) {
     const controlsState = game.controlsState;
     if (hero.state.isClimbing ||
@@ -227,15 +243,7 @@ function processFirstPersonsMovement(game: Game, scene: Scene, hero: Actor, time
         } else {
             hero.state.isWalking = false;
         }
-        if (Math.abs(controlsState.altControlVector.x) > 0.6 && turnReset) {
-            const euler = new THREE.Euler();
-            euler.setFromQuaternion(scene.camera.controlNode.quaternion, 'YXZ');
-            euler.y -= Math.sign(controlsState.altControlVector.x) * Math.PI / 8;
-            scene.camera.controlNode.quaternion.setFromEuler(euler);
-            turnReset = false;
-        } else if (Math.abs(controlsState.altControlVector.x) < 0.3) {
-            turnReset = true;
-        }
+        processFirstPersonsTurning(game, scene);
         if (controlsState.jump === 1) {
             toggleJump(hero, true);
             animIndex = AnimType.JUMP;
