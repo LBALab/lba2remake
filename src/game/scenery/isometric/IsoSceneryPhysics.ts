@@ -181,7 +181,10 @@ export default class IsoSceneryPhysics {
                     obj.state.floorSound = column.sound;
                     obj.state.floorSound2 = column.sound2;
                 }
-                const minY = i > 0 ? bb.min.y : -Infinity;
+                let minY = i > 0 ? bb.min.y : -Infinity;
+                if (column.shape >= 2 && column.shape <= 5) {
+                    minY = -Infinity;
+                }
                 if (basePos.y >= minY) {
                     groundHeight = y;
                     if (position.y < y) {
