@@ -26,9 +26,10 @@ export default class IslandShadows {
             return;
         }
 
+        HERO_POS.copy(baseScene.actors[0].physics.position);
+        HERO_POS.applyMatrix4(baseScene.sceneNode.matrixWorld);
         this.computeShadow(baseScene, baseScene.actors[0], shadows);
         this.computeMagicballShadow(baseScene, shadows);
-        HERO_POS.copy(POSITION);
         for (const actor of baseScene.actors) {
             if (actor.index !== 0) {
                 this.computeShadow(baseScene, actor, shadows);
@@ -68,7 +69,7 @@ export default class IslandShadows {
             const sz = actor.model.boundingBox.max.x - actor.model.boundingBox.min.x;
             POSITION.copy(actor.physics.position);
             POSITION.applyMatrix4(scene.sceneNode.matrixWorld);
-            const distToHero = HERO_POS ? DIFF.subVectors(POSITION, HERO_POS).lengthSq() : 0;
+            const distToHero = DIFF.subVectors(POSITION, HERO_POS).lengthSq();
             if (distToHero < SHADOW_MAX_DIST_SQ) {
                 shadows.push({
                     data: [POSITION.x, POSITION.z, 2.8 / sz, 1],
@@ -80,10 +81,10 @@ export default class IslandShadows {
 
     computeMagicballShadow(scene: Scene, shadows: any[]) {
         const sz = 0.3;
-        if (scene.magicBall) {
+        if (scene.magicBall && scene.magicBall.threeObject) {
             POSITION.copy(scene.magicBall.threeObject.position);
             POSITION.applyMatrix4(scene.sceneNode.matrixWorld);
-            const distToHero = HERO_POS ? DIFF.subVectors(POSITION, HERO_POS).lengthSq() : 0;
+            const distToHero = DIFF.subVectors(POSITION, HERO_POS).lengthSq();
             if (distToHero < SHADOW_MAX_DIST_SQ) {
                 shadows.push({
                     data: [POSITION.x, POSITION.z, 2.8 / sz, 1],
