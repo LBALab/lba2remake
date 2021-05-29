@@ -18,7 +18,16 @@ export function GOTO_POINT(this: ScriptContext, point: Point) {
         this.actor.stop();
         return;
     }
-    const distance = this.actor.goto(point.physics.position);
+    let distance = 0;
+    if (this.actor.props.flags.isSprite) {
+        distance = this.actor.gotoPosition(
+            point.physics.position,
+            this.time.delta * WORLD_SCALE * this.actor.props.speed
+        );
+    } else {
+        distance = this.actor.goto(point.physics.position);
+    }
+
     if (distance > 0.55) {
         this.state.reentryOffset = this.state.offset;
         this.state.continue = false;
