@@ -209,6 +209,12 @@ function processCollisionsWithActors(scene: Scene, actor: Actor) {
                 actor.physics.position.add(DIFF);
                 ACTOR_BOX.translate(DIFF);
             }
+            if (otherActor.props.flags.canBePushed &&
+                !otherActor.state.isColliding) {
+                otherActor.physics.position.sub(DIFF);
+                otherActor.threeObject.position.sub(DIFF);
+                ACTOR2_BOX.translate(DIFF);
+            }
             if (actor.state.isCarriedBy !== otherActor.index
                 && otherActor.state.isCarriedBy !== actor.index) {
                 actor.state.hasCollidedWithActor = otherActor.index;
