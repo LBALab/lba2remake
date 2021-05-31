@@ -21,7 +21,7 @@ export function processPhysicsFrame(game: Game, scene: Scene, time: Time) {
 }
 
 function processActorPhysics(game: Game, scene: Scene, actor: Actor, time: Time) {
-    if (!actor.model || actor.state.isDead)
+    if (actor.state.isDead)
         return;
 
     // If someone is talking who isn't this actor, don't process the physics.
@@ -52,9 +52,9 @@ function processActorPhysics(game: Game, scene: Scene, actor: Actor, time: Time)
     if (actor.state.isCarriedBy === -1) {
         actor.threeObject.quaternion.copy(actor.physics.orientation);
         actor.threeObject.position.copy(actor.physics.position);
-        if (actor.model.boundingBoxDebugMesh) {
-            actor.model.boundingBoxDebugMesh.quaternion.copy(actor.threeObject.quaternion);
-            actor.model.boundingBoxDebugMesh.quaternion.invert();
+        if (actor.model?.boundingBoxDebugMesh) {
+            actor.model?.boundingBoxDebugMesh.quaternion.copy(actor.threeObject.quaternion);
+            actor.model?.boundingBoxDebugMesh.quaternion.invert();
         }
     }
 }
