@@ -71,7 +71,7 @@ export async function loadSprite(
     let threeObject;
     let update = (_time) => {};
     const { sprites: replacements } = await getModelReplacements();
-    if (replacements && index in replacements) {
+    if (is3DCam && replacements && index in replacements) {
         if (replacements[index].hide) {
             threeObject = new THREE.Object3D();
         } else {
