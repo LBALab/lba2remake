@@ -156,27 +156,31 @@ const H_THRESHOLD = 0.007 * WORLD_SIZE;
 function processCollisionsWithActors(scene: Scene, actor: Actor) {
     actor.state.hasCollidedWithActor = -1;
     actor.state.isCarriedBy = -1;
-    if (actor.model === null || actor.state.isDead ||
+    if (actor.state.isDead ||
         !actor.props.flags.hasCollisions) {
         return;
     }
-    ACTOR_BOX.copy(actor.model.boundingBox);
+    const box = actor.getBoundingBox();
+    if (!box) {
+        return;
+    }
+    ACTOR_BOX.copy(box);
 
     ACTOR_BOX.translate(actor.physics.position);
     DIFF.set(0, YSTEP, 0);
     ACTOR_BOX.translate(DIFF);
     for (const otherActor of scene.actors) {
-        if ((otherActor.model === null && otherActor.sprite === null)
-            || otherActor.index === actor.index
+        if (otherActor.index === actor.index
             || otherActor.state.isDead
             || !otherActor.state.isVisible
             || !(otherActor.props.flags.hasCollisions || otherActor.props.flags.isSprite)) {
             continue;
         }
 
-        const boundingBox = otherActor.model
-            ? otherActor.model.boundingBox
-            : otherActor.sprite.boundingBox;
+        const boundingBox = otherActor.getBoundingBox();
+        if (!boundingBox) {
+            continue;
+        }
         INTERSECTION.copy(boundingBox);
         if (otherActor.model) {
             INTERSECTION.translate(otherActor.physics.position);
