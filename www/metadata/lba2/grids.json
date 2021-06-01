@@ -3721,6 +3721,189 @@
             },
             "27x4x21": {
                 "hide": true
+            },
+            "36x5x24": {
+                "hide": true
+            },
+            "36x4x24": {
+                "hide": true
+            },
+            "36x3x24": {
+                "hide": true
+            },
+            "36x3x23": {
+                "hide": true
+            },
+            "36x4x23": {
+                "hide": true
+            },
+            "36x5x23": {
+                "hide": true
+            },
+            "35x5x23": {
+                "hide": true
+            },
+            "35x5x24": {
+                "hide": true
+            },
+            "35x5x22": {
+                "hide": true
+            },
+            "35x5x21": {
+                "hide": true
+            },
+            "36x5x21": {
+                "hide": true
+            },
+            "36x5x22": {
+                "hide": true
+            },
+            "37x5x22": {
+                "hide": true
+            },
+            "37x4x22": {
+                "hide": true
+            },
+            "37x3x22": {
+                "hide": true
+            },
+            "37x5x21": {
+                "hide": true
+            },
+            "38x5x21": {
+                "hide": true
+            },
+            "38x5x22": {
+                "hide": true
+            },
+            "38x4x22": {
+                "hide": true
+            },
+            "38x3x22": {
+                "hide": true
+            },
+            "39x3x22": {
+                "hide": true
+            },
+            "39x4x22": {
+                "hide": true
+            },
+            "39x5x22": {
+                "hide": true
+            },
+            "39x5x21": {
+                "hide": true
+            },
+            "40x5x21": {
+                "hide": true
+            },
+            "40x5x22": {
+                "hide": true
+            },
+            "40x4x22": {
+                "hide": true
+            },
+            "40x3x22": {
+                "hide": true
+            },
+            "41x5x22": {
+                "hide": true
+            },
+            "41x5x21": {
+                "hide": true
+            },
+            "42x5x21": {
+                "hide": true
+            },
+            "42x5x22": {
+                "hide": true
+            },
+            "42x4x22": {
+                "hide": true
+            },
+            "42x3x22": {
+                "hide": true
+            },
+            "42x2x22": {
+                "hide": true
+            },
+            "42x2x21": {
+                "hide": true
+            },
+            "42x3x21": {
+                "hide": true
+            },
+            "42x4x21": {
+                "hide": true
+            },
+            "42x4x23": {
+                "hide": true
+            },
+            "42x5x23": {
+                "hide": true
+            },
+            "42x3x23": {
+                "hide": true
+            },
+            "42x2x23": {
+                "hide": true
+            },
+            "41x5x23": {
+                "hide": true
+            },
+            "41x5x24": {
+                "hide": true
+            },
+            "42x5x24": {
+                "hide": true
+            },
+            "42x4x24": {
+                "hide": true
+            },
+            "42x3x24": {
+                "hide": true
+            },
+            "42x2x24": {
+                "hide": true
+            },
+            "42x2x25": {
+                "hide": true
+            },
+            "42x3x25": {
+                "hide": true
+            },
+            "42x4x25": {
+                "hide": true
+            },
+            "42x5x25": {
+                "hide": true
+            },
+            "41x5x25": {
+                "hide": true
+            },
+            "41x5x26": {
+                "hide": true
+            },
+            "42x5x26": {
+                "hide": true
+            },
+            "42x3x26": {
+                "hide": true
+            },
+            "42x4x26": {
+                "hide": true
+            },
+            "42x2x26": {
+                "hide": true
+            },
+            "41x2x26": {
+                "hide": true
+            },
+            "41x3x26": {
+                "hide": true
+            },
+            "41x4x26": {
+                "hide": true
             }
         }
     },

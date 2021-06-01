@@ -4443,6 +4443,11 @@
     "91": {
       "mirror": true
     },
+    "92": {
+      "replace": true,
+      "file": "OT_092_green_counter.glb",
+      "orientation": 0
+    },
     "102": {
       "replace": true,
       "file": "OT_102_103_104_105_casino_coin_slot.glb",
