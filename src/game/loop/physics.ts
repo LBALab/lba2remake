@@ -209,8 +209,7 @@ function processCollisionsWithActors(scene: Scene, actor: Actor) {
                 actor.physics.position.add(DIFF);
                 ACTOR_BOX.translate(DIFF);
             }
-            if (otherActor.props.flags.canBePushed &&
-                !otherActor.state.isColliding) {
+            if (otherActor.props.flags.canBePushed) {
                 otherActor.physics.position.sub(DIFF);
                 otherActor.threeObject.position.sub(DIFF);
                 ACTOR2_BOX.translate(DIFF);
