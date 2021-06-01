@@ -780,8 +780,7 @@ export default class Actor {
     }
 
     getBoundingBox() {
-        return this.model ?
-        this.model.boundingBox : this.sprite.boundingBox;
+        return this.model ? this.model?.boundingBox : this.sprite?.boundingBox;
     }
 
     private static createState(): ActorState {
