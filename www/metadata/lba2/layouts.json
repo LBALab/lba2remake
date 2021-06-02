@@ -4427,6 +4427,11 @@
     "67": {
       "mirror": true
     },
+    "71": {
+      "replace": true,
+      "file": "OT_071_huge_zlitos_with_keyhole.glb",
+      "orientation": 0
+    },
     "79": {
       "replace": true,
       "file": "OT_079_casino_slot_machine.glb",
@@ -4437,8 +4442,23 @@
       "file": "OT_039_080_magritte_plants.glb",
       "orientation": 0
     },
+    "84": {
+      "replace": true,
+      "file": "OT_084_085_huge_zlitos_deco.glb",
+      "orientation": 0
+    },
+    "85": {
+      "replace": true,
+      "file": "OT_084_085_huge_zlitos_deco.glb",
+      "orientation": 2
+    },
     "89": {
       "mirror": true
+    },
+    "90": {
+      "replace": true,
+      "file": "OT_084_085_huge_zlitos_deco.glb",
+      "orientation": 1
     },
     "91": {
       "mirror": true
@@ -4543,6 +4563,11 @@
     },
     "128": {
       "mirror": true
+    },
+    "129": {
+      "replace": true,
+      "file": "OT_084_085_huge_zlitos_deco.glb",
+      "orientation": 3
     },
     "136": {
       "mirror": true

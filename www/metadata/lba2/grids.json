@@ -3629,6 +3629,39 @@
             }
         }
     },
+    "78": {
+        "models": [
+            {
+                "name": "AA_point_light_yellow_1W.glb",
+                "position": {
+                    "x": 27.5,
+                    "y": -20,
+                    "z": 61
+                },
+                "quaternion": [
+                    0,
+                    0,
+                    0,
+                    1
+                ]
+            },
+            {
+                "name": "AA_point_light_yellow_1W.glb",
+                "position": {
+                    "x": 51.5,
+                    "y": 25.5,
+                    "z": 31
+                },
+                "quaternion": [
+                    0,
+                    0,
+                    0,
+                    1
+                ]
+            }
+        ],
+        "patches": {}
+    },
     "80": {
         "models": [
             {
@@ -3637,6 +3670,48 @@
                     "x": 42.5,
                     "y": 1,
                     "z": 3.500000000000007
+                },
+                "quaternion": [
+                    0,
+                    0,
+                    0,
+                    1
+                ]
+            },
+            {
+                "name": "AA_point_light_yellow_1W.glb",
+                "position": {
+                    "x": 15,
+                    "y": -18.5,
+                    "z": 1
+                },
+                "quaternion": [
+                    0,
+                    0,
+                    0,
+                    1
+                ]
+            },
+            {
+                "name": "AA_point_light_yellow_1W.glb",
+                "position": {
+                    "x": -8.5,
+                    "y": 5.5,
+                    "z": 13.5
+                },
+                "quaternion": [
+                    0,
+                    0,
+                    0,
+                    1
+                ]
+            },
+            {
+                "name": "AA_point_light_yellow_1W.glb",
+                "position": {
+                    "x": 12.5,
+                    "y": 13,
+                    "z": 29
                 },
                 "quaternion": [
                     0,
@@ -3903,6 +3978,150 @@
                 "hide": true
             },
             "41x4x26": {
+                "hide": true
+            },
+            "13x10x19": {
+                "hide": true
+            },
+            "13x9x19": {
+                "hide": true
+            },
+            "13x11x19": {
+                "hide": true
+            },
+            "13x12x19": {
+                "hide": true
+            },
+            "13x13x19": {
+                "hide": true
+            },
+            "13x9x18": {
+                "hide": true
+            },
+            "13x10x18": {
+                "hide": true
+            },
+            "13x11x18": {
+                "hide": true
+            },
+            "13x12x18": {
+                "hide": true
+            },
+            "13x13x18": {
+                "hide": true
+            },
+            "13x13x17": {
+                "hide": true
+            },
+            "13x12x17": {
+                "hide": true
+            },
+            "13x11x17": {
+                "hide": true
+            },
+            "13x10x17": {
+                "hide": true
+            },
+            "13x9x17": {
+                "hide": true
+            },
+            "13x9x16": {
+                "hide": true
+            },
+            "13x10x16": {
+                "hide": true
+            },
+            "13x11x16": {
+                "hide": true
+            },
+            "13x12x16": {
+                "hide": true
+            },
+            "13x13x16": {
+                "hide": true
+            },
+            "13x13x15": {
+                "hide": true
+            },
+            "13x12x15": {
+                "hide": true
+            },
+            "13x11x15": {
+                "hide": true
+            },
+            "13x10x15": {
+                "hide": true
+            },
+            "13x9x15": {
+                "hide": true
+            },
+            "13x6x14": {
+                "hide": true
+            },
+            "13x5x14": {
+                "hide": true
+            },
+            "13x4x14": {
+                "hide": true
+            },
+            "13x7x14": {
+                "hide": true
+            },
+            "13x8x14": {
+                "hide": true
+            },
+            "13x9x14": {
+                "hide": true
+            },
+            "13x10x14": {
+                "hide": true
+            },
+            "13x11x14": {
+                "hide": true
+            },
+            "12x4x14": {
+                "hide": true
+            },
+            "12x5x14": {
+                "hide": true
+            },
+            "12x6x14": {
+                "hide": true
+            },
+            "12x7x14": {
+                "hide": true
+            },
+            "12x8x14": {
+                "hide": true
+            },
+            "11x8x14": {
+                "hide": true
+            },
+            "11x7x14": {
+                "hide": true
+            },
+            "11x6x14": {
+                "hide": true
+            },
+            "11x5x14": {
+                "hide": true
+            },
+            "11x4x14": {
+                "hide": true
+            },
+            "10x4x14": {
+                "hide": true
+            },
+            "10x5x14": {
+                "hide": true
+            },
+            "10x6x14": {
+                "hide": true
+            },
+            "10x7x14": {
+                "hide": true
+            },
+            "10x8x14": {
                 "hide": true
             }
         }
