@@ -4550,6 +4550,16 @@
     "137": {
       "mirror": true
     },
+    "138": {
+      "replace": true,
+      "file": "OT_138_139_green_square_stool.glb",
+      "orientation": 0
+    },
+    "139": {
+      "replace": true,
+      "file": "OT_138_139_green_square_stool.glb",
+      "orientation": 1
+    },
     "141": {
       "replace": true,
       "file": "OT_141_red_fire_extinguisher.glb",
