@@ -157,7 +157,9 @@ function processCollisionsWithActors(scene: Scene, actor: Actor) {
     actor.state.hasCollidedWithActor = -1;
     actor.state.isCarriedBy = -1;
     if (actor.state.isDead ||
-        !actor.props.flags.hasCollisions) {
+        !actor.props.flags.hasCollisions ||
+        actor.props.flags.isSprite
+    ) {
         return;
     }
     const box = actor.getBoundingBox();
@@ -173,7 +175,7 @@ function processCollisionsWithActors(scene: Scene, actor: Actor) {
         if (otherActor.index === actor.index
             || otherActor.state.isDead
             || !otherActor.state.isVisible
-            || !(otherActor.props.flags.hasCollisions || otherActor.props.flags.isSprite)) {
+            || !otherActor.props.flags.hasCollisions) {
             continue;
         }
 
