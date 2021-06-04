@@ -4398,6 +4398,11 @@
     "15": {
       "mirror": true
     },
+    "17": {
+      "replace": true,
+      "file": "OT_017_casino_reception_cabinet.glb",
+      "orientation": 0
+    },
     "18": {
       "mirror": true
     },
@@ -4420,6 +4425,16 @@
       "replace": true,
       "file": "OT_039_080_magritte_plants.glb",
       "orientation": 0
+    },
+    "58": {
+      "replace": true,
+      "file": "OT_058_059_round_wall_lamp.glb",
+      "orientation": 0
+    },
+    "59": {
+      "replace": true,
+      "file": "OT_058_059_round_wall_lamp.glb",
+      "orientation": 3
     },
     "66": {
       "mirror": true
