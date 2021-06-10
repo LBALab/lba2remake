@@ -4421,6 +4421,16 @@
     "36": {
       "mirror": true
     },
+    "37": {
+      "replace": true,
+      "file": "OT_037_038_green_square_table.glb",
+      "orientation": 0
+    },
+    "38": {
+      "replace": true,
+      "file": "OT_037_038_green_square_table.glb",
+      "orientation": 1
+    },
     "39": {
       "replace": true,
       "file": "OT_039_080_magritte_plants.glb",
