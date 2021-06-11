@@ -4443,6 +4443,116 @@
             }
         }
     },
+    "82": {
+        "models": [
+            {
+                "name": "OT_061_round_table_lamp_var1.glb",
+                "position": {
+                    "x": 10.5,
+                    "y": 2,
+                    "z": 10.5
+                },
+                "quaternion": [
+                    0,
+                    0,
+                    0,
+                    1
+                ]
+            }
+        ],
+        "patches": {
+            "10x3x11": {
+                "hide": true
+            },
+            "9x3x11": {
+                "hide": true
+            },
+            "9x2x11": {
+                "hide": true
+            },
+            "9x1x11": {
+                "hide": true
+            },
+            "10x1x11": {
+                "hide": true
+            },
+            "10x2x11": {
+                "hide": true
+            },
+            "11x2x11": {
+                "hide": true
+            },
+            "11x3x11": {
+                "hide": true
+            },
+            "11x1x11": {
+                "hide": true
+            },
+            "12x1x11": {
+                "hide": true
+            },
+            "12x2x11": {
+                "hide": true
+            },
+            "12x3x11": {
+                "hide": true
+            },
+            "13x3x11": {
+                "hide": true
+            },
+            "13x2x11": {
+                "hide": true
+            },
+            "13x1x11": {
+                "hide": true
+            },
+            "14x1x11": {
+                "hide": true
+            },
+            "14x2x11": {
+                "hide": true
+            },
+            "14x3x11": {
+                "hide": true
+            },
+            "15x3x11": {
+                "hide": true
+            },
+            "15x2x11": {
+                "hide": true
+            },
+            "15x1x11": {
+                "hide": true
+            },
+            "15x1x10": {
+                "hide": true
+            },
+            "15x2x10": {
+                "hide": true
+            },
+            "15x3x10": {
+                "hide": true
+            },
+            "15x3x9": {
+                "hide": true
+            },
+            "15x2x9": {
+                "hide": true
+            },
+            "15x1x9": {
+                "hide": true
+            },
+            "10x6x11": {
+                "hide": true
+            },
+            "10x5x11": {
+                "hide": true
+            },
+            "10x4x11": {
+                "hide": true
+            }
+        }
+    },
     "111": {
         "models": [],
         "patches": {

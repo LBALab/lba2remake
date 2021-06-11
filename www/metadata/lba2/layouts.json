@@ -4446,6 +4446,16 @@
       "file": "OT_058_059_round_wall_lamp.glb",
       "orientation": 3
     },
+    "60": {
+      "replace": true,
+      "file": "OT_060_round_table_lamp.glb",
+      "orientation": 0
+    },
+    "61": {
+      "replace": true,
+      "file": "OT_061_round_table_lamp.glb",
+      "orientation": 0
+    },
     "66": {
       "mirror": true
     },
@@ -4613,6 +4623,11 @@
     "141": {
       "replace": true,
       "file": "OT_141_red_fire_extinguisher.glb",
+      "orientation": 0
+    },
+    "143": {
+      "replace": true,
+      "file": "OT_143_office_u_table.glb",
       "orientation": 0
     },
     "151": {
