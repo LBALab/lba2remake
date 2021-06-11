@@ -4458,6 +4458,20 @@
                     0,
                     1
                 ]
+            },
+            {
+                "name": "OT_206_teapot_var1.glb",
+                "position": {
+                    "x": 16,
+                    "y": 2,
+                    "z": 9
+                },
+                "quaternion": [
+                    0,
+                    -0.7071067811865475,
+                    0,
+                    0.7071067811865476
+                ]
             }
         ],
         "patches": {
@@ -4549,6 +4563,15 @@
                 "hide": true
             },
             "10x4x11": {
+                "hide": true
+            },
+            "16x7x10": {
+                "hide": true
+            },
+            "16x6x10": {
+                "hide": true
+            },
+            "16x5x10": {
                 "hide": true
             }
         }
