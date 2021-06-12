@@ -4663,6 +4663,16 @@
       "file": "OT_203_three_teapots.glb",
       "orientation": 0
     },
+    "204": {
+      "replace": true,
+      "file": "OT_204_two_small_cups.glb",
+      "orientation": 0
+    },
+    "205": {
+      "replace": true,
+      "file": "OT_205_a_small_cup.glb",
+      "orientation": 0
+    },
     "206": {
       "replace": true,
       "file": "OT_206_teapot.glb",
