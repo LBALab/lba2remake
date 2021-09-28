@@ -209,7 +209,10 @@
         "2": "removed_from_holomap"
       }
     },
-    null,
+    {
+      "name": "baggage_claim_downstairs_door_opened",
+      "type": "boolean"
+    },
     null,
     {
       "name": "lighthouse_keeper",
@@ -226,7 +229,17 @@
       "name": "tralus_cave_gate_opened",
       "type": "boolean"
     },
-    null,
+    {
+      "name": "sewer_secret_room_state",
+      "type": "enum",
+      "enumValues": {
+        "0": "nothing",
+        "1": "examined_map",
+        "2": "map_revealed",
+        "3": "found_pyramid_shaped_key",
+        "4": "opened_room"
+      }
+    },
     null,
     {
       "name": "clearing_up_the_rain",
@@ -240,9 +253,30 @@
         "5": "achieved"
       }
     },
+    {
+      "name": "dinofly_healer_state",
+      "type": "enum",
+      "enumValues": {
+        "0": "nothing",
+        "1": "umbrella_stolen",
+        "2": "got_umbrella",
+        "3": "go_see_desert_island_healing_wizard"
+      }
+    },
     null,
-    null,
-    null,
+    {
+      "name": "twinsun_ferry_state",
+      "type": "enum",
+      "enumValues": {
+        "0": "nothing",
+        "1": "ticket_to_desert_island",
+        "3": "going_to_desert_island",
+        "4": "arrived_desert_island",
+        "5": "ticket_to_citadel_island",
+        "7": "going_to_citadel_island",
+        "8": "arrived_citadel_island"
+      }
+    },
     {
       "name": "freeing_raph_status",
       "type": "enum",
@@ -253,27 +287,106 @@
         "3": "freed_raph"
       }
     },
+    {
+      "name": "wizard_school_progress",
+      "type": "enum",
+      "enumValues": {
+        "0": "none",
+        "3": "joined_school",
+        "4": "got_blue_triton_horn",
+        "5": "got_slate",
+        "7": "you_are_a_wizard"
+      }
+    },
+    {
+      "name": "find_healing_wizard_state",
+      "type": "enum",
+      "enumValues": {
+        "0": "nothing",
+        "1": "wizard_on_desert_island",
+        "2": "find_magic_school",
+        "3": "found_school_of_magic"
+      }
+    },
+    {
+      "name": "blowgun_test_state",
+      "type": "enum",
+      "enumValues": {
+        "0": "nothing",
+        "1": "started",
+        "2": "passed"
+      }
+    },
     null,
     null,
+    {
+      "name": "sewer_map_state",
+      "type": "enum",
+      "enumValues": {
+        "0": "nothing",
+        "1": "gallic_acid_used",
+        "2": "map_examined"
+      }
+    },
+    null,
+    {
+      "name": "zoe_going_to_see_dinofly",
+      "type": "boolean"
+    },
+    null,
+    {
+      "name": "zeelish_arrived_on_citadel",
+      "type": "boolean"
+    },
+    {
+      "name": "scooter_transport_state",
+      "type": "enum",
+      "enumValues": {
+        "0": "none",
+        "1": "on_scooter",
+        "2": "scooter2"
+      }
+    },
+    {
+      "name": "school_attack_revenge",
+      "type": "enum",
+      "enumValues": {
+        "0": "none",
+        "1": "umbrella_thief",
+        "2": "bob",
+        "3": "quetch_big_brother",
+        "4": "umbrella_thief_and_bob",
+        "5": "umbrella_thief_and_quetch_big_brother",
+        "6": "bob_and_quetch_big_brother",
+        "7": "umbrella_thief_and_bob_and_quetch_big_brother"
+      }
+    },
+    null,
+    {
+      "name": "car_state",
+      "type": "enum",
+      "enumValues": {
+        "0": "broken",
+        "1": "got_part",
+        "2": "gave_part_to_zoe",
+        "3": "repaired"
+      }
+    },
     null,
     null,
+    {
+      "name": "bob_wander_state"
+    },
+    {
+      "name": "quetch_big_brother_spawned",
+      "type": "boolean"
+    },
     null,
     null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
+    {
+      "name": "weather_wizard_disappeared",
+      "type": "boolean"
+    },
     null,
     {
       "name": "zeelish_visits_state",
@@ -290,7 +403,7 @@
         "8": "saw_zoe",
         "9": "back_to_desert",
         "10": "saw_magic_school_director",
-        "11": "captured_the_perl"
+        "11": "captured_the_pearl"
       }
     },
     null,
@@ -304,7 +417,20 @@
     null,
     null,
     {
-      "name": "dino_arrives_on_desert_island",
+      "name": "dinofly_travel_state",
+      "type": "enum",
+      "enumValues": {
+        "0": "none",
+        "1": "on_citadel_island",
+        "2": "on_dome_of_the_slate",
+        "3": "on_desert_island",
+        "4": "on_island_across_from_hacienda",
+        "5": "fly_west",
+        "6": "fly_east"
+      }
+    },
+    {
+      "name": "read_note_from_weather_wizard",
       "type": "boolean"
     },
     null,
@@ -319,9 +445,13 @@
     null,
     null,
     null,
-    null,
-    null,
-    null,
+    {
+      "name": "boat_video_sequence"
+    },
+    {
+      "name": "in_wizard_robes",
+      "type": "boolean"
+    },
     null,
     {
       "name": "read_temple_of_bu_ad",
@@ -337,7 +467,15 @@
       "name": "petanque_sphero_cured",
       "type": "boolean"
     },
+    {
+      "name": "car_is_repaired",
+      "type": "boolean"
+    },
     null,
+    {
+      "name": "seen_island_across_from_hacienda",
+      "type": "boolean"
+    },
     null,
     null,
     null,
@@ -373,16 +511,49 @@
     null,
     null,
     null,
+    {
+      "name": "in_ending_cutscene",
+      "type": "boolean"
+    },
+    {
+      "name": "spying_on_spacecraft",
+      "type": "boolean"
+    },
     null,
     null,
+    {
+      "name": "joe_state",
+      "type": "enum",
+      "enumValues": {
+        "0": "trapped_in_tralu_cave",
+        "1": "stuck_as_a_mussel",
+        "2": "freed"
+      }
+    },
     null,
     null,
+    {
+      "name": "not_in_lupinbourg_statue_area",
+      "type": "boolean"
+    },
+    {
+      "name": "not_in_lupinbourg_landing_area",
+      "type": "boolean"
+    },
     null,
     null,
     null,
+    {
+      "name": "collected_incandescent_pearl",
+      "type": "boolean"
+    },
     null,
     null,
     null,
+    {
+      "name": "not_in_woodbridge",
+      "type": "boolean"
+    },
     null,
     null,
     null,
@@ -449,6 +620,14 @@
     null,
     null,
     null,
+    {
+      "name": "sewer_cloverbox_collected",
+      "type": "boolean"
+    },
+    {
+      "name": "dome_cloverbox_collected",
+      "type": "boolean"
+    },
     null,
     null,
     null,
@@ -456,18 +635,10 @@
     null,
     null,
     null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
+    {
+      "name": "transport_override",
+      "type": "boolean"
+    },
     null,
     null,
     null,

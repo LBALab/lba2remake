@@ -23,8 +23,12 @@
     "lamp"
   ],
   "varcubes": [
-    null,
-    null,
+    {
+      "name": "unused_var0"
+    },
+    {
+      "name": "unused_var1"
+    },
     {
       "name": "speaking_through_radio"
     }
