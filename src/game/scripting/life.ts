@@ -609,7 +609,9 @@ export function ACTION(this: ScriptContext) {
 
 export const SET_FRAME = unimplemented();
 
-export const SET_SPRITE = unimplemented();
+export function SET_SPRITE(this: ScriptContext, index: number) {
+    this.actor.setSprite(this.scene, index);
+}
 
 export function SET_FRAME_3DS(this: ScriptContext) {
 
