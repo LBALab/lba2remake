@@ -13,6 +13,8 @@ import { getParams } from '../../params';
 import { initWagonState } from '../gameplay/wagon';
 import { LBA2Items, GetInventoryItems, LBA1Items } from '../data/inventory';
 import Extra, { getBonus } from '../Extra';
+import { CURRENT_TRACK, VAR_GAME } from './condition';
+import { SET_TRACK } from './structural';
 
 const isLBA1 = getParams().game === 'lba1';
 
@@ -664,9 +666,13 @@ export function PLAY_MUSIC(this: ScriptContext, index) {
     audio.playMusic(index);
 }
 
-export const TRACK_TO_VAR_GAME = unimplemented();
+export function TRACK_TO_VAR_GAME(this: ScriptContext, index) {
+    SET_VAR_GAME.call(this, index, CURRENT_TRACK.call(this));
+}
 
-export const VAR_GAME_TO_TRACK = unimplemented();
+export function VAR_GAME_TO_TRACK(this: ScriptContext, index) {
+    SET_TRACK.call(this, VAR_GAME.call(this, index));
+}
 
 export const ANIM_TEXTURE = unimplemented();
 
