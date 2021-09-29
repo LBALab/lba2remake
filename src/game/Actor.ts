@@ -43,6 +43,7 @@ export interface ActorProps {
     sceneIndex: number;
     pos: [number, number, number];
     life: number;
+    armour: number;
     flags: ActorFlags;
     entityIndex: number;
     bodyIndex: number;
@@ -678,12 +679,13 @@ export default class Actor {
         }
 
         let life = -1;
-        // TODO(scottwilliams): This doesn't take into account actor armour.
+        const armour = this.props.armour;
+        const damage = Math.max(0, hitStrength - armour);
         if (this.index === 0) {
-            this.game.getState().hero.life -= hitStrength;
+            this.game.getState().hero.life -= damage;
             life = this.game.getState().hero.life;
         } else {
-            this.props.life -= hitStrength;
+            this.props.life -= damage;
             life = this.props.life;
         }
 
@@ -887,6 +889,7 @@ export function createNewActorProps(
         index: scene.actors.length,
         pos: details.position.toArray() as any,
         life: 255,
+        armour: 0,
         flags: {
             hasCollisions: true,
             hasCollisionBricks: true,
