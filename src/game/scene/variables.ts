@@ -26,7 +26,9 @@ export function findUsedVarGames(actors: Actor[]) {
         const commands = actor.scripts.life.commands;
         for (const cmd of commands) {
             let value = null;
-            if (cmd.op.command === 'SET_VAR_GAME') {
+            if (cmd.op.command === 'SET_VAR_GAME'
+                || cmd.op.command === 'TRACK_TO_VAR_GAME'
+                || cmd.op.command === 'VAR_GAME_TO_TRACK') {
                 value = cmd.args[0].value;
             } else if (cmd.condition && cmd.condition.op.command === 'VAR_GAME') {
                 value = cmd.condition.param.value;
