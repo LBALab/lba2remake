@@ -15,5 +15,61 @@
     "twinsun_poster",
     "room_center",
     "paper_rolls"
+  ],
+  "varcubes": [
+    {
+      "name": "speaking_to",
+      "type": "enum",
+      "enumValues": {
+        "0": "none",
+        "1": "kid4",
+        "2": "teacher",
+        "3": "kid1",
+        "4": "kid2",
+        "5": "kid3"
+      }
+    },
+    {
+      "name": "unused_var1"
+    },
+    {
+      "name": "unused_var2"
+    },
+    {
+      "name": "attacked_kid4",
+      "type": "boolean"
+    },
+    {
+      "name": "attacked_kid1",
+      "type": "boolean"
+    },
+    {
+      "name": "attacked_kid2_or_kid3",
+      "type": "boolean"
+    },
+    {
+      "name": "said_hello_to_kid4",
+      "type": "boolean"
+    },
+    {
+      "name": "said_hello_to_kid1",
+      "type": "boolean"
+    },
+    {
+      "name": "said_hello_to_kid2",
+      "type": "boolean"
+    },
+    {
+      "name": "said_hello_to_kid3",
+      "type": "boolean"
+    },
+    {
+      "name": "said_hello_to_teacher",
+      "type": "boolean"
+    },
+    {
+      "name": "twinsen_attacked_kids_or_teacher",
+      "type": "boolean"
+    }
   ]
 }

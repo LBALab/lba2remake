@@ -54,5 +54,54 @@
     "to_lighthouse_area",
     "seashore",
     "fork_lighthouse_signal_back"
+  ],
+  "varcubes": [
+    {
+      "name": "in_conversation",
+      "type": "boolean"
+    },
+    {
+      "name": "unused_var1"
+    },
+    {
+      "name": "speaking_to_zoe",
+      "type": "boolean"
+    },
+    {
+      "name": "unused_var3"
+    },
+    {
+      "name": "wrong_way_with_zoe",
+      "type": "enum",
+      "enumValues": {
+        "0": "none",
+        "1": "back_to_town",
+        "2": "neighbour_house"
+      }
+    },
+    {
+      "name": "unused_var5"
+    },
+    {
+      "name": "unused_var6"
+    },
+    {
+      "name": "sup_agent_hostile",
+      "type": "boolean"
+    },
+    {
+      "name": "dinofly_destination",
+      "type": "enum",
+      "enumValues": {
+        "0": "none",
+        "1": "island_across_from_hacienda",
+        "2": "desert_island",
+        "3": "dome_of_the_slate"
+      }
+    },
+    {
+      "name": "arriving_on_dinofly",
+      "type": "boolean"
+    }
   ]
 }

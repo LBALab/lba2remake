@@ -26,12 +26,17 @@
     "cam_baby_room"
   ],
   "varcubes": [
-    null,
+    {
+      "name": "cellar_door_opened",
+      "type": "boolean"
+    },
     {
       "name": "zoe_talked",
       "type": "boolean"
     },
-    null,
+    {
+      "name": "unused_var2"
+    },
     {
       "name": "said_hello",
       "type": "boolean"

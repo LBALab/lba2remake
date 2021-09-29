@@ -37,5 +37,11 @@
     "cam_dinofly_landing_zone2",
     "cam_dinofly_landing_zone3",
     "cam_dinofly_landing_zone4"
+  ],
+  "varcubes": [
+    {
+      "name": "in_conversation",
+      "type": "boolean"
+    }
   ]
 }
