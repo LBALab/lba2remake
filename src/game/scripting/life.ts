@@ -449,9 +449,8 @@ export function SUB_LIFE_POINT_OBJ(this: ScriptContext, actor: Actor, value) {
     }
 }
 
-export function HIT(this: ScriptContext, actor: Actor, strength) {
-    actor.state.wasHitBy = this.actor.index;
-    actor.props.life -= strength;
+export function HIT(this: ScriptContext, actor: Actor, strength: number) {
+    actor.hit(this.actor, strength);
 }
 
 export function PLAY_VIDEO(this: ScriptContext, cmdState, video: string) {
@@ -690,9 +689,13 @@ export const REPLACE = unimplemented();
 
 export const SCALE = unimplemented();
 
-export const SET_ARMOR = unimplemented();
+export function SET_ARMOR(this: ScriptContext, value: number) {
+    SET_ARMOR_OBJ.call(this, this.actor, value);
+}
 
-export const SET_ARMOR_OBJ = unimplemented();
+export function SET_ARMOR_OBJ(this: ScriptContext, actor: Actor, value: number) {
+    actor.props.armour = value;
+}
 
 export function ADD_LIFE_POINT_OBJ(this: ScriptContext, index, points) {
     const actor = this.scene.actors[index];
