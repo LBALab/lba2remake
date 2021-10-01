@@ -7,6 +7,7 @@ import DebugData from '../../../../DebugData';
 import { TickerProps } from '../../../../../utils/Ticker';
 import { scopeColors } from '../blocks/blocksLibrary/utils';
 import Scene from '../../../../../../game/Scene';
+import { GetInventorySize } from '../../../../../../game/data/inventory';
 
 const defaultSplitDistance = 60;
 
@@ -405,10 +406,10 @@ function getScope(cmd) {
     }
     if (baseScope === 'game') {
         if (cmd.name === 'VAR_GAME' || cmd.name === 'VAR_CUBE') {
-            if (cmd.param.realValue < 40) {
+            if (cmd.param.realValue < GetInventorySize()) {
                 return 'inventory';
             }
-        } else if (cmd.args[0].realValue < 40) {
+        } else if (cmd.args[0].realValue < GetInventorySize()) {
             return 'inventory';
         }
     }

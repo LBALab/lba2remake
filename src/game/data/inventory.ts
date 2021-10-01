@@ -199,3 +199,12 @@ export function GetInventoryColumns() {
 export function GetInventoryItems() {
     return isLBA1 ? LBA1Items : LBA2Items;
 }
+
+export const LBA1InventorySize = 28;
+
+export const LBA2InventorySize = 40;
+
+export function GetInventorySize() {
+    return isLBA1 ? LBA1InventorySize : LBA2InventorySize;
+}
+

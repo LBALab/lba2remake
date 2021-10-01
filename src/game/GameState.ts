@@ -5,6 +5,7 @@ import { getParams } from '../params';
 import Actor from './Actor';
 import AnimState from '../model/anim/AnimState';
 import { AnimStateJSON } from '../model/anim/types';
+import { GetInventorySize, LBA2Items } from './data/inventory';
 
 export interface GameConfig {
     displayText: boolean;
@@ -92,6 +93,7 @@ export function createGameState(): GameState {
         actorTalking: -1,
         flags: {
             quest: createQuestFlags(),
+            inventory: createInventoryFlags(),
             holomap: createHolomapFlags()
         },
         save(hero: Actor) {
@@ -140,6 +142,15 @@ function createQuestFlags() {
     return quest;
 }
 
+function createInventoryFlags() {
+    const inventory = [];
+    for (let i = 0; i < GetInventorySize(); i += 1) {
+        inventory[i] = 0;
+    }
+
+    return inventory;
+}
+
 function createHolomapFlags() {
     const holomap = [];
     for (let i = 0; i < 512; i += 1) {
@@ -184,4 +195,10 @@ export function setMagicBallLevel(state: GameState, index: number) {
 
     state.hero.magicball = magicball;
     state.hero.handStrength = handStrength;
+
+    // Update the magic ball and ring of lightning item states.
+    state.flags.inventory[LBA2Items.MAGIC_BALL] = index;
+    if (getParams().game === 'lba2') {
+        state.flags.inventory[LBA2Items.RING_OF_LIGHTNING] = index;
+    }
 }
