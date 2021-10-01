@@ -168,7 +168,7 @@ const Inventory = ({ game, closeInventory }: any) => {
             const slot = game.getState().hero.inventorySlot;
             const rawItemId = GetInventoryMapping()[slot];
             const itemId = resolveItem(slot);
-            if (game.getState().flags.quest[rawItemId] >= 1) {
+            if (game.getState().flags.quest[rawItemId] >= 1 && CanUseItem(itemId)) {
                 heroUseItem(game, rawItemId, itemId);
                 closeInventory();
             } else {

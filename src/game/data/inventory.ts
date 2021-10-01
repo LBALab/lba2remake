@@ -224,6 +224,27 @@ export function GetInventorySize() {
     return isLBA1 ? LBA1InventorySize : LBA2InventorySize;
 }
 
+function CanUseItemLBA1(_item: LBA1Items) {
+    // Not implemented - assume all items are always usable.
+    return true;
+}
+
+function CanUseItemLBA2(item: LBA2Items) {
+    switch (item)
+    {
+        case LBA2Items.LASER_PISTOL_CRYSTAL_PIECE:
+        case LBA2Items.LASER_PISTOL_BODY:
+            return false;
+
+        default:
+            return true;
+    }
+}
+
+export function CanUseItem(item: LBA1Items|LBA2Items) {
+    return isLBA1 ? CanUseItemLBA1(item as LBA1Items) : CanUseItemLBA2(item as LBA2Items);
+}
+
 function MapItemLBA1(item: number, _state: number) {
     // Not implemented.
     return item;
