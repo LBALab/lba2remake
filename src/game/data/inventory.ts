@@ -7,7 +7,7 @@ import { getParams } from '../../params';
 const isLBA1 = getParams().game === 'lba1';
 
 const LBA2InventoryColumns = 7;
-const LBA2InventoryRows = 5;
+const LBA2InventoryRows = 6;    // Original: 5, but it overloaded some slots.
 
 const LBA1InventoryColumns = 7;
 const LBA1InventoryRows = 4;
@@ -123,24 +123,32 @@ const LBA2InventoryMapping = {
     14: LBA2Items.HOLOMAP,
     15: LBA2Items.PROTO_PACK,
     16: LBA2Items.RADIO,
-    17: LBA2Items.TRANSLATOR,
-    18: LBA2Items.TRANSLATOR,
+    17: LBA2Items.TRANSLATOR,           // Original: also CAR_PART
+    18: LBA2Items.MECA_PENGUIN,
     19: LBA2Items.KASHES,
     20: LBA2Items.FRAGMENT_SUPS,
     21: LBA2Items.FERRYMAN_SONG,
     22: LBA2Items.SLICE_OF_TART,
-    23: LBA2Items.ISLAND_CX_KEY,
+    23: LBA2Items.ISLAND_CX_KEY,        // Original: also GARDEN_BALSAM
     24: LBA2Items.GEM,
     25: LBA2Items.PEARL_OF_INCANDESCENCE,
-    26: LBA2Items.PICKAXE,
+    26: LBA2Items.PICKAXE,              // Original: also GALLIC_ACID
     27: LBA2Items.FRAGMENT_MOSQUIBEES,
     28: LBA2Items.GAZOGEM,
     29: LBA2Items.DISSIDENTS_RING,
     30: LBA2Items.UMBRELLA,
     31: LBA2Items.MEMORY_VIEWER,
     32: LBA2Items.FERRY_TICKET,
-    33: LBA2Items.BURGERMASTER_NOTES,
+    33: LBA2Items.BURGERMASTER_NOTES,   // Original: also PYRAMID_KEY, BURGERMASTER_KEY
     34: LBA2Items.FRAGMENT_WANNIES,
+
+    // The following items are overloaded onto other item slots in the original but we don't need
+    // to keep the same design.
+    35: LBA2Items.PYRAMID_KEY,
+    36: LBA2Items.GALLIC_ACID,
+    37: LBA2Items.GARDEN_BALSAM,
+    38: LBA2Items.CAR_PART,
+    39: LBA2Items.BURGERMASTER_KEY,
 };
 
 const LBA1InventoryMapping = {
