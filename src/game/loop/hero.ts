@@ -104,6 +104,9 @@ export function getBodyFromGameState(game: Game): number {
             return -1;
         }
         if (game.getState().flags.quest[LBA2Items.TUNIC]) {
+            if (game.getState().flags.inventory[LBA2Items.TUNIC] === 1) {
+                return LBA2BodyType.TWINSEN_WIZARD;
+            }
             return LBA2BodyType.TWINSEN_TUNIC;
         }
         return LBA2BodyType.TWINSEN_NO_TUNIC;
@@ -114,9 +117,20 @@ export function getBodyFromGameState(game: Game): number {
     }
 
     const body = LBA2WeaponToBodyMapping[equippedItem];
-    if (body === LBA2BodyType.TWINSEN_TUNIC && !game.getState().flags.quest[LBA2Items.TUNIC]) {
+    const tunic = game.getState().flags.quest[LBA2Items.TUNIC];
+    const wizard = tunic && game.getState().flags.inventory[LBA2Items.TUNIC] === 1;
+
+    // Special cases.
+    if (body === LBA2BodyType.TWINSEN_TUNIC && !tunic) {
         return LBA2BodyType.TWINSEN_NO_TUNIC;
     }
+    if (body === LBA2BodyType.TWINSEN_BLOWGUN && wizard) {
+        return LBA2BodyType.TWINSEN_WIZARD_BLOWGUN;
+    }
+    if (body === LBA2BodyType.TWINSEN_TUNIC && wizard) {
+        return LBA2BodyType.TWINSEN_WIZARD;
+    }
+
     return body;
 }
 
