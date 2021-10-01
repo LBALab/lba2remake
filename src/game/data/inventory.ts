@@ -337,4 +337,3 @@ export function GetItemResourceIndex(item: LBA1Items|LBA2Items) {
         ? GetLBA1ItemResourceIndex(item as LBA1Items)
         : GetLBA2ItemResourceIndex(item as LBA2Items);
 }
-
