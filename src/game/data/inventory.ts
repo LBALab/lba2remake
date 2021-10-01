@@ -12,6 +12,8 @@ const LBA2InventoryRows = 5;
 const LBA1InventoryColumns = 7;
 const LBA1InventoryRows = 4;
 
+// This list corresponds with the game vars for each item, which is mostly but not entirely the
+// same as the indices used for the item modems and strings.
 export enum LBA2Items {
     HOLOMAP = 0,
     MAGIC_BALL = 1,
@@ -22,7 +24,7 @@ export enum LBA2Items {
     PYRAMID_KEY = 6,
     CAR_PART = 7,
     KASHES = 8,
-    LASER_PISTOL_NO_CRYSTAL = 9,
+    LASER_PISTOL = 9,
     SWORD = 10,
     WANNIE_GLOVE = 11,
     PROTO_PACK = 12,
@@ -37,7 +39,7 @@ export enum LBA2Items {
     GEM = 21,
     HORN = 22,
     BLOWGUN = 23,
-    ITINERARY_TOKEN = 24,
+    MEMORY_VIEWER = 24,
     SLICE_OF_TART = 25,
     RADIO = 26,
     GARDEN_BALSAM = 27,
@@ -53,17 +55,19 @@ export enum LBA2Items {
     BURGERMASTER_KEY = 37,
     BURGERMASTER_NOTES = 38,
     PROTECTIVE_SPELL = 39,
+
+    // Items below this point are "virtual" - they do not have associated game vars.
     GREEN_MAGIC_BALL = 40,
     RED_MAGIC_BALL = 41,
     FIRE_MAGIC_BALL = 42,
     ZLITOS = 43,
     DARK_MONK_KEY = 44,
-    MEMORY_VIEWER = 45,
+    TRAVEL_TOKEN = 45,
     BLOWTRON = 46,
     WIZARDS_TUNIC = 47,
     JET_PACK = 48,
-    CRYSTAL_PIECE = 49,
-    LASER_PISTON_WITH_CRYSTAL = 50,
+    LASER_PISTOL_CRYSTAL_PIECE = 49,
+    LASER_PISTOL_BODY = 50,
     GREEN_RING_OF_LIGHTNING = 51,
     RED_RING_OF_LIGHTNING = 52,
     FIRE_RING_OF_LIGHTNING = 53,
@@ -107,7 +111,7 @@ const LBA2InventoryMapping = {
     2: LBA2Items.BLOWGUN,
     3: LBA2Items.HORN,
     4: LBA2Items.WANNIE_GLOVE,
-    5: LBA2Items.LASER_PISTON_WITH_CRYSTAL,
+    5: LBA2Items.LASER_PISTOL,
     6: LBA2Items.SWORD,
     7: LBA2Items.TUNIC,
     8: LBA2Items.SENDELLS_BALL,
@@ -172,11 +176,15 @@ const LBA1InventoryMapping = {
 
 export const LBA2WeaponToBodyMapping = {
     [LBA2Items.MAGIC_BALL]: LBA2BodyType.TWINSEN_TUNIC,
+    [LBA2Items.GREEN_MAGIC_BALL]: LBA2BodyType.TWINSEN_TUNIC,
+    [LBA2Items.RED_MAGIC_BALL]: LBA2BodyType.TWINSEN_TUNIC,
+    [LBA2Items.FIRE_MAGIC_BALL]: LBA2BodyType.TWINSEN_TUNIC,
     [LBA2Items.DARTS]: LBA2BodyType.TWINSEN_TUNIC,
-    [LBA2Items.LASER_PISTON_WITH_CRYSTAL]: LBA2BodyType.TWINSEN_LASER_PISTOL,
+    [LBA2Items.LASER_PISTOL]: LBA2BodyType.TWINSEN_LASER_PISTOL,
     [LBA2Items.SWORD]: LBA2BodyType.TWINSEN_SWORD,
     [LBA2Items.WANNIE_GLOVE]: LBA2BodyType.TWINSEN_WANNIE_GLOVE,
     [LBA2Items.BLOWGUN]: LBA2BodyType.TWINSEN_BLOWGUN,
+    [LBA2Items.BLOWTRON]: LBA2BodyType.TWINSEN_BLOWTRON,
 };
 
 export const LBA1WeaponToBodyMapping = {
@@ -206,5 +214,127 @@ export const LBA2InventorySize = 40;
 
 export function GetInventorySize() {
     return isLBA1 ? LBA1InventorySize : LBA2InventorySize;
+}
+
+function MapItemLBA1(item: number, _state: number) {
+    // Not implemented.
+    return item;
+}
+
+function MapItemLBA2(item: number, state: number) {
+    switch (item as LBA2Items)
+    {
+        case LBA2Items.MAGIC_BALL:
+            return GetLBA2MagicBallForLevel(state);
+
+        case LBA2Items.TUNIC:
+            return (state === 1) ? LBA2Items.WIZARDS_TUNIC : LBA2Items.TUNIC;
+
+        case LBA2Items.PEARL_OF_INCANDESCENCE:
+            return (state === 1) ? LBA2Items.TRAVEL_TOKEN : LBA2Items.PEARL_OF_INCANDESCENCE;
+
+        case LBA2Items.KASHES:
+            // TODO: how does original LBA2 decide Kashes vs Zlitos here?
+            return LBA2Items.ZLITOS;
+
+        case LBA2Items.LASER_PISTOL:
+            if (state === 0) {
+                return LBA2Items.LASER_PISTOL_CRYSTAL_PIECE;
+            }
+            if (state === 1) {
+                return LBA2Items.LASER_PISTOL_BODY;
+            }
+            return LBA2Items.LASER_PISTOL;
+
+        case LBA2Items.PROTO_PACK:
+            return (state === 1) ? LBA2Items.JET_PACK : LBA2Items.PROTO_PACK;
+
+        case LBA2Items.RING_OF_LIGHTNING:
+            return GetLBA2RingOfLightningForLevel(state);
+
+        case LBA2Items.BLOWGUN:
+            return (state === 1) ? LBA2Items.BLOWTRON : LBA2Items.BLOWGUN;
+
+        case LBA2Items.FRAGMENT_FRANCOS:
+            return (state === 1) ? LBA2Items.DARK_MONK_KEY : LBA2Items.FRAGMENT_FRANCOS;
+
+        default:
+            // Most items have no special states.
+            return item;
+    }
+}
+
+export function MapItem(item: number, state: number) {
+    return isLBA1 ? MapItemLBA1(item, state) : MapItemLBA2(item, state);
+}
+
+export function GetLBA2MagicBallForLevel(level: number) {
+    switch (level)
+    {
+        case 2:
+            return LBA2Items.GREEN_MAGIC_BALL;
+
+        case 3:
+            return LBA2Items.RED_MAGIC_BALL;
+
+        case 4:
+            return LBA2Items.FIRE_MAGIC_BALL;
+
+        case 0:
+        case 1:
+        default:
+            return LBA2Items.MAGIC_BALL;
+    }
+}
+
+export function GetLBA2RingOfLightningForLevel(level: number) {
+    switch (level)
+    {
+        case 2:
+            return LBA2Items.GREEN_RING_OF_LIGHTNING;
+
+        case 3:
+            return LBA2Items.RED_RING_OF_LIGHTNING;
+
+        case 4:
+            return LBA2Items.FIRE_RING_OF_LIGHTNING;
+
+        case 0:
+        case 1:
+        default:
+            return LBA2Items.RING_OF_LIGHTNING;
+    }
+}
+
+function GetLBA1ItemResourceIndex(item: LBA1Items) {
+    // TODO: check if any mapping is needed.
+    return item as number;
+}
+
+function GetLBA2ItemResourceIndex(item: LBA2Items) {
+    switch (item)
+    {
+        case LBA2Items.LASER_PISTOL:
+            return 50;
+
+        case LBA2Items.MEMORY_VIEWER:
+            return 45;
+
+        case LBA2Items.TRAVEL_TOKEN:
+            return 24;
+
+        case LBA2Items.LASER_PISTOL_BODY:
+            return 9;
+
+        default:
+            // Most items require no mapping.
+            return item as number;
+    }
+}
+
+export function GetItemResourceIndex(item: LBA1Items|LBA2Items) {
+    return isLBA1
+        ? GetLBA1ItemResourceIndex(item as LBA1Items)
+        : GetLBA2ItemResourceIndex(item as LBA2Items);
 }
 

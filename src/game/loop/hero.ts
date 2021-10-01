@@ -559,7 +559,7 @@ function processActorMovement(
                     case LBA2Items.WANNIE_GLOVE:
                         animIndex = AnimType.WANNIE_GLOVE_SWING;
                         break;
-                    case LBA2Items.LASER_PISTON_WITH_CRYSTAL:
+                    case LBA2Items.LASER_PISTOL:
                         animIndex = AnimType.LASTER_PISTOL_SHOOT;
                         break;
                     case LBA1Items.FUNFROCK_SABER:
@@ -703,4 +703,23 @@ function processCamRelativeMovement(
         }
     }
     return animIndex;
+}
+
+export function heroUseItem(game: Game, rawItemId: number, itemId?: number) {
+    if (!itemId) {
+        itemId = rawItemId;
+    }
+
+    // Use the raw item ID here as it will be passed to scripts.
+    game.getState().hero.usingItemId = rawItemId;
+
+    // Reset the usingItemId after a single game loop execution.
+    game.addLoopFunction(null, () => {
+        game.getState().hero.usingItemId = -1;
+    });
+
+    if (itemId in LBA2WeaponToBodyMapping) {
+        // Use the mapped item ID here as it affects Twinsen's model.
+        game.getState().hero.equippedItemId = itemId;
+    }
 }
