@@ -99,22 +99,81 @@ export async function loadSprite(
 }
 
 function loadMesh(index, sprite, box) {
+    // flat - draw the sprite on the XZ plane.
+    // xmajor - draw the sprite on the XY plane.
+    // zmajor - draw the sprite on the YZ plane.
+    // else - draw sprite on plane perpendicular to isometric camera
+    //
+    // The final case is a fallback and has clipping issues with the floor below. It also causes
+    // distortion in 3D isometric mode due to the non-fixed camera position.
+    //
+    // In this final case, the y axis is stretched by the projection-corrected length of the line
+    // from (0, yMax, 0) to (xMax, yMax, zMax) in order to render equivalently to a 2D billboard.
+    // The 1/sqrt(3) factor here is the horizonal:vertical foreshortening in isometric projections.
+    //
+    // A better way of handling this might be to project the sprite on to a cuboid rather than a
+    // plane but is significantly more complex.
+    //
+    // The tuning factors here are arbitrary and were chosen based on what gave good results in the
+    // various locations on Citadel island.
     const s = sprite.spritesMap[index];
-    const xMajor = (box.xMax - box.xMin) > (box.zMax - box.zMin);
-    const vertices = xMajor
+    const axisMajorThreshold = 3 / 5;   // Arbitrary tuning parameter.
+    const flatThreshold = 3;            // Arbitrary tuning parameter.
+    const xSize = box.xMax - box.xMin;
+    const ySize = box.yMax - box.yMin;
+    const zSize = box.zMax - box.xMin;
+    const flat = ((xSize / ySize) > flatThreshold) && ((zSize / ySize) > flatThreshold);
+    const xMajor = (xSize / (xSize + zSize)) > axisMajorThreshold;
+    const zMajor = (zSize / (xSize + zSize)) > axisMajorThreshold;
+    const yProj = WORLD_SCALE / Math.sqrt(3);
+    const yExtra = yProj * Math.sqrt(Math.pow(xSize / 2, 2) + Math.pow(zSize / 2, 2));
+    const vertices = flat
+        ? [
+            [box.xMax * WORLD_SCALE, 0, box.zMin * WORLD_SCALE],
+            [box.xMin * WORLD_SCALE, 0, box.zMin * WORLD_SCALE],
+            [box.xMin * WORLD_SCALE, 0, box.zMax * WORLD_SCALE],
+            [box.xMax * WORLD_SCALE, 0, box.zMax * WORLD_SCALE],
+        ]
+        : xMajor
         ? [
             [box.xMax * WORLD_SCALE, box.yMin * WORLD_SCALE, 0],
             [box.xMin * WORLD_SCALE, box.yMin * WORLD_SCALE, 0],
             [box.xMin * WORLD_SCALE, box.yMax * WORLD_SCALE, 0],
             [box.xMax * WORLD_SCALE, box.yMax * WORLD_SCALE, 0]
         ]
-        : [
+        : zMajor
+        ? [
             [0, box.yMin * WORLD_SCALE, box.zMin * WORLD_SCALE],
             [0, box.yMin * WORLD_SCALE, box.zMax * WORLD_SCALE],
             [0, box.yMax * WORLD_SCALE, box.zMax * WORLD_SCALE],
             [0, box.yMax * WORLD_SCALE, box.zMin * WORLD_SCALE]
+        ]
+        : [
+            [box.xMax * WORLD_SCALE, box.yMin * WORLD_SCALE - yExtra, box.zMin * WORLD_SCALE],
+            [box.xMin * WORLD_SCALE, box.yMin * WORLD_SCALE - yExtra, box.zMax * WORLD_SCALE],
+            [box.xMin * WORLD_SCALE, box.yMax * WORLD_SCALE + yExtra, box.zMax * WORLD_SCALE],
+            [box.xMax * WORLD_SCALE, box.yMax * WORLD_SCALE + yExtra, box.zMin * WORLD_SCALE]
         ];
-    const baseUvs = xMajor
+    const baseUvs = flat
+        ? [
+            [
+                s.u,
+                s.v + s.h / 2
+            ],
+            [
+                s.u + s.w / 2,
+                s.v
+            ],
+            [
+                s.u + s.w,
+                s.v + s.h / 2
+            ],
+            [
+                s.u + s.w / 2,
+                s.v + s.h,
+            ]
+        ]
+        : xMajor
         ? [
             [
                 s.u,
@@ -133,7 +192,8 @@ function loadMesh(index, sprite, box) {
                 s.v + (s.w / 2)
             ]
         ]
-        : [
+        : zMajor
+        ? [
             [
                 s.u,
                 (s.v + s.h) - (s.w / 2)
@@ -145,6 +205,24 @@ function loadMesh(index, sprite, box) {
             [
                 s.u + s.w,
                 s.v + (s.w / 2)
+            ],
+            [
+                s.u,
+                s.v
+            ]
+        ]
+        : [
+            [
+                s.u,
+                s.v + s.h
+            ],
+            [
+                s.u + s.w,
+                s.v + s.h
+            ],
+            [
+                s.u + s.w,
+                s.v
             ],
             [
                 s.u,
