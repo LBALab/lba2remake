@@ -450,7 +450,7 @@ export function SUB_LIFE_POINT_OBJ(this: ScriptContext, actor: Actor, value) {
 }
 
 export function HIT(this: ScriptContext, actor: Actor, strength: number) {
-    actor.hit(this.actor, strength);
+    actor.hit(this.actor.index, strength);
 }
 
 export function PLAY_VIDEO(this: ScriptContext, cmdState, video: string) {
