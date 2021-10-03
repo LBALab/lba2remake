@@ -2,6 +2,7 @@ import { map, filter, take, drop, each, sortBy } from 'lodash';
 import DebugData, { getVarName, getObjectName } from '../../../../../../DebugData';
 import LocationsNode from '../../../../locator/LocationsNode';
 import { ActorDirMode } from '../../../../../../../../game/Actor';
+import { GetInventorySize } from '../../../../../../../../game/data/inventory';
 
 function getActor(field) {
     const block = field.getSourceBlock();
@@ -166,10 +167,11 @@ function generateVarGame(inventory) {
     if (!game) {
         return [['<vargame>', '-1']];
     }
+    const inventorySize = GetInventorySize();
     const vars = inventory
-        ? take(game.getState().flags.quest, 40)
-        : drop(game.getState().flags.quest, 40);
-    const offset = inventory ? 0 : 40;
+        ? take(game.getState().flags.quest, inventorySize)
+        : drop(game.getState().flags.quest, inventorySize);
+    const offset = inventory ? 0 : inventorySize;
     return map(
         vars,
         (_value, idx) => {

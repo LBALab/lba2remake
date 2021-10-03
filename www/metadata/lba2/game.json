@@ -20,7 +20,7 @@
       "type": "boolean"
     },
     {
-      "name": "incandescent_pearl",
+      "name": "incandescent_pearl_or_travel_token",
       "type": "boolean"
     },
     {
@@ -32,7 +32,7 @@
       "type": "boolean"
     },
     {
-      "name": "kashes"
+      "name": "kashes_or_zlitos"
     },
     {
       "name": "pisto_laser",
@@ -47,7 +47,8 @@
       "type": "boolean"
     },
     {
-      "name": "protopack"
+      "name": "protopack",
+      "type": "boolean"
     },
     {
       "name": "ferry_ticket",
@@ -57,7 +58,8 @@
       "name": "nitro_meca_penguin"
     },
     {
-      "name": "can_of_gazogem"
+      "name": "can_of_gazogem",
+      "type": "boolean"
     },
     {
       "name": "dissidents_ring",
@@ -87,10 +89,12 @@
       "type": "boolean"
     },
     {
-      "name": "blowgun"
+      "name": "blowgun",
+      "type": "boolean"
     },
     {
-      "name": "itinerary_token"
+      "name": "memory_viewer",
+      "type": "boolean"
     },
     {
       "name": "slice_of_tart",
@@ -117,7 +121,7 @@
       "type": "boolean"
     },
     {
-      "name": "fragment_of_the_francos",
+      "name": "fragment_of_the_francos_or_dark_monk_key",
       "type": "boolean"
     },
     {

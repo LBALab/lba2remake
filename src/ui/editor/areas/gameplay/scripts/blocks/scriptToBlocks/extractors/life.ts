@@ -6,6 +6,7 @@ import {
 } from './utils';
 import { GENERIC_IF, LOGIC_OPERATOR } from './control';
 import { lbaToDegrees } from '../../../../../../../../utils/lba';
+import { GetInventorySize } from '../../../../../../../../game/data/inventory';
 
 /*
 ** Behaviours
@@ -113,7 +114,7 @@ function GENERIC_SETTER(type, scope, workspace, cmd, {connection}) {
         connection.connect(block.previousConnection);
     }
     const varIndex = cmd.data.args[0].value;
-    if (scope === 'game' && varIndex < 40) {
+    if (scope === 'game' && varIndex < GetInventorySize()) {
         scope = 'inventory';
     }
     block.setFieldValue(scope, 'scope');

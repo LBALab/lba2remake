@@ -11,7 +11,7 @@ import { getVideoPath } from '../../resources';
 import { ScriptContext } from './ScriptContext';
 import { getParams } from '../../params';
 import { initWagonState } from '../gameplay/wagon';
-import { LBA2Items, GetInventoryItems, LBA1Items } from '../data/inventory';
+import { LBA2Items, GetInventoryItems, LBA1Items, GetInventorySize } from '../data/inventory';
 import Extra, { getBonus } from '../Extra';
 import { CURRENT_TRACK, VAR_GAME } from './condition';
 import { SET_TRACK } from './structural';
@@ -498,8 +498,8 @@ export function INC_CLOVER_BOX(this: ScriptContext) {
 }
 
 export function SET_USED_INVENTORY(this: ScriptContext, item) {
-    if (item < 40) {
-        this.game.getState().flags.quest[item] = 1;
+    if (item < GetInventorySize()) {
+        this.game.getState().hero.usingItemId = item;
     }
 }
 
@@ -709,7 +709,9 @@ export function ADD_LIFE_POINT_OBJ(this: ScriptContext, index, points) {
     }
 }
 
-export const STATE_INVENTORY = unimplemented();
+export function STATE_INVENTORY(this: ScriptContext, item: number, state: number) {
+    this.game.getState().flags.inventory[item] = state;
+}
 
 export const SET_HIT_ZONE = unimplemented();
 

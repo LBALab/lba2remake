@@ -1,3 +1,4 @@
+import { GetInventorySize } from '../../../../../../../../game/data/inventory';
 import { GENERIC_CONDITION, newBlock } from './utils';
 
 export const COL = GENERIC_CONDITION.bind(null, 'lba_collision', false);
@@ -50,7 +51,7 @@ export const OBJECT_DISPLAYED = GENERIC_CONDITION.bind(null, 'lba_object_display
 function VAR_CONDITION(scope, workspace, cmd, { connection }) {
     const block = newBlock(workspace, 'lba_var_value', cmd);
     const cond = cmd.data.condition;
-    if (scope === 'game' && cond.param.value < 40) {
+    if (scope === 'game' && cond.param.value < GetInventorySize()) {
         scope = 'inventory';
     }
     block.setFieldValue(scope, 'scope');

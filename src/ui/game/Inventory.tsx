@@ -3,7 +3,14 @@ import * as THREE from 'three';
 import React, { useEffect, useState, useRef } from 'react';
 
 import SampleType from '../../game/data/sampleType';
-import { GetInventoryMapping, GetInventoryRows, GetInventoryColumns, LBA2WeaponToBodyMapping } from '../../game/data/inventory';
+import {
+    GetInventoryMapping,
+    GetInventoryRows,
+    GetInventoryColumns,
+    GetItemResourceIndex,
+    MapItem,
+    CanUseItem,
+} from '../../game/data/inventory';
 import { getText } from '../../resources';
 import '../styles/inventory.scss';
 import {
@@ -15,6 +22,7 @@ import {
 } from './overlay';
 import { ControlsState } from '../../game/ControlsState';
 import { getParams } from '../../params';
+import { heroUseItem } from '../../game/loop/hero';
 
 const InventoryObjectsIndex = 4;
 const InventoryTextOffset = 100;
@@ -23,7 +31,6 @@ const isLBA1 = getParams().game === 'lba1';
 
 const Inventory = ({ game, closeInventory }: any) => {
     const [selectedSlot, setSelectedSlot] = useState(game.getState().hero.inventorySlot);
-    const [equippedItem, setEquippedItem] = useState(game.getState().hero.equippedItemId);
     const [clock, setClock] = useState(null);
     const [canvas, setCanvas] = useState(null);
     const [renderer, setRenderer] = useState(null);
@@ -39,6 +46,20 @@ const Inventory = ({ game, closeInventory }: any) => {
             itemNodes[slot] = useRef(null);
         }
     }
+
+    const resolveItem = (slot: number) => {
+        const rawItemId = GetInventoryMapping()[slot];
+        const inventoryFlags = game.getState().flags.inventory;
+        const state = inventoryFlags[rawItemId];
+        const itemId = MapItem(rawItemId, state);
+        return itemId;
+    };
+
+    const resolveItemResource = (slot: number) => {
+        const itemId = resolveItem(slot);
+        const resourceId = GetItemResourceIndex(itemId);
+        return resourceId;
+    };
 
     useEffect(() => {
         setClock(createOverlayClock());
@@ -72,9 +93,18 @@ const Inventory = ({ game, closeInventory }: any) => {
         };
     }, [renderer]);
 
-    const loadModel = async (slot) => {
-        models[slot] = await loadSceneInventoryModel(invScenes[slot], GetInventoryMapping()[slot]);
+    const loadModelForResource = async (slot: number, resource: number) => {
+        models[slot] = {
+            model: await loadSceneInventoryModel(invScenes[slot], resource),
+            resourceId: resource,
+        };
         setModels(models);
+    };
+
+    const loadModel = async (slot) => {
+        // Models depend on the item state (e.g. blowgun vs blowtron).
+        const resourceId = resolveItemResource(slot);
+        await loadModelForResource(slot, resourceId);
     };
 
    useEffect(() => {
@@ -134,17 +164,12 @@ const Inventory = ({ game, closeInventory }: any) => {
             action = true;
         }
         if (key === 'Enter' || controlsState?.action === 1) {
-            const itemId = GetInventoryMapping()[game.getState().hero.inventorySlot];
-            if (game.getState().flags.quest[itemId] >= 1) {
-                game.getState().hero.usingItemId = itemId;
-                // Reset the usingItemId after a single game loop execution.
-                game.addLoopFunction(null, () => {
-                    game.getState().hero.usingItemId = -1;
-                });
-                if (itemId in LBA2WeaponToBodyMapping) {
-                    setEquippedItem(itemId);
-                    game.getState().hero.equippedItemId = itemId;
-                }
+            // Use the raw (state-independent) item ID here as it may trigger script actions.
+            const slot = game.getState().hero.inventorySlot;
+            const rawItemId = GetInventoryMapping()[slot];
+            const itemId = resolveItem(slot);
+            if (game.getState().flags.quest[rawItemId] >= 1 && CanUseItem(itemId)) {
+                heroUseItem(game, rawItemId, itemId);
                 closeInventory();
             } else {
                 game.getAudioManager().playSample(SampleType.ERROR);
@@ -179,9 +204,18 @@ const Inventory = ({ game, closeInventory }: any) => {
     });
 
     const renderLoop = (time, slot, selected, item) => {
-        const m = models[slot];
+        const model = models[slot];
+        const m = model?.model;
 
         if (!item || !item.current || !m) {
+            return;
+        }
+
+        // If the item state has changed, request a reload and skip rendering.
+        const resourceId = resolveItemResource(slot);
+        if (model.resourceId !== resourceId) {
+            models[slot] = null;
+            loadModelForResource(slot, resourceId);
             return;
         }
 
@@ -239,11 +273,13 @@ const Inventory = ({ game, closeInventory }: any) => {
     }, [renderer, selectedSlot]);
 
     useEffect(() => {
+        // Text depends on item state (e.g. blowgun vs blowtron).
         const questFlags = game.getState().flags.quest;
-        const itemId = GetInventoryMapping()[selectedSlot];
-        if (questFlags[itemId]) {
+        const rawItemId = GetInventoryMapping()[selectedSlot];
+        const resourceId = resolveItemResource(selectedSlot);
+        if (questFlags[rawItemId]) {
             getText(InventoryObjectsIndex).then((res) => {
-                setInvText(res[InventoryTextOffset + itemId].value);
+                setInvText(res[InventoryTextOffset + resourceId].value);
             });
         } else {
             setInvText('');
@@ -256,7 +292,8 @@ const Inventory = ({ game, closeInventory }: any) => {
             const slot = i * GetInventoryColumns() + j;
             const value = game.getState().flags.quest[GetInventoryMapping()[slot]];
             const inInventory = value >= 1;
-            const equipped = GetInventoryMapping()[slot] === equippedItem;
+            const itemId = resolveItem(slot);
+            const equipped = itemId === game.getState().hero.equippedItemId;
             inventorySlots.push(
                 <div
                   ref={itemNodes[slot]}

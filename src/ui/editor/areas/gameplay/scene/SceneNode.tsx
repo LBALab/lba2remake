@@ -7,6 +7,7 @@ import {PointsNode} from './nodes/PointsNode';
 import {makeVarDef, makeVariables, Var} from './node_factories/variables';
 import LocationsNode from '../locator/LocationsNode';
 import Scene from '../../../../../game/Scene';
+import { GetInventorySize } from '../../../../../game/data/inventory';
 
 const VarCube = makeVariables('varcube', 'Scene Variables', (scene) => {
     if (scene) {
@@ -38,14 +39,16 @@ const VarGame = {
                 if (VarGameConfig.filterInventory) {
                     let count = 0;
                     each(scene.usedVarGames, (varGame) => {
-                        if (varGame < 40)
+                        if (varGame < GetInventorySize())
                             count += 1;
                     });
                     return count;
                 }
                 return scene.usedVarGames.length;
             }
-            return VarGameConfig.filterInventory ? 40 : game.getState().flags.quest.length;
+            return VarGameConfig.filterInventory
+                ? GetInventorySize()
+                : game.getState().flags.quest.length;
         }
         return 0;
     },
@@ -56,7 +59,7 @@ const VarGame = {
             const state = game.getState();
             if (VarGameConfig.filterScene) {
                 const usedVarGames = VarGameConfig.filterInventory
-                    ? filter(scene.usedVarGames, vg => vg < 40)
+                    ? filter(scene.usedVarGames, vg => vg < GetInventorySize())
                     : scene.usedVarGames;
                 const varGame = usedVarGames[idx];
                 if (varGame !== undefined) {
