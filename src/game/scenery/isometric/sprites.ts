@@ -18,7 +18,9 @@ import {
     getSpritesClipInfo,
     getSpritesRawClipInfo,
     getSpritesAnim3DSClipInfo,
-    getModelReplacements
+    getModelReplacements,
+    getAnim3DS,
+    getAnim3DSInfo,
 } from '../../../resources';
 import { getParams } from '../../../params';
 import { loadReplacementData } from './metadata/replacements';
@@ -27,6 +29,8 @@ const loader = new GLTFLoader();
 
 let spriteCache = null;
 let spriteRawCache = null;
+let anim3DSCache = null;
+let anim3DSInfoCache = null;
 const push = Array.prototype.push;
 
 let cachePromise = null;
@@ -37,6 +41,9 @@ async function loadCacheOnce() {
     spriteCache = loadSpritesMapping(sprites, palette);
     const spritesRaw = await getSpritesRaw();
     spriteRawCache = loadSpritesMapping(spritesRaw, palette);
+    const anims3DS = await getAnim3DS();
+    anim3DSCache = loadSpritesMapping(anims3DS, palette);
+    anim3DSInfoCache = await getAnim3DSInfo();
 }
 
 async function loadCache() {
@@ -54,7 +61,14 @@ export async function loadSprite(
     is3DCam = false,
 ) {
     await loadCache();
-    const cache = (index < 100) ? spriteRawCache : spriteCache;
+    let cache;
+    if (hasSpriteAnim3D) {
+        cache = anim3DSCache;
+    } else if (index < 100) {
+        cache = spriteRawCache;
+    } else {
+        cache = spriteCache;
+    }
 
     const clipInfo = hasSpriteAnim3D ?
         await getSpritesAnim3DSClipInfo() :
@@ -71,7 +85,8 @@ export async function loadSprite(
     let threeObject;
     let update = (_time) => {};
     const { sprites: replacements } = await getModelReplacements();
-    if (replacements && index in replacements) {
+    // TODO: replacements for animated sprites.
+    if (!hasSpriteAnim3D && replacements && index in replacements) {
         if (replacements[index].hide) {
             threeObject = new THREE.Object3D();
         } else {
@@ -451,4 +466,9 @@ export async function loadSpriteReplacement(ambience, {file, fx}) {
             });
         });
     });
+}
+
+export async function loadAnim3DSInfo(index: number) {
+    await loadCache();
+    return anim3DSInfoCache[index];
 }

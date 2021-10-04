@@ -9,7 +9,7 @@ import { parseModelLBA1 } from './parsers/body1';
 import { parseModelLBA2 } from './parsers/body2';
 import { parseSceneMapLBA1, parseSceneLBA1 } from './parsers/scene1';
 import { parseSceneMapLBA2, parseSceneLBA2 } from './parsers/scene2';
-import { parseSpriteClipInfo, parseSprite, parseSpriteRaw } from './parsers/sprite';
+import { parseSpriteClipInfo, parseSprite, parseSpriteRaw, parseAnim3DSInfo } from './parsers/sprite';
 import { parseBrick } from './parsers/bricks';
 import { parseLibrary } from './parsers/libraries';
 import { parseGridLBA1 } from './parsers/grids1';
@@ -53,6 +53,7 @@ const ResourceTypes = {
     OBL: { type: 'OBL', description: 'LBA2 Island Object HQR File', parser: NOP },
     HQR: { type: 'HQR', description: 'LBA High Quality Resource', parser: NOP },
     ILE: { type: 'ILE', description: 'LBA2 Island HQR File', parser: NOP },
+    '3DS': { type: '3DS', description: 'Animated Sprite Information', parser: parseAnim3DSInfo },
 };
 
 export { ResourceTypes };
