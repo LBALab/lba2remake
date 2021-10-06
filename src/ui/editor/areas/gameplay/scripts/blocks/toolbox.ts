@@ -311,7 +311,7 @@ const baseTree = `<xml id="toolbox" style="display: none">
     <block type="lba_flow_obj"/>
     <block type="lba_impact_obj"/>
     <block type="lba_pos_obj_around"/>
-    <block type="lba_scale"/>
+    <block type="lba_ladder"/>
     <block type="lba_popcorn"/>
     <block type="lba_set_frame_3ds"/>
     <block type="lba_set_action"/>

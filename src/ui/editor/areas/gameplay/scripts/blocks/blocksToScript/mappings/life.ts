@@ -395,7 +395,7 @@ export default {
     lba_flow_obj: { code: 0x92 },
     lba_impact_obj: { code: 0x56 },
     lba_pos_obj_around: { code: 0x99 },
-    lba_scale: { code: 0x6B },
+    lba_ladder: { code: 0x6B },
     lba_popcorn: { code: 0x90 },
     lba_set_frame_3ds: { code: 0x55 },
     lba_set_action: { code: 0x52 }

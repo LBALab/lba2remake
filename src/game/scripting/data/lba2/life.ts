@@ -645,8 +645,8 @@ export const LifeOpcode = [
     },
     {
         opcode: 0x6B,
-        command: 'SCALE',
-        handler: lf.SCALE,
+        command: 'LADDER',
+        handler: lf.LADDER,
         args: ['Uint8', 'Uint8']
     },
     {

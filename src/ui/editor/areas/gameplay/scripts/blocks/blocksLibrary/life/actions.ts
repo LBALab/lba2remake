@@ -571,8 +571,8 @@ export const lba_pos_obj_around = action((_block, field) => {
     field(new Blockly.FieldNumber(), 'arg_1');
 });
 
-export const lba_scale = action((_block, field) => {
-    field('(?) scale');
+export const lba_ladder = action((_block, field) => {
+    field('ladder');
     field(new Blockly.FieldNumber(), 'arg_0');
     field(new Blockly.FieldNumber(), 'arg_1');
 });

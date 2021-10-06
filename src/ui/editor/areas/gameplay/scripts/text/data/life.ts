@@ -455,7 +455,7 @@ export default {
         type: 'fct',
         indent: Indent.KEEP
     },
-    SCALE: {
+    LADDER: {
         type: 'fct',
         indent: Indent.KEEP
     },

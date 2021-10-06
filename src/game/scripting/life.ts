@@ -708,7 +708,13 @@ export function BRUTAL_EXIT(this: ScriptContext) {
 
 export const REPLACE = unimplemented();
 
-export const SCALE = unimplemented();
+export function LADDER(this: ScriptContext, which: number, flag: number) {
+    for (const zone of this.scene.zones) {
+        if (zone.props.type === ZoneType.LADDER && zone.props.param === which) {
+            zone.ladder.enabled = (flag !== 0);
+        }
+    }
+}
 
 export function SET_ARMOR(this: ScriptContext, value: number) {
     SET_ARMOR_OBJ.call(this, this.actor, value);
