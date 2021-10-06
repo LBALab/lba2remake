@@ -738,7 +738,13 @@ export function STATE_INVENTORY(this: ScriptContext, item: number, state: number
     this.game.getState().flags.inventory[item] = state;
 }
 
-export const SET_HIT_ZONE = unimplemented();
+export function SET_HIT_ZONE(this: ScriptContext, which: number, damage: number) {
+    for (const zone of this.scene.zones) {
+        if (zone.props.type === ZoneType.SPIKE && zone.props.param === which) {
+            zone.spike.damage = damage;
+        }
+    }
+}
 
 export function SAMPLE(this: ScriptContext, index) {
     this.actor.playSample(index);
