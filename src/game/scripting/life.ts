@@ -36,7 +36,13 @@ export function ANIM_OBJ(this: ScriptContext, actor: Actor, animIndex: number) {
     actor.setAnim(animIndex);
 }
 
-export const SET_CAMERA = unimplemented();
+export function SET_CAMERA(this: ScriptContext, which: number, flag: number) {
+    for (const zone of this.scene.zones) {
+        if (zone.props.type === ZoneType.CAMERA && zone.props.param === which) {
+            zone.camera.enabled = (flag !== 0);
+        }
+    }
+}
 
 export const CAMERA_CENTER = unimplemented();
 
