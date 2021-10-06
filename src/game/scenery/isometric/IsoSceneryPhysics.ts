@@ -277,7 +277,8 @@ export default class IsoSceneryPhysics {
                 position,
                 dx,
                 dz,
-                isTouchingGround
+                isTouchingGround,
+                obj instanceof Actor && (obj as Actor).props.flags.hasCollisionBricksLow
             );
         }
         position.multiplyScalar(WORLD_SIZE);
@@ -397,7 +398,8 @@ function processBoxIntersections(
     position: THREE.Vector3,
     dx: number,
     dz: number,
-    isTouchingGround: boolean
+    isTouchingGround: boolean,
+    lowCollisions: boolean
 ) {
     const boundingBox = obj.model.boundingBox;
     ACTOR_BOX.copy(boundingBox);
@@ -405,6 +407,11 @@ function processBoxIntersections(
     ACTOR_BOX.max.multiplyScalar(STEP);
     ACTOR_BOX.translate(position);
     ACTOR_BOX.min.y += 1 / 128;
+
+    // The lowCollisions flag indicates crawling.
+    if (lowCollisions) {
+        ACTOR_BOX.max.y = ACTOR_BOX.min.y + (ACTOR_BOX.max.y - ACTOR_BOX.min.y) / 2;
+    }
 
     let collision = false;
     for (let ox = -1; ox < 2; ox += 1) {
