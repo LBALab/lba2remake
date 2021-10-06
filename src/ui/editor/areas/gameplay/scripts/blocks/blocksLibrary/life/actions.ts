@@ -506,7 +506,7 @@ export const lba_set_grm = action((_block, field) => {
 });
 
 export const lba_set_change_cube = action((_block, field) => {
-    field('(?) set change cube');
+    field('set change cube');
     field(new Blockly.FieldNumber(), 'arg_0');
     field(new Blockly.FieldNumber(), 'arg_1');
 });

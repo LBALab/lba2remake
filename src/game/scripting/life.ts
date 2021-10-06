@@ -595,7 +595,13 @@ export function SUB_FUEL(this: ScriptContext, fuel) {
 
 export const SET_GRM = unimplemented();
 
-export const SET_CHANGE_CUBE = unimplemented();
+export function SET_CHANGE_CUBE(this: ScriptContext, zone: number, flag: number) {
+    for (const z of this.scene.zones) {
+        if (z.props.type === ZoneType.TELEPORT && z.teleport.id === zone) {
+            z.teleport.enabled = (flag !== 0);
+        }
+    }
+}
 
 export function MESSAGE_ZOE(this: ScriptContext, cmdState, id) {
     const colorHero = this.actor.props.textColor;
