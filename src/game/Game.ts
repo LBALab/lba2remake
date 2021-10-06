@@ -38,6 +38,7 @@ export default class Game {
     private _audio: any;
     private _loopFunctions: LoopFunction[];
     private _cinema: boolean;
+    private _elapsedTimeBase: number = 0;
     menuTexts: any;
     texts: any;
 
@@ -195,7 +196,7 @@ export default class Game {
     getTime() {
         return {
             delta: Math.min(this.clock.getDelta(), 0.025),
-            elapsed: this.clock.getElapsedTime(),
+            elapsed: this._elapsedTimeBase + this.clock.getElapsedTime(),
         };
     }
 
@@ -207,8 +208,11 @@ export default class Game {
     }
 
     pause(pauseAudio = true) {
+        // The clock restarts to zero whenever stopped so we need to track the accumulated time so
+        // far otherwise time will go backwards when we unpause, breaking any waits.
         this._isPaused = true;
         this.clock.stop();
+        this._elapsedTimeBase += this.clock.elapsedTime;
         if (pauseAudio) {
             this._audio.pause();
         }
