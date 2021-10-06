@@ -30,16 +30,33 @@ const ZONE_TYPE_MATERIAL_COLOR = [
     '#008000', // RAIL
 ];
 
+export enum ZoneType {
+    TELEPORT = 0,
+    CAMERA = 1,
+    SCENERIC = 2,
+    FRAGMENT = 3,
+    BONUS = 4,
+    TEXT = 5,
+    LADDER = 6,
+    CONVEYOR = 7,
+    SPIKE = 8,
+    RAIL = 9,
+}
+
 export interface ZoneProps {
     sceneIndex: number;
     index: number;
-    type: number;
+    type: ZoneType;
     pos: number[];
-    snap: number;
-    info0: number;
-    info1: number;
-    info2: number;
-    info3: number;
+    param: number;
+    info0: number;      // Camera X. Bonus type. Fragment number. Ladder/rail on/off. Text color.
+    info1: number;      // Camera Y. Bonus quantity. Conveyor on/off. Spike damage. Text camera.
+    info2: number;      // Camera Z. Fragment on/off. Conveyor dir. Spike rearm time. Text side.
+    info3: number;      // Camera alpha. Teleport beta.
+    info4: number;      // Camera beta. Teleport destination scene.
+    info5: number;      // Camera gamma.
+    info6: number;      // Camera distance.
+    info7: number;      // Camera on/off/force. Teleport on/off.
     box: {
         xMin: number;
         yMin: number;
@@ -67,6 +84,57 @@ export default class Zone {
     private icon: HTMLImageElement;
     private name: string;
 
+    // Flags and settings unpacked from the zone props (and related state).
+    teleport: {
+        x: number;
+        y: number;
+        z: number;
+        beta: number;
+        id: number;
+        enabled: boolean;
+    };
+    camera: {
+        x: number;
+        y: number;
+        z: number;
+        alpha: number;
+        beta: number;
+        gamma: number;
+        distance: number;
+        enabled: boolean;
+        force: boolean;
+    };
+    sceneric: {
+    };
+    fragment: {
+        fragment: number;
+        enabled: boolean;
+    };
+    bonus: {
+        type: number;
+        quantity: number;
+        given: boolean;
+    };
+    text: {
+        color: number;
+        camera: number;
+        side: number;
+    };
+    ladder: {
+        enabled: boolean;
+    };
+    conveyor: {
+        enabled: boolean;
+        direction: number;
+    };
+    spike: {
+        damage: number;
+        rearmTime: number;
+    };
+    rail: {
+        enabled: boolean;
+    };
+
     constructor(props: ZoneProps, is3DCam: boolean) {
         this.index = props.index;
         this.zoneType = ZONE_TYPE[props.type];
@@ -75,6 +143,8 @@ export default class Zone {
         this.physics = {
             position: new THREE.Vector3(props.pos[0], props.pos[1], props.pos[2])
         };
+
+        this.unpackProps();
 
         const {xMin, yMin, zMin, xMax, yMax, zMax} = props.box;
         const bb = new THREE.Box3(
@@ -145,5 +215,89 @@ export default class Zone {
         this.labelCtx.fillStyle = selected ? 'black' : 'white';
         this.labelCtx.fillText(this.name, 128 + 18, 38, 256 - 64);
         this.labelTexture.needsUpdate = true;
+    }
+
+    private unpackProps() {
+        switch (this.props.type)
+        {
+            case ZoneType.TELEPORT:
+                this.teleport = {
+                    x: this.props.info0,
+                    y: this.props.info1,
+                    z: this.props.info2,
+                    beta: this.props.info3,
+                    id: this.props.info4,
+                    enabled: (this.props.info7 & 3) !== 0,
+                };
+                break;
+
+            case ZoneType.CAMERA:
+                this.camera = {
+                    x: this.props.info0,
+                    y: this.props.info1,
+                    z: this.props.info2,
+                    alpha: this.props.info3,
+                    beta: this.props.info4,
+                    gamma: this.props.info5,
+                    distance: this.props.info6,
+                    enabled: (this.props.info7 & 3) !== 0,
+                    force: (this.props.info7 & 8) !== 0,
+                };
+                break;
+
+            case ZoneType.SCENERIC:
+                this.sceneric = {
+                };
+                break;
+
+            case ZoneType.FRAGMENT:
+                this.fragment = {
+                    fragment: this.props.info0,
+                    enabled: this.props.info2 !== 0,
+                };
+                break;
+
+            case ZoneType.BONUS:
+                this.bonus = {
+                    type: this.props.info0,
+                    quantity: this.props.info1,
+                    given: false,
+                };
+                break;
+
+            case ZoneType.TEXT:
+                this.text = {
+                    color: this.props.info0,
+                    camera: this.props.info1,
+                    side: this.props.info2,
+                };
+                break;
+
+            case ZoneType.LADDER:
+                this.ladder = {
+                    enabled: this.props.info0 !== 0,
+                };
+                break;
+
+            case ZoneType.CONVEYOR:
+                this.conveyor = {
+                    enabled: this.props.info1 !== 0,
+                    direction: this.props.info2,
+                };
+                break;
+
+            case ZoneType.SPIKE:
+                this.spike = {
+                    damage: this.props.info1,
+                    rearmTime: this.props.info2,
+                };
+                break;
+
+            case ZoneType.RAIL:
+                this.rail = {
+                    enabled: this.props.info0 !== 0,
+                };
+                break;
+        }
     }
 }

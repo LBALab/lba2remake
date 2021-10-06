@@ -8,6 +8,7 @@ import LifeProps from './data/life';
 import MoveProps from './data/move';
 import ConditionProps from './data/condition';
 import {formatVar} from './format';
+import { ZoneType } from '../../../../../../game/Zone';
 
 export function getDebugListing(type, scene, actor) {
     if (scene && actor) {
@@ -255,7 +256,7 @@ export function mapDataName(scene: Scene, data) {
         if (data.value === -1)
             return 'none';
         const foundZone = find(scene.zones, zone =>
-            zone.props.type === 2 && zone.props.snap === data.value);
+            zone.props.type === ZoneType.SCENERIC && zone.props.param === data.value);
         if (foundZone) {
             return getObjectName('zone', scene.index, foundZone.props.index);
         }

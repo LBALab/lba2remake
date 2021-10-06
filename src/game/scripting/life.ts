@@ -15,6 +15,7 @@ import { LBA2Items, GetInventoryItems, LBA1Items, GetInventorySize } from '../da
 import Extra, { getBonus } from '../Extra';
 import { CURRENT_TRACK, VAR_GAME } from './condition';
 import { SET_TRACK } from './structural';
+import { ZoneType } from '../Zone';
 
 const isLBA1 = getParams().game === 'lba1';
 
@@ -741,8 +742,8 @@ export const BACKGROUND = unimplemented();
 
 export function SET_RAIL(this: ScriptContext, rail: number, value: number) {
     for (const zone of this.scene.zones) {
-        if (zone.props.type === 9 && zone.props.snap === rail) {
-            zone.props.info1 = value;
+        if (zone.props.type === ZoneType.RAIL && zone.props.param === rail) {
+            zone.rail.enabled = (value !== 0);
         }
     }
 }
