@@ -672,7 +672,13 @@ export function THE_END(this: ScriptContext) {
     this.game.getState().hero.magic = 80;
 }
 
-export const ESCALATOR = unimplemented();
+export function ESCALATOR(this: ScriptContext, which: number, flag: number) {
+    for (const zone of this.scene.zones) {
+        if (zone.props.type === ZoneType.CONVEYOR && zone.props.param === which) {
+            zone.conveyor.enabled = (flag !== 0);
+        }
+    }
+}
 
 export function PLAY_MUSIC(this: ScriptContext, index) {
     const audio = this.game.getAudioManager();
