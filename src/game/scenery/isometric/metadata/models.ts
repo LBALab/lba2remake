@@ -105,7 +105,7 @@ export async function loadFullSceneModel(
     };
 }
 
-export async function saveFullSceneModel(replacements, entry) {
+export async function saveFullSceneModel(replacements, entry): Promise<void> {
     const { threeObject, animations } = replacements;
     threeObject.traverse((node) => {
         if (node instanceof THREE.Mesh) {

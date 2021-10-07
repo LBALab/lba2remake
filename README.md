@@ -8,6 +8,11 @@ A Little Big Adventure 2 / Twinsen's Odyssey reimplementation in Typescript / Th
 
 #### [Live demo](https://www.lba2remake.net) (or [Editor mode](https://www.lba2remake.net/#editor=true))
 
+## Videos
+
+* [Presenting the v0.5 update (2021)](https://www.youtube.com/watch?v=Ifa4C_R9pQc)
+* [Presenting the v0.4 update (2020)](https://www.youtube.com/watch?v=cZDVVcCLeY0)
+* [Introducing the project (2020)](https://www.youtube.com/watch?v=6bAzSgZ0nD0)
 
 ## Vision / goals
 

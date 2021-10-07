@@ -16,5 +16,21 @@
     "cam_dinofly_landing_area2",
     "cam_dinofly_landing_area3",
     "to_protection_spell_cave"
+  ],
+  "varcubes": [
+    {
+      "name": "in_conversation",
+      "type": "boolean"
+    },
+    {
+      "name": "dinofly_destination",
+      "type": "enum",
+      "enumValues": {
+        "0": "none",
+        "1": "desert_island",
+        "2": "citadel_island",
+        "3": "dome_of_the_slate"
+      }
+    }
   ]
 }

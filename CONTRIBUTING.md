@@ -26,7 +26,7 @@ If you have an idea that is not already listed there, you can [open an issue](ht
 
 ## Contributing as a developer
 
-The best way to start contributing as a developer is to get in touch with us over [Slack](https://join.slack.com/t/lba2remake/shared_invite/enQtMzIyNzIwNDMzNTIxLTc5OGVkNjI3NGE4YjM5ZTE5YmRkODBjMzNjOTk5NGM1NGIyMTI2N2FlOTYzYjBlZjE4NzIzYWI3ZWI0YmViMmI) and tell us what you'd like to do with the project so we can point you in the right direction.
+The best way to start contributing as a developer is to get in touch with us over [Slack](https://join.slack.com/t/lba2remake/shared_invite/zt-4497ew6p-NxlmHoAWtG6lXDG9lW0NMA) and tell us what you'd like to do with the project so we can point you in the right direction.
 
 Or you can fork the project and work on whatever you want!
 

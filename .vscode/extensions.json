@@ -2,6 +2,6 @@
     "recommendations": [
         "christian-kohler.npm-intellisense",
         "eg2.vscode-npm-script",
-        "ms-vscode.vscode-typescript-tslint-plugin"
+        "eg2.tslint"
     ]
 }

@@ -4398,6 +4398,11 @@
     "15": {
       "mirror": true
     },
+    "17": {
+      "replace": true,
+      "file": "OT_017_casino_reception_cabinet.glb",
+      "orientation": 0
+    },
     "18": {
       "mirror": true
     },
@@ -4421,11 +4426,26 @@
       "file": "OT_039_080_magritte_plants.glb",
       "orientation": 0
     },
+    "58": {
+      "replace": true,
+      "file": "OT_058_059_round_wall_lamp.glb",
+      "orientation": 0
+    },
+    "59": {
+      "replace": true,
+      "file": "OT_058_059_round_wall_lamp.glb",
+      "orientation": 3
+    },
     "66": {
       "mirror": true
     },
     "67": {
       "mirror": true
+    },
+    "71": {
+      "replace": true,
+      "file": "OT_071_huge_zlitos_with_keyhole.glb",
+      "orientation": 0
     },
     "79": {
       "replace": true,
@@ -4437,11 +4457,31 @@
       "file": "OT_039_080_magritte_plants.glb",
       "orientation": 0
     },
+    "84": {
+      "replace": true,
+      "file": "OT_084_085_huge_zlitos_deco.glb",
+      "orientation": 0
+    },
+    "85": {
+      "replace": true,
+      "file": "OT_084_085_huge_zlitos_deco.glb",
+      "orientation": 2
+    },
     "89": {
       "mirror": true
     },
+    "90": {
+      "replace": true,
+      "file": "OT_084_085_huge_zlitos_deco.glb",
+      "orientation": 1
+    },
     "91": {
       "mirror": true
+    },
+    "92": {
+      "replace": true,
+      "file": "OT_092_green_counter.glb",
+      "orientation": 0
     },
     "102": {
       "replace": true,
@@ -4539,11 +4579,26 @@
     "128": {
       "mirror": true
     },
+    "129": {
+      "replace": true,
+      "file": "OT_084_085_huge_zlitos_deco.glb",
+      "orientation": 3
+    },
     "136": {
       "mirror": true
     },
     "137": {
       "mirror": true
+    },
+    "138": {
+      "replace": true,
+      "file": "OT_138_139_green_square_stool.glb",
+      "orientation": 0
+    },
+    "139": {
+      "replace": true,
+      "file": "OT_138_139_green_square_stool.glb",
+      "orientation": 1
     },
     "141": {
       "replace": true,

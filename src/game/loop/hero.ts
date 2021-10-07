@@ -104,6 +104,9 @@ export function getBodyFromGameState(game: Game): number {
             return -1;
         }
         if (game.getState().flags.quest[LBA2Items.TUNIC]) {
+            if (game.getState().flags.inventory[LBA2Items.TUNIC] === 1) {
+                return LBA2BodyType.TWINSEN_WIZARD;
+            }
             return LBA2BodyType.TWINSEN_TUNIC;
         }
         return LBA2BodyType.TWINSEN_NO_TUNIC;
@@ -114,9 +117,20 @@ export function getBodyFromGameState(game: Game): number {
     }
 
     const body = LBA2WeaponToBodyMapping[equippedItem];
-    if (body === LBA2BodyType.TWINSEN_TUNIC && !game.getState().flags.quest[LBA2Items.TUNIC]) {
+    const tunic = game.getState().flags.quest[LBA2Items.TUNIC];
+    const wizard = tunic && game.getState().flags.inventory[LBA2Items.TUNIC] === 1;
+
+    // Special cases.
+    if (body === LBA2BodyType.TWINSEN_TUNIC && !tunic) {
         return LBA2BodyType.TWINSEN_NO_TUNIC;
     }
+    if (body === LBA2BodyType.TWINSEN_BLOWGUN && wizard) {
+        return LBA2BodyType.TWINSEN_WIZARD_BLOWGUN;
+    }
+    if (body === LBA2BodyType.TWINSEN_TUNIC && wizard) {
+        return LBA2BodyType.TWINSEN_WIZARD;
+    }
+
     return body;
 }
 
@@ -559,7 +573,7 @@ function processActorMovement(
                     case LBA2Items.WANNIE_GLOVE:
                         animIndex = AnimType.WANNIE_GLOVE_SWING;
                         break;
-                    case LBA2Items.LASER_PISTON_WITH_CRYSTAL:
+                    case LBA2Items.LASER_PISTOL:
                         animIndex = AnimType.LASTER_PISTOL_SHOOT;
                         break;
                     case LBA1Items.FUNFROCK_SABER:
@@ -703,4 +717,23 @@ function processCamRelativeMovement(
         }
     }
     return animIndex;
+}
+
+export function heroUseItem(game: Game, rawItemId: number, itemId?: number) {
+    if (!itemId) {
+        itemId = rawItemId;
+    }
+
+    // Use the raw item ID here as it will be passed to scripts.
+    game.getState().hero.usingItemId = rawItemId;
+
+    // Reset the usingItemId after a single game loop execution.
+    game.addLoopFunction(null, () => {
+        game.getState().hero.usingItemId = -1;
+    });
+
+    if (itemId in LBA2WeaponToBodyMapping) {
+        // Use the mapped item ID here as it affects Twinsen's model.
+        game.getState().hero.equippedItemId = itemId;
+    }
 }

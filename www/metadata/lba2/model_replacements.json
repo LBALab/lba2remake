@@ -44,6 +44,15 @@
 		},
         "230": {
 			"hide": true
-		}
+		},
+        "281": {
+            "file": "huge_zlitos_deco.glb"
+        },
+        "277": {
+            "file": "casino_entrance_cord.glb"
+        },
+        "266": {
+            "file": "casino_entrance_elevator.glb"
+        }
     }
 }

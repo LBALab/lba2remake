@@ -11,8 +11,10 @@ import { getVideoPath } from '../../resources';
 import { ScriptContext } from './ScriptContext';
 import { getParams } from '../../params';
 import { initWagonState } from '../gameplay/wagon';
-import { LBA2Items, GetInventoryItems, LBA1Items } from '../data/inventory';
+import { LBA2Items, GetInventoryItems, LBA1Items, GetInventorySize } from '../data/inventory';
 import Extra, { getBonus } from '../Extra';
+import { CURRENT_TRACK, VAR_GAME } from './condition';
+import { SET_TRACK } from './structural';
 
 const isLBA1 = getParams().game === 'lba1';
 
@@ -447,9 +449,8 @@ export function SUB_LIFE_POINT_OBJ(this: ScriptContext, actor: Actor, value) {
     }
 }
 
-export function HIT(this: ScriptContext, actor: Actor, strength) {
-    actor.state.wasHitBy = this.actor.index;
-    actor.props.life -= strength;
+export function HIT(this: ScriptContext, actor: Actor, strength: number) {
+    actor.hit(this.actor.index, strength);
 }
 
 export function PLAY_VIDEO(this: ScriptContext, cmdState, video: string) {
@@ -497,8 +498,8 @@ export function INC_CLOVER_BOX(this: ScriptContext) {
 }
 
 export function SET_USED_INVENTORY(this: ScriptContext, item) {
-    if (item < 40) {
-        this.game.getState().flags.quest[item] = 1;
+    if (item < GetInventorySize()) {
+        this.game.getState().hero.usingItemId = item;
     }
 }
 
@@ -609,7 +610,9 @@ export function ACTION(this: ScriptContext) {
 
 export const SET_FRAME = unimplemented();
 
-export const SET_SPRITE = unimplemented();
+export function SET_SPRITE(this: ScriptContext, index: number) {
+    this.actor.setSprite(this.scene, index);
+}
 
 export function SET_FRAME_3DS(this: ScriptContext) {
 
@@ -664,9 +667,13 @@ export function PLAY_MUSIC(this: ScriptContext, index) {
     audio.playMusic(index);
 }
 
-export const TRACK_TO_VAR_GAME = unimplemented();
+export function TRACK_TO_VAR_GAME(this: ScriptContext, index) {
+    SET_VAR_GAME.call(this, index, CURRENT_TRACK.call(this));
+}
 
-export const VAR_GAME_TO_TRACK = unimplemented();
+export function VAR_GAME_TO_TRACK(this: ScriptContext, index) {
+    SET_TRACK.call(this, VAR_GAME.call(this, index));
+}
 
 export const ANIM_TEXTURE = unimplemented();
 
@@ -684,9 +691,13 @@ export const REPLACE = unimplemented();
 
 export const SCALE = unimplemented();
 
-export const SET_ARMOR = unimplemented();
+export function SET_ARMOR(this: ScriptContext, value: number) {
+    SET_ARMOR_OBJ.call(this, this.actor, value);
+}
 
-export const SET_ARMOR_OBJ = unimplemented();
+export function SET_ARMOR_OBJ(this: ScriptContext, actor: Actor, value: number) {
+    actor.props.armour = value;
+}
 
 export function ADD_LIFE_POINT_OBJ(this: ScriptContext, index, points) {
     const actor = this.scene.actors[index];
@@ -698,7 +709,9 @@ export function ADD_LIFE_POINT_OBJ(this: ScriptContext, index, points) {
     }
 }
 
-export const STATE_INVENTORY = unimplemented();
+export function STATE_INVENTORY(this: ScriptContext, item: number, state: number) {
+    this.game.getState().flags.inventory[item] = state;
+}
 
 export const SET_HIT_ZONE = unimplemented();
 

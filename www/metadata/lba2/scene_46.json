@@ -36,5 +36,31 @@
     "lighthouse_door",
     "lighthouse_area_limit2",
     "cam_fork_dead_end"
+  ],
+  "varcubes": [
+    {
+      "name": "in_conversation",
+      "type": "boolean"
+    },
+    {
+      "name": "speaking_to_bersimon_wizard",
+      "type": "boolean"
+    },
+    {
+      "name": "scooter_destination",
+      "type": "enum",
+      "enumValues": {
+        "0": "none",
+        "1": "lupin_bourg",
+        "2": "woodbridge_island",
+        "3": "wizards_lane"
+      }
+    },
+    null,
+    null,
+    {
+      "name": "esmers_hostile",
+      "type": "boolean"
+    }
   ]
 }

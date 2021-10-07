@@ -5,6 +5,7 @@ import { scopeColors } from './blocks/blocksLibrary/utils';
 import { fullscreen } from '../../../../styles';
 import DebugData from '../../../DebugData';
 import Scene from '../../../../../game/Scene';
+import { GetInventorySize } from '../../../../../game/data/inventory';
 
 const darker = (c) => {
     const hsl = convert.hex.hsl(c);
@@ -91,7 +92,7 @@ const scopes = [
                 return [];
             }
             const vars = game.getState().flags.quest;
-            return mapVariables(drop(vars, 40), { offset: 40, type: 'game' });
+            return mapVariables(drop(vars, GetInventorySize()), { offset: GetInventorySize(), type: 'game' });
         }
     },
     {
@@ -103,7 +104,7 @@ const scopes = [
                 return [];
             }
             const vars = game.getState().flags.quest;
-            return mapVariables(take(vars, 40), { type: 'game' });
+            return mapVariables(take(vars, GetInventorySize()), { type: 'game' });
         }
     },
     {
