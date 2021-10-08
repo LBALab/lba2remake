@@ -12,6 +12,7 @@
 ### Metadata
 * Sara González Ramajo (@SendellX)
 * Alexandre Fontoura (@xesf)
+* Fraser Gordon (@fraserjgordon)
 
 ## Contributions
 ### Development
@@ -23,6 +24,7 @@
 ### Metadata
 * Sara González Ramajo (@SendellX)
 * Jeffrey Veenhuis (@Jeffroiscool)
+* Fraser Gordon (@fraserjgordon)
 
 ### DevOps
 * @chucksellick
