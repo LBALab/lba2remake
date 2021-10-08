@@ -480,7 +480,7 @@ export const lba_set_can_fall = action((_block, field) => {
 });
 
 export const lba_brick_col = action((_block, field) => {
-    field('(?) brick_ ol');
+    field('brick_col');
     field(new Blockly.FieldNumber(), 'arg_0');
 });
 
