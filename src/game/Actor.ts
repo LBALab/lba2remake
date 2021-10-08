@@ -120,6 +120,7 @@ export interface ActorState {
     floorSound: number;
     floorSound2: number;
     nextAnim: number;
+    noShock: boolean;
 }
 
 export enum SlideWay {
@@ -673,6 +674,11 @@ export default class Actor {
     }
 
     hit(hitBy, hitStrength) {
+        // If the actor is flagged 'noShock', all hit effects are ignored.
+        if (this.state.noShock) {
+            return;
+        }
+
         if (this.sprite) {
             this.state.wasHitBy = hitBy;
             return;
@@ -824,6 +830,7 @@ export default class Actor {
             floorSound: -1,
             floorSound2: -1,
             nextAnim: null,
+            noShock: false,
         };
     }
 }

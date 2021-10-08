@@ -490,7 +490,7 @@ export const lba_obj_col = action((_block, field) => {
 });
 
 export const lba_no_shock = action((_block, field) => {
-    field('(?) no shock');
+    field('no shock');
     field(new Blockly.FieldNumber(), 'arg_0');
 });
 
