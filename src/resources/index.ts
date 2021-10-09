@@ -53,6 +53,20 @@ const getSpritesAnim3DSClipInfo = async () => {
     return await loadResource(ResourceName.ANIM3DS_CLIP);
 };
 
+const getAnim3DS = async () => {
+    // The last entry in the HQR is an info table, not a sprite so is not loaded here.
+    const resource = await loadResource(ResourceName.ANIM3DS);
+    const entriesPromise = [];
+    for (let i = 0; i < (resource.length - 1); i += 1) {
+        entriesPromise.push(loadResource(ResourceName.ANIM3DS, i));
+    }
+    return await Promise.all(entriesPromise);
+};
+
+const getAnim3DSInfo = async() => {
+    return await loadResource(ResourceName.ANIM3DS_INFO);
+};
+
 const getEntities = async () => {
     return await loadResource(ResourceName.ENTITIES);
 };
@@ -207,6 +221,8 @@ export {
     getSpritesRaw,
     getSpritesRawClipInfo,
     getSpritesAnim3DSClipInfo,
+    getAnim3DS,
+    getAnim3DSInfo,
     getEntities,
     getAnimations,
     getAnimationsSync,

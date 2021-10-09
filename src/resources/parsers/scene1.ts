@@ -161,7 +161,7 @@ function loadActors(scene, offset) {
             followActor: -1,
             extraAmount: -1,
             textColor: null,
-            spriteAnim3DNumber: -1,
+            spriteAnim3D: null,
             spriteSizeHit: -1,
             armour: -1,
             life: -1,

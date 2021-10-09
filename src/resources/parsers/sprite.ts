@@ -95,4 +95,20 @@ const parseSpriteRaw = (resource: Resource, index: number) => {
     };
 };
 
-export { parseSpriteClipInfo, parseSprite, parseSpriteRaw };
+const parseAnim3DSInfo = (resource: Resource, index: number) => {
+    const dataView = new DataView(resource.getEntry(index));
+    const entryCount = dataView.byteLength / 8;
+    const entries = [];
+    for (let i = 0; i < entryCount; i += 1) {
+        const offset = i * 8;
+        entries.push({
+            // First four bytes are a resource name. Not needed.
+            startFrame: dataView.getInt16(offset + 4, true),
+            endFrame: dataView.getInt16(offset + 6, true),
+        });
+    }
+
+    return entries;
+};
+
+export { parseSpriteClipInfo, parseSprite, parseSpriteRaw, parseAnim3DSInfo };

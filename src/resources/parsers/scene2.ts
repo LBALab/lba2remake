@@ -219,7 +219,7 @@ function loadActors(scene, offset) {
             followActor: -1,
             extraAmount: -1,
             textColor: null,
-            spriteAnim3DNumber: -1,
+            spriteAnim3D: null,
             spriteSizeHit: -1,
             armour: -1,
             life: -1,
@@ -281,11 +281,17 @@ function loadActors(scene, offset) {
         actor.textColor = getHtmlColor(scene.palette, (textColor * 16) + 12);
 
         if (actor.flags.hasSpriteAnim3D) {
-            actor.spriteAnim3DNumber = data.getUint32(offset, true);
+            const index = data.getUint32(offset, true);
             offset += 4;
-            actor.spriteSizeHit = data.getInt16(offset, true);
-            actor.info3 = actor.spriteSizeHit;
+            const fps = data.getInt16(offset, true);
             offset += 2;
+            actor.spriteAnim3D = {
+                index,
+                startFrame: actor.spriteIndex,
+                endFrame: actor.spriteIndex,
+                fps,
+                info: null,     // Will load later (at sprite load time).
+            };
         }
         actor.armour = data.getUint8(offset);
         offset += 1;

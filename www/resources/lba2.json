@@ -5,6 +5,8 @@
 
         { "strategy": "STATIC", "type": "LA2", "id": "ANIM",             "description": "Animations",               "path": "LBA2/ANIM.HQR" },
         { "strategy": "STATIC", "type": "LM2", "id": "BODY",             "description": "3d Models",                "path": "LBA2/BODY.HQR" },
+        { "strategy": "STATIC", "type": "LSP", "id": "ANIM3DS",          "description": "Sprite Animations",        "path": "LBA2/ANIM3DS.HQR" },
+        { "strategy": "STATIC", "type": "3DS", "id": "ANIM3DS_INFO",     "description": "Sprite Animations Info",   "path": "LBA2/ANIM3DS.HQR", "index": 127 },
 
         { "strategy": "STATIC", "type": "HQR", "id": "RESS",             "description": "Global Resources",         "path": "LBA2/RESS.HQR" },
         { "strategy": "STATIC", "type": "PAL", "id": "PALETTE",          "description": "Main Palette",             "path": "LBA2/RESS.HQR", "index": 0 },
