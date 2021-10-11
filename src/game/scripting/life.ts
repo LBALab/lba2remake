@@ -628,7 +628,9 @@ export function ADD_MESSAGE(this: ScriptContext, cmdState, id) {
 
 export const BALLOON = unimplemented();
 
-export const NO_SHOCK = unimplemented();
+export function NO_SHOCK(this: ScriptContext, flag: number) {
+    this.actor.state.noShock = (flag !== 0);
+}
 
 export function CINEMA_MODE(this: ScriptContext, mode) {
     if (mode > 0) {

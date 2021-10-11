@@ -6,7 +6,7 @@ import AnimState from '../model/anim/AnimState';
 import { AnimType } from './data/animType';
 import { angleToRad, angleTo, getDistanceLba, WORLD_SCALE, distance2D } from '../utils/lba';
 import {createBoundingBox} from '../utils/rendering';
-import { loadSprite } from './scenery/isometric/sprites';
+import { loadAnim3DSInfo, loadSprite } from './scenery/isometric/sprites';
 
 import { getObjectName } from '../ui/editor/DebugData';
 import { createActorLabel } from '../ui/editor/labels';
@@ -53,7 +53,16 @@ export interface ActorProps {
     angle: number;
     speed: number;
     spriteIndex: number;
-    spriteAnim3DNumber: number;
+    spriteAnim3D?: {
+        index: number;
+        startFrame: number;
+        endFrame: number;
+        fps: number;
+        info: {
+            startFrame: number;
+            endFrame: number;
+        };
+    };
     lifeScriptSize: number;
     lifeScript: DataView;
     moveScriptSize: number;
@@ -121,6 +130,7 @@ export interface ActorState {
     floorSound: number;
     floorSound2: number;
     nextAnim: number;
+    noShock: boolean;
 }
 
 export enum SlideWay {
@@ -559,6 +569,11 @@ export default class Actor {
                 }
             }
         } else {
+            // Ensure we have sprite anim information, if needed.
+            if (this.props.flags.hasSpriteAnim3D) {
+                this.props.spriteAnim3D.info = await loadAnim3DSInfo(this.props.spriteAnim3D.index);
+            }
+
             this.threeObject = new THREE.Object3D();
             this.threeObject.name = `actor:${name}`;
             this.threeObject.visible = this.state.isVisible;
@@ -674,6 +689,11 @@ export default class Actor {
     }
 
     hit(hitBy, hitStrength) {
+        // If the actor is flagged 'noShock', all hit effects are ignored.
+        if (this.state.noShock) {
+            return;
+        }
+
         if (this.sprite) {
             this.state.wasHitBy = hitBy;
             return;
@@ -824,6 +844,7 @@ export default class Actor {
             floorSound: -1,
             floorSound2: -1,
             nextAnim: null,
+            noShock: false,
         };
     }
 }
@@ -907,7 +928,6 @@ export function createNewActorProps(
         angle: 0,
         speed: 35,
         spriteIndex: 0,
-        spriteAnim3DNumber: -1,
         lifeScriptSize: 1,
         lifeScript: new DataView(new ArrayBuffer(1)),
         moveScriptSize: 1,
