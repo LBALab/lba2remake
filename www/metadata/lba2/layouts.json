@@ -4385,7 +4385,9 @@
       "orientation": 0
     },
     "6": {
-      "mirror": true
+      "replace": true,
+      "file": "OT_006_storage_trunk.glb",
+      "orientation": 0
     },
     "7": {
       "replace": true,
