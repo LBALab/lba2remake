@@ -4399,6 +4399,16 @@
       "file": "OT_007_white_stool.glb",
       "orientation": 0
     },
+    "8": {
+      "replace": true,
+      "file": "OT_008_orange_curtains.glb",
+      "orientation": 0
+    },
+    "9": {
+      "replace": true,
+      "file": "OT_009_orange_curtains.glb",
+      "orientation": 0
+    },
     "10": {
       "mirror": true
     },
@@ -4703,6 +4713,11 @@
     "112:3x2x1:13035,13036,13037,13039,13040,13041": {
       "replace": true,
       "file": "OT_112_lemuzard_gambling_barrier_var1.glb",
+      "orientation": 0
+    },
+    "8:1x11x1:13108,13110,13112,13114,13116,13118,13120,13122,13124,13126,13128": {
+      "replace": true,
+      "file": "OT_008_orange_curtains_var1.glb",
       "orientation": 0
     }
   },
