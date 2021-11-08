@@ -4437,6 +4437,11 @@
     "27": {
       "mirror": true
     },
+    "28": {
+      "replace": true,
+      "file": "OT_028_esmer_bar_sign.glb",
+      "orientation": 0
+    },
     "29": {
       "mirror": true
     },
