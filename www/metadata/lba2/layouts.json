@@ -4415,6 +4415,11 @@
     "15": {
       "mirror": true
     },
+    "16": {
+      "replace": true,
+      "file": "OT_016_wooden_window.glb",
+      "orientation": 0
+    },
     "17": {
       "replace": true,
       "file": "OT_017_casino_reception_cabinet.glb",
