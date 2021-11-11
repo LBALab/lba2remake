@@ -4155,6 +4155,90 @@
                     0,
                     0.7071067811865476
                 ]
+            },
+            {
+                "name": "OT_031_032_033_034_035_bar_armchair.glb",
+                "position": {
+                    "x": 19,
+                    "y": 2,
+                    "z": 28
+                },
+                "quaternion": [
+                    0,
+                    0,
+                    0,
+                    1
+                ]
+            },
+            {
+                "name": "OT_031_032_033_034_035_bar_armchair.glb",
+                "position": {
+                    "x": 21,
+                    "y": 2,
+                    "z": 28
+                },
+                "quaternion": [
+                    0,
+                    0,
+                    0,
+                    1
+                ]
+            },
+            {
+                "name": "OT_031_032_033_034_035_bar_armchair.glb",
+                "position": {
+                    "x": 27,
+                    "y": 0.5,
+                    "z": 28
+                },
+                "quaternion": [
+                    0,
+                    0,
+                    0,
+                    1
+                ]
+            },
+            {
+                "name": "OT_031_032_033_034_035_bar_armchair.glb",
+                "position": {
+                    "x": 29,
+                    "y": 0.5,
+                    "z": 28
+                },
+                "quaternion": [
+                    0,
+                    0,
+                    0,
+                    1
+                ]
+            },
+            {
+                "name": "OT_031_032_033_034_035_bar_armchair.glb",
+                "position": {
+                    "x": 34,
+                    "y": 0.5,
+                    "z": 28
+                },
+                "quaternion": [
+                    0,
+                    0,
+                    0,
+                    1
+                ]
+            },
+            {
+                "name": "OT_031_032_033_034_035_bar_armchair.glb",
+                "position": {
+                    "x": 37,
+                    "y": 0.5,
+                    "z": 28
+                },
+                "quaternion": [
+                    0,
+                    0,
+                    0,
+                    1
+                ]
             }
         ],
         "patches": {
@@ -4456,6 +4540,255 @@
                 "hide": true
             },
             "28x4x27": {
+                "hide": true
+            },
+            "29x3x24": {
+                "hide": true
+            },
+            "29x4x24": {
+                "hide": true
+            },
+            "29x5x24": {
+                "hide": true
+            },
+            "28x5x24": {
+                "hide": true
+            },
+            "28x4x24": {
+                "hide": true
+            },
+            "28x3x24": {
+                "hide": true
+            },
+            "27x3x24": {
+                "hide": true
+            },
+            "27x4x24": {
+                "hide": true
+            },
+            "27x5x24": {
+                "hide": true
+            },
+            "26x5x24": {
+                "hide": true
+            },
+            "26x4x24": {
+                "hide": true
+            },
+            "26x3x24": {
+                "hide": true
+            },
+            "21x6x24": {
+                "hide": true
+            },
+            "21x7x24": {
+                "hide": true
+            },
+            "21x8x24": {
+                "hide": true
+            },
+            "20x8x24": {
+                "hide": true
+            },
+            "20x7x24": {
+                "hide": true
+            },
+            "20x6x24": {
+                "hide": true
+            },
+            "19x6x24": {
+                "hide": true
+            },
+            "19x7x24": {
+                "hide": true
+            },
+            "19x8x24": {
+                "hide": true
+            },
+            "18x8x24": {
+                "hide": true
+            },
+            "18x7x24": {
+                "hide": true
+            },
+            "18x6x24": {
+                "hide": true
+            },
+            "21x4x29": {
+                "hide": true
+            },
+            "21x5x29": {
+                "hide": true
+            },
+            "21x6x29": {
+                "hide": true
+            },
+            "21x7x29": {
+                "hide": true
+            },
+            "21x8x29": {
+                "hide": true
+            },
+            "20x8x29": {
+                "hide": true
+            },
+            "20x7x29": {
+                "hide": true
+            },
+            "20x6x29": {
+                "hide": true
+            },
+            "19x6x29": {
+                "hide": true
+            },
+            "19x7x29": {
+                "hide": true
+            },
+            "19x8x29": {
+                "hide": true
+            },
+            "18x8x29": {
+                "hide": true
+            },
+            "18x7x29": {
+                "hide": true
+            },
+            "18x6x29": {
+                "hide": true
+            },
+            "19x5x28": {
+                "hide": true
+            },
+            "20x5x28": {
+                "hide": true
+            },
+            "21x5x28": {
+                "hide": true
+            },
+            "21x4x28": {
+                "hide": true
+            },
+            "19x4x28": {
+                "hide": true
+            },
+            "29x1x29": {
+                "hide": true
+            },
+            "29x1x28": {
+                "hide": true
+            },
+            "27x1x28": {
+                "hide": true
+            },
+            "29x2x29": {
+                "hide": true
+            },
+            "29x2x28": {
+                "hide": true
+            },
+            "28x2x28": {
+                "hide": true
+            },
+            "27x2x28": {
+                "hide": true
+            },
+            "26x2x28": {
+                "hide": true
+            },
+            "26x3x29": {
+                "hide": true
+            },
+            "27x3x29": {
+                "hide": true
+            },
+            "28x3x29": {
+                "hide": true
+            },
+            "29x3x29": {
+                "hide": true
+            },
+            "29x4x29": {
+                "hide": true
+            },
+            "28x4x29": {
+                "hide": true
+            },
+            "27x4x29": {
+                "hide": true
+            },
+            "26x4x29": {
+                "hide": true
+            },
+            "26x5x29": {
+                "hide": true
+            },
+            "27x5x29": {
+                "hide": true
+            },
+            "28x5x29": {
+                "hide": true
+            },
+            "29x5x29": {
+                "hide": true
+            },
+            "37x1x29": {
+                "hide": true
+            },
+            "37x1x28": {
+                "hide": true
+            },
+            "34x1x28": {
+                "hide": true
+            },
+            "33x2x28": {
+                "hide": true
+            },
+            "34x2x28": {
+                "hide": true
+            },
+            "33x3x29": {
+                "hide": true
+            },
+            "34x3x29": {
+                "hide": true
+            },
+            "34x4x29": {
+                "hide": true
+            },
+            "33x4x29": {
+                "hide": true
+            },
+            "33x5x29": {
+                "hide": true
+            },
+            "34x5x29": {
+                "hide": true
+            },
+            "36x5x29": {
+                "hide": true
+            },
+            "37x5x29": {
+                "hide": true
+            },
+            "37x4x29": {
+                "hide": true
+            },
+            "36x4x29": {
+                "hide": true
+            },
+            "36x3x29": {
+                "hide": true
+            },
+            "37x3x29": {
+                "hide": true
+            },
+            "37x2x29": {
+                "hide": true
+            },
+            "36x2x28": {
+                "hide": true
+            },
+            "37x2x28": {
                 "hide": true
             }
         }

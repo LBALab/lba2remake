@@ -4445,6 +4445,21 @@
     "29": {
       "mirror": true
     },
+    "31": {
+      "replace": true,
+      "file": "OT_031_032_033_034_035_bar_armchair.glb",
+      "orientation": 1
+    },
+    "33": {
+      "replace": true,
+      "file": "OT_031_032_033_034_035_bar_armchair.glb",
+      "orientation": 0
+    },
+    "34": {
+      "replace": true,
+      "file": "OT_031_032_033_034_035_bar_armchair.glb",
+      "orientation": 3
+    },
     "36": {
       "mirror": true
     },
