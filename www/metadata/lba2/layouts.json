@@ -4662,6 +4662,11 @@
       "file": "OT_138_139_green_square_stool.glb",
       "orientation": 1
     },
+    "140": {
+      "replace": true,
+      "file": "OT_140_stage_light.glb",
+      "orientation": 0
+    },
     "141": {
       "replace": true,
       "file": "OT_141_red_fire_extinguisher.glb",
