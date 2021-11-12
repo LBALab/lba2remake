@@ -4379,17 +4379,34 @@
       "file": "OT_002_white_chair.glb",
       "orientation": 0
     },
+    "4": {
+      "replace": true,
+      "file": "OT_004_vanity_table.glb",
+      "orientation": 0
+    },
     "5": {
       "replace": true,
       "file": "OT_005_room_divider.glb",
       "orientation": 0
     },
     "6": {
-      "mirror": true
+      "replace": true,
+      "file": "OT_006_storage_trunk.glb",
+      "orientation": 0
     },
     "7": {
       "replace": true,
       "file": "OT_007_white_stool.glb",
+      "orientation": 0
+    },
+    "8": {
+      "replace": true,
+      "file": "OT_008_orange_curtains.glb",
+      "orientation": 0
+    },
+    "9": {
+      "replace": true,
+      "file": "OT_009_orange_curtains.glb",
       "orientation": 0
     },
     "10": {
@@ -4397,6 +4414,11 @@
     },
     "15": {
       "mirror": true
+    },
+    "16": {
+      "replace": true,
+      "file": "OT_016_wooden_window.glb",
+      "orientation": 0
     },
     "17": {
       "replace": true,
@@ -4415,11 +4437,41 @@
     "27": {
       "mirror": true
     },
+    "28": {
+      "replace": true,
+      "file": "OT_028_esmer_bar_sign.glb",
+      "orientation": 0
+    },
     "29": {
       "mirror": true
     },
+    "31": {
+      "replace": true,
+      "file": "OT_031_032_033_034_035_bar_armchair.glb",
+      "orientation": 1
+    },
+    "33": {
+      "replace": true,
+      "file": "OT_031_032_033_034_035_bar_armchair.glb",
+      "orientation": 0
+    },
+    "34": {
+      "replace": true,
+      "file": "OT_031_032_033_034_035_bar_armchair.glb",
+      "orientation": 3
+    },
     "36": {
       "mirror": true
+    },
+    "37": {
+      "replace": true,
+      "file": "OT_037_038_green_square_table.glb",
+      "orientation": 0
+    },
+    "38": {
+      "replace": true,
+      "file": "OT_037_038_green_square_table.glb",
+      "orientation": 1
     },
     "39": {
       "replace": true,
@@ -4435,6 +4487,16 @@
       "replace": true,
       "file": "OT_058_059_round_wall_lamp.glb",
       "orientation": 3
+    },
+    "60": {
+      "replace": true,
+      "file": "OT_060_round_table_lamp.glb",
+      "orientation": 0
+    },
+    "61": {
+      "replace": true,
+      "file": "OT_061_round_table_lamp.glb",
+      "orientation": 0
     },
     "66": {
       "mirror": true
@@ -4600,9 +4662,19 @@
       "file": "OT_138_139_green_square_stool.glb",
       "orientation": 1
     },
+    "140": {
+      "replace": true,
+      "file": "OT_140_stage_light.glb",
+      "orientation": 0
+    },
     "141": {
       "replace": true,
       "file": "OT_141_red_fire_extinguisher.glb",
+      "orientation": 0
+    },
+    "143": {
+      "replace": true,
+      "file": "OT_143_office_u_table.glb",
       "orientation": 0
     },
     "151": {
@@ -4633,6 +4705,26 @@
       "file": "OT_200_blue_wooden_box.glb",
       "orientation": 0
     },
+    "203": {
+      "replace": true,
+      "file": "OT_203_three_teapots.glb",
+      "orientation": 0
+    },
+    "204": {
+      "replace": true,
+      "file": "OT_204_two_small_cups.glb",
+      "orientation": 0
+    },
+    "205": {
+      "replace": true,
+      "file": "OT_205_a_small_cup.glb",
+      "orientation": 0
+    },
+    "206": {
+      "replace": true,
+      "file": "OT_206_teapot.glb",
+      "orientation": 2
+    },
     "200:2x4x4:0,12677,12680,12681,-1,-1,-1,-1,12682,12683,12688,12689,-1,-1,-1,-1,0,12677,0,12678,0,12679,12680,12681,12682,12683,12684,12685,12686,12687,12688,12689": {
       "replace": true,
       "file": "OT_200_blue_wooden_box_var1.glb",
@@ -4651,6 +4743,11 @@
     "112:3x2x1:13035,13036,13037,13039,13040,13041": {
       "replace": true,
       "file": "OT_112_lemuzard_gambling_barrier_var1.glb",
+      "orientation": 0
+    },
+    "8:1x11x1:13108,13110,13112,13114,13116,13118,13120,13122,13124,13126,13128": {
+      "replace": true,
+      "file": "OT_008_orange_curtains_var1.glb",
       "orientation": 0
     }
   },
