@@ -4498,6 +4498,16 @@
       "file": "OT_061_round_table_lamp.glb",
       "orientation": 0
     },
+    "62": {
+      "replace": true,
+      "file": "OT_062_magritte_painting_1.glb",
+      "orientation": 0
+    },
+    "65": {
+      "replace": true,
+      "file": "OT_065_magritte_painting_2.glb",
+      "orientation": 0
+    },
     "66": {
       "mirror": true
     },
