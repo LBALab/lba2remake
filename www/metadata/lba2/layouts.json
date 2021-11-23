@@ -4503,6 +4503,11 @@
       "file": "OT_062_magritte_painting_1.glb",
       "orientation": 0
     },
+    "63": {
+      "replace": true,
+      "file": "OT_063_duam_catwalk.glb",
+      "orientation": 0
+    },
     "65": {
       "replace": true,
       "file": "OT_065_magritte_painting_2.glb",
@@ -4763,6 +4768,11 @@
     "8:1x11x1:13108,13110,13112,13114,13116,13118,13120,13122,13124,13126,13128": {
       "replace": true,
       "file": "OT_008_orange_curtains_var1.glb",
+      "orientation": 0
+    },
+    "63:1x1x13:12763,12764,12764,12764,12764,12764,12764,12764,12764,12764,12764,12765,12766": {
+      "replace": true,
+      "file": "OT_063_duam_catwalk_var1.glb",
       "orientation": 0
     }
   },
