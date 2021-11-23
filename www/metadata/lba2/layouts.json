@@ -4524,6 +4524,11 @@
       "file": "OT_071_huge_zlitos_with_keyhole.glb",
       "orientation": 0
     },
+    "73": {
+      "replace": true,
+      "file": "OT_073_082_classy_wall_lamp.glb",
+      "orientation": 0
+    },
     "79": {
       "replace": true,
       "file": "OT_079_casino_slot_machine.glb",
@@ -4533,6 +4538,11 @@
       "replace": true,
       "file": "OT_039_080_magritte_plants.glb",
       "orientation": 0
+    },
+    "82": {
+      "replace": true,
+      "file": "OT_073_082_classy_wall_lamp.glb",
+      "orientation": 3
     },
     "84": {
       "replace": true,
