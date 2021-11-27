@@ -4529,6 +4529,11 @@
       "file": "OT_073_082_classy_wall_lamp.glb",
       "orientation": 0
     },
+    "75": {
+      "replace": true,
+      "file": "OT_075_sink.glb",
+      "orientation": 0
+    },
     "79": {
       "replace": true,
       "file": "OT_079_casino_slot_machine.glb",
