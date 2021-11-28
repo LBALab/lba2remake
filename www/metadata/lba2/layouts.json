@@ -4534,6 +4534,11 @@
       "file": "OT_075_sink.glb",
       "orientation": 0
     },
+    "76": {
+      "replace": true,
+      "file": "OT_076_towel.glb",
+      "orientation": 0
+    },
     "79": {
       "replace": true,
       "file": "OT_079_casino_slot_machine.glb",
