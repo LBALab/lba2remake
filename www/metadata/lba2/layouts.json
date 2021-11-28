@@ -4564,6 +4564,11 @@
       "file": "OT_073_082_classy_wall_lamp.glb",
       "orientation": 3
     },
+    "83": {
+      "replace": true,
+      "file": "OT_083_deluxe_couch.glb",
+      "orientation": 0
+    },
     "84": {
       "replace": true,
       "file": "OT_084_085_huge_zlitos_deco.glb",
@@ -4750,6 +4755,16 @@
       "file": "OT_173_ancient_pots.glb",
       "orientation": 0
     },
+    "178": {
+      "replace": true,
+      "file": "OT_178_small_display_table.glb",
+      "orientation": 0
+    },
+    "179": {
+      "replace": true,
+      "file": "OT_179_small_display_table.glb",
+      "orientation": 0
+    },
     "200": {
       "replace": true,
       "file": "OT_200_blue_wooden_box.glb",
@@ -4803,6 +4818,16 @@
     "63:1x1x13:12763,12764,12764,12764,12764,12764,12764,12764,12764,12764,12764,12765,12766": {
       "replace": true,
       "file": "OT_063_duam_catwalk_var1.glb",
+      "orientation": 0
+    },
+    "178:1x3x4:14630,14631,14632,14633,14634,14635,14633,14634,14635,14636,14637,14638": {
+      "replace": true,
+      "file": "OT_178_small_display_table_var1.glb",
+      "orientation": 0
+    },
+    "179:2x3x1:14639,14641,14642,14644,14645,14647": {
+      "replace": true,
+      "file": "OT_179_small_display_table_var1.glb",
       "orientation": 0
     }
   },
