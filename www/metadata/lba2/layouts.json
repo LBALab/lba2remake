@@ -4539,6 +4539,11 @@
       "file": "OT_076_towel.glb",
       "orientation": 0
     },
+    "77": {
+      "replace": true,
+      "file": "OT_077_081_deluxe_armchair.glb",
+      "orientation": 0
+    },
     "79": {
       "replace": true,
       "file": "OT_079_casino_slot_machine.glb",
@@ -4548,6 +4553,11 @@
       "replace": true,
       "file": "OT_039_080_magritte_plants.glb",
       "orientation": 0
+    },
+    "81": {
+      "replace": true,
+      "file": "OT_077_081_deluxe_armchair.glb",
+      "orientation": 2
     },
     "82": {
       "replace": true,
