@@ -417,6 +417,7 @@ function appendMeshGeometry(
                 break;
             case 'transparent':
                 geometries[geomGroup] = {
+                    render_order: node.userData.render_order,
                     index: [],
                     positions: [],
                     normals: [],
@@ -450,6 +451,7 @@ function appendMeshGeometry(
                 break;
             case 'original':
                 geometries[geomGroup] = {
+                    render_order: node.userData.render_order,
                     index: [],
                     positions: [],
                     normals: [],
