@@ -4750,6 +4750,11 @@
       "file": "OT_168_paper_rolls_container.glb",
       "orientation": 0
     },
+    "172": {
+      "replace": true,
+      "file": "OT_172_twinsun_souvenirs.glb",
+      "orientation": 0
+    },
     "173": {
       "replace": true,
       "file": "OT_173_ancient_pots.glb",
