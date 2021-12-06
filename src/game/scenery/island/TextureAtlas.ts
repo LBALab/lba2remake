@@ -4,11 +4,11 @@ import {each, find} from 'lodash';
 export default class TextureAtlas {
     texture: THREE.DataTexture;
     groups: any;
-    private rawTexture: Uint8Array;
+    private rawTexture: Uint8ClampedArray;
     private palette: Uint8Array;
 
     constructor({ile, palette}, uvGroups, debug = false) {
-        this.rawTexture = new Uint8Array(ile.getEntry(2));
+        this.rawTexture = new Uint8ClampedArray(ile.getEntry(2));
         this.palette = palette;
 
         this.groups = {
@@ -133,7 +133,7 @@ export default class TextureAtlas {
     }
 
     private createAtlasTexture(dim) {
-        const image_data = new Uint8Array(dim * dim * 4);
+        const image_data = new Uint8ClampedArray(dim * dim * 4);
         const texture = new THREE.DataTexture(
             image_data,
             dim,

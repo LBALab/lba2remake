@@ -92,7 +92,7 @@ export default class Clouds {
             new THREE.BufferAttribute(new Float32Array(angles), 1, false)
         );
         this.threeObject = new THREE.Mesh(bufferGeometry, this.material);
-        this.threeObject.name = `Clouds${props.ground ? ' (Ground)' : ''}`;
+        this.threeObject.name = `${props.ground ? 'Ground' : ''}Clouds`;
         this.threeObject.onBeforeRender = Lightning.applyUniforms;
     }
 

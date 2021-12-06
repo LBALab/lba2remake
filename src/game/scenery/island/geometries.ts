@@ -6,7 +6,7 @@ import {
     makeNoiseTexture
 } from '../../../texture';
 import {compile} from '../../../utils/shaders';
-import { loadGround } from './ground';
+import { loadGround, loadGroundNormals } from './ground';
 import { loadObjectGeometries } from './objects';
 import { loadModel } from './model';
 import TextureAtlas from './TextureAtlas';
@@ -70,13 +70,21 @@ export function loadGeometries(threeObject, props, data, layout): IslandGeometry
     const light = getLightVector(data.ambience);
     const geometries = prepareGeometries(props, data, atlas, light);
 
+    const normalInfo = {
+        faceNormalsPerVertex: new Map<string, number[][]>(),
+        ground_colored: [],
+        ground_textured: [],
+    };
+
     for (const section of layout.groundSections) {
         const tilesKey = [section.x, section.z].join(',');
         const tileUsageInfo = [];
-        loadGround(section, geometries, tileUsageInfo);
+        loadGround(section, geometries, tileUsageInfo, normalInfo);
         loadObjectGeometries(section, geometries, models, atlas, props);
         usedTiles.set(tilesKey, tileUsageInfo);
     }
+
+    loadGroundNormals(geometries, normalInfo);
 
     const matByName = {};
     for (const [name, geom] of Object.entries(geometries)) {
@@ -139,7 +147,7 @@ function prepareGeometries(island, data, atlas, light) {
     return {
         ground_colored: {
             positions: [],
-            normals: null,
+            normals: [],
             uvs: null,
             uvGroups: null,
             colors: [],
@@ -159,7 +167,7 @@ function prepareGeometries(island, data, atlas, light) {
         },
         ground_textured: {
             positions: [],
-            normals: null,
+            normals: [],
             uvs: [],
             uvGroups: null,
             colors: [],

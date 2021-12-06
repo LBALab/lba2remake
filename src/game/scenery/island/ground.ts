@@ -1,3 +1,4 @@
+import * as THREE from 'three';
 import {map} from 'lodash';
 import {bits} from '../../../utils';
 import {WORLD_SCALE, WORLD_SCALE_B} from '../../../utils/lba';
@@ -9,9 +10,20 @@ export const LIQUID_TYPES = {
     LAVA: 9,
 };
 
+export interface NormalInfo {
+    faceNormalsPerVertex: Map<string, number[][]>;
+    ground_colored: string[];
+    ground_textured: string[];
+}
+
 const push = Array.prototype.push;
 
-export function loadGround(section: IslandSection, geometries, tileUsageInfo) {
+export function loadGround(
+    section: IslandSection,
+    geometries,
+    tileUsageInfo,
+    normalInfo: NormalInfo
+) {
     const { groundMesh } = section;
     for (let x = 0; x < 64; x += 1) {
         for (let z = 0; z < 64; z += 1) {
@@ -29,37 +41,28 @@ export function loadGround(section: IslandSection, geometries, tileUsageInfo) {
                 const pts = map(t.points, pt => ((x + pt.x) * 65) + z + pt.z);
                 if (!isSeaLevelLiquid(t, pts) && (t.useColor || t.useTexture || t.unk0)) {
                     tileUsageInfo[(x * 64) + z] = t0.orientation;
+                    let group = 'ground_colored';
                     if (t.useTexture || (!t.useTexture && !t.useColor)) {
-                        push.apply(
-                            geometries.ground_textured.positions,
-                            getPositions(section, pts)
-                        );
+                        group = 'ground_textured';
                         push.apply(
                             geometries.ground_textured.uvs,
                             getUVs(section.textureInfo, t.uvIndex)
                         );
-                        push.apply(
-                            geometries.ground_textured.colors,
-                            getColors(t)
-                        );
-                        push.apply(
-                            geometries.ground_textured.intensities,
-                            getIntensities(groundMesh.intensity, pts)
-                        );
-                    } else {
-                        push.apply(
-                            geometries.ground_colored.positions,
-                            getPositions(section, pts)
-                        );
-                        push.apply(
-                            geometries.ground_colored.colors,
-                            getColors(t)
-                        );
-                        push.apply(
-                            geometries.ground_colored.intensities,
-                            getIntensities(groundMesh.intensity, pts)
-                        );
                     }
+                    const positions = getPositions(section, pts);
+                    push.apply(
+                        geometries[group].positions,
+                        positions
+                    );
+                    push.apply(
+                        geometries[group].colors,
+                        getColors(t)
+                    );
+                    push.apply(
+                        geometries[group].intensities,
+                        getIntensities(groundMesh.intensity, pts)
+                    );
+                    saveNormalsInfo(section, pts, positions, group, normalInfo);
                 }
             };
 
@@ -131,4 +134,70 @@ function getIntensities(intensity, points) {
         intensities.push(intensity[points[i]]);
     }
     return intensities;
+}
+
+const NORM = new THREE.Vector3();
+
+function getFaceNormal(positions) {
+    const u = [
+        positions[3] - positions[0],
+        positions[4] - positions[1],
+        positions[5] - positions[2]
+    ];
+    const v = [
+        positions[6] - positions[0],
+        positions[7] - positions[1],
+        positions[8] - positions[2]
+    ];
+    NORM.set(
+        (u[1] * v[2]) - (u[2] * v[1]),
+        (u[2] * v[0]) - (u[0] * v[2]),
+        (u[0] * v[1]) - (u[1] * v[0])
+    );
+    NORM.normalize();
+    return NORM.toArray();
+}
+
+function saveNormalsInfo(
+    section: IslandSection,
+    pts: number[],
+    positions: number[],
+    group: string,
+    normalInfo: NormalInfo
+) {
+    const { faceNormalsPerVertex } = normalInfo;
+    const normal = getFaceNormal(positions);
+    for (let i = 0; i < 3; i += 1) {
+        const idx = pts[i];
+        const sx = (section.x * 64) + (65 - Math.floor(idx / 65));
+        const sz = (section.z * 64) + (idx % 65);
+        const key = `${sx}x${sz}`;
+        if (!faceNormalsPerVertex.has(key)) {
+            faceNormalsPerVertex.set(key, []);
+        }
+        faceNormalsPerVertex.get(key).push(normal);
+        normalInfo[group].push(key);
+    }
+}
+
+const NORM2 = new THREE.Vector3();
+
+export function loadGroundNormals(geometries, normalInfo: NormalInfo) {
+    const { faceNormalsPerVertex, ground_colored, ground_textured } = normalInfo;
+    const vertexNormals = new Map<string, number[]>();
+    for (const [key, normals] of faceNormalsPerVertex) {
+        NORM.set(0, 0, 0);
+        normals.forEach((n) => {
+            NORM2.fromArray(n);
+            NORM.add(NORM2);
+        });
+        NORM.divideScalar(normals.length);
+        vertexNormals.set(key, NORM.toArray());
+    }
+    for (const key of ground_colored) {
+        push.apply(geometries.ground_colored.normals, vertexNormals.get(key));
+    }
+    for (const key of ground_textured) {
+        push.apply(geometries.ground_textured.normals, vertexNormals.get(key));
+    }
 }
