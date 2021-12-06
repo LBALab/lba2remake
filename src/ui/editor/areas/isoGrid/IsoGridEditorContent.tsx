@@ -618,6 +618,9 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
             if (editorData.replacementMesh) {
                 editorData.replacementMesh.visible = !showOriginal;
             }
+            if (editorData.fullReplacement) {
+                editorData.bricksMesh.visible = showOriginal;
+            }
             isoGrid.update(null, scene, time);
         }
         if (this.gizmo) {

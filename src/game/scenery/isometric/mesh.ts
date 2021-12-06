@@ -20,25 +20,7 @@ import { replaceMaterialsForPreview } from './metadata/preview';
 
 export async function loadMesh(grid, entry, ambience, gridMetadata, is3D, editorData, numActors) {
     const threeObject = new THREE.Object3D();
-    const geometries = {
-        standard: {
-            positions: [],
-            uvs: [],
-            flags: [],
-            material: new THREE.RawShaderMaterial({
-                vertexShader: compile('vert', brick_vertex),
-                fragmentShader: compile('frag', brick_fragment),
-                transparent: true,
-                uniforms: {
-                    library: { value: grid.library.texture }
-                },
-                defines: {},
-                glslVersion: Renderer.getGLSLVersion(),
-                side: THREE.DoubleSide
-            })
-        },
-        dome_ground: null
-    };
+
     const {library, cells} = grid;
     const bricksReplInfo = await extractBricksReplacementInfo(
         grid,
@@ -53,67 +35,89 @@ export async function loadMesh(grid, entry, ambience, gridMetadata, is3D, editor
         threeObject.add(replacementMesh);
     }
 
-    if (editorData) {
-        const material = geometries.standard.material;
-        const uniforms = material.uniforms;
-        material.defines.GRID_EDITOR = true;
-        uniforms.mode = { value: 0 };
-        editorData.mode = uniforms.mode;
-        editorData.replacementMesh = replacementMesh;
-        editorData.bricksMap = new Map<string, any>();
-    }
+    const geometries: Record<string, any> = {};
+    if (!bricksReplInfo.fullReplacement || editorData) {
+        geometries.standard = {
+            positions: [],
+            uvs: [],
+            flags: [],
+            material: new THREE.RawShaderMaterial({
+                vertexShader: compile('vert', brick_vertex),
+                fragmentShader: compile('frag', brick_fragment),
+                transparent: true,
+                uniforms: {
+                    library: { value: grid.library.texture }
+                },
+                defines: {},
+                glslVersion: Renderer.getGLSLVersion(),
+                side: THREE.DoubleSide
+            })
+        };
 
-    for (let z = 0; z < 64; z += 1) {
-        for (let x = 0; x < 64; x += 1) {
-            buildColumn(
-                grid,
-                library,
-                cells,
-                geometries,
-                x,
-                z,
-                bricksReplInfo,
-                editorData,
-                is3D,
-                numActors
-            );
-        }
-    }
-
-    each(geometries, (geom, name) => {
-        if (!geom) {
-            return;
-        }
-        const {positions, uvs, flags, material} = geom;
-        if (positions.length === 0) {
-            return;
+        if (editorData) {
+            const material = geometries.standard.material;
+            const uniforms = material.uniforms;
+            material.defines.GRID_EDITOR = true;
+            uniforms.mode = { value: 0 };
+            editorData.mode = uniforms.mode;
+            editorData.replacementMesh = replacementMesh;
+            editorData.fullReplacement = bricksReplInfo.fullReplacement;
+            editorData.bricksMap = new Map<string, any>();
         }
 
-        const bufferGeometry = new THREE.BufferGeometry();
-        bufferGeometry.setAttribute(
-            'position',
-            new THREE.BufferAttribute(new Float32Array(positions), 3)
-        );
-        bufferGeometry.setAttribute(
-            'uv',
-            new THREE.BufferAttribute(new Float32Array(uvs), 2)
-        );
-        if (editorData && flags) {
+        for (let z = 0; z < 64; z += 1) {
+            for (let x = 0; x < 64; x += 1) {
+                buildColumn(
+                    grid,
+                    library,
+                    cells,
+                    geometries,
+                    x,
+                    z,
+                    bricksReplInfo,
+                    editorData,
+                    is3D,
+                    numActors
+                );
+            }
+        }
+
+        each(geometries, (geom, name) => {
+            if (!geom) {
+                return;
+            }
+            const {positions, uvs, flags, material} = geom;
+            if (positions.length === 0) {
+                return;
+            }
+
+            const bufferGeometry = new THREE.BufferGeometry();
             bufferGeometry.setAttribute(
-                'flag',
-                new THREE.BufferAttribute(new Uint8Array(flags), 1)
+                'position',
+                new THREE.BufferAttribute(new Float32Array(positions), 3)
             );
-        }
-        const mesh = new THREE.Mesh(bufferGeometry, material);
+            bufferGeometry.setAttribute(
+                'uv',
+                new THREE.BufferAttribute(new Float32Array(uvs), 2)
+            );
+            if (editorData && flags) {
+                bufferGeometry.setAttribute(
+                    'flag',
+                    new THREE.BufferAttribute(new Uint8Array(flags), 1)
+                );
+            }
+            const mesh = new THREE.Mesh(bufferGeometry, material);
 
-        if (editorData && name === 'standard') {
-            editorData.bricksGeom = bufferGeometry;
-        }
+            if (editorData && name === 'standard') {
+                editorData.bricksGeom = bufferGeometry;
+                editorData.bricksMesh = mesh;
+            }
 
-        mesh.frustumCulled = false;
-        mesh.name = `iso_grid_${name}`;
-        threeObject.add(mesh);
-    });
+            mesh.frustumCulled = false;
+            mesh.name = `iso_grid_${name}`;
+            threeObject.add(mesh);
+        });
+    }
 
     threeObject.name = `scenery_iso_${entry}`;
     threeObject.scale.set(WORLD_SCALE_B, WORLD_SCALE_B, WORLD_SCALE_B);
@@ -121,7 +125,7 @@ export async function loadMesh(grid, entry, ambience, gridMetadata, is3D, editor
     threeObject.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), -Math.PI / 2.0);
 
     const extra_meshes = [];
-    if (is3D) {
+    if (is3D && (!bricksReplInfo.fullReplacement || editorData)) {
         const { game } = getParams();
         if (editorData) {
             editorData.models = new Set();

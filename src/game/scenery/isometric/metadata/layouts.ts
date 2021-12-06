@@ -9,16 +9,17 @@ export async function loadLayoutsMetadata(entry, library, isEditor, mergeReplace
     const bkg = await getBricksHQR();
     const layoutsReq = await fetch(`/metadata/${game}/layouts.json`);
     const layoutsMetadata = await layoutsReq.json();
-    const isoScenesReq = await fetch(`/metadata/${game}/iso_scenes.json`);
-    const isoScenesMetadata = await isoScenesReq.json();
-    const hasFullReplacement = !mergeReplacements && isoScenesMetadata.includes(entry);
+    const sceneriesReq = await fetch(`/metadata/${game}/sceneries.json`);
+    const sceneriesMetadata = await sceneriesReq.json();
+    const hasReplacements = !mergeReplacements && entry in sceneriesMetadata;
+    const hasBakedReplacements = hasReplacements && sceneriesMetadata[entry].baked;
     const libMetadata = layoutsMetadata[library.index];
     const layouts = {};
     const variants = [];
     await Promise.all(map(libMetadata, async (data, idx) => {
         let info = null;
         if (data.replace) {
-            if (hasFullReplacement) {
+            if (hasReplacements) {
                 info = {...data};
             } else {
                 const model = await loadModel(`/models/${game}/layouts/${data.file}`, !isEditor);
@@ -80,5 +81,5 @@ export async function loadLayoutsMetadata(entry, library, isEditor, mergeReplace
         const sz1 = v1.props.nX * v1.props.nY * v1.props.nZ;
         return sz1 - sz0;
     });
-    return { hasFullReplacement, mergeReplacements, layouts, variants };
+    return { hasReplacements, hasBakedReplacements, mergeReplacements, layouts, variants };
 }

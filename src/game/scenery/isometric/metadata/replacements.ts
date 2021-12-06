@@ -24,8 +24,14 @@ export async function initReplacements(
     numActors: number
 ) {
     const data = await loadReplacementData(ambience);
-    if (layoutsMetadata.hasFullReplacement) {
-        const { threeObject, update } = await loadFullSceneModel(entry, data, isEditor, numActors);
+    if (layoutsMetadata.hasReplacements) {
+        const { threeObject, update } = await loadFullSceneModel(
+            entry,
+            data,
+            isEditor,
+            layoutsMetadata.hasBakedReplacements,
+            numActors
+        );
         return {
             threeObject,
             update,

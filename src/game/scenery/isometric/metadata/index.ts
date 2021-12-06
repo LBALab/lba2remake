@@ -35,6 +35,14 @@ export async function extractBricksReplacementInfo(
         isEditor,
         numActors
     );
+
+    if (layoutsMetadata.hasBakedReplacements) {
+        return {
+            replacements,
+            fullReplacement: true,
+        };
+    }
+
     const mirrorGroups = {};
 
     await computeReplacements({
@@ -69,6 +77,11 @@ export async function saveSceneReplacementModel(entry, ambience) {
     });
 
     const layoutsMetadata = await loadLayoutsMetadata(entry, grid.library, true, true);
+
+    if (layoutsMetadata.hasBakedReplacements) {
+        return;
+    }
+
     const replacements = await initReplacements(entry, layoutsMetadata, ambience, true, 0);
 
     await computeReplacements({grid, layoutsMetadata, replacements});
