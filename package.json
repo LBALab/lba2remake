@@ -17,6 +17,7 @@
     "unpack": "ts-node utils/convert/unpack.ts"
   },
   "dependencies": {
+    "@agrande/xatlas-web": "^1.0.1",
     "@lbalab/hqr": "^3.4.1",
     "@types/lodash": "^4.14.169",
     "@types/react-dom": "^16.9.13",

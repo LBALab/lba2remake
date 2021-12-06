@@ -136,6 +136,7 @@ app.get('/layout_models/:game', function(req, res) {
 app.use('/', express.static('./www'));
 app.use('/doc', express.static('./doc'));
 app.use('/webxr-assets', express.static('./node_modules/@webxr-input-profiles/assets/dist/profiles'));
+app.use('/xatlas-web.wasm', express.static('./node_modules/@agrande/xatlas-web/dist/xatlas-web.wasm'));
 
 const indexBody = renderToStaticMarkup(React.createElement(Main, {
     script: 'window.ga=function(){};\nwindow.isLocalServer=true;'
