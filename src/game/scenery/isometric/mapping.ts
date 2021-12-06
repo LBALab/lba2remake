@@ -32,7 +32,7 @@ export function loadBricksMapping(layouts, bricks, mask, palette) {
     );
     const bricksMap = {};
     const {width, height} = computeTextureSize(usedBricks.length);
-    const image_data = new Uint8Array(width * height * 4);
+    const image_data = new Uint8ClampedArray(width * height * 4);
     const nWidth = Math.floor(width / 52);
     each(usedBricks, (brick, idx) => {
         const offsetX = (idx % nWidth) * 52;

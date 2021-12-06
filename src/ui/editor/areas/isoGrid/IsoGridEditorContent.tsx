@@ -1,6 +1,8 @@
 import * as React from 'react';
 import * as THREE from 'three';
+import { saveAs } from 'file-saver';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
+import { GLTFExporter } from 'three/examples/jsm/exporters/GLTFExporter';
 
 import Renderer from '../../../../renderer';
 import { fullscreen } from '../../../styles/index';
@@ -25,6 +27,7 @@ import { loadModel } from '../../../../game/scenery/isometric/metadata/models';
 import { loadLUTTexture } from '../../../../utils/lut';
 import { loadPaletteTexture } from '../../../../texture';
 import { replaceMaterialsForPreview } from '../../../../game/scenery/isometric/metadata/preview';
+import { buildAtlas } from '../../../../graphics/uvAltas/atlas';
 
 enum CursorType {
     BRICK,
@@ -167,6 +170,7 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
         this.closeReplacement = this.closeReplacement.bind(this);
         this.useFile = this.useFile.bind(this);
         this.applyChanges = this.applyChanges.bind(this);
+        this.export = this.export.bind(this);
 
         const isoCamera = getIsometricCamera();
         const iso3DCamera = getIso3DCamera();
@@ -813,6 +817,9 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
                 {cursor && <button style={infoButton} onClick={this.add3DModel}>
                     Add 3D model
                 </button>}
+                <button style={infoButton} onClick={this.export}>
+                    Export
+                </button>
             </div>
         </div>;
     }
@@ -874,6 +881,10 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
                 </button>
             }
         </div>;
+    }
+
+    export() {
+        exportGrid(this.isoGridIdx);
     }
 
     closeReplacement() {
@@ -959,4 +970,78 @@ function getLightVector(ambience) {
         -(ambience.lightingBeta * 2 * Math.PI) / 0x1000
     );
     return lightVector;
+}
+
+async function exportGrid(isoGridIdx: number) {
+    const exporter = new GLTFExporter();
+    const image_data = new Uint8ClampedArray(4);
+    image_data[0] = 0xFF;
+    image_data[1] = 0xFF;
+    image_data[2] = 0xFF;
+    image_data[3] = 0xFF;
+    const whiteSquareTexture = new THREE.DataTexture(
+        image_data,
+        1,
+        1,
+        THREE.RGBAFormat,
+        THREE.UnsignedByteType,
+        THREE.UVMapping,
+        THREE.RepeatWrapping,
+        THREE.RepeatWrapping,
+        THREE.LinearFilter,
+        THREE.LinearMipMapLinearFilter
+    );
+    const sceneData = await getScene(isoGridIdx);
+    const objToExport = await IsoScenery.loadForExport(sceneData);
+    const threeObject = objToExport.threeObject;
+    threeObject.traverse((node) => {
+        if (node instanceof THREE.Mesh) {
+            const geom = node.geometry.clone() as THREE.BufferGeometry;
+            node.geometry = geom;
+            if (!geom.index) {
+                const numVertex = geom.attributes.position.count;
+                const indexArray = new Uint32Array(numVertex);
+                for (let i = 0; i < numVertex; i += 1) {
+                    indexArray[i] = i;
+                }
+                geom.setIndex(new THREE.BufferAttribute(
+                    indexArray,
+                    1
+                ));
+            }
+            switch (node.name) {
+                case 'colored':
+                    node.material = new THREE.MeshStandardMaterial({
+                        map: whiteSquareTexture
+                    });
+                    break;
+                case 'iso_grid_standard': {
+                    const mat = node.material as THREE.RawShaderMaterial;
+                    node.material = new THREE.MeshStandardMaterial({
+                        map: mat.uniforms.library.value,
+                    });
+                    break;
+                }
+                default: {
+                    if (node.name.startsWith('textured_')
+                        && node.material instanceof THREE.RawShaderMaterial) {
+                        const mat = node.material as THREE.RawShaderMaterial;
+                        node.material = new THREE.MeshStandardMaterial({
+                            map: mat.uniforms.uTexture.value,
+                            transparent: mat.transparent
+                        });
+                        break;
+                    }
+                }
+            }
+        }
+    });
+    await buildAtlas(threeObject);
+    exporter.parse(threeObject, (gltf: ArrayBuffer) => {
+        const blob = new Blob([gltf], {type: 'application/octet-stream'});
+        saveAs(blob, `${threeObject.name}.glb`);
+    }, {
+        binary: true,
+        embedImages: true
+    });
 }

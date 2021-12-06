@@ -37,6 +37,14 @@ export default class IsoScenery {
         });
     }
 
+    static async loadForExport(sceneData): Promise<IsoScenery> {
+        return IsoScenery.loadGeneric({
+            ...sceneData,
+            numActors: 0,
+            is3D: true,
+        });
+    }
+
     private static async loadGeneric(data): Promise<IsoScenery> {
         const { sceneryIndex, ambience, is3D, isGridEditor, numActors } = data;
         const [palette, bricks, gridMetadata, mask] = await Promise.all([
