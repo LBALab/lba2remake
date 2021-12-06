@@ -4239,6 +4239,20 @@
                     0,
                     1
                 ]
+            },
+            {
+                "name": "OT_134_mutant_turtle_tank.glb",
+                "position": {
+                    "x": 45.5,
+                    "y": 0.5,
+                    "z": 30
+                },
+                "quaternion": [
+                    0,
+                    0.7071067811865475,
+                    0,
+                    0.7071067811865476
+                ]
             }
         ],
         "patches": {
@@ -4790,6 +4804,234 @@
             },
             "37x2x28": {
                 "hide": true
+            },
+            "47x2x32": {
+                "hide": true
+            },
+            "47x1x32": {
+                "hide": true
+            },
+            "47x3x32": {
+                "hide": true
+            },
+            "47x4x32": {
+                "hide": true
+            },
+            "47x5x32": {
+                "hide": true
+            },
+            "47x6x32": {
+                "hide": true
+            },
+            "47x7x32": {
+                "hide": true
+            },
+            "47x8x32": {
+                "hide": true
+            },
+            "46x7x32": {
+                "hide": true
+            },
+            "46x8x32": {
+                "hide": true
+            },
+            "46x6x32": {
+                "hide": true
+            },
+            "46x4x32": {
+                "hide": true
+            },
+            "46x5x32": {
+                "hide": true
+            },
+            "46x3x32": {
+                "hide": true
+            },
+            "46x2x32": {
+                "hide": true
+            },
+            "46x1x32": {
+                "hide": true
+            },
+            "45x1x32": {
+                "hide": true
+            },
+            "45x2x32": {
+                "hide": true
+            },
+            "45x3x32": {
+                "hide": true
+            },
+            "45x4x32": {
+                "hide": true
+            },
+            "45x5x32": {
+                "hide": true
+            },
+            "45x6x32": {
+                "hide": true
+            },
+            "45x7x32": {
+                "hide": true
+            },
+            "45x8x32": {
+                "hide": true
+            },
+            "44x8x32": {
+                "hide": true
+            },
+            "44x7x32": {
+                "hide": true
+            },
+            "44x6x32": {
+                "hide": true
+            },
+            "44x5x32": {
+                "hide": true
+            },
+            "44x4x32": {
+                "hide": true
+            },
+            "44x3x32": {
+                "hide": true
+            },
+            "44x2x32": {
+                "hide": true
+            },
+            "44x1x32": {
+                "hide": true
+            },
+            "43x1x32": {
+                "hide": true
+            },
+            "43x2x32": {
+                "hide": true
+            },
+            "43x3x32": {
+                "hide": true
+            },
+            "43x4x32": {
+                "hide": true
+            },
+            "43x5x32": {
+                "hide": true
+            },
+            "43x6x32": {
+                "hide": true
+            },
+            "43x7x32": {
+                "hide": true
+            },
+            "43x8x32": {
+                "hide": true
+            },
+            "43x8x31": {
+                "hide": true
+            },
+            "44x8x31": {
+                "hide": true
+            },
+            "45x8x31": {
+                "hide": true
+            },
+            "46x8x31": {
+                "hide": true
+            },
+            "47x8x31": {
+                "hide": true
+            },
+            "47x7x31": {
+                "hide": true
+            },
+            "47x6x31": {
+                "hide": true
+            },
+            "47x5x31": {
+                "hide": true
+            },
+            "47x4x31": {
+                "hide": true
+            },
+            "47x3x31": {
+                "hide": true
+            },
+            "47x2x31": {
+                "hide": true
+            },
+            "47x1x31": {
+                "hide": true
+            },
+            "47x1x30": {
+                "hide": true
+            },
+            "47x2x30": {
+                "hide": true
+            },
+            "47x3x30": {
+                "hide": true
+            },
+            "47x4x30": {
+                "hide": true
+            },
+            "47x5x30": {
+                "hide": true
+            },
+            "47x6x30": {
+                "hide": true
+            },
+            "47x7x30": {
+                "hide": true
+            },
+            "47x8x30": {
+                "hide": true
+            },
+            "46x8x30": {
+                "hide": true
+            },
+            "45x8x30": {
+                "hide": true
+            },
+            "44x8x30": {
+                "hide": true
+            },
+            "43x8x30": {
+                "hide": true
+            },
+            "43x8x29": {
+                "hide": true
+            },
+            "44x8x29": {
+                "hide": true
+            },
+            "45x8x29": {
+                "hide": true
+            },
+            "46x8x29": {
+                "hide": true
+            },
+            "47x8x29": {
+                "hide": true
+            },
+            "47x7x29": {
+                "hide": true
+            },
+            "47x6x29": {
+                "hide": true
+            },
+            "47x5x29": {
+                "hide": true
+            },
+            "47x4x29": {
+                "hide": true
+            },
+            "47x3x29": {
+                "hide": true
+            },
+            "47x2x29": {
+                "hide": true
+            },
+            "47x1x29": {
+                "hide": true
             }
         }
     },
@@ -4958,6 +5200,20 @@
                     0,
                     0.7071067811865476
                 ]
+            },
+            {
+                "name": "OT_166_blue_cash_register_shop.glb",
+                "position": {
+                    "x": 12.5,
+                    "y": 2,
+                    "z": 10.5
+                },
+                "quaternion": [
+                    0,
+                    0.7071067811865475,
+                    0,
+                    0.7071067811865476
+                ]
             }
         ],
         "patches": {
@@ -5046,6 +5302,12 @@
                 "hide": true
             },
             "10x1x9": {
+                "hide": true
+            },
+            "12x5x11": {
+                "hide": true
+            },
+            "12x4x11": {
                 "hide": true
             }
         }
