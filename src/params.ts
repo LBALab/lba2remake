@@ -10,7 +10,7 @@ const paramsDefinitions = {
         default: mobileRE.test(navigator.userAgent)
     },
     scene: {
-        type: 'int',
+        type: 'number',
         default: -1
     },
     editor: {
@@ -56,6 +56,18 @@ const paramsDefinitions = {
     ball3d: {
         type: 'boolean',
         default: false
+    },
+    hdrEnv: {
+        type: 'string',
+        default: null
+    },
+    hdrIntensity: {
+        type: 'number',
+        default: 1
+    },
+    useProbe: {
+        type: 'boolean',
+        default: false
     }
 };
 
@@ -73,6 +85,9 @@ export interface Params {
     vrCtrlDBG: boolean;
     audio3d: boolean;
     ball3d: boolean;
+    hdrEnv: string | null;
+    hdrIntensity: number;
+    useProbe: boolean;
 }
 
 export function getParams(forceRefresh = false) : Params {
@@ -114,18 +129,18 @@ function parseParam(param, name, src) {
             console.warn(`Invalid value for param ${name}, value: ${src}, type=boolean`);
             return param.default;
 
-        case 'int':
+        case 'number':
             try {
                 const i = Number(src);
                 if (Number.isNaN(i)) {
                     // tslint:disable-next-line:no-console
-                    console.warn(`Invalid value for param ${name}, value: ${src}, type=int`);
+                    console.warn(`Invalid value for param ${name}, value: ${src}, type=number`);
                     return param.default;
                 }
                 return i;
             } catch (e) {
                 // tslint:disable-next-line:no-console
-                console.warn(`Invalid value for param ${name}, value: ${src}, type=int`);
+                console.warn(`Invalid value for param ${name}, value: ${src}, type=number`);
                 return param.default;
             }
 

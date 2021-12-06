@@ -27,6 +27,7 @@ import { processPhysicsFrame } from './loop/physics';
 import { SpriteType } from './data/spriteType';
 import { LBA2PointOffsets } from './scripting/data/lba2/points';
 import { getBodyFromGameState } from './loop/hero';
+import { loadHDREnv } from '../graphics/gi/LightProbeUtils';
 
 export interface SceneProps {
     index: number;
@@ -272,24 +273,43 @@ export default class Scene {
     }
 
     private addLight() {
-        const { ambience } = this.props;
-        const light = new THREE.DirectionalLight();
-        light.name = 'DirectionalLight';
-        light.position.set(-1000, 0, 0);
-        light.position.applyAxisAngle(
-            new THREE.Vector3(0, 0, 1),
-            -(ambience.lightingAlpha * 2 * Math.PI) / 0x1000
-        );
-        light.position.applyAxisAngle(
-            new THREE.Vector3(0, 1, 0),
-            -(ambience.lightingBeta * 2 * Math.PI) / 0x1000
-        );
-        light.updateMatrix();
-        light.matrixAutoUpdate = false;
-        this.threeScene.add(light);
-        const ambient = new THREE.AmbientLight(0xFFFFFF, 0.08);
-        ambient.name = 'AmbientLight';
-        this.threeScene.add(ambient);
+        if (getParams().hdrEnv) {
+            loadHDREnv(this.renderer).then(({ texture, lightProbe }) => {
+                if (getParams().useProbe) {
+                    this.threeScene.add(lightProbe);
+                } else {
+                    this.actors.forEach((actor) => {
+                        actor.threeObject.traverse((obj) => {
+                            if (obj instanceof THREE.Mesh) {
+                                obj.material.envMap = texture;
+                                obj.material.envMapIntensity =
+                                    parseFloat(getParams().hdrEnv.split(':')[1]);
+                                obj.material.needsUpdate = true;
+                            }
+                        });
+                    });
+                }
+            });
+        } else {
+            const { ambience } = this.props;
+            const light = new THREE.DirectionalLight();
+            light.name = 'DirectionalLight';
+            light.position.set(-1000, 0, 0);
+            light.position.applyAxisAngle(
+                new THREE.Vector3(0, 0, 1),
+                -(ambience.lightingAlpha * 2 * Math.PI) / 0x1000
+            );
+            light.position.applyAxisAngle(
+                new THREE.Vector3(0, 1, 0),
+                -(ambience.lightingBeta * 2 * Math.PI) / 0x1000
+            );
+            light.updateMatrix();
+            light.matrixAutoUpdate = false;
+            this.threeScene.add(light);
+            const ambient = new THREE.AmbientLight(0xFFFFFF, 0.08);
+            ambient.name = 'AmbientLight';
+            this.threeScene.add(ambient);
+        }
     }
 
     private initSceneNode() {

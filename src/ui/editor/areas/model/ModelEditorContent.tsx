@@ -16,6 +16,7 @@ import {
 import { loadEntities } from './browser/entitities';
 import DebugData from '../../DebugData';
 import { getParams } from '../../../../params';
+import { loadHDREnv } from '../../../../graphics/gi/LightProbeUtils';
 
 interface Props extends TickerProps {
     params: any;
@@ -130,6 +131,11 @@ export default class Model extends FrameListener<Props, State> {
             this.setState({ renderer }, this.saveDebugScope);
             this.root = root;
             this.root.appendChild(this.canvas);
+            if (getParams().hdrEnv && getParams().useProbe) {
+                const { /* texture, */ lightProbe } = await loadHDREnv(renderer);
+                // this.state.scene.threeScene.background = texture;
+                this.state.scene.threeScene.add(lightProbe);
+            }
         }
     }
 
