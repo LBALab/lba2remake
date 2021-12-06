@@ -1,28 +1,12 @@
 import * as THREE from 'three';
 import {each} from 'lodash';
 
-import VERT_COLORED from './shaders/colored.vert.glsl';
-import FRAG_COLORED from './shaders/colored.frag.glsl';
-import VERT_TEXTURED from './shaders/textured.vert.glsl';
-import FRAG_TEXTURED from './shaders/textured.frag.glsl';
-
-import {loadPaletteTexture, loadSubTextureRGBA} from '../texture';
-import {compile} from '../utils/shaders';
-import { WORLD_SIZE, PolygonType } from '../utils/lba';
+import { loadSubTextureRGBA } from '../texture';
+import { PolygonType } from '../utils/lba';
 import Lightning from '../game/scenery/island/environment/Lightning';
-import Renderer from '../renderer';
+import LBAStandardMaterial from '../graphics/materials/LBAStandardMaterial';
 
 const push = Array.prototype.push;
-
-const fakeNoiseBuffer = new Uint8Array(1);
-fakeNoiseBuffer[0] = 128;
-const fakeNoise = new THREE.DataTexture(
-    fakeNoiseBuffer,
-    1,
-    1,
-    THREE.AlphaFormat,
-    THREE.UnsignedByteType
-);
 
 interface ModelGeometry {
     positions: number[];
@@ -41,11 +25,15 @@ interface ModelGeometry {
     material: THREE.Material;
 }
 
-const worldScale = 1 / (WORLD_SIZE * 0.04);
-
-function prepareGeometries(texture, bones, matrixRotation, palette, lutTexture, envInfo, ambience) {
-    const paletteTexture = loadPaletteTexture(palette);
-    const light = getLightVector(ambience);
+function prepareGeometries(
+    texture,
+    bones,
+    _matrixRotation,
+    _palette,
+    _lutTexture,
+    _envInfo,
+    _ambience
+) {
     return {
         colored: {
             positions: [],
@@ -59,24 +47,9 @@ function prepareGeometries(texture, bones, matrixRotation, palette, lutTexture, 
             lineColors: [],
             lineIntensities: [],
             lineBones: [],
-            material: new THREE.RawShaderMaterial({
-                vertexShader: compile('vert', VERT_COLORED),
-                fragmentShader: compile('frag', FRAG_COLORED),
-                defines: {
-                    OPACITY: '1.0'
-                },
-                uniforms: {
-                    fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
-                    fogDensity: {value: envInfo.fogDensity},
-                    worldScale: {value: worldScale},
-                    palette: {value: paletteTexture},
-                    noise: {value: fakeNoise},
-                    light: {value: light},
-                    bonePos: { value: bones.position },
-                    boneRot: { value: bones.rotation },
-                    rotationMatrix: { value: matrixRotation }
-                },
-                glslVersion: Renderer.getGLSLVersion()
+            material: new LBAStandardMaterial({
+                bones,
+                vertexColors: true,
             })
         },
         colored_transparent: {
@@ -91,25 +64,11 @@ function prepareGeometries(texture, bones, matrixRotation, palette, lutTexture, 
             lineColors: [],
             lineIntensities: [],
             lineBones: [],
-            material: new THREE.RawShaderMaterial({
+            material: new LBAStandardMaterial({
+                bones,
+                vertexColors: true,
                 transparent: true,
-                vertexShader: compile('vert', VERT_COLORED),
-                fragmentShader: compile('frag', FRAG_COLORED),
-                defines: {
-                    OPACITY: '0.5'
-                },
-                uniforms: {
-                    fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
-                    fogDensity: {value: envInfo.fogDensity},
-                    worldScale: {value: worldScale},
-                    palette: {value: paletteTexture},
-                    noise: {value: fakeNoise},
-                    light: {value: light},
-                    bonePos: { value: bones.position },
-                    boneRot: { value: bones.rotation },
-                    rotationMatrix: { value: matrixRotation }
-                },
-                glslVersion: Renderer.getGLSLVersion()
+                opacity: 0.5,
             })
         },
         textured: {
@@ -126,21 +85,9 @@ function prepareGeometries(texture, bones, matrixRotation, palette, lutTexture, 
             lineColors: [],
             lineIntensities: [],
             lineBones: [],
-            material: new THREE.RawShaderMaterial({
-                vertexShader: compile('vert', VERT_TEXTURED),
-                fragmentShader: compile('frag', FRAG_TEXTURED),
-                uniforms: {
-                    fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
-                    fogDensity: {value: envInfo.fogDensity},
-                    worldScale: {value: worldScale},
-                    uTexture: {value: texture},
-                    palette: {value: paletteTexture},
-                    lutTexture: {value: lutTexture},
-                    light: {value: light},
-                    bonePos: { value: bones.position },
-                    boneRot: { value: bones.rotation },
-                    rotationMatrix: { value: matrixRotation }
-                }
+            material: new LBAStandardMaterial({
+                bones,
+                map: texture,
             })
         },
         textured_transparent: {
@@ -157,22 +104,11 @@ function prepareGeometries(texture, bones, matrixRotation, palette, lutTexture, 
             lineColors: [],
             lineIntensities: [],
             lineBones: [],
-            material: new THREE.RawShaderMaterial({
+            material: new LBAStandardMaterial({
+                bones,
+                map: texture,
                 transparent: true,
-                vertexShader: compile('vert', VERT_TEXTURED),
-                fragmentShader: compile('frag', FRAG_TEXTURED),
-                uniforms: {
-                    fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
-                    fogDensity: {value: envInfo.fogDensity},
-                    worldScale: {value: worldScale},
-                    uTexture: {value: texture},
-                    palette: {value: paletteTexture},
-                    lutTexture: {value: lutTexture},
-                    light: {value: light},
-                    bonePos: { value: bones.position },
-                    boneRot: { value: bones.rotation },
-                    rotationMatrix: { value: matrixRotation }
-                }
+                opacity: 0.5,
             })
         }
     };
@@ -236,13 +172,13 @@ export function loadMesh(
             }
             if (uvGroups) {
                 bufferGeometry.setAttribute(
-                    'uvGroup',
-                    new THREE.BufferAttribute(new Uint8Array(uvGroups), 4, false)
+                    'uvgroup',
+                    new THREE.BufferAttribute(new Uint16Array(uvGroups), 4, false)
                 );
             }
             bufferGeometry.setAttribute(
                 'color',
-                new THREE.BufferAttribute(new Uint8Array(colors), 1, false)
+                new THREE.BufferAttribute(new Uint8Array(colors), 3, true)
             );
             bufferGeometry.setAttribute(
                 'intensity',
@@ -283,7 +219,7 @@ export function loadMesh(
             );
             linebufferGeometry.setAttribute(
                 'color',
-                new THREE.BufferAttribute(new Uint8Array(lineColors), 1, false)
+                new THREE.BufferAttribute(new Uint8Array(lineColors), 3, true)
             );
             linebufferGeometry.setAttribute(
                 'intensity',
@@ -325,15 +261,15 @@ function loadGeometry(
         ambience
     );
 
-    loadFaceGeometry(geometries, body);
-    loadSphereGeometry(geometries, body);
-    loadLineGeometry(geometries, body);
+    loadFaceGeometry(geometries, body, palette);
+    loadSphereGeometry(geometries, body, palette);
+    loadLineGeometry(geometries, body, palette);
     // debugBoneGeometry(geometries, body);
 
     return geometries;
 }
 
-function loadFaceGeometry(geometries, body) {
+function loadFaceGeometry(geometries, body, palette) {
     each(body.polygons, (p) => {
         const uvGroup = getUVGroup(body, p);
         const baseGroup = p.hasTransparency ? 'textured_transparent' : 'textured';
@@ -348,16 +284,16 @@ function loadFaceGeometry(geometries, body) {
                 push.apply(geometries[group].uvs, getUVs(body, p, j));
                 push.apply(geometries[group].uvGroups, getUVGroup(body, p));
                 push.apply(geometries[group].bones, getBone(body, vertexIndex));
+                push.apply(geometries[group].colors, getColor(p.colour, p.intensity, palette));
                 geometries[group].polyTypes.push(p.polyType);
-                geometries[group].colors.push(p.colour);
                 geometries[group].intensities.push(p.intensity);
             } else {
                 const cGroup = p.polyType === PolygonType.TRANS ? 'colored_transparent' : 'colored';
                 push.apply(geometries[cGroup].positions, getPosition(body, vertexIndex));
                 push.apply(geometries[cGroup].normals, faceNormal || getNormal(body, vertexIndex));
                 push.apply(geometries[cGroup].bones, getBone(body, vertexIndex));
+                push.apply(geometries[cGroup].colors, getColor(p.colour, p.intensity, palette));
                 geometries[cGroup].polyTypes.push(p.polyType);
-                geometries[cGroup].colors.push(p.colour);
                 geometries[cGroup].intensities.push(p.intensity);
             }
         };
@@ -372,13 +308,20 @@ function loadFaceGeometry(geometries, body) {
     });
 }
 
-function loadSphereGeometry(geometries, body) {
+function loadSphereGeometry(geometries, body, palette) {
     each(body.spheres, (s) => {
         const centerPos = getPosition(body, s.vertex);
         const sphereGeometry = new THREE.SphereGeometry(s.size, 8, 8);
-        const normal = getNormal(body, s.vertex);
 
-        const addVertex = (x, y, z) => {
+        const addVertex = (idx) => {
+            const x = vertex[idx];
+            const y = vertex[idx + 1];
+            const z = vertex[idx + 2];
+            const normal = [
+                normals[idx],
+                normals[idx + 1],
+                normals[idx + 2],
+            ];
             push.apply(geometries.colored.positions, [
                 x + centerPos[0],
                 y + centerPos[1],
@@ -386,27 +329,28 @@ function loadSphereGeometry(geometries, body) {
             ]);
             push.apply(geometries.colored.normals, normal);
             push.apply(geometries.colored.bones, getBone(body, s.vertex));
-            geometries.colored.colors.push(s.colour);
+            push.apply(geometries.colored.colors, getColor(s.colour, s.intensity, palette));
             geometries.colored.intensities.push(s.intensity);
             geometries.colored.polyTypes.push(0);
         };
 
         const { array: vertex } = sphereGeometry.attributes.position;
+        const { array: normals } = sphereGeometry.attributes.normal;
         const { array: index, count } = sphereGeometry.index;
         for (let i = 0; i < count; i += 1) {
             const idx = index[i] * 3;
-            addVertex(vertex[idx], vertex[idx + 1], vertex[idx + 2]);
+            addVertex(idx);
         }
     });
 }
 
-function loadLineGeometry(geometries, body) {
+function loadLineGeometry(geometries, body, palette) {
     each(body.lines, (l) => {
         const addVertex = (color, intensity, i) => {
             push.apply(geometries.colored.linePositions, getPosition(body, i));
             push.apply(geometries.colored.lineNormals, getNormal(body, i));
             push.apply(geometries.colored.lineBones, getBone(body, i));
-            geometries.colored.lineColors.push(color);
+            push.apply(geometries.colored.lineColors, getColor(color, intensity, palette));
             geometries.colored.lineIntensities.push(intensity);
         };
 
@@ -441,6 +385,15 @@ function debugBoneGeometry(geometries, body) {
     });
 }
 */
+
+function getColor(color, intensity, palette) {
+    const idx = color * 16 + intensity;
+    return [
+        palette[idx * 3],
+        palette[idx * 3 + 1],
+        palette[idx * 3 + 2],
+    ];
+}
 
 function getBone(body, index) {
     const vertex = body.vertices[index];
@@ -506,27 +459,13 @@ function getUVGroup(body, p) {
     return [0, 0, 255, 255];
 }
 
-function getLightVector(ambience) {
-    const lightVector = new THREE.Vector3(-1, 0, 0);
-    lightVector.applyAxisAngle(
-        new THREE.Vector3(0, 0, 1),
-        -(ambience.lightingAlpha * 2 * Math.PI) / 0x1000
-    );
-    lightVector.applyAxisAngle(
-        new THREE.Vector3(0, 1, 0),
-        -(ambience.lightingBeta * 2 * Math.PI) / 0x1000
-    );
-    return lightVector;
-}
-
 function createSubgroupGeometry(geometries, group, baseGroup, uvGroup) {
     if (group in geometries) {
         return;
     }
     const baseMaterial = geometries[baseGroup].material;
-    const baseUniforms = baseMaterial.uniforms;
     const transparent = baseGroup === 'textured_transparent';
-    const baseTexture = baseUniforms.uTexture.value;
+    const baseTexture = baseMaterial.map;
     let groupTexture = baseTexture;
     if (uvGroup.join(',') !== '0,0,255,255') {
         groupTexture = loadSubTextureRGBA(
@@ -551,22 +490,11 @@ function createSubgroupGeometry(geometries, group, baseGroup, uvGroup) {
         lineColors: [],
         lineIntensities: [],
         lineBones: [],
-        material: new THREE.RawShaderMaterial({
-            transparent,
-            vertexShader: baseMaterial.vertexShader,
-            fragmentShader: baseMaterial.fragmentShader,
-            uniforms: {
-                fogColor: baseUniforms.fogColor,
-                fogDensity: baseUniforms.fogDensity,
-                worldScale: {value: worldScale},
-                uTexture: {value: groupTexture},
-                lutTexture: baseUniforms.lutTexture,
-                palette: baseUniforms.palette,
-                light: baseUniforms.light,
-                bonePos: baseUniforms.bonePos,
-                boneRot: baseUniforms.boneRot,
-                rotationMatrix: baseUniforms.rotationMatrix,
-            }
-        })
+        material: new LBAStandardMaterial({
+            bones: baseMaterial.bones,
+            map: groupTexture,
+            useTextureAtlas: true,
+            transparent
+        }),
     };
 }

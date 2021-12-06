@@ -78,7 +78,7 @@ export function loadTexture(buffer: ArrayBuffer, palette: Uint8Array) {
 
 export function loadTextureRGBA(buffer: ArrayBuffer, palette: Uint8Array) {
     const pixel_data = new Uint8Array(buffer);
-    const image_data = new Uint8Array(256 * 256 * 4);
+    const image_data = new Uint8ClampedArray(256 * 256 * 4);
     for (let i = 0; i < 65536; i += 1) { // 256 * 256
         const idx = pixel_data[i];
         if (idx === 0) {
