@@ -4757,6 +4757,11 @@
       "file": "OT_162_health_heart.glb",
       "orientation": 0
     },
+    "163": {
+      "replace": true,
+      "file": "OT_163_towel_hooks.glb",
+      "orientation": 0
+    },
     "165": {
       "mirror": true
     },
