@@ -334,7 +334,7 @@ export default {
         type: 'assignment',
         indent: Indent.KEEP
     },
-    SET_CHANGE_CUBE: {
+    SET_TELEPORT_ZONE: {
         type: 'fct',
         indent: Indent.KEEP
     },
@@ -423,7 +423,7 @@ export default {
         type: 'structural',
         indent: Indent.KEEP
     },
-    ESCALATOR: {
+    CONVEYOR: {
         type: 'fct',
         indent: Indent.KEEP
     },
@@ -504,7 +504,7 @@ export default {
         type: 'control_no_parens',
         indent: Indent.SUB
     },
-    SET_HIT_ZONE: {
+    SET_SPIKE_ZONE: {
         type: 'fct',
         indent: Indent.KEEP
     },

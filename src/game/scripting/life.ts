@@ -595,7 +595,7 @@ export function SUB_FUEL(this: ScriptContext, fuel) {
 
 export const SET_GRM = unimplemented();
 
-export function SET_CHANGE_CUBE(this: ScriptContext, targetScene: number, flag: number) {
+export function SET_TELEPORT_ZONE(this: ScriptContext, targetScene: number, flag: number) {
     for (const zone of this.scene.zones) {
         if ((zone instanceof TeleportZone) && zone.targetScene === targetScene) {
             zone.enabled = (flag !== 0);
@@ -672,7 +672,7 @@ export function THE_END(this: ScriptContext) {
     this.game.getState().hero.magic = 80;
 }
 
-export function ESCALATOR(this: ScriptContext, which: number, flag: number) {
+export function CONVEYOR(this: ScriptContext, which: number, flag: number) {
     for (const zone of this.scene.zones) {
         if ((zone instanceof ConveyorZone) && zone.id === which) {
             zone.enabled = (flag !== 0);
@@ -738,7 +738,7 @@ export function STATE_INVENTORY(this: ScriptContext, item: number, state: number
     this.game.getState().flags.inventory[item] = state;
 }
 
-export function SET_HIT_ZONE(this: ScriptContext, which: number, damage: number) {
+export function SET_SPIKE_ZONE(this: ScriptContext, which: number, damage: number) {
     for (const zone of this.scene.zones) {
         if ((zone instanceof SpikeZone) && zone.id === which) {
             zone.damage = damage;

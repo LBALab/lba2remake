@@ -11,7 +11,7 @@ import Extra from '../../Extra';
 
 const STEP = 1 / WORLD_SIZE;
 const HALF_BRICK = 1 / 32;
-const ESCALATOR_SPEED = 0.05;
+const CONVEYOR_SPEED = 0.05;
 
 // Vertical height offsets for the jet/protopack.
 const JETPACK_OFFSET = 0.03;
@@ -219,7 +219,7 @@ export default class IsoSceneryPhysics {
                             }
                         }
                         if (!isLBA1) {
-                            processEscalator(column, position, time);
+                            processConveyor(column, position, time);
                         }
                         break;
                     }
@@ -457,19 +457,19 @@ function intersectBox(actor: Actor | Extra, position: THREE.Vector3) {
     return false;
 }
 
-function processEscalator(column, position: THREE.Vector3, time: Time) {
+function processConveyor(column, position: THREE.Vector3, time: Time) {
     switch (column.groundType) {
-        case GROUND_TYPES.ESCALATOR_BOTTOM_RIGHT_TOP_LEFT:
-            position.z -= ESCALATOR_SPEED * time.delta;
+        case GROUND_TYPES.CONVEYOR_BOTTOM_RIGHT_TOP_LEFT:
+            position.z -= CONVEYOR_SPEED * time.delta;
             break;
-        case GROUND_TYPES.ESCALATOR_TOP_LEFT_BOTTOM_RIGHT:
-            position.z += ESCALATOR_SPEED * time.delta;
+        case GROUND_TYPES.CONVEYOR_TOP_LEFT_BOTTOM_RIGHT:
+            position.z += CONVEYOR_SPEED * time.delta;
             break;
-        case GROUND_TYPES.ESCALATOR_BOTTOM_LEFT_TOP_RIGHT:
-            position.x += ESCALATOR_SPEED * time.delta;
+        case GROUND_TYPES.CONVEYOR_BOTTOM_LEFT_TOP_RIGHT:
+            position.x += CONVEYOR_SPEED * time.delta;
             break;
-        case GROUND_TYPES.ESCALATOR_TOP_RIGHT_BOTTOM_LEFT:
-            position.x -= ESCALATOR_SPEED * time.delta;
+        case GROUND_TYPES.CONVEYOR_TOP_RIGHT_BOTTOM_LEFT:
+            position.x -= CONVEYOR_SPEED * time.delta;
             break;
     }
 }

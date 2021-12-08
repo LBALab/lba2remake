@@ -469,8 +469,8 @@ export const LifeOpcode = [
     },
     {
         opcode: 0x4D,
-        command: 'SET_CHANGE_CUBE',
-        handler: lf.SET_CHANGE_CUBE,
+        command: 'SET_TELEPORT_ZONE',
+        handler: lf.SET_TELEPORT_ZONE,
         args: ['Uint8', 'Uint8']
     },
     {
@@ -598,8 +598,8 @@ export const LifeOpcode = [
     },
     {
         opcode: 0x63,
-        command: 'ESCALATOR',
-        handler: lf.ESCALATOR,
+        command: 'CONVEYOR',
+        handler: lf.CONVEYOR,
         args: ['Uint8', 'Uint8']
     },
     {
@@ -722,8 +722,8 @@ export const LifeOpcode = [
     },
     {
         opcode: 0x77,
-        command: 'SET_HIT_ZONE',
-        handler: lf.SET_HIT_ZONE,
+        command: 'SET_SPIKE_ZONE',
+        handler: lf.SET_SPIKE_ZONE,
         args: ['Uint8', 'Uint8']
     },
     {
