@@ -3,7 +3,7 @@ import DebugData, { getVarName, getObjectName } from '../../../../../../DebugDat
 import LocationsNode from '../../../../locator/LocationsNode';
 import { ActorDirMode } from '../../../../../../../../game/Actor';
 import { GetInventorySize } from '../../../../../../../../game/data/inventory';
-import { ZoneType } from '../../../../../../../../game/Zone';
+import { ScenericZone } from '../../../../../../../../game/Zone';
 
 function getActor(field) {
     const block = field.getSourceBlock();
@@ -111,12 +111,12 @@ export function generateZones() {
     if (!scene) {
         return [['<zone>', '-1']];
     }
-    const zones = filter(scene.zones, zone => zone.props.type === ZoneType.SCENERIC) as any;
+    const zones = filter(scene.zones, zone => zone instanceof ScenericZone) as any;
     return map(
         zones,
-        (zone) => {
+        (zone: ScenericZone) => {
             const name = getObjectName('zone', scene.index, zone.props.index);
-            return [name, `${zone.props.param}`];
+            return [name, `${zone.id}`];
         }
     );
 }

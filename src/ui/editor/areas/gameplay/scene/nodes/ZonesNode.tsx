@@ -3,7 +3,7 @@ import DebugData, {getObjectName, renameObject, locateObject} from '../../../../
 import {SceneGraphNode} from '../../sceneGraph/SceneGraphNode';
 import {makeObjectsNode} from '../node_factories/objects';
 import Scene from '../../../../../../game/Scene';
-import Zone, { ZoneType, ZONE_TYPE } from '../../../../../../game/Zone';
+import Zone, { TextZone, ZONE_TYPE } from '../../../../../../game/Zone';
 
 const ZoneNode = {
     dynamic: true,
@@ -61,7 +61,7 @@ const ZoneNode = {
             name: 'Param',
             value: (zone: Zone) => {
                 let value = zone.props.param;
-                if (zone.props.type === ZoneType.TEXT) {
+                if (zone instanceof TextZone) {
                     if (DebugData.scope.scene.props.texts[value]) {
                         value = DebugData.scope.scene.props.texts[value].value;
                     }

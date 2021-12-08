@@ -3,6 +3,7 @@ import {cloneDeep} from 'lodash';
 import {getObjectName} from '../ui/editor/DebugData';
 import {createBoundingBox} from '../utils/rendering';
 import { getParams } from '../params';
+import assert from 'assert';
 
 export const ZONE_TYPE = [
     'TELEPORT',
@@ -84,58 +85,7 @@ export default class Zone {
     private icon: HTMLImageElement;
     private name: string;
 
-    // Flags and settings unpacked from the zone props (and related state).
-    teleport: {
-        x: number;
-        y: number;
-        z: number;
-        beta: number;
-        id: number;
-        enabled: boolean;
-    };
-    camera: {
-        x: number;
-        y: number;
-        z: number;
-        alpha: number;
-        beta: number;
-        gamma: number;
-        distance: number;
-        enabled: boolean;
-        force: boolean;
-    };
-    sceneric: {
-    };
-    fragment: {
-        fragment: number;
-        enabled: boolean;
-    };
-    bonus: {
-        type: number;
-        quantity: number;
-        given: boolean;
-    };
-    text: {
-        color: number;
-        camera: number;
-        side: number;
-    };
-    ladder: {
-        enabled: boolean;
-    };
-    conveyor: {
-        enabled: boolean;
-        direction: number;
-    };
-    spike: {
-        damage: number;
-        rearmTime: number;
-    };
-    rail: {
-        enabled: boolean;
-    };
-
-    constructor(props: ZoneProps, is3DCam: boolean) {
+    protected constructor(props: ZoneProps, is3DCam: boolean) {
         this.index = props.index;
         this.zoneType = ZONE_TYPE[props.type];
         this.props = cloneDeep(props);
@@ -143,8 +93,6 @@ export default class Zone {
         this.physics = {
             position: new THREE.Vector3(props.pos[0], props.pos[1], props.pos[2])
         };
-
-        this.unpackProps();
 
         const {xMin, yMin, zMin, xMax, yMax, zMax} = props.box;
         const bb = new THREE.Box3(
@@ -217,87 +165,202 @@ export default class Zone {
         this.labelTexture.needsUpdate = true;
     }
 
-    private unpackProps() {
-        switch (this.props.type)
+    static create(props: ZoneProps, is3DCam: boolean): Zone {
+        switch (props.type)
         {
             case ZoneType.TELEPORT:
-                this.teleport = {
-                    x: this.props.info0,
-                    y: this.props.info1,
-                    z: this.props.info2,
-                    beta: this.props.info3,
-                    id: this.props.info4,
-                    enabled: (this.props.info7 & 3) !== 0,
-                };
-                break;
+                return new TeleportZone(props, is3DCam);
 
             case ZoneType.CAMERA:
-                this.camera = {
-                    x: this.props.info0,
-                    y: this.props.info1,
-                    z: this.props.info2,
-                    alpha: this.props.info3,
-                    beta: this.props.info4,
-                    gamma: this.props.info5,
-                    distance: this.props.info6,
-                    enabled: (this.props.info7 & 3) !== 0,
-                    force: (this.props.info7 & 8) !== 0,
-                };
-                break;
+                return new CameraZone(props, is3DCam);
 
             case ZoneType.SCENERIC:
-                this.sceneric = {
-                };
-                break;
+                return new ScenericZone(props, is3DCam);
 
             case ZoneType.FRAGMENT:
-                this.fragment = {
-                    fragment: this.props.info0,
-                    enabled: this.props.info2 !== 0,
-                };
-                break;
-
-            case ZoneType.BONUS:
-                this.bonus = {
-                    type: this.props.info0,
-                    quantity: this.props.info1,
-                    given: false,
-                };
-                break;
+                return new FragmentZone(props, is3DCam);
 
             case ZoneType.TEXT:
-                this.text = {
-                    color: this.props.info0,
-                    camera: this.props.info1,
-                    side: this.props.info2,
-                };
-                break;
+                return new TextZone(props, is3DCam);
+
+            case ZoneType.BONUS:
+                return new BonusZone(props, is3DCam);
 
             case ZoneType.LADDER:
-                this.ladder = {
-                    enabled: this.props.info0 !== 0,
-                };
-                break;
+                return new LadderZone(props, is3DCam);
 
             case ZoneType.CONVEYOR:
-                this.conveyor = {
-                    enabled: this.props.info1 !== 0,
-                    direction: this.props.info2,
-                };
-                break;
+                return new ConveyorZone(props, is3DCam);
 
             case ZoneType.SPIKE:
-                this.spike = {
-                    damage: this.props.info1,
-                    rearmTime: this.props.info2,
-                };
-                break;
+                return new SpikeZone(props, is3DCam);
 
             case ZoneType.RAIL:
-                this.rail = {
-                    enabled: this.props.info0 !== 0,
-                };
-                break;
+                return new RailZone(props, is3DCam);
         }
+    }
+}
+
+export class TeleportZone extends Zone {
+    targetScene: number;
+    x: number;
+    y: number;
+    z: number;
+    beta: number;
+    id: number;
+    enabled: boolean;
+
+    constructor(props: ZoneProps, is3DCam: boolean) {
+        assert(props.type === ZoneType.TELEPORT);
+        super(props, is3DCam);
+
+        this.targetScene = this.props.param;
+        this.x = this.props.info0;
+        this.y = this.props.info1;
+        this.z = this.props.info2;
+        this.beta = this.props.info3;
+        this.id = this.props.info4;
+        this.enabled = (this.props.info7 & 3) !== 0;
+    }
+}
+
+export class CameraZone extends Zone {
+    id: number;
+    x: number;
+    y: number;
+    z: number;
+    alpha: number;
+    beta: number;
+    gamma: number;
+    distance: number;
+    enabled: boolean;
+    force: boolean;
+
+    constructor(props: ZoneProps, is3DCam: boolean) {
+        assert(props.type === ZoneType.CAMERA);
+        super(props, is3DCam);
+
+        this.id = this.props.param;
+        this.x = this.props.info0;
+        this.y = this.props.info1;
+        this.z = this.props.info2;
+        this.alpha = this.props.info3;
+        this.beta = this.props.info4;
+        this.gamma = this.props.info5;
+        this.distance = this.props.info6;
+        this.enabled = (this.props.info7 & 3) !== 0;
+        this.force = (this.props.info7 & 8) !== 0;
+    }
+}
+
+export class ScenericZone extends Zone {
+    id: number;
+
+    constructor(props: ZoneProps, is3DCam: boolean) {
+        assert(props.type === ZoneType.SCENERIC);
+        super(props, is3DCam);
+
+        this.id = this.props.param;
+    }
+}
+
+export class FragmentZone extends Zone {
+    fragment: number;
+    enabled: boolean;
+
+    constructor(props: ZoneProps, is3DCam: boolean) {
+        assert(props.type === ZoneType.FRAGMENT);
+        super(props, is3DCam);
+
+        this.fragment = this.props.info0;
+        this.enabled = this.props.info2 !== 0;
+    }
+}
+
+export class BonusZone extends Zone {
+    bonusType: number;
+    quantity: number;
+    given: boolean;
+
+    constructor(props: ZoneProps, is3DCam: boolean) {
+        assert(props.type === ZoneType.BONUS);
+        super(props, is3DCam);
+
+        this.bonusType = this.props.info0;
+        this.quantity = this.props.info1;
+        this.given = false;
+    }
+}
+
+export class TextZone extends Zone {
+    message: number;
+    textColor: number;
+    camera: number;
+    side: number;
+
+    constructor(props: ZoneProps, is3DCam: boolean) {
+        assert(props.type === ZoneType.TEXT);
+        super(props, is3DCam);
+
+        this.message = this.props.param;
+        this.textColor = this.props.info0;
+        this.camera = this.props.info1;
+        this.side = this.props.info2;
+    }
+}
+
+export class LadderZone extends Zone {
+    id: number;
+    enabled: boolean;
+
+    constructor(props: ZoneProps, is3DCam: boolean) {
+        assert(props.type === ZoneType.LADDER);
+        super(props, is3DCam);
+
+        this.id = this.props.param;
+        this.enabled = this.props.info0 !== 0;
+    }
+}
+
+export class ConveyorZone extends Zone {
+    id: number;
+    enabled: boolean;
+    direction: number;
+
+    constructor(props: ZoneProps, is3DCam: boolean) {
+        assert(props.type === ZoneType.CONVEYOR);
+        super(props, is3DCam);
+
+        this.id = this.props.param;
+        this.enabled = this.props.info1 !== 0;
+        this.direction = this.props.info2;
+    }
+}
+
+export class SpikeZone extends Zone {
+    id: number;
+    damage: number;
+    rearmTime: number;
+
+    constructor(props: ZoneProps, is3DCam: boolean) {
+        assert(props.type === ZoneType.SPIKE);
+        super(props, is3DCam);
+
+        this.id = this.props.param;
+        this.damage = this.props.info1;
+        this.rearmTime = this.props.info2;
+    }
+}
+
+export class RailZone extends Zone {
+    id: number;
+    enabled: boolean;
+
+    constructor(props: ZoneProps, is3DCam: boolean) {
+        assert(props.type === ZoneType.RAIL);
+        super(props, is3DCam);
+
+        this.id = this.props.param;
+        this.enabled = this.props.info0 !== 0;
     }
 }

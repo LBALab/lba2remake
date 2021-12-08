@@ -3,7 +3,7 @@ import { getDistanceLba } from '../../utils/lba';
 import { ScriptContext } from './ScriptContext';
 import { LBA2GameFlags } from '../data/gameFlags';
 import Actor from '../Actor';
-import Zone, { ZoneType } from '../Zone';
+import { RailZone, ScenericZone } from '../Zone';
 
 export function COL(this: ScriptContext) {
     if (this.actor.props.life <= 0) {
@@ -38,9 +38,9 @@ export function ZONE(this: ScriptContext) {
 
 export function ZONE_OBJ(this: ScriptContext, actor: Actor) {
     const pos = actor.physics.position.clone();
-    let match: Zone = null;
+    let match: ScenericZone = null;
     for (const zone of this.scene.zones) {
-        if (zone.props.type !== ZoneType.SCENERIC)
+        if (!(zone instanceof ScenericZone))
             continue;
 
         const box = zone.props.box;
@@ -63,7 +63,7 @@ export function ZONE_OBJ(this: ScriptContext, actor: Actor) {
             }
         }
     }
-    return match ? match.props.param : -1;
+    return match ? match.id : -1;
 }
 
 export function BODY(this: ScriptContext) {
@@ -192,8 +192,8 @@ export function RND(this: ScriptContext, max: number) {
 
 export function RAIL(this: ScriptContext, rail: number) {
     for (const zone of this.scene.zones) {
-        if (zone.props.type === ZoneType.RAIL && zone.props.param === rail) {
-            return zone.rail.enabled;
+        if (zone instanceof RailZone && zone.id === rail) {
+            return zone.enabled;
         }
     }
     return 0;

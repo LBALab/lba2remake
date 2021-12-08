@@ -6,7 +6,7 @@ import IsoSceneryPhysics from '../scenery/isometric/IsoSceneryPhysics';
 import { Time } from '../../datatypes';
 import { WORLD_SIZE } from '../../utils/lba';
 import { KeyFrame } from '../../model/anim/types';
-import { ZoneType } from '../Zone';
+import { RailZone } from '../Zone';
 
 /*
 **                       ----
@@ -220,14 +220,13 @@ function isSwitchEnabled(scene: Scene) {
     POS.copy(lINFO.center);
     POS.y += 0.02;
     for (const zone of scene.zones) {
-        if (zone.props.type !== ZoneType.RAIL)
-            continue;
-
-        const box = zone.props.box;
-        if (POS.x >= box.xMin && POS.x <= box.xMax &&
-            POS.y >= box.yMin && POS.y <= box.yMax &&
-            POS.z >= box.zMin && POS.z <= box.zMax) {
-            return zone.rail.enabled;
+        if (zone instanceof RailZone) {
+            const box = zone.props.box;
+            if (POS.x >= box.xMin && POS.x <= box.xMax &&
+                POS.y >= box.yMin && POS.y <= box.yMax &&
+                POS.z >= box.zMin && POS.z <= box.zMax) {
+                return zone.enabled;
+            }
         }
     }
     return false;

@@ -15,7 +15,7 @@ import { LBA2Items, GetInventoryItems, LBA1Items, GetInventorySize } from '../da
 import Extra, { getBonus } from '../Extra';
 import { CURRENT_TRACK, VAR_GAME } from './condition';
 import { SET_TRACK } from './structural';
-import { ZoneType } from '../Zone';
+import { CameraZone, ConveyorZone, LadderZone, RailZone, SpikeZone, TeleportZone } from '../Zone';
 
 const isLBA1 = getParams().game === 'lba1';
 
@@ -38,8 +38,8 @@ export function ANIM_OBJ(this: ScriptContext, actor: Actor, animIndex: number) {
 
 export function SET_CAMERA(this: ScriptContext, which: number, flag: number) {
     for (const zone of this.scene.zones) {
-        if (zone.props.type === ZoneType.CAMERA && zone.props.param === which) {
-            zone.camera.enabled = (flag !== 0);
+        if ((zone instanceof CameraZone) && zone.id === which) {
+            zone.enabled = (flag !== 0);
         }
     }
 }
@@ -595,10 +595,10 @@ export function SUB_FUEL(this: ScriptContext, fuel) {
 
 export const SET_GRM = unimplemented();
 
-export function SET_CHANGE_CUBE(this: ScriptContext, zone: number, flag: number) {
-    for (const z of this.scene.zones) {
-        if (z.props.type === ZoneType.TELEPORT && z.teleport.id === zone) {
-            z.teleport.enabled = (flag !== 0);
+export function SET_CHANGE_CUBE(this: ScriptContext, targetScene: number, flag: number) {
+    for (const zone of this.scene.zones) {
+        if ((zone instanceof TeleportZone) && zone.targetScene === targetScene) {
+            zone.enabled = (flag !== 0);
         }
     }
 }
@@ -674,8 +674,8 @@ export function THE_END(this: ScriptContext) {
 
 export function ESCALATOR(this: ScriptContext, which: number, flag: number) {
     for (const zone of this.scene.zones) {
-        if (zone.props.type === ZoneType.CONVEYOR && zone.props.param === which) {
-            zone.conveyor.enabled = (flag !== 0);
+        if ((zone instanceof ConveyorZone) && zone.id === which) {
+            zone.enabled = (flag !== 0);
         }
     }
 }
@@ -710,8 +710,8 @@ export const REPLACE = unimplemented();
 
 export function LADDER(this: ScriptContext, which: number, flag: number) {
     for (const zone of this.scene.zones) {
-        if (zone.props.type === ZoneType.LADDER && zone.props.param === which) {
-            zone.ladder.enabled = (flag !== 0);
+        if ((zone instanceof LadderZone) && zone.id === which) {
+            zone.enabled = (flag !== 0);
         }
     }
 }
@@ -740,8 +740,8 @@ export function STATE_INVENTORY(this: ScriptContext, item: number, state: number
 
 export function SET_HIT_ZONE(this: ScriptContext, which: number, damage: number) {
     for (const zone of this.scene.zones) {
-        if (zone.props.type === ZoneType.SPIKE && zone.props.param === which) {
-            zone.spike.damage = damage;
+        if ((zone instanceof SpikeZone) && zone.id === which) {
+            zone.damage = damage;
         }
     }
 }
@@ -772,8 +772,8 @@ export const BACKGROUND = unimplemented();
 
 export function SET_RAIL(this: ScriptContext, rail: number, value: number) {
     for (const zone of this.scene.zones) {
-        if (zone.props.type === ZoneType.RAIL && zone.props.param === rail) {
-            zone.rail.enabled = (value !== 0);
+        if ((zone instanceof RailZone) && zone.id === rail) {
+            zone.enabled = (value !== 0);
         }
     }
 }
