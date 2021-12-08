@@ -4763,7 +4763,9 @@
       "orientation": 0
     },
     "165": {
-      "mirror": true
+      "replace": true,
+      "file": "OT_165_box.glb",
+      "orientation": 0
     },
     "166": {
       "replace": true,
