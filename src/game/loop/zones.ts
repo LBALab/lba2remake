@@ -7,7 +7,8 @@ import { angleTo, angleToRad, getRandom, WORLD_SCALE, BRICK_SIZE, getHtmlColor }
 import Extra, { getBonus } from '../Extra';
 import Game from '../Game';
 import Scene from '../Scene';
-import Zone from '../Zone';
+import Zone,
+    { BonusZone, CameraZone, LadderZone, ScenericZone, TeleportZone, TextZone, ZoneType } from '../Zone';
 import { getParams } from '../../params';
 import { Time } from '../../datatypes';
 
@@ -61,7 +62,7 @@ export function processZones(game: Game, scene: Scene, time: Time) {
     const pos = hero.physics.position.clone();
     game.controlsState.camZone = null;
     for (const zone of scene.zones) {
-        if (zone.props.type === 2)
+        if (zone instanceof ScenericZone)
             continue;
 
         const box = zone.props.box;
@@ -101,10 +102,14 @@ function LADDER(game: Game, scene: Scene, zone: Zone, hero: Actor, _time: Time) 
         return false;
     }
 
+    if (!(zone instanceof LadderZone)) {
+        return false;
+    }
+
     // TODO(scottwilliams): work out how to tell if Twinsen is facing ladders
     // at arbitrary angles as happens on islands (vs isometric).
     const facing = isFacingLadder(hero.physics.temp.angle) || scene.props.isIsland;
-    if (zone.props.info1 && facing) {
+    if (zone.enabled && facing) {
         // Is UP being pressed?
         if (game.controlsState.controlVector.y > 0.6) {
             hero.state.isClimbing = true;
@@ -144,11 +149,11 @@ function LADDER(game: Game, scene: Scene, zone: Zone, hero: Actor, _time: Time) 
 //     newScene.sceneNode.add(helper);
 // }
 
-// calculateTagetPosition returns the target position we should place Twinsen at
+// calculateTargetPosition returns the target position we should place Twinsen at
 // in the new scene. This function attempts to work out the closest
 // corresponding "exit" zone in the newScene and snap the location to that. If
 // no such zone exists we fall back to the default location on the zone props.
-function calculateTagetPosition(hero: Actor, zone: Zone, newScene: Scene) {
+function calculateTargetPosition(hero: Actor, zone: TeleportZone, newScene: Scene) {
     // MAX_ZONE_DIST is the farthest away we would consider a TELEPORT
     // zone "the" matching zone we're looking for.
     const MAX_ZONE_DIST = 5 * BRICK_SIZE * WORLD_SCALE;
@@ -162,9 +167,9 @@ function calculateTagetPosition(hero: Actor, zone: Zone, newScene: Scene) {
 
     // Where the zone props put us by default.
     const initialTargetPos = new THREE.Vector3(
-        (0x8000 - zone.props.info2 - 256) * WORLD_SCALE,
-        zone.props.info1 * WORLD_SCALE,
-        zone.props.info0 * WORLD_SCALE
+        (0x8000 - zone.z - 256) * WORLD_SCALE,
+        zone.y * WORLD_SCALE,
+        zone.x * WORLD_SCALE
     );
 
     // Iterate over all of the zones in the new scene to find the
@@ -177,7 +182,7 @@ function calculateTagetPosition(hero: Actor, zone: Zone, newScene: Scene) {
     let closestZone = null;
     let smallestDistance = Number.MAX_SAFE_INTEGER;
     for (const newZone of newScene.zones) {
-        if (newZone.zoneType !== 'TELEPORT') {
+        if (newZone.props.type !== ZoneType.TELEPORT) {
             continue;
         }
 
@@ -214,8 +219,8 @@ function calculateTagetPosition(hero: Actor, zone: Zone, newScene: Scene) {
     const deltaY = (hero.physics.position.y - zone.props.box.yMin) / lenY;
 
     if (closestZone) {
-        // console.log("Current scene ID: " + closestZone.props.snap +
-        // " Target scene ID: " + zone.props.snap);
+        // console.log("Current scene ID: " + closestZone.targetScene +
+        // " Target scene ID: " + zone.targetScene);
 
         // offset is how far we push Twinsen into the scene to ensure we
         // don't immediately re-enter back into the previous scene.
@@ -223,8 +228,8 @@ function calculateTagetPosition(hero: Actor, zone: Zone, newScene: Scene) {
 
         // If we have a specific override for this scene transition,
         // use that instead.
-        const currentScene = SCENE_ID_TO_NAME[closestZone.props.snap];
-        const targetScene = SCENE_ID_TO_NAME[zone.props.snap];
+        const currentScene = SCENE_ID_TO_NAME[closestZone.targetScene];
+        const targetScene = SCENE_ID_TO_NAME[zone.targetScene];
         if (ZONE_OFFSET_OVERRIDES[currentScene] &&
             ZONE_OFFSET_OVERRIDES[currentScene][targetScene]) {
             // tslint:disable-next-line:max-line-length
@@ -277,9 +282,13 @@ function GOTO_SCENE(game: Game, scene: Scene, zone: Zone, hero: Actor, _time: Ti
     hero.state.isClimbing = false;
     hero.state.isToppingOutUp = false;
 
-    if (!(scene.sideScenes && scene.sideScenes.has(zone.props.snap))) {
-        scene.goto(zone.props.snap).then((newScene) => {
-            const newPosition = calculateTagetPosition(hero, zone, newScene);
+    if (!(zone instanceof TeleportZone && zone.enabled)) {
+        return false;
+    }
+
+    if (!(scene.sideScenes && scene.sideScenes.has(zone.targetScene))) {
+        scene.goto(zone.targetScene).then((newScene) => {
+            const newPosition = calculateTargetPosition(hero, zone, newScene);
 
             const newHero = newScene.actors[0];
             newHero.physics.position.x = newPosition.x;
@@ -287,7 +296,7 @@ function GOTO_SCENE(game: Game, scene: Scene, zone: Zone, hero: Actor, _time: Ti
             newHero.physics.position.z = newPosition.z;
             newHero.threeObject.position.copy(newHero.physics.position);
 
-            const dAngle = -zone.props.info3 * (Math.PI / 2);
+            const dAngle = -zone.beta * (Math.PI / 2);
             if (game.controlsState.firstPerson) {
                 const euler = new THREE.Euler();
                 euler.setFromQuaternion(scene.camera.controlNode.quaternion, 'YXZ');
@@ -328,6 +337,10 @@ const HERO_POS = new THREE.Vector3();
  * @return {boolean}
  */
 function CAMERA(game: Game, scene: Scene, zone: Zone) {
+    if (!(zone instanceof CameraZone)) {
+        return false;
+    }
+
     const hero = scene.actors[0];
     if (!hero.threeObject
         || !(hero.props.dirMode !== ActorDirMode.MANUAL || game.getUiState().cinema))
@@ -349,21 +362,25 @@ function CAMERA(game: Game, scene: Scene, zone: Zone) {
     return false;
 }
 
-export function getCamVector(zone) {
+export function getCamVector(zone: CameraZone) {
     const camVector = new THREE.Vector3(-1, 0, 0);
     camVector.applyEuler(new THREE.Euler(
-        0, // -(zone.props.info3 * 2 * Math.PI) / 0x1000,
-        -(zone.props.info4 * 2 * Math.PI) / 0x1000,
-        -(zone.props.info3 * 2 * Math.PI) / 0x1000, // -(zone.props.info5 * 2 * Math.PI) / 0x1000,
+        0, // -(zone.alpha * 2 * Math.PI) / 0x1000,
+        -(zone.beta * 2 * Math.PI) / 0x1000,
+        -(zone.alpha * 2 * Math.PI) / 0x1000, // -(zone.gamma * 2 * Math.PI) / 0x1000,
         'YZX'
     ));
-    camVector.multiplyScalar(WORLD_SCALE * zone.props.info6 * 0.5);
+    camVector.multiplyScalar(WORLD_SCALE * zone.distance * 0.5);
     return camVector;
 }
 
 const isLBA1 = getParams().game === 'lba1';
 
 function TEXT(game: Game, scene: Scene, zone: Zone, hero: Actor, _time: Time) {
+    if (!(zone instanceof TextZone)) {
+        return false;
+    }
+
     if (game.controlsState.action === 1) {
         if (!scene.zoneState.skipListener) {
             const vrFirstPerson = game.vr && game.controlsState.firstPerson;
@@ -375,12 +392,12 @@ function TEXT(game: Game, scene: Scene, zone: Zone, hero: Actor, _time: Time) {
                 hero.props.animIndex = isLBA1 ? AnimType.NONE : AnimType.TALK;
             }
 
-            const text = scene.props.texts[zone.props.snap];
+            const text = scene.props.texts[zone.message];
             game.setUiState({
                 text: {
                     type: text.type === 3 ? 'big' : 'small',
                     value: text.value,
-                    color: getHtmlColor(scene.props.palette, (zone.props.info0 * 16) + 12)
+                    color: getHtmlColor(scene.props.palette, (zone.textColor * 16) + 12)
                 }
             });
 
@@ -422,6 +439,10 @@ function TEXT(game: Game, scene: Scene, zone: Zone, hero: Actor, _time: Time) {
 }
 
 function BONUS(game: Game, scene: Scene, zone: Zone, hero: Actor, time: Time) {
+    if (!(zone instanceof BonusZone)) {
+        return false;
+    }
+
     if (game.controlsState.action === 1) {
         game.controlsState.action = 0;
 
@@ -430,11 +451,11 @@ function BONUS(game: Game, scene: Scene, zone: Zone, hero: Actor, time: Time) {
             hero.playSample(SampleType.TWINSEN_LANDING);
             hero.state.isSearching = false;
 
-            if (zone.props.info2) {
+            if (zone.given) {
                 return false;
             }
 
-            const bonusSprite = getBonus(zone.props.info0);
+            const bonusSprite = getBonus(zone.bonusType);
             let destAngle = angleTo(zone.physics.position, hero.physics.position);
             destAngle += angleToRad(getRandom(0, 300) - 150);
 
@@ -452,11 +473,11 @@ function BONUS(game: Game, scene: Scene, zone: Zone, hero: Actor, time: Time) {
                 position,
                 destAngle,
                 bonusSprite,
-                zone.props.info1,
+                zone.quantity,
                 time,
             ).then(() => {
                 // indicate the zone bonus has been given already
-                zone.props.info2 = 1;
+                zone.given = true;
             });
         });
         return true;

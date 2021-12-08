@@ -192,7 +192,7 @@ export default class Scene {
                 )
             )
         );
-        const zones = this.props.zones.map(props => new Zone(props, this.is3DCam));
+        const zones = this.props.zones.map(props => Zone.create(props, this.is3DCam));
         const points = this.props.points.map(props => new Point(props));
 
         // Apply point overrides if they exist.

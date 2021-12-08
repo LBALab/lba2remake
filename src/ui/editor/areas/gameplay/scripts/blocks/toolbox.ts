@@ -272,7 +272,7 @@ const baseTree = `<xml id="toolbox" style="display: none">
     <sep gap="40"/>
     <label text="Misc"/>
     <block type="lba_hit"/>
-    <block type="lba_set_hit_zone"/>
+    <block type="lba_set_spike_zone"/>
     <block type="lba_set_sprite"/>
     <block type="lba_anim_texture"/>
     <block type="lba_set_invisible"/>
@@ -280,7 +280,7 @@ const baseTree = `<xml id="toolbox" style="display: none">
     <sep gap="40"/>
     <label text="Transportation"/>
     <block type="lba_set_rail"/>
-    <block type="lba_escalator"/>
+    <block type="lba_conveyor"/>
     <block type="lba_init_buggy"/>
 
     <sep gap="40"/>
@@ -300,7 +300,7 @@ const baseTree = `<xml id="toolbox" style="display: none">
     <block type="lba_no_shock"/>
     <block type="lba_pcx"/>
     <block type="lba_set_grm"/>
-    <block type="lba_set_change_cube"/>
+    <block type="lba_set_teleport_zone"/>
     <block type="lba_fade_to_pal"/>
     <block type="lba_palette"/>
     <block type="lba_flow_point"/>
@@ -311,7 +311,7 @@ const baseTree = `<xml id="toolbox" style="display: none">
     <block type="lba_flow_obj"/>
     <block type="lba_impact_obj"/>
     <block type="lba_pos_obj_around"/>
-    <block type="lba_scale"/>
+    <block type="lba_ladder"/>
     <block type="lba_popcorn"/>
     <block type="lba_set_frame_3ds"/>
     <block type="lba_set_action"/>

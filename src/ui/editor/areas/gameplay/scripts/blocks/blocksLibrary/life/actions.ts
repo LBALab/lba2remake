@@ -389,8 +389,8 @@ export const lba_hit = action((_block, field) => {
     field(new Blockly.FieldNumber(), 'arg_1');
 });
 
-export const lba_set_hit_zone = action((_block, field) => {
-    field('(?) set hit zone');
+export const lba_set_spike_zone = action((_block, field) => {
+    field('set spike zone');
     field(new Blockly.FieldNumber(), 'arg_0');
     field(new Blockly.FieldNumber(), 'arg_1');
 });
@@ -426,8 +426,8 @@ export const lba_set_rail = action((_block, field) => {
     field(new Blockly.FieldNumber(), 'arg_1');
 });
 
-export const lba_escalator = action((_block, field) => {
-    field('escalator');
+export const lba_conveyor = action((_block, field) => {
+    field('conveyor');
     field(new Blockly.FieldNumber(), 'arg_0');
     field(new Blockly.FieldNumber(), 'arg_1');
 });
@@ -505,8 +505,8 @@ export const lba_set_grm = action((_block, field) => {
     field(new Blockly.FieldNumber(), 'arg_1');
 });
 
-export const lba_set_change_cube = action((_block, field) => {
-    field('(?) set change cube');
+export const lba_set_teleport_zone = action((_block, field) => {
+    field('set teleport zone');
     field(new Blockly.FieldNumber(), 'arg_0');
     field(new Blockly.FieldNumber(), 'arg_1');
 });
@@ -571,8 +571,8 @@ export const lba_pos_obj_around = action((_block, field) => {
     field(new Blockly.FieldNumber(), 'arg_1');
 });
 
-export const lba_scale = action((_block, field) => {
-    field('(?) scale');
+export const lba_ladder = action((_block, field) => {
+    field('ladder');
     field(new Blockly.FieldNumber(), 'arg_0');
     field(new Blockly.FieldNumber(), 'arg_1');
 });
