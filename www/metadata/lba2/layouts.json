@@ -4802,6 +4802,11 @@
       "file": "OT_179_small_display_table.glb",
       "orientation": 0
     },
+    "182": {
+      "replace": true,
+      "file": "OT_182_q_tips.glb",
+      "orientation": 0
+    },
     "193": {
       "replace": true,
       "file": "OT_193_candle_stand.glb",
