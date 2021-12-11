@@ -163,6 +163,7 @@ export default class IslandEditorContent extends FrameListener<Props, State> {
         if (oldIsland) {
             this.state.scene.threeScene.remove(oldIsland.threeObject);
         }
+        const isDifferent = this.name !== this.props.sharedState.name;
         this.name = this.props.sharedState.name;
         const ambience = IslandAmbience[this.props.sharedState.name];
         const island = await Island.loadForEditor(
@@ -172,23 +173,25 @@ export default class IslandEditorContent extends FrameListener<Props, State> {
         );
         this.state.renderer.applySceneryProps(island.props);
 
-        const offset = islandOffsets[this.name];
-        this.state.scene.camera.controlNode.position.set(
-            offset.position.x, offset.position.y, offset.position.z
-        );
+        if (isDifferent) {
+            const offset = islandOffsets[this.name];
+            this.state.scene.camera.controlNode.position.set(
+                offset.position.x, offset.position.y, offset.position.z
+            );
 
-        this.state.cameraOrientation.set(
-            offset.quartenion.x,
-            offset.quartenion.y,
-            offset.quartenion.z,
-            offset.quartenion.w,
-        );
-        this.state.cameraHeadOrientation.set(
-            offset.headQuartenion.x,
-            offset.headQuartenion.y,
-            offset.headQuartenion.z,
-            offset.headQuartenion.w,
-        );
+            this.state.cameraOrientation.set(
+                offset.quartenion.x,
+                offset.quartenion.y,
+                offset.quartenion.z,
+                offset.quartenion.w,
+            );
+            this.state.cameraHeadOrientation.set(
+                offset.headQuartenion.x,
+                offset.headQuartenion.y,
+                offset.headQuartenion.z,
+                offset.headQuartenion.w,
+            );
+        }
 
         this.state.scene.threeScene.add(island.threeObject);
         this.setState({ island }, this.saveDebugScope);
