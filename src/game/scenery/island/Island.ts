@@ -172,7 +172,7 @@ export default class Island {
         if (data.bakedModel) {
             this.threeObject = data.bakedModel.scene;
         } else {
-        this.threeObject = new THREE.Object3D();
+            this.threeObject = new THREE.Object3D();
         }
         this.threeObject.name = `island_${data.name}`;
         this.threeObject.matrixAutoUpdate = false;
@@ -183,30 +183,33 @@ export default class Island {
             : loadGeometries(this.threeObject, this.props, data, options, layout);
 
         if (!options.export) {
-        this.addObjectBoundingBoxes(layout);
+            this.addObjectBoundingBoxes(layout);
+        }
+        if (options.export) {
+            this.patchObjectForExport(this.name, layout);
         }
         if (options.preview) {
             loadPickingPlanes(this.threeObject, layout);
         }
 
         if (!options.export) {
-        this.physics = new IslandPhysics(layout);
+            this.physics = new IslandPhysics(layout);
             if (!options.withBaking && !options.editor) {
-        this.components.push(new IslandShadows(geomInfo));
+                this.components.push(new IslandShadows(geomInfo));
             }
-        this.components.push(
-            ...loadEnvironmentComponents(
-                data,
-                this.props.envInfo,
-                this.physics,
-                layout,
-                geomInfo,
-                options
-            )
-        );
-        this.addComponentNodes();
-        this.sections = layout.groundSections;
-    }
+            this.components.push(
+                ...loadEnvironmentComponents(
+                    data,
+                    this.props.envInfo,
+                    this.physics,
+                    layout,
+                    geomInfo,
+                    options
+                )
+            );
+            this.addComponentNodes();
+            this.sections = layout.groundSections;
+        }
     }
 
     update(game: Game, scene: Scene, time: Time) {
@@ -244,5 +247,20 @@ export default class Island {
             }
         }
         this.threeObject.add(boundingBoxes);
+    }
+
+    private patchObjectForExport(name: string, layout: IslandLayout) {
+        for (const section of layout.groundSections) {
+            for (const obj of section.objects) {
+                if (obj.index === 26 && name === 'CITADEL') { // Lamp post
+                    const lamp = new THREE.PointLight();
+                    lamp.color.set(0xffffaa);
+                    lamp.intensity = 500.0;
+                    lamp.userData.radius = 0.6;
+                    lamp.position.set(obj.x, obj.y + 3, obj.z);
+                    this.threeObject.add(lamp);
+                }
+            }
+        }
     }
 }

@@ -191,6 +191,12 @@ for obj in textured_objects:
     links.new(nodes["UV Map.002"].outputs[0], nodes["Vector Math.001"].inputs[1])
     links.new(nodes["Vector Math.002"].outputs[0], nodes["Image Texture"].inputs[0])
 
+# Update light radius from custom property
+for obj in bpy.data.objects:
+    if obj.type == 'LIGHT' and obj.data.type == 'POINT':
+        if obj.get('radius'):
+            obj.data.shadow_soft_size = obj['radius']
+
 
 # center view
 for screen in bpy.data.screens:
@@ -259,12 +265,12 @@ if "apply" in steps:
         scene_nodes = bpy.data.scenes["Scene"].node_tree.nodes
         scene_nodes['Image'].image = bpy.data.images['BakeTarget']
         tmpfilename = '/tmp/lightmap0001.exr'
-    print("Saving lightmap: ", tmpfilename)
-    scene_nodes['File Output'].base_path = '/tmp'
-    scene_nodes['File Output'].file_slots[0].path = 'lightmap'
-    scene_nodes['File Output'].format.file_format = 'OPEN_EXR'
-    scene_nodes['File Output'].format.color_mode = 'RGB'
-    scene_nodes['File Output'].format.color_depth = '32'
+        print("Saving lightmap: ", tmpfilename)
+        scene_nodes['File Output'].base_path = '/tmp'
+        scene_nodes['File Output'].file_slots[0].path = 'lightmap'
+        scene_nodes['File Output'].format.file_format = 'OPEN_EXR'
+        scene_nodes['File Output'].format.color_mode = 'RGB'
+        scene_nodes['File Output'].format.color_depth = '32'
         bpy.ops.render.render(animation=False, write_still=False, use_viewport=False, layer="", scene="")
         lightmap = bpy.data.images.load(tmpfilename)
         lightmap.name = 'Lightmap'
