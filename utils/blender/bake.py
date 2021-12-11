@@ -113,6 +113,7 @@ noise_detail = 2.0
 ground_textured = bpy.data.objects.get('ground_textured')
 if ground_textured:
     mat = ground_textured.data.materials[0]
+    mat["LBA_MixColorAndTexture"] = True
     nodes = mat.node_tree.nodes
     links = mat.node_tree.links
 
@@ -164,6 +165,7 @@ texture_size = bpy.data.images['Image_1'].size
 textured_objects = [o for o in bpy.data.objects if o.name.startswith('objects_textured')]
 for obj in textured_objects:
     mat = obj.data.materials[0]
+    mat["LBA_Atlas"] = True
     nodes = mat.node_tree.nodes
     links = mat.node_tree.links
 

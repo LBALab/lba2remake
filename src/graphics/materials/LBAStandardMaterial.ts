@@ -12,6 +12,7 @@ registerShaderChunks();
 interface LBAStandardMaterialParams extends THREE.MeshStandardMaterialParameters {
     mixColorAndTexture?: boolean;
     useTextureAtlas?: boolean;
+    atlasMode?: 'model' | 'island';
     bones?: BoneBindings;
 }
 
@@ -23,12 +24,14 @@ interface LBAStandardMaterialParams extends THREE.MeshStandardMaterialParameters
 export default class LBAStandardMaterial extends THREE.MeshStandardMaterial {
     mixColorAndTexture = false;
     useTextureAtlas = false;
+    atlasMode: 'model' | 'island' = 'model';
     bones: BoneBindings;
 
     constructor(parameters: LBAStandardMaterialParams = {}) {
         super(omit(parameters, [
             'mixColorAndTexture',
             'useTextureAtlas',
+            'atlasMode',
             'bones'
         ]));
 
@@ -42,6 +45,9 @@ export default class LBAStandardMaterial extends THREE.MeshStandardMaterial {
         if (parameters.useTextureAtlas) {
             this.defines.USE_TEXTURE_ATLAS = '';
         }
+        if (parameters.atlasMode === 'island') {
+            this.defines.USE_ATLAS_ISLAND_MODE = '';
+        }
         if (parameters.bones) {
             this.defines.USE_LBA_BONES = '';
             this.uniforms.bonePos.value = parameters.bones.position;
@@ -50,6 +56,7 @@ export default class LBAStandardMaterial extends THREE.MeshStandardMaterial {
 
         this.mixColorAndTexture = !!parameters.mixColorAndTexture;
         this.useTextureAtlas = !!parameters.useTextureAtlas;
+        this.atlasMode = parameters.atlasMode || 'model';
         this.bones = parameters.bones;
     }
 
@@ -62,6 +69,9 @@ export default class LBAStandardMaterial extends THREE.MeshStandardMaterial {
         if (source.useTextureAtlas) {
             this.defines.USE_TEXTURE_ATLAS = '';
         }
+        if (source.atlasMode === 'island') {
+            this.defines.USE_ATLAS_ISLAND_MODE = '';
+        }
         if (source.bones) {
             this.defines.USE_LBA_BONES = '';
             this.uniforms.bonePos.value = source.bones.position;
@@ -70,6 +80,7 @@ export default class LBAStandardMaterial extends THREE.MeshStandardMaterial {
 
         this.useTextureAtlas = source.useTextureAtlas;
         this.mixColorAndTexture = source.mixColorAndTexture;
+        this.atlasMode = source.atlasMode;
         this.bones = source.bones;
 
         return this;

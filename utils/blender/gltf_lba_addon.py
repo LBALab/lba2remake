@@ -32,13 +32,22 @@ class glTF2ExportUserExtension:
 
     def gather_mesh_hook(self, gltf2_mesh, blender_mesh, blender_object, vertex_groups, modifiers, skip_filter, material_names, export_settings):
         baked_mat = blender_mesh.materials.get('LBABakedMaterial')
+        gltf2_mat = gltf2_mesh.primitives[0].material
         if baked_mat is not None:
             if self.baked_mat_index == -1:
                 image = baked_mat.node_tree.nodes['Image Texture'].image
                 self.baked_mat_index =self.gather_image_exr(image)
-            gltf2_mat = gltf2_mesh.primitives[0].material
             gltf2_mat.extensions['LBA2R_lightmaps'] = {}
             gltf2_mat.extensions['LBA2R_lightmaps']['exrImageIndex'] = self.baked_mat_index
+
+        obj_mat = blender_mesh.materials[0]
+        if "LBA_Atlas" in obj_mat:
+            gltf2_mat.extensions['LBA2R_lba_materials'] = {}
+            gltf2_mat.extensions['LBA2R_lba_materials']['useTextureAtlas'] = True
+            gltf2_mat.extensions['LBA2R_lba_materials']['atlasMode'] = 'island'
+        if "LBA_MixColorAndTexture" in obj_mat:
+            gltf2_mat.extensions['LBA2R_lba_materials'] = {}
+            gltf2_mat.extensions['LBA2R_lba_materials']['mixColorAndTexture'] = True
 
     def get_tex_from_socket(self, socket):
         result = self.gltf2_blender_search_node_tree.from_socket(

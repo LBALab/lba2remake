@@ -12,6 +12,7 @@ registerShaderChunks();
 interface LBABasicMaterialParams extends THREE.MeshBasicMaterialParameters {
     mixColorAndTexture?: boolean;
     useTextureAtlas?: boolean;
+    atlasMode?: 'model' | 'island';
     bones?: BoneBindings;
 }
 
@@ -23,9 +24,10 @@ interface LBABasicMaterialParams extends THREE.MeshBasicMaterialParameters {
 export default class LBABasicMaterial extends THREE.MeshBasicMaterial {
     mixColorAndTexture = false;
     useTextureAtlas = false;
+    atlasMode: 'model' | 'island' = 'model';
 
     constructor(parameters: LBABasicMaterialParams = {}) {
-        super(omit(parameters, ['mixColorAndTexture', 'useTextureAtlas']));
+        super(omit(parameters, ['mixColorAndTexture', 'useTextureAtlas', 'atlasMode']));
 
         this.type = 'LBABasicMaterial';
 
@@ -36,9 +38,13 @@ export default class LBABasicMaterial extends THREE.MeshBasicMaterial {
         if (parameters.useTextureAtlas) {
             this.defines.USE_TEXTURE_ATLAS = '';
         }
+        if (parameters.atlasMode === 'island') {
+            this.defines.USE_ATLAS_ISLAND_MODE = '';
+        }
 
         this.mixColorAndTexture = !!parameters.mixColorAndTexture;
         this.useTextureAtlas = !!parameters.useTextureAtlas;
+        this.atlasMode = parameters.atlasMode || 'model';
     }
 
     copy(source: LBABasicMaterial) {
@@ -51,9 +57,13 @@ export default class LBABasicMaterial extends THREE.MeshBasicMaterial {
         if (source.useTextureAtlas) {
             this.defines.USE_TEXTURE_ATLAS = '';
         }
+        if (source.atlasMode === 'island') {
+            this.defines.USE_ATLAS_ISLAND_MODE = '';
+        }
 
         this.useTextureAtlas = source.useTextureAtlas;
         this.mixColorAndTexture = source.mixColorAndTexture;
+        this.atlasMode = source.atlasMode;
 
         return this;
     }
