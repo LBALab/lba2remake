@@ -35,6 +35,7 @@ export function bake(req, res) {
             ];
             if (type === 'island') {
                 scriptArgs.push('--hdri', path.join(process.cwd(), 'www/data/hdr/sunset.hdr'));
+                scriptArgs.push('--hdriAngle', '120');
             }
             if (dumpAfter) {
                 scriptArgs.push('--dumpAfter', dumpAfter);

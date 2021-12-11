@@ -3,6 +3,7 @@ import platform
 import sys
 import argparse
 import os
+import math
 from mathutils import Vector
 
 #############################################################################
@@ -25,6 +26,7 @@ parser.add_argument('--resolution', default=512, type=int)
 parser.add_argument('--margin', default=2, type=int)
 parser.add_argument('--denoise', default="FAST", choices=["NONE", "FAST", "ACCURATE"])
 parser.add_argument('--hdri')
+parser.add_argument('--hdriAngle', type=float, default=0.0)
 parser.add_argument('--input', required=True)
 parser.add_argument('--output')
 parser.add_argument('--dumpAfter', default="none", choices=["none", "import", "bake", "denoise", "apply"])
@@ -92,6 +94,7 @@ if (args.hdri is not None):
     nodes.new('ShaderNodeMapping')
     nodes.new('ShaderNodeTexCoord')
     nodes['Environment Texture'].image = bpy.data.images.load(args.hdri)
+    nodes["Mapping"].inputs[2].default_value[2] = math.radians(args.hdriAngle)
 
     links.new(nodes["Background"].outputs[0], nodes["World Output"].inputs[0])
     links.new(nodes["Environment Texture"].outputs[0], nodes["Background"].inputs[0])
