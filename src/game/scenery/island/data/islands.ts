@@ -1,6 +1,11 @@
-import environments from './environments';
+import environments, { EnvInfo } from './environments';
 
-export default {
+export interface IslandProps {
+    envInfo: EnvInfo;
+    startPosition: [number, number];
+}
+
+const islandProps: Record<string, IslandProps> = {
     CITADEL: {
         envInfo: environments.TWINSUN_RAIN,
         startPosition: [
@@ -93,3 +98,5 @@ export default {
         ]
     }
 };
+
+export default islandProps;

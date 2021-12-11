@@ -5,9 +5,10 @@ import Lightning from './Lightning';
 import Stars from './Stars';
 import { IslandGeometryInfo } from '../geometries';
 import IslandPhysics from '../IslandPhysics';
+import { IslandData } from '../Island';
 
 export function loadEnvironmentComponents(
-    data,
+    data: IslandData,
     envInfo,
     physics: IslandPhysics,
     layout,

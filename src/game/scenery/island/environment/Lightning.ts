@@ -129,6 +129,10 @@ export default class Lightning {
         params.radius0 = this.lightning.intensity * 0.31875;
         params.radius1 = params.radius0 * 0.0318;
 
+        if (!game) {
+            return;
+        }
+
         const audio = game.getAudioManager();
         if (game.getState().config.positionalAudio) {
             if (!this.sound) {
@@ -205,8 +209,8 @@ export default class Lightning {
     private static HERO_POS_TMP = new THREE.Vector3();
 
     private getObjectPositions(scene: Scene): ObjectPositions {
-        const hero = scene.actors[0];
-        if (hero.threeObject) {
+        const hero = scene.actors && scene.actors[0];
+        if (hero && hero.threeObject) {
             Lightning.HERO_POS_TMP.set(0, 0, 0);
             Lightning.HERO_POS_TMP.applyMatrix4(hero.threeObject.matrixWorld);
         } else {

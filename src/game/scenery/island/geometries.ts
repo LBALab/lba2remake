@@ -6,8 +6,8 @@ import {
     makeNoiseTexture
 } from '../../../texture';
 import {compile} from '../../../utils/shaders';
-import { loadGround, loadGroundNormals } from './ground';
-import { loadObjectGeometries } from './objects';
+import { getTileUsage, loadGround, loadGroundNormals } from './ground';
+import { loadBoundingBox, loadObjectGeometries } from './objects';
 import { loadModel } from './model';
 import TextureAtlas from './TextureAtlas';
 import Lightning from './environment/Lightning';
@@ -25,6 +25,9 @@ import OBJECTS_TEXTURED__VERT from './shaders/objects/textured.vert.glsl';
 import OBJECTS_TEXTURED__FRAG from './shaders/objects/textured.frag.glsl';
 
 import { WORLD_SIZE } from '../../../utils/lba';
+import { IslandData, IslandOptions } from './Island';
+import IslandLayout from './IslandLayout';
+import { IslandProps } from './data/islands';
 
 const fakeNoiseBuffer = new Uint8Array(1);
 fakeNoiseBuffer[0] = 128;
@@ -50,7 +53,13 @@ export interface IslandGeometryInfo {
     light: THREE.Vector3;
 }
 
-export function loadGeometries(threeObject, props, data, layout): IslandGeometryInfo {
+export function loadGeometries(
+    threeObject: THREE.Object3D,
+    props: IslandProps,
+    data: IslandData,
+    options: IslandOptions,
+    layout: IslandLayout
+): IslandGeometryInfo {
     const usedTiles = new Map<string, number[]>();
     const models = [];
     const uvGroupsS : Set<string> = new Set();
@@ -80,7 +89,7 @@ export function loadGeometries(threeObject, props, data, layout): IslandGeometry
         const tilesKey = [section.x, section.z].join(',');
         const tileUsageInfo = [];
         loadGround(section, geometries, tileUsageInfo, normalInfo);
-        loadObjectGeometries(section, geometries, models, atlas, props);
+        loadObjectGeometries(section, geometries, models, atlas, props, options);
         usedTiles.set(tilesKey, tileUsageInfo);
     }
 
@@ -133,6 +142,43 @@ export function loadGeometries(threeObject, props, data, layout): IslandGeometry
             mesh.onBeforeRender = Lightning.applyUniforms;
         }
     }
+
+    return { matByName, usedTiles, light };
+}
+
+export function loadGeometriesInfoOnly(
+    threeObject: THREE.Object3D,
+    data: IslandData,
+    layout: IslandLayout,
+) {
+    const light = getLightVector(data.ambience);
+
+    const { obl } = data;
+    const models = [];
+    for (let i = 0; i < obl.length; i += 1) {
+        const model = loadModel(obl.getEntry(i));
+        models.push(model);
+    }
+
+    const usedTiles = new Map<string, number[]>();
+    for (const section of layout.groundSections) {
+        const tilesKey = [section.x, section.z].join(',');
+        const tileUsageInfo = [];
+        getTileUsage(section, tileUsageInfo);
+        usedTiles.set(tilesKey, tileUsageInfo);
+        for (const obj of section.objects) {
+            const model = models[obj.index];
+            loadBoundingBox(obj, model);
+        }
+    }
+
+    const matByName = {};
+    threeObject.traverse((obj) => {
+        if (obj instanceof THREE.Mesh) {
+            const material = obj.material;
+            matByName[obj.name] = material;
+        }
+    });
 
     return { matByName, usedTiles, light };
 }

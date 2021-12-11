@@ -20,9 +20,13 @@ export default function ModelEditorSettings(props) {
     const setFog = (e) => {
         props.stateHandler.setFog(e.target.checked);
     };
+    const setBaked = (e) => {
+        props.stateHandler.setBaked(e.target.checked);
+    };
 
     const wf = props.sharedState.wireframe;
     const fog = props.sharedState.fog;
+    const baked = props.sharedState.baked;
 
     return <div>
         <div style={lineStyle}>
@@ -35,6 +39,12 @@ export default function ModelEditorSettings(props) {
             <label style={{cursor: 'pointer'}}>
                 <input type="checkbox" onChange={setWireframe} checked={wf} style={inputStyle}/>
                 Wireframe
+            </label>
+        </div>
+        <div style={lineStyle}>
+            <label style={{cursor: 'pointer'}}>
+                <input type="checkbox" onChange={setBaked} checked={baked} style={inputStyle}/>
+                Show Baked Model
             </label>
         </div>
     </div>;

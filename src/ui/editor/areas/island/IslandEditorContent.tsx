@@ -24,12 +24,13 @@ interface Props extends TickerProps {
         name: string;
         wireframe: boolean;
         fog: boolean;
+        baked: boolean;
     };
     stateHandler: any;
 }
 
 interface State {
-    island?: any;
+    island?: Island;
     renderer?: any;
     scene: any;
     clock: THREE.Clock;
@@ -76,6 +77,7 @@ export default class IslandEditorContent extends FrameListener<Props, State> {
     canvas: HTMLCanvasElement;
     mouseEnabled: boolean;
     name: string;
+    baked: boolean;
     wireframe: boolean;
     fog: boolean;
 
@@ -163,7 +165,11 @@ export default class IslandEditorContent extends FrameListener<Props, State> {
         }
         this.name = this.props.sharedState.name;
         const ambience = IslandAmbience[this.props.sharedState.name];
-        const island = await Island.loadForEditor(this.props.sharedState.name, ambience);
+        const island = await Island.loadForEditor(
+            this.props.sharedState.name,
+            ambience,
+            this.baked
+        );
         this.state.renderer.applySceneryProps(island.props);
 
         const offset = islandOffsets[this.name];
@@ -263,7 +269,8 @@ export default class IslandEditorContent extends FrameListener<Props, State> {
         const { island } = this.state;
         if (this.fog !== fog && island && island.threeObject) {
             island.threeObject.traverse((obj) => {
-                if (obj && obj.material && obj instanceof THREE.Mesh &&
+                if (obj && obj instanceof THREE.Mesh &&
+                    obj.material &&
                     (obj.material as THREE.RawShaderMaterial).uniforms) {
                     (obj.material as THREE.RawShaderMaterial).uniforms.fogDensity.value =
                         fog ? island.props.envInfo.fogDensity : 0;
@@ -276,8 +283,9 @@ export default class IslandEditorContent extends FrameListener<Props, State> {
 
     frame() {
         const { renderer, clock, island, scene } = this.state;
-        const { name, wireframe, fog } = this.props.sharedState;
-        if (this.name !== name) {
+        const { name, wireframe, fog, baked } = this.props.sharedState;
+        if (this.name !== name || this.baked !== baked) {
+            this.baked = baked;
             this.loadIsland();
         }
         if (this.wireframe !== wireframe && island) {
@@ -317,7 +325,7 @@ export default class IslandEditorContent extends FrameListener<Props, State> {
     async exportIsland() {
         const { island } = this.state;
         if (island) {
-            const glb = await exportIslandForBaking(island.threeObject);
+            const glb = await exportIslandForBaking(this.name);
             const blob = new Blob([glb], {type: 'application/octet-stream'});
             saveAs(blob, `${island.threeObject.name}.glb`);
         }

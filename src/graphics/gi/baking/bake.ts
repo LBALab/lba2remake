@@ -35,7 +35,7 @@ export interface BakeObject {
 export async function bake(params: BakeParams) {
     const island = DebugData.scope.island;
     if (island) {
-        const obj = await bakeIsland(island, params);
+        const obj = await bakeIsland(island.name, params);
         if (params?.cancelled)
             throw new Error('Cancelled');
         await bakeObject(obj, params);

@@ -20,6 +20,7 @@ const IslandEditor = {
         island: 'CITADEL',
         wireframe: false,
         fog: false,
+        baked: false,
     }),
     stateHandler: {
         setWireframe(wireframe) {
@@ -29,10 +30,11 @@ const IslandEditor = {
             this.setState({ fog });
         },
         setName(name) {
-            this.setState({
-                name,
-            });
+            this.setState({ name });
         },
+        setBaked(baked) {
+            this.setState({ baked });
+        }
     },
     toolAreas: [
         IslandsBrowserArea,

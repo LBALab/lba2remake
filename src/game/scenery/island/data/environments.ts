@@ -1,4 +1,36 @@
-export default {
+export interface EnvInfo {
+    index: number;
+    skyColor: [number, number, number];
+    fogDensity: number;
+    skyHeight?: number;
+    sea?: {
+        scale: number;
+        amplitude: number;
+    };
+    clouds?: {
+        speed: number;
+        whiteness?: number;
+        opacity?: number;
+    };
+    groundClouds?: {
+        speed: number;
+        ground: true;
+        whiteness: number;
+        scale: number;
+    };
+    rain?: {
+        count: number;
+    };
+    lightning?: {
+        intensity: number;
+        frequency: number;
+    };
+    stars?: {
+        count: number;
+    };
+}
+
+const envInfo: Record<string, EnvInfo> = {
     TWINSUN_RAIN: {
         index: 11,
         skyColor: [0.02, 0.02, 0.01],
@@ -60,3 +92,5 @@ export default {
         }
     }
 };
+
+export default envInfo;

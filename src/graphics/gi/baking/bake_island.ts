@@ -6,25 +6,35 @@ import {
 } from '../../../resources';
 import { buildAtlas } from '../../uvAltas/atlas';
 import Island from '../../../game/scenery/island/Island';
+import IslandAmbience from '../../../ui/editor/areas/island/browser/ambience';
 import { BakeObject, BakeParams } from './bake';
 
-export async function bakeIsland(island: Island, params: BakeParams): Promise<BakeObject> {
+const cache: Record<string, BakeObject> = {};
+
+export async function bakeIsland(name: string, params: BakeParams): Promise<BakeObject> {
+    if (name in cache) {
+        params.startProgress('Loading from cache').done();
+        return cache[name];
+    }
     // tslint:disable-next-line:no-console
-    const glb = await exportIslandForBaking(island.threeObject, params);
-    const name = island.threeObject.name.slice('island_'.length);
-    return {
-        type: 'island',
+    const glb = await exportIslandForBaking(name, params);
+    const obj = {
+        type: 'island' as const,
         glb,
         name,
     };
+    cache[name] = obj;
+    return obj;
 }
 
 export async function exportIslandForBaking(
-    islandObject: THREE.Object3D,
+    name: string,
     params?: BakeParams
 ) {
+    const ambience = IslandAmbience[name];
+    const island = await Island.loadForExport(name, ambience);
     let p = params?.startProgress('Patching island');
-    const objToExport = islandObject.clone(true);
+    const objToExport = island.threeObject;
     await patchIslandObject(objToExport);
     p?.done();
     p = params?.startProgress('Building atlas');
@@ -44,12 +54,8 @@ export async function exportIslandForBaking(
 
 async function patchIslandObject(islandObject: THREE.Object3D) {
     const palette = await getPalette();
-    const namesToRemove = ['Rain', 'Sea', 'Clouds', 'GroundClouds', 'Stars', 'Lightning'];
-    const toRemove = [];
     islandObject.traverse((node) => {
-        if (namesToRemove.includes(node.name)) {
-            toRemove.push(node);
-        } else if (node instanceof THREE.Mesh) {
+        if (node instanceof THREE.Mesh) {
             const geom = node.geometry.clone() as THREE.BufferGeometry;
             node.geometry = geom;
             if (!geom.index) {
@@ -112,9 +118,6 @@ async function patchIslandObject(islandObject: THREE.Object3D) {
             }
         }
     });
-    for (const node of toRemove) {
-        node.parent.remove(node);
-    }
 }
 
 async function patchTextureCoords(islandObject: THREE.Object3D) {

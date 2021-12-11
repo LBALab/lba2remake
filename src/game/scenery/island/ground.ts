@@ -72,6 +72,36 @@ export function loadGround(
     }
 }
 
+export function getTileUsage(
+    section: IslandSection,
+    tileUsageInfo,
+) {
+    const { groundMesh } = section;
+    for (let x = 0; x < 64; x += 1) {
+        for (let z = 0; z < 64; z += 1) {
+            const t0 = loadTriangle(groundMesh, x, z, 0);
+            const t1 = loadTriangle(groundMesh, x, z, 1);
+
+            const isSeaLevelLiquid = (t, p) => {
+                const seaLevel = groundMesh.heightmap[p[0]] === 0
+                    && groundMesh.heightmap[p[1]] === 0
+                    && groundMesh.heightmap[p[2]] === 0;
+                return seaLevel && t.liquid !== 0;
+            };
+
+            const triangle = (t) => {
+                const pts = map(t.points, pt => ((x + pt.x) * 65) + z + pt.z);
+                if (!isSeaLevelLiquid(t, pts) && (t.useColor || t.useTexture || t.unk0)) {
+                    tileUsageInfo[(x * 64) + z] = t0.orientation;
+                }
+            };
+
+            triangle(t0);
+            triangle(t1);
+        }
+    }
+}
+
 function loadTriangle(groundMesh, x, z, idx) {
     const flags = groundMesh.triangles[(((x * 64) + z) * 2) + idx];
     const orientation = bits(groundMesh.triangles[((x * 64) + z) * 2], 16, 1);

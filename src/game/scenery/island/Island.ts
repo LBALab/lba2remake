@@ -1,21 +1,24 @@
 import * as THREE from 'three';
+import { GLTFLoader, GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
 
 import IslandLayout from './IslandLayout';
 import IslandPhysics from './IslandPhysics';
 import { createBoundingBox } from '../../../utils/rendering';
 import { loadLUTTexture } from '../../../utils/lut';
-import islandsInfo from './data/islands';
+import islandsInfo, { IslandProps } from './data/islands';
 import { getCommonResource, getPalette, getIsland, getIslandObjects } from '../../../resources';
 import islandSceneMapping from './data/sceneMapping';
 import Game from '../../Game';
 import Scene from '../../Scene';
 import { Time } from '../../../datatypes';
-import IslandShadows from './IslandShadows';
 import { loadEnvironmentComponents } from './environment';
-import { loadGeometries } from './geometries';
+import { loadGeometries, loadGeometriesInfoOnly } from './geometries';
 import { loadPickingPlanes } from './preview';
 import { getParams } from '../../../params';
 import { LBA2GameFlags } from '../../data/gameFlags';
+import LightMapPlugin from '../../../graphics/gltf/LightMapPlugin';
+import LBAMaterialsPlugin from '../../../graphics/gltf/LBAMaterialsPlugin';
+import IslandShadows from './IslandShadows';
 
 const textureLoader = new THREE.TextureLoader();
 
@@ -25,7 +28,7 @@ const islandsCache = {
     preview: new Map<string, Island>()
 };
 
-interface IslandData {
+export interface IslandData {
     name: string;
     ress: any;
     palette: any;
@@ -34,13 +37,16 @@ interface IslandData {
     ambience: any;
     lutTexture: THREE.DataTexture;
     smokeTexture: THREE.Texture;
+    bakedModel: GLTF;
 }
 
 export interface IslandOptions {
-    cache: 'none' |'regular' | 'editor' | 'preview';
+    cache: 'none' | 'regular' | 'editor' | 'preview';
     preview: boolean;
     editor: boolean;
+    export: boolean;
     flags?: any[];
+    withBaking: boolean;
 }
 
 interface IslandComponent {
@@ -52,7 +58,7 @@ export default class Island {
     readonly name: string;
     readonly threeObject: THREE.Object3D;
     readonly physics: IslandPhysics;
-    readonly props: any;
+    readonly props: IslandProps;
     readonly sections: any;
     private components: IslandComponent[] = [];
 
@@ -65,15 +71,19 @@ export default class Island {
             cache: 'none',
             preview: false,
             editor: false,
+            export: false,
             flags: game.getState().flags.quest,
+            withBaking: true
         });
     }
 
-    static async loadForEditor(name: string, ambience: any): Promise<Island> {
+    static async loadForEditor(name: string, ambience: any, baked: boolean): Promise<Island> {
         return Island.loadWithCache(name, ambience, {
-            cache: 'editor',
+            cache: baked ? 'none' : 'editor',
             preview: false,
             editor: true,
+            export: false,
+            withBaking: baked
         });
     }
 
@@ -82,6 +92,18 @@ export default class Island {
             cache: 'preview',
             preview: true,
             editor: false,
+            export: false,
+            withBaking: true
+        });
+    }
+
+    static async loadForExport(name: string, ambience: any): Promise<Island> {
+        return Island.loadWithCache(name, ambience, {
+            cache: 'none',
+            preview: false,
+            editor: false,
+            export: true,
+            withBaking: false
         });
     }
 
@@ -93,7 +115,7 @@ export default class Island {
         if (options.cache !== 'none' && islandsCache[options.cache].has(name)) {
             return islandsCache[options.cache].get(name);
         }
-        const data = await Island.loadData(name, ambience);
+        const data = await Island.loadData(name, ambience, options);
         const island = new Island(data, options);
         if (options.cache !== 'none') {
             islandsCache[options.cache].set(name, island);
@@ -101,14 +123,19 @@ export default class Island {
         return island;
     }
 
-    private static async loadData(name, ambience): Promise<IslandData> {
-        const [ress, palette, ile, obl, lutTexture, smokeTexture] = await Promise.all([
+    private static async loadData(
+        name: string,
+        ambience: any,
+        options: IslandOptions
+    ): Promise<IslandData> {
+        const [ress, palette, ile, obl, lutTexture, smokeTexture, bakedModel] = await Promise.all([
             getCommonResource(),
             getPalette(),
             getIsland(name),
             getIslandObjects(name),
             loadLUTTexture(),
-            textureLoader.loadAsync('images/smoke.png')
+            textureLoader.loadAsync('images/smoke.png'),
+            Island.loadBakedModel(name, options),
         ]);
         return {
             name,
@@ -118,27 +145,55 @@ export default class Island {
             obl,
             ambience,
             lutTexture,
-            smokeTexture
+            smokeTexture,
+            bakedModel,
         };
+    }
+
+    private static async loadBakedModel(name: string, options: IslandOptions): Promise<GLTF> {
+        if (!options.withBaking) {
+            return null;
+        }
+        const info = await fetch(`models/lba2/islands/${name}.glb`, {
+            method: 'HEAD'
+        });
+        if (!info.ok) {
+            return null;
+        }
+        const loader = new GLTFLoader();
+        loader.register(parser => new LightMapPlugin(parser));
+        loader.register(parser => new LBAMaterialsPlugin(parser));
+        return loader.loadAsync(`models/lba2/islands/${name}.glb`);
     }
 
     private constructor(data: IslandData, options: IslandOptions) {
         this.name = data.name;
         this.props = islandsInfo[data.name];
+        if (data.bakedModel) {
+            this.threeObject = data.bakedModel.scene;
+        } else {
         this.threeObject = new THREE.Object3D();
+        }
         this.threeObject.name = `island_${data.name}`;
         this.threeObject.matrixAutoUpdate = false;
         const layout = new IslandLayout(data.ile, options);
 
-        const geomInfo = loadGeometries(this.threeObject, this.props, data, layout);
+        const geomInfo = data.bakedModel
+            ? loadGeometriesInfoOnly(this.threeObject, data, layout)
+            : loadGeometries(this.threeObject, this.props, data, options, layout);
 
+        if (!options.export) {
         this.addObjectBoundingBoxes(layout);
+        }
         if (options.preview) {
             loadPickingPlanes(this.threeObject, layout);
         }
 
+        if (!options.export) {
         this.physics = new IslandPhysics(layout);
+            if (!options.withBaking && !options.editor) {
         this.components.push(new IslandShadows(geomInfo));
+            }
         this.components.push(
             ...loadEnvironmentComponents(
                 data,
@@ -151,6 +206,7 @@ export default class Island {
         );
         this.addComponentNodes();
         this.sections = layout.groundSections;
+    }
     }
 
     update(game: Game, scene: Scene, time: Time) {
