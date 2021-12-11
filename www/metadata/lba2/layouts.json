@@ -4812,6 +4812,16 @@
       "file": "OT_183_matches.glb",
       "orientation": 0
     },
+    "184": {
+      "replace": true,
+      "file": "OT_184_chess_tower.glb",
+      "orientation": 0
+    },
+    "185": {
+      "replace": true,
+      "file": "OT_185_champagne_cork.glb",
+      "orientation": 0
+    },
     "193": {
       "replace": true,
       "file": "OT_193_candle_stand.glb",
