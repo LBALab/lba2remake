@@ -162,8 +162,8 @@ export default class Scene {
                     this.addVRGUI();
                 }
             }
-            this.addLight();
             this.scenery = scenery;
+            this.addLight();
         }
 
         this.initSceneNode();
@@ -309,6 +309,11 @@ export default class Scene {
             const ambient = new THREE.AmbientLight(0xFFFFFF, 0.08);
             ambient.name = 'AmbientLight';
             this.threeScene.add(ambient);
+        }
+        if (this.props.isIsland) {
+            const envInfo = (this.scenery as Island).props.envInfo;
+            const color = new THREE.Color().fromArray(envInfo.skyColor);
+            this.threeScene.fog = new THREE.FogExp2(color.getHex(), envInfo.fogDensity * 0.05);
         }
     }
 

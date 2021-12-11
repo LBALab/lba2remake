@@ -193,7 +193,7 @@ export default class IslandEditorContent extends FrameListener<Props, State> {
         this.state.scene.threeScene.add(island.threeObject);
         this.setState({ island }, this.saveDebugScope);
         this.wireframe = false;
-        this.fog = true;
+        this.fog = undefined;
     }
 
     handleClick() {
@@ -277,6 +277,14 @@ export default class IslandEditorContent extends FrameListener<Props, State> {
                 }
             });
             this.fog = fog;
+            if (fog) {
+                const envInfo = island.props.envInfo;
+                const color = new THREE.Color().fromArray(envInfo.skyColor);
+                this.state.scene.threeScene.fog =
+                    new THREE.FogExp2(color.getHex(), envInfo.fogDensity * 0.05);
+            } else {
+                this.state.scene.threeScene.fog = null;
+            }
             setCurrentFog(fog);
         }
     }
@@ -303,6 +311,9 @@ export default class IslandEditorContent extends FrameListener<Props, State> {
             elapsed: clock.getElapsedTime()
         };
         renderer.stats.begin();
+        if (island) {
+            island.update(null, scene, time);
+        }
         scene.camera.update(island, this.state, time);
         renderer.render(scene);
         renderer.stats.end();
