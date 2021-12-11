@@ -20,7 +20,8 @@ export interface BakeParams {
     textureSize: number;
     samples: number;
     margin: number;
-    denoise: 'FAST' | 'ACCURATE';
+    denoise: 'NONE' | 'FAST' | 'ACCURATE';
+    dumpAfter: 'none' | 'import' | 'bake' | 'denoise' | 'apply';
     cancelled: boolean;
     startProgress: (name: string, details?: string) => ProgressHandler;
 }
@@ -46,7 +47,7 @@ export async function bake(params: BakeParams) {
 async function bakeObject(obj: BakeObject, params: BakeParams) {
     let p = params.startProgress('Uploading');
     const { game } = getParams();
-    const query = `resolution=${params.textureSize}&samples=${params.samples}&margin=${params.margin}&denoise=${params.denoise}`;
+    const query = `resolution=${params.textureSize}&samples=${params.samples}&margin=${params.margin}&denoise=${params.denoise}&dumpAfter=${params.dumpAfter}`;
     const url = `/api/bake/${obj.type}/${game}/${obj.name}?${query}`;
     const { jobId } = await fetch(url, {
         method: 'POST',

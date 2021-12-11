@@ -7,7 +7,8 @@ interface Props {
         setTextureSize: (value: number) => void;
         setSamples: (value: number) => void;
         setMargin: (value: number) => void;
-        setDenoise: (value: 'FAST' | 'ACCURATE') => void;
+        setDenoise: (value: 'NONE' | 'FAST' | 'ACCURATE') => void;
+        setDumpAfter: (value: string) => void;
     };
 }
 
@@ -34,7 +35,8 @@ interface State {
 }
 
 const POSSIBLE_TEXTURE_SIZES = [32, 64, 128, 256, 512, 1024, 2048, 4096];
-const POSSIBLE_DENOISE_MODES = ['FAST', 'ACCURATE'];
+const POSSIBLE_DENOISE_MODES = ['NONE', 'FAST', 'ACCURATE'];
+const POSSIBLE_DUMP_VALUES = ['none', 'import', 'bake', 'denoise', 'apply'];
 
 const wrapperStyle = {
     padding: '1em',
@@ -175,10 +177,20 @@ export default class BakingAreaContent extends React.Component<Props, State> {
                 <div style={formLineStyle}>
                     Denoise:
                     <div style={formControlStyle}>
-                        <select value={sharedState.textureSize}
+                        <select value={sharedState.denoise}
                                 onChange={e => stateHandler.setDenoise(e.target.value as any)}>
                             {POSSIBLE_DENOISE_MODES
-                                .map(sz => <option key={sz} value={sz}>{sz}</option>)}
+                                .map(dn => <option key={dn} value={dn}>{dn}</option>)}
+                        </select>
+                    </div>
+                </div>
+                <div style={formLineStyle}>
+                    Dump blender file after:
+                    <div style={formControlStyle}>
+                        <select value={sharedState.dumpAfter}
+                                onChange={e => stateHandler.setDumpAfter(e.target.value as any)}>
+                            {POSSIBLE_DUMP_VALUES
+                                .map(d => <option key={d} value={d}>{d}</option>)}
                         </select>
                     </div>
                 </div>
@@ -283,14 +295,15 @@ export default class BakingAreaContent extends React.Component<Props, State> {
                             }
                         </span>
                     </div>
-                    {stage.eta && <div style={{minHeight: '2em', fontStyle: 'italic'}}>
-                        <span style={{color: 'lightblue', float: 'right'}}>
-                            ETA:&nbsp;
-                            <span style={{color: 'lightgrey', fontStyle: 'normal'}}>
-                                {fDuration(stage.eta)} ⏱️
+                    {(stage.duration === undefined && stage.eta !== undefined) &&
+                        <div style={{minHeight: '2em', fontStyle: 'italic'}}>
+                            <span style={{color: 'lightblue', float: 'right'}}>
+                                ETA:&nbsp;
+                                <span style={{color: 'lightgrey', fontStyle: 'normal'}}>
+                                    {fDuration(stage.eta)} ⏱️
+                                </span>
                             </span>
-                        </span>
-                    </div>}
+                        </div>}
                     <div style={{paddingLeft: '3em', opacity: idx || done ? 0.6 : 1}}>
                         {stage.details.map((detail, idx2) =>
                             <div key={detail}>{idx2 || idx || done ? <>&nbsp;</> : '‣'}&nbsp;

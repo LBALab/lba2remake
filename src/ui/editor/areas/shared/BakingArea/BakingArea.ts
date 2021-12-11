@@ -10,6 +10,7 @@ const GLTFViewer = {
         samples: 50,
         margin: 2,
         denoise: 'FAST',
+        dumpAfter: 'none',
     }),
     stateHandler: {
         setTextureSize(textureSize) {
@@ -24,6 +25,9 @@ const GLTFViewer = {
         setDenoise(denoise) {
             this.setState({ denoise });
         },
+        setDumpAfter(dumpAfter) {
+            this.setState({ dumpAfter });
+        }
     }
 };
 

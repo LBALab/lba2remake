@@ -23,10 +23,12 @@ parser.add_argument('--steps', default="import,bake,apply,probes,export")
 parser.add_argument('--samples', default=50, type=int)
 parser.add_argument('--resolution', default=512, type=int)
 parser.add_argument('--margin', default=2, type=int)
-parser.add_argument('--denoise', default="FAST", choices=["FAST", "ACCURATE"])
+parser.add_argument('--denoise', default="FAST", choices=["NONE", "FAST", "ACCURATE"])
 parser.add_argument('--hdri')
 parser.add_argument('--input', required=True)
 parser.add_argument('--output')
+parser.add_argument('--dumpAfter', default="none", choices=["none", "import", "bake", "denoise", "apply"])
+parser.add_argument('--dumpFile')
 
 args = parser.parse_args(argv)
 
@@ -50,7 +52,10 @@ print(f"[INFO]:  RESOLUTION: {args.resolution}")
 print(f"[INFO]:  MARGIN: {args.margin}")
 print(f"[INFO]:  DENOISE: {args.denoise}")
 print(f"[INFO]:  INPUT: {args.input}")
-print(f"[INFO]:  OUTPUT: {output_file}", flush=True)
+print(f"[INFO]:  OUTPUT: {output_file}")
+print(f"[INFO]:  DUMP-AFTER: {args.dumpAfter}", flush=args.dumpAfter == "none")
+if args.dumpAfter != "none":
+    print(f"[INFO]:  DUMP-FILE: {args.dumpFile}", flush=True)
 
 
 #############################################################################
@@ -197,6 +202,10 @@ objects_to_bake = [o for o in bpy.data.objects if o.type == 'MESH'
     and 'skip_baking' not in o
     and o.data.uv_layers.get('UVMap.001')]
 
+if args.dumpAfter == "import":
+    print("[PROGRESS]:Dumping", flush=True)
+    bpy.ops.wm.save_as_mainfile(filepath=args.dumpFile)
+    quit()
 
 #############################################################################
 ###  BAKE
@@ -234,30 +243,44 @@ if "bake" in steps:
 
         bpy.ops.object.bake(use_clear=False, margin=margin, type='DIFFUSE', pass_filter={'DIRECT', 'INDIRECT'})
 
+if args.dumpAfter == "bake":
+    print("[PROGRESS]:Dumping", flush=True)
+    bpy.ops.wm.save_as_mainfile(filepath=args.dumpFile)
+    quit()
 
 #############################################################################
 ###  APPLY
 #############################################################################
 if "apply" in steps:
-    print("[PROGRESS]:Denoising", flush=True)
-    baked_mat = bpy.data.materials.new(name="LBABakedMaterial")
-    baked_mat.use_nodes = True
-
-    nodes = baked_mat.node_tree.nodes
-    links = baked_mat.node_tree.links
-
-    scene_nodes = bpy.data.scenes["Scene"].node_tree.nodes
-    scene_nodes['Image'].image = bpy.data.images['BakeTarget']
-    tmpfilename = '/tmp/lightmap0001.exr'
+    if args.denoise != "NONE":
+        print("[PROGRESS]:Denoising", flush=True)
+        scene_nodes = bpy.data.scenes["Scene"].node_tree.nodes
+        scene_nodes['Image'].image = bpy.data.images['BakeTarget']
+        tmpfilename = '/tmp/lightmap0001.exr'
     print("Saving lightmap: ", tmpfilename)
     scene_nodes['File Output'].base_path = '/tmp'
     scene_nodes['File Output'].file_slots[0].path = 'lightmap'
     scene_nodes['File Output'].format.file_format = 'OPEN_EXR'
     scene_nodes['File Output'].format.color_mode = 'RGB'
     scene_nodes['File Output'].format.color_depth = '32'
-    bpy.ops.render.render(animation=False, write_still=False, use_viewport=False, layer="", scene="")
-    lightmap = bpy.data.images.load(tmpfilename)
-    lightmap.name = 'Lightmap'
+        bpy.ops.render.render(animation=False, write_still=False, use_viewport=False, layer="", scene="")
+        lightmap = bpy.data.images.load(tmpfilename)
+        lightmap.name = 'Lightmap'
+    else:
+        lightmap = bpy.data.images['BakeTarget']
+        lightmap.name = 'Lightmap'
+
+    if args.dumpAfter == "denoise":
+        print("[PROGRESS]:Dumping", flush=True)
+        bpy.ops.wm.save_as_mainfile(filepath=args.dumpFile)
+        quit()
+
+    print("[PROGRESS]:Applying", flush=True)
+    baked_mat = bpy.data.materials.new(name="LBABakedMaterial")
+    baked_mat.use_nodes = True
+
+    nodes = baked_mat.node_tree.nodes
+    links = baked_mat.node_tree.links
 
     node_img = nodes.new(type="ShaderNodeTexImage")
     node_img.image = bpy.data.images['Lightmap']
@@ -279,6 +302,10 @@ if "apply" in steps:
         else:
             mesh.materials.append(baked_mat)
 
+if args.dumpAfter == "apply":
+    print("[PROGRESS]:Dumping", flush=True)
+    bpy.ops.wm.save_as_mainfile(filepath=args.dumpFile)
+    quit()
 
 #############################################################################
 ###  LIGHT PROBES

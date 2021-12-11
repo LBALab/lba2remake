@@ -3,16 +3,20 @@ import os from 'os';
 import path from 'path';
 import { spawn } from 'child_process';
 import { startNewJob } from './jobs.js';
+import downloadsFolderFn from 'downloads-folder';
+
+const downloadsFolder = downloadsFolderFn();
 
 export function bake(req, res) {
     const { type, game, name } = req.params;
-    const { steps, samples, resolution, margin, denoise } = req.query;
+    const { steps, samples, resolution, margin, denoise, dumpAfter } = req.query;
     const tmpDir = os.tmpdir();
     const inputFile = path.join(tmpDir, `${name}.glb`);
     const targetDir = type === 'island'
         ? path.normalize(`www/models/${game}/islands`)
         : path.normalize(`www/models/${game}/iso_scenes`);
     const outputFile = path.join(process.cwd(), targetDir, `${name}.glb`);
+    const dumpFile = path.join(downloadsFolder, `${name}.blend`);
     req.pipe(fs.createWriteStream(inputFile));
     req.on('end', () => {
         let bl = null;
@@ -30,7 +34,11 @@ export function bake(req, res) {
                 '--denoise', denoise || 'FAST',
             ];
             if (type === 'island') {
-                scriptArgs.push('--hdri', 'www/data/hdr/sunset.hdr');
+                scriptArgs.push('--hdri', path.join(process.cwd(), 'www/data/hdr/sunset.hdr'));
+            }
+            if (dumpAfter) {
+                scriptArgs.push('--dumpAfter', dumpAfter);
+                scriptArgs.push('--dumpFile', dumpFile);
             }
             const blenderPath = process.env.BLENDER_EXEC_PATH;
             bl = spawn(blenderPath, [...blenderArgs, ...scriptArgs]);
