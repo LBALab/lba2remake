@@ -181,6 +181,9 @@ export default class Island {
             for (const obj of section.objects) {
                 const box = createBoundingBox(obj.boundingBox, new THREE.Vector3(0.9, 0.9, 0.9));
                 box.name = `[${section.x},${section.z}]:${obj.index}`;
+                if (obj.label) {
+                    box.add(obj.label);
+                }
                 boundingBoxes.add(box);
             }
         }

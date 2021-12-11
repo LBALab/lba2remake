@@ -10,6 +10,7 @@ export interface IslandObjectInfo {
     iv: number;
     soundType: number;
     boundingBox?: THREE.Box3;
+    label?: THREE.Object3D;
     flags: number;
     flagValue: number;
 }
