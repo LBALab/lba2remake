@@ -25,6 +25,7 @@ const textureLoader = new THREE.TextureLoader();
 const islandsCache = {
     regular: new Map<string, Island>(),
     editor: new Map<string, Island>(),
+    editor_baked: new Map<string, Island>(),
     preview: new Map<string, Island>()
 };
 
@@ -41,7 +42,7 @@ export interface IslandData {
 }
 
 export interface IslandOptions {
-    cache: 'none' | 'regular' | 'editor' | 'preview';
+    cache: 'none' | 'regular' | 'editor' | 'editor_baked' | 'preview';
     preview: boolean;
     editor: boolean;
     export: boolean;
@@ -79,7 +80,7 @@ export default class Island {
 
     static async loadForEditor(name: string, ambience: any, baked: boolean): Promise<Island> {
         return Island.loadWithCache(name, ambience, {
-            cache: baked ? 'none' : 'editor',
+            cache: baked ? 'editor_baked' : 'editor',
             preview: false,
             editor: true,
             export: false,
