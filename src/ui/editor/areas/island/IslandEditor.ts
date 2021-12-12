@@ -17,7 +17,7 @@ const IslandEditor = {
     settings: IslandEditorSettings,
     mainArea: true,
     getInitialState: () => ({
-        island: 'CITADEL',
+        name: 'CITADEL',
         wireframe: false,
         fog: false,
         baked: false,
