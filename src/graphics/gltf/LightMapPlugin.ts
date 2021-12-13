@@ -1,11 +1,14 @@
 import * as THREE from 'three';
 import { GLTFLoaderPlugin, GLTFParser } from 'three/examples/jsm/loaders/GLTFLoader';
 import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader';
+import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader';
+
 interface GLTFParserExt extends GLTFParser {
-    floatTextureCache?: {};
+    lightmapTextureCache?: {};
 }
 
 const exrLoader = new EXRLoader();
+const rgbeLoader = new RGBELoader();
 
 export default class LightMapPlugin implements GLTFLoaderPlugin {
     parser: GLTFParserExt;
@@ -34,46 +37,40 @@ export default class LightMapPlugin implements GLTFLoaderPlugin {
             return;
         }
         const details = materialDef.extensions[this.name];
-        if (!parser.floatTextureCache) {
-            parser.floatTextureCache = {};
+        if (!parser.lightmapTextureCache) {
+            parser.lightmapTextureCache = {};
         }
-        if ('exrImageIndex' in details) {
-            const image = parser.json.images[details.exrImageIndex];
-            if (image.bufferView in parser.floatTextureCache) {
-                materialParams.lightMap = parser.floatTextureCache[image.bufferView];
+        if ('exrImageIndex' in details || 'hdrImageIndex' in details) {
+            const index = 'exrImageIndex' in details
+                ? details.exrImageIndex
+                : details.hdrImageIndex;
+            const image = parser.json.images[index];
+            if (image.bufferView in parser.lightmapTextureCache) {
+                materialParams.lightMap = await parser.lightmapTextureCache[image.bufferView];
             } else {
-                const buffer = await parser.getDependency('bufferView', image.bufferView);
-                const imageData = exrLoader.parse(buffer);
-                const texture = new THREE.DataTexture(
-                    imageData.data,
-                    imageData.width,
-                    imageData.height,
-                    imageData.format,
-                    imageData.type,
-                );
-                texture.flipY = true;
-                texture.minFilter = THREE.LinearFilter;
-                texture.magFilter = THREE.LinearFilter;
-                materialParams.lightMap = texture;
-                parser.floatTextureCache[image.bufferView] = texture;
+                parser.lightmapTextureCache[image.bufferView] = new Promise((async (resolve) => {
+                    const buffer = await parser.getDependency('bufferView', image.bufferView);
+                    const imageData = 'exrImageIndex' in details
+                        ? exrLoader.parse(buffer)
+                        : rgbeLoader.parse(buffer);
+                    const texture = new THREE.DataTexture(
+                        imageData.data,
+                        imageData.width,
+                        imageData.height,
+                        imageData.format,
+                        imageData.type,
+                    );
+                    texture.flipY = 'exrImageIndex' in details;
+                    texture.minFilter = THREE.LinearFilter;
+                    texture.magFilter = THREE.LinearFilter;
+                    if ('hdrImageIndex' in details) {
+                        texture.encoding = THREE.RGBEEncoding;
+                    }
+                    materialParams.lightMap = texture;
+                    resolve(texture);
+                }));
+                await parser.lightmapTextureCache[image.bufferView];
             }
-        } else if (details.bufferView in parser.floatTextureCache) {
-            materialParams.lightMap = parser.floatTextureCache[details.bufferView];
-        } else {
-            const buffer = await parser.getDependency('bufferView', details.bufferView);
-            const data = new Float32Array(buffer);
-            const texture = new THREE.DataTexture(
-                data,
-                details.width,
-                details.height,
-                THREE.RGBAFormat,
-                THREE.FloatType,
-            );
-            texture.magFilter = THREE.LinearFilter;
-            texture.minFilter = THREE.LinearFilter;
-            texture.generateMipmaps = false;
-            parser.floatTextureCache[details.bufferView] = texture;
-            materialParams.lightMap = texture;
         }
         delete materialParams.metalness;
         delete materialParams.roughness;

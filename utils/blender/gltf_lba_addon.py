@@ -34,11 +34,13 @@ class glTF2ExportUserExtension:
         baked_mat = blender_mesh.materials.get('LBABakedMaterial')
         gltf2_mat = gltf2_mesh.primitives[0].material
         if baked_mat is not None:
+            file_format = 'HDR'
             if self.baked_mat_index == -1:
                 image = baked_mat.node_tree.nodes['Image Texture'].image
-                self.baked_mat_index =self.gather_image_exr(image)
+                self.baked_mat_index =self.gather_image(image, file_format)
             gltf2_mat.extensions['LBA2R_lightmaps'] = {}
-            gltf2_mat.extensions['LBA2R_lightmaps']['exrImageIndex'] = self.baked_mat_index
+            index = 'exrImageIndex' if file_format == 'OPEN_EXR' else 'hdrImageIndex'
+            gltf2_mat.extensions['LBA2R_lightmaps'][index] = self.baked_mat_index
 
         obj_mat = blender_mesh.materials[0]
         if "LBA_Atlas" in obj_mat:
@@ -57,28 +59,37 @@ class glTF2ExportUserExtension:
             return None
         return result[0]
 
-    def gather_image_exr(self, image: bpy.types.Image):
-        buffer_view = self.gltf2_io_binary_data.BinaryData(data=self.encode(image))
+    def gather_image(self, image: bpy.types.Image, file_format: str):
+        if file_format == 'OPEN_EXR':
+            mime_type = 'image/x-exr'
+            uri = 'lightmap.exr'
+        elif file_format == 'HDR':
+            mime_type = 'image/vnd.radiance'
+            uri = 'lightmap.hdr'
+        else:
+            raise Exception('Unsupported file format: ' + file_format)
+
+        buffer_view = self.gltf2_io_binary_data.BinaryData(data=self.encode(image, file_format))
 
         image = self.gltf2_io.Image(
             buffer_view=buffer_view,
             extensions=None,
             extras=None,
-            mime_type="image/x-exr",
+            mime_type=mime_type,
             name="lightmap",
-            uri="lightmap.exr"
+            uri=uri
         )
 
         return image
 
-    def encode(self, image: bpy.types.Image):
+    def encode(self, image: bpy.types.Image, file_format: str):
         with self.TmpImageGuard() as guard:
             self.make_temp_image_copy(guard, src_image=image)
             tmp_image = guard.image
             with tempfile.TemporaryDirectory() as tmpdirname:
                 tmpfilename = tmpdirname + '/img'
                 tmp_image.filepath_raw = tmpfilename
-                tmp_image.file_format = 'OPEN_EXR'
+                tmp_image.file_format = file_format
                 tmp_image.save()
                 with open(tmpfilename, "rb") as f:
                     return f.read()
