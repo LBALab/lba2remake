@@ -22,6 +22,10 @@ window.addEventListener('unhandledrejection', (event) => {
         window.vrSession.end();
     }
     const data = event.reason;
+    if (data && data.code === 18) {
+        // Prevent pointer lock error from crashing the app
+        return;
+    }
     const message = (data && data.message) || data;
     const stack = data && data.stack;
     init({
