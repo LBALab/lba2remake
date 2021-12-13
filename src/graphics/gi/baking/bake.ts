@@ -22,6 +22,12 @@ export interface BakeParams {
     margin: number;
     denoise: 'NONE' | 'FAST' | 'ACCURATE';
     dumpAfter: 'none' | 'import' | 'bake' | 'denoise' | 'apply';
+    hdri?: string;
+    hdriRotation: number;
+    hdriExposure: number;
+}
+
+export interface BakeState extends BakeParams {
     cancelled: boolean;
     startProgress: (name: string, details?: string) => ProgressHandler;
 }
@@ -32,7 +38,7 @@ export interface BakeObject {
     name: string;
 }
 
-export async function bake(params: BakeParams) {
+export async function bake(params: BakeState) {
     const island = DebugData.scope.island;
     if (island) {
         const obj = await bakeIsland(island.name, params);
@@ -44,11 +50,15 @@ export async function bake(params: BakeParams) {
     }
 }
 
-async function bakeObject(obj: BakeObject, params: BakeParams) {
+async function bakeObject(obj: BakeObject, params: BakeState) {
     let p = params.startProgress('Uploading');
     const { game } = getParams();
-    const query = `resolution=${params.textureSize}&samples=${params.samples}&margin=${params.margin}&denoise=${params.denoise}&dumpAfter=${params.dumpAfter}`;
-    const url = `/api/bake/${obj.type}/${game}/${obj.name}?${query}`;
+    const q = [];
+    for (const opt of ['textureSize', 'samples', 'margin', 'denoise', 'dumpAfter', 'hdri', 'hdriRotation', 'hdriExposure']) {
+        if (params[opt] !== undefined)
+            q.push(`${opt}=${params[opt]}`);
+    }
+    const url = `/api/bake/${obj.type}/${game}/${obj.name}?${q.join('&')}`;
     const { jobId } = await fetch(url, {
         method: 'POST',
         body: obj.glb,

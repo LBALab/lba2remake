@@ -9,7 +9,7 @@ const downloadsFolder = downloadsFolderFn();
 
 export function bake(req, res) {
     const { type, game, name } = req.params;
-    const { steps, samples, resolution, margin, denoise, dumpAfter } = req.query;
+    const { steps, samples, textureSize, margin, denoise, dumpAfter, hdri, hdriRotation, hdriExposure } = req.query;
     const tmpDir = os.tmpdir();
     const inputFile = path.join(tmpDir, `${name}.glb`);
     const targetDir = type === 'island'
@@ -29,13 +29,14 @@ export function bake(req, res) {
                 '--output', outputFile,
                 '--steps', steps || 'import,bake,apply,export',
                 '--samples', samples || 64,
-                '--resolution', resolution || 512,
+                '--textureSize', textureSize || 512,
                 '--margin', margin || 2,
                 '--denoise', denoise || 'FAST',
             ];
-            if (type === 'island') {
-                scriptArgs.push('--hdri', path.join(process.cwd(), 'www/data/hdr/sunset.hdr'));
-                scriptArgs.push('--hdriAngle', '120');
+            if (hdri) {
+                scriptArgs.push('--hdri', path.join(process.cwd(), 'www/data/hdr', hdri));
+                scriptArgs.push('--hdriRotation', hdriRotation || 0);
+                scriptArgs.push('--hdriExposure', hdriExposure || 1);
             }
             if (dumpAfter) {
                 scriptArgs.push('--dumpAfter', dumpAfter);

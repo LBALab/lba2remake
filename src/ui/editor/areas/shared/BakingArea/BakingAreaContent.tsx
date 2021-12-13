@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { bake, BakeParams, BakeProgress, ProgressHandler } from '../../../../../graphics/gi/baking/bake';
+import { bake, BakeState, BakeProgress, ProgressHandler, BakeParams } from '../../../../../graphics/gi/baking/bake';
 
 interface Props {
     sharedState: BakeParams;
@@ -9,6 +9,9 @@ interface Props {
         setMargin: (value: number) => void;
         setDenoise: (value: 'NONE' | 'FAST' | 'ACCURATE') => void;
         setDumpAfter: (value: string) => void;
+        setHdri: (value?: string) => void;
+        setHdriRotation: (value: number) => void;
+        setHdriExposure: (value: number) => void;
     };
 }
 
@@ -28,10 +31,11 @@ interface BakeProgressHistory {
 interface State {
     baking: boolean;
     progress?: BakeProgressHistory;
-    appliedParams?: BakeParams;
+    appliedParams?: BakeState;
     error?: string;
     done: boolean;
     time?: number;
+    hdris: string[];
 }
 
 const POSSIBLE_TEXTURE_SIZES = [32, 64, 128, 256, 512, 1024, 2048, 4096];
@@ -84,8 +88,15 @@ export default class BakingAreaContent extends React.Component<Props, State> {
             baking: false,
             progress: null,
             done: false,
-            error: null
+            error: null,
+            hdris: []
         };
+
+        fetch('/api/bake/hdri').then(res => res.json()).then((hdris) => {
+            this.setState({
+                hdris
+            });
+        });
     }
 
     async bakeLighting() {
@@ -141,7 +152,7 @@ export default class BakingAreaContent extends React.Component<Props, State> {
 
     render() {
         const { sharedState, stateHandler } = this.props;
-        const { baking } = this.state;
+        const { baking, hdris } = this.state;
         return <div style={wrapperStyle}>
             <div>
                 <div style={formLineStyle}>
@@ -182,6 +193,42 @@ export default class BakingAreaContent extends React.Component<Props, State> {
                             {POSSIBLE_DENOISE_MODES
                                 .map(dn => <option key={dn} value={dn}>{dn}</option>)}
                         </select>
+                    </div>
+                </div>
+                <div style={formLineStyle}>
+                    HDRI:
+                    <div style={formControlStyle}>
+                        <select value={sharedState.hdri}
+                                onChange={e => stateHandler.setHdri(e.target.value as any)}>
+                            <option value={undefined}>None</option>
+                            {hdris
+                                .map(h => <option key={h} value={h}>{h}</option>)}
+                        </select>
+                    </div>
+                </div>
+                <div style={formLineStyle}>
+                    HDRI rotation:
+                    <div style={formControlStyle}>
+                        <input type="number"
+                                value={sharedState.hdriRotation}
+                                min={0}
+                                max={360}
+                                onChange={
+                                    e => stateHandler.setHdriRotation(Number(e.target.value))
+                                }/>
+                    </div>
+                </div>
+                <div style={formLineStyle}>
+                    HDRI exposure:
+                    <div style={formControlStyle}>
+                        <input type="number"
+                                value={sharedState.hdriExposure}
+                                min={0}
+                                max={100}
+                                step={0.05}
+                                onChange={
+                                    e => stateHandler.setHdriExposure(Number(e.target.value))
+                                }/>
                     </div>
                 </div>
                 <div style={formLineStyle}>

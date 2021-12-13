@@ -22,11 +22,12 @@ argv = argv[argv.index("--") + 1:]
 parser = argparse.ArgumentParser(description='Perform light baking')
 parser.add_argument('--steps', default="import,bake,apply,probes,export")
 parser.add_argument('--samples', default=50, type=int)
-parser.add_argument('--resolution', default=512, type=int)
+parser.add_argument('--textureSize', default=512, type=int)
 parser.add_argument('--margin', default=2, type=int)
 parser.add_argument('--denoise', default="FAST", choices=["NONE", "FAST", "ACCURATE"])
 parser.add_argument('--hdri')
-parser.add_argument('--hdriAngle', type=float, default=0.0)
+parser.add_argument('--hdriRotation', type=float, default=0.0)
+parser.add_argument('--hdriExposure', type=float, default=1.0)
 parser.add_argument('--input', required=True)
 parser.add_argument('--output')
 parser.add_argument('--dumpAfter', default="none", choices=["none", "import", "bake", "denoise", "apply"])
@@ -50,7 +51,7 @@ print(flush=True)
 print("[INFO]:LIGHT BAKING")
 print(f"[INFO]:  STEPS: {steps}")
 print(f"[INFO]:  SAMPLES: {args.samples}")
-print(f"[INFO]:  RESOLUTION: {args.resolution}")
+print(f"[INFO]:  RESOLUTION: {args.textureSize}")
 print(f"[INFO]:  MARGIN: {args.margin}")
 print(f"[INFO]:  DENOISE: {args.denoise}")
 print(f"[INFO]:  INPUT: {args.input}")
@@ -94,7 +95,8 @@ if (args.hdri is not None):
     nodes.new('ShaderNodeMapping')
     nodes.new('ShaderNodeTexCoord')
     nodes['Environment Texture'].image = bpy.data.images.load(args.hdri)
-    nodes["Mapping"].inputs[2].default_value[2] = math.radians(args.hdriAngle)
+    nodes["Background"].inputs[1].default_value = args.hdriExposure
+    nodes["Mapping"].inputs[2].default_value[2] = math.radians(args.hdriRotation)
 
     links.new(nodes["Background"].outputs[0], nodes["World Output"].inputs[0])
     links.new(nodes["Environment Texture"].outputs[0], nodes["Background"].inputs[0])
@@ -223,9 +225,9 @@ if args.dumpAfter == "import":
 #############################################################################
 if "bake" in steps:
     print("[PROGRESS]:Baking", flush=True)
-    resolution = args.resolution
+    textureSize = args.textureSize
     margin = args.margin
-    bake_target = bpy.data.images.new(name="BakeTarget", width=resolution, height=resolution, float_buffer=True)
+    bake_target = bpy.data.images.new(name="BakeTarget", width=textureSize, height=textureSize, float_buffer=True)
     i = 0.0
     for obj in objects_to_bake:
         print(f"[PROGRESS]:Baking:{i / len(objects_to_bake)}:{obj.name}", flush=True)

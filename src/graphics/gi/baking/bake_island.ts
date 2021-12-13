@@ -7,11 +7,11 @@ import {
 import { buildAtlas } from '../../uvAltas/atlas';
 import Island from '../../../game/scenery/island/Island';
 import IslandAmbience from '../../../ui/editor/areas/island/browser/ambience';
-import { BakeObject, BakeParams } from './bake';
+import { BakeObject, BakeState } from './bake';
 
 const cache: Record<string, BakeObject> = {};
 
-export async function bakeIsland(name: string, params: BakeParams): Promise<BakeObject> {
+export async function bakeIsland(name: string, params: BakeState): Promise<BakeObject> {
     if (name in cache) {
         params.startProgress('Loading from cache').done();
         return cache[name];
@@ -29,7 +29,7 @@ export async function bakeIsland(name: string, params: BakeParams): Promise<Bake
 
 export async function exportIslandForBaking(
     name: string,
-    params?: BakeParams
+    params?: BakeState
 ) {
     const ambience = IslandAmbience[name];
     const island = await Island.loadForExport(name, ambience);

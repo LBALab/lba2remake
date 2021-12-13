@@ -1,3 +1,4 @@
+import { BakeParams } from '../../../../../graphics/gi/baking/bake';
 import BakingAreaContent from './BakingAreaContent';
 
 const GLTFViewer = {
@@ -5,12 +6,14 @@ const GLTFViewer = {
     name: 'Baking',
     icon: 'light.svg',
     content: BakingAreaContent,
-    getInitialState: () => ({
+    getInitialState: (): BakeParams => ({
         textureSize: 512,
         samples: 50,
         margin: 2,
         denoise: 'FAST',
         dumpAfter: 'none',
+        hdriRotation: 0,
+        hdriExposure: 1,
     }),
     stateHandler: {
         setTextureSize(textureSize) {
@@ -27,6 +30,15 @@ const GLTFViewer = {
         },
         setDumpAfter(dumpAfter) {
             this.setState({ dumpAfter });
+        },
+        setHdri(hdri) {
+            this.setState({ hdri });
+        },
+        setHdriRotation(hdriRotation) {
+            this.setState({ hdriRotation });
+        },
+        setHdriExposure(hdriExposure) {
+            this.setState({ hdriExposure });
         }
     }
 };
