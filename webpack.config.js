@@ -22,6 +22,10 @@ module.exports = {
     },
     module: {
         rules: [{
+            test: /((blockly|file-saver)\/.*\.js)$/,
+            enforce: "pre",
+            use: ["source-map-loader"],
+        }, {
             test: /\.tsx?$/,
             include: /src/,
             exclude: /node_modules/,
