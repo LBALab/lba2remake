@@ -337,4 +337,9 @@ if "export" in steps:
     bpy.ops.object.select_all(action='DESELECT')
     for obj in objects_to_bake:
         obj.select_set(True)
+    objects_to_export = [o for o in bpy.data.objects if o.type == 'MESH'
+        and o.get('LBAExport')
+        and o['LBAExport'] == True]
+    for obj in objects_to_export:
+        obj.select_set(True)
     bpy.ops.export_scene.gltf(filepath=output_file, export_tangents=True, use_selection=True)

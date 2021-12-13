@@ -90,7 +90,9 @@ async function patchIslandObject(islandObject: THREE.Object3D) {
                     break;
                 }
                 default: {
-                    node.material = new THREE.MeshStandardMaterial();
+                    if (!(node.material instanceof THREE.MeshStandardMaterial)) {
+                        node.material = new THREE.MeshStandardMaterial();
+                    }
                     break;
                 }
             }

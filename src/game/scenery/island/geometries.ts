@@ -8,7 +8,7 @@ import {
 import {compile} from '../../../utils/shaders';
 import { getTileUsage, loadGround, loadGroundNormals } from './ground';
 import { loadBoundingBox, loadObjectGeometries } from './objects';
-import { loadModel } from './model';
+import { IslandModel, loadModel } from './model';
 import TextureAtlas from './TextureAtlas';
 import Lightning from './environment/Lightning';
 
@@ -61,11 +61,11 @@ export function loadGeometries(
     layout: IslandLayout
 ): IslandGeometryInfo {
     const usedTiles = new Map<string, number[]>();
-    const models = [];
+    const models: IslandModel[] = [];
     const uvGroupsS : Set<string> = new Set();
     const { obl } = data;
     for (let i = 0; i < obl.length; i += 1) {
-        const model = loadModel(obl.getEntry(i));
+        const model = loadModel(obl.getEntry(i), i);
         models.push(model);
         for (const group of model.uvGroups) {
             uvGroupsS.add(group.join(','));
@@ -137,6 +137,7 @@ export function loadGeometries(
             const mesh = new THREE.Mesh(bufferGeometry, material);
             mesh.matrixAutoUpdate = false;
             mesh.name = name;
+            mesh.userData.LBAExport = true;
             matByName[name] = material;
             threeObject.add(mesh);
             mesh.onBeforeRender = Lightning.applyUniforms;
@@ -156,7 +157,7 @@ export function loadGeometriesInfoOnly(
     const { obl } = data;
     const models = [];
     for (let i = 0; i < obl.length; i += 1) {
-        const model = loadModel(obl.getEntry(i));
+        const model = loadModel(obl.getEntry(i), i);
         models.push(model);
     }
 
@@ -209,7 +210,7 @@ function prepareGeometries(island, data, atlas, light) {
                     noise: {value: noiseTexture},
                     actorPos: {value: times(10, () => new THREE.Vector4(0, 0, 0, 0))}
                 }
-            })
+            }),
         },
         ground_textured: {
             positions: [],

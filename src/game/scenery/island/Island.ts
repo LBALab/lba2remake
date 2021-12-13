@@ -19,6 +19,8 @@ import { LBA2GameFlags } from '../../data/gameFlags';
 import LightMapPlugin from '../../../graphics/gltf/LightMapPlugin';
 import LBAMaterialsPlugin from '../../../graphics/gltf/LBAMaterialsPlugin';
 import IslandShadows from './IslandShadows';
+import HQR from '../../../hqr';
+import { addObjects } from './patches';
 
 const textureLoader = new THREE.TextureLoader();
 
@@ -33,8 +35,8 @@ export interface IslandData {
     name: string;
     ress: any;
     palette: any;
-    ile: any;
-    obl: any;
+    ile: HQR;
+    obl: HQR;
     ambience: any;
     lutTexture: THREE.DataTexture;
     smokeTexture: THREE.Texture;
@@ -253,13 +255,12 @@ export default class Island {
     private patchObjectForExport(name: string, layout: IslandLayout) {
         for (const section of layout.groundSections) {
             for (const obj of section.objects) {
-                if (obj.index === 26 && name === 'CITADEL') { // Lamp post
-                    const lamp = new THREE.PointLight();
-                    lamp.color.set(0xffffaa);
-                    lamp.intensity = 500.0;
-                    lamp.userData.radius = 0.6;
-                    lamp.position.set(obj.x, obj.y + 3, obj.z);
-                    this.threeObject.add(lamp);
+                const objects = addObjects(name, obj);
+                for (const newObj of objects) {
+                    newObj.position.x += obj.x;
+                    newObj.position.y += obj.y;
+                    newObj.position.z += obj.z;
+                    this.threeObject.add(newObj);
                 }
             }
         }

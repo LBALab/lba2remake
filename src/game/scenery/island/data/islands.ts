@@ -1,12 +1,14 @@
 import environments, { EnvInfo } from './environments';
 
 export interface IslandProps {
+    name: string;
     envInfo: EnvInfo;
     startPosition: [number, number];
 }
 
 const islandProps: Record<string, IslandProps> = {
     CITADEL: {
+        name: 'CITADEL',
         envInfo: environments.TWINSUN_RAIN,
         startPosition: [
             0,
@@ -14,6 +16,7 @@ const islandProps: Record<string, IslandProps> = {
         ]
     },
     CITABAU: {
+        name: 'CITABAU',
         envInfo: environments.TWINSUN_SUNNY,
         startPosition: [
             0,
@@ -21,6 +24,7 @@ const islandProps: Record<string, IslandProps> = {
         ]
     },
     DESERT: {
+        name: 'DESERT',
         envInfo: environments.TWINSUN_SUNNY,
         startPosition: [
             0.8,
@@ -28,6 +32,7 @@ const islandProps: Record<string, IslandProps> = {
         ]
     },
     EMERAUDE: {
+        name: 'EMERAUDE',
         envInfo: environments.MOON,
         startPosition: [
             1.4,
@@ -35,6 +40,7 @@ const islandProps: Record<string, IslandProps> = {
         ]
     },
     OTRINGAL: {
+        name: 'OTRINGAL',
         envInfo: environments.ZEELISH,
         startPosition: [
             0.8,
@@ -42,6 +48,7 @@ const islandProps: Record<string, IslandProps> = {
         ]
     },
     KNARTAS: {
+        name: 'KNARTAS',
         envInfo: environments.ZEELISH,
         startPosition: [
             1,
@@ -49,6 +56,7 @@ const islandProps: Record<string, IslandProps> = {
         ]
     },
     ILOTCX: {
+        name: 'ILOTCX',
         envInfo: environments.ZEELISH,
         startPosition: [
             3.3,
@@ -56,6 +64,7 @@ const islandProps: Record<string, IslandProps> = {
         ]
     },
     CELEBRAT: {
+        name: 'CELEBRAT',
         envInfo: environments.ZEELISH,
         startPosition: [
             3.1,
@@ -63,6 +72,7 @@ const islandProps: Record<string, IslandProps> = {
         ]
     },
     CELEBRA2: {
+        name: 'CELEBRA2',
         envInfo: environments.ZEELISH,
         startPosition: [
             3.1,
@@ -70,6 +80,7 @@ const islandProps: Record<string, IslandProps> = {
         ]
     },
     ASCENCE: {
+        name: 'ASCENCE',
         envInfo: environments.ZEELISH,
         startPosition: [
             2.5,
@@ -77,6 +88,7 @@ const islandProps: Record<string, IslandProps> = {
         ]
     },
     MOSQUIBE: {
+        name: 'MOSQUIBE',
         envInfo: environments.UNDERGAS,
         startPosition: [
             0.75,
@@ -84,6 +96,7 @@ const islandProps: Record<string, IslandProps> = {
         ]
     },
     PLATFORM: {
+        name: 'PLATFORM',
         envInfo: environments.UNDERGAS,
         startPosition: [
             1.78,
@@ -91,6 +104,7 @@ const islandProps: Record<string, IslandProps> = {
         ]
     },
     SOUSCELB: {
+        name: 'SOUSCELB',
         envInfo: environments.UNDERGAS,
         startPosition: [
             1.39,

@@ -5,8 +5,12 @@ import {WORLD_SCALE} from '../../../utils/lba';
 import { IslandSection, IslandObjectInfo } from './IslandLayout';
 import { getParams } from '../../../params';
 import { IslandOptions } from './Island';
+import { IslandModel } from './model';
+import { IslandProps } from './data/islands';
+import { getObjectPatch } from './patches';
 
-interface SectionHeader {
+export interface IslandObjectSection {
+    index: number;
     type: any;
     numFaces: any;
     pointsPerFace: number;
@@ -29,19 +33,19 @@ const TransparentObjectOffset = {
 export function loadObjectGeometries(
     section: IslandSection,
     geometries,
-    models,
+    models: IslandModel[],
     atlas,
-    island,
-    _options: IslandOptions
+    island: IslandProps,
+    options: IslandOptions
 ) {
     for (const obj of section.objects) {
         const model = models[obj.index];
-        loadFaces(geometries, model, obj, atlas, island);
+        loadFaces(geometries, model, obj, atlas, island, options);
         loadBoundingBox(obj, model);
     }
 }
 
-export function loadBoundingBox(obj: IslandObjectInfo, model) {
+export function loadBoundingBox(obj: IslandObjectInfo, model: IslandModel) {
     const bb = new THREE.Box3(
         new THREE.Vector3(model.bbXMin, model.bbYMin, model.bbZMin),
         new THREE.Vector3(model.bbXMax, model.bbYMax, model.bbZMax),
@@ -109,26 +113,36 @@ function createObjectLabel(name, bb: THREE.Box3) {
     return sprite;
 }
 
-function loadFaces(geometries, model, info, atlas, island) {
+function loadFaces(
+    geometries,
+    model: IslandModel,
+    info,
+    atlas,
+    island: IslandProps,
+    options: IslandOptions
+) {
     const data = new DataView(
         model.buffer,
         model.faceSectionOffset,
         model.lineSectionOffset - model.faceSectionOffset
     );
     let offset = 0;
+    let index = 0;
     while (offset < data.byteLength) {
-        const section = parseSectionHeader(data, model, offset);
-        loadFaceSection(geometries, model, info, section, atlas, island);
+        const section = parseSectionHeader(data, model, offset, index);
+        loadFaceSection(geometries, model, info, section, atlas, island, options);
         offset += section.size + 8;
+        index += 1;
     }
 }
 
-function parseSectionHeader(data, object, offset): SectionHeader {
+function parseSectionHeader(data, object, offset, index): IslandObjectSection {
     const type = data.getUint8(offset);
     const flags = data.getUint8(offset + 1);
     const numFaces = data.getUint16(offset + 2, true);
     const size = data.getUint16(offset + 4, true) - 8;
     return {
+        index,
         type,
         numFaces,
         pointsPerFace: (flags & 0x80) ? 4 : 3,
@@ -139,41 +153,69 @@ function parseSectionHeader(data, object, offset): SectionHeader {
     };
 }
 
-function loadFaceSection(geometries, object, info, section: SectionHeader, atlas, island) {
+function loadFaceSection(
+    geometries,
+    model: IslandModel,
+    info,
+    section: IslandObjectSection,
+    atlas,
+    island: IslandProps,
+    options: IslandOptions
+) {
+    const patch = getObjectPatch(island, model, section, options);
     for (let i = 0; i < section.numFaces; i += 1) {
-        const uvGroup = getUVGroup(object, section, i, atlas);
-        const faceNormal = getFaceNormal(object, section, info, i);
+        const uvGroup = getUVGroup(model, section, i, atlas);
+        const faceNormal = getFaceNormal(model, section, info, i);
         const normalVec = new THREE.Vector3(
             faceNormal[0],
             faceNormal[1],
             faceNormal[2]
         ).normalize();
+        const getNormal = (index) => {
+            if (section.blockSize === 12 || section.blockSize === 16) {
+                return section.type === 1 ? faceNormal : getVertexNormal(model, info, index);
+            }
+            return section.type !== 10 ? faceNormal : getVertexNormal(model, info, index);
+        };
         const addVertex = (j) => {
             const index = section.data.getUint16((i * section.blockSize) + (j * 2), true);
+            const pos = getPosition(model, info, index);
+            const normal = getNormal(index);
+            let group;
+            let textured;
             if (section.blockSize === 12 || section.blockSize === 16) {
-                push.apply(geometries.objects_colored.positions, getPosition(object, info, index));
-                push.apply(
-                    geometries.objects_colored.normals,
-                    section.type === 1 ? faceNormal : getVertexNormal(object, info, index)
-                );
-                geometries.objects_colored.colors.push(getColor(section, i));
+                group = 'objects_colored';
+                textured = false;
             } else {
-                const pos = getPosition(object, info, index);
+                group = section.isTransparent ? 'objects_textured_transparent' : 'objects_textured';
+                textured = true;
                 if (section.isTransparent && TransparentObjectOffset[island.name]) {
                     pos[0] -= TransparentObjectOffset[island.name] * normalVec.x;
                     pos[1] -= TransparentObjectOffset[island.name] * normalVec.y;
                     pos[2] -= TransparentObjectOffset[island.name] * normalVec.z;
                 }
-                const group = section.isTransparent
-                    ? 'objects_textured_transparent'
-                    : 'objects_textured';
-                push.apply(geometries[group].positions, pos);
-                push.apply(
-                    geometries[group].normals,
-                    section.type !== 10 ? faceNormal : getVertexNormal(object, info, index)
-                );
+            }
+            if (patch &&
+                (!patch.onlyIf || patch.onlyIf({ faceNormal }))) {
+                if (!(patch.group in geometries)) {
+                    geometries[patch.group] = {
+                        positions: [],
+                        normals: [],
+                        uvs: 'uvs' in geometries[group] ? [] : undefined,
+                        uvGroups: 'uvGroups' in geometries[group] ? [] : undefined,
+                        colors: 'colors' in geometries[group] ? [] : undefined,
+                        material: patch.getMaterial(geometries[group]),
+                    };
+                }
+                group = patch.group;
+            }
+            push.apply(geometries[group].positions, pos);
+            push.apply(geometries[group].normals, normal);
+            if (textured) {
                 push.apply(geometries[group].uvs, getUVs(section, i, j));
                 push.apply(geometries[group].uvGroups, uvGroup);
+            } else {
+                geometries[group].colors.push(getColor(section, i));
             }
         };
         for (let j = 0; j < 3; j += 1) {
@@ -187,7 +229,7 @@ function loadFaceSection(geometries, object, info, section: SectionHeader, atlas
     }
 }
 
-function getFaceNormal(object, section: SectionHeader, info, i) {
+function getFaceNormal(object, section: IslandObjectSection, info, i) {
     const vert = [];
     for (let j = 0; j < 3; j += 1) {
         const index = section.data.getUint16((i * section.blockSize) + (j * 2), true);
@@ -231,12 +273,12 @@ function getPosition(object, info, index) {
     ];
 }
 
-function getColor(section: SectionHeader, face) {
+function getColor(section: IslandObjectSection, face) {
     const color = section.data.getUint8((face * section.blockSize) + 8);
     return Math.floor(color / 16);
 }
 
-function getUVs(section: SectionHeader, face, ptIndex) {
+function getUVs(section: IslandObjectSection, face, ptIndex) {
     const baseIndex = face * section.blockSize;
     const index = baseIndex + 12 + (ptIndex * 4);
     const u = section.data.getUint16(index);
@@ -244,7 +286,7 @@ function getUVs(section: SectionHeader, face, ptIndex) {
     return [u, v];
 }
 
-function getUVGroup(object, section: SectionHeader, face, atlas) {
+function getUVGroup(object, section: IslandObjectSection, face, atlas) {
     if (section.blockSize === 24 || section.blockSize === 32) {
         const baseIndex = face * section.blockSize;
         const uvGroupIndex = section.blockSize === 32 ?
