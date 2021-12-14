@@ -1,20 +1,33 @@
 import { map, filter, take, drop, each, sortBy } from 'lodash';
-import DebugData, { getVarName, getObjectName } from '../../../../../../DebugData';
+import DebugData, { getVarName, getObjectName, getVarInfo } from '../../../../../../DebugData';
 import LocationsNode from '../../../../locator/LocationsNode';
 import { ActorDirMode } from '../../../../../../../../game/Actor';
 import { GetInventorySize } from '../../../../../../../../game/data/inventory';
-import { ScenericZone } from '../../../../../../../../game/Zone';
+import Zone, {
+    CameraZone,
+    ConveyorZone,
+    FragmentZone,
+    LadderZone,
+    RailZone,
+    ScenericZone,
+    SpikeZone,
+    TeleportZone,
+} from '../../../../../../../../game/Zone';
 
 function getActor(field) {
     const block = field.getSourceBlock();
     if (!block) {
         return null;
     }
+
     const actorField = block.getField('actor');
-    if (actorField) {
-        const idx = Number(actorField.getValue());
-        if (idx !== -1) {
-            return block.workspace.scene.actors[idx];
+    const actorIdx = actorField
+        ? Number(actorField.getValue())
+        : block.data && block.data.actor ? block.data.actor : null;
+
+    if (actorIdx !== null) {
+        if (actorIdx !== -1) {
+            return block.workspace.scene.actors[actorIdx];
         }
     }
     return block.workspace.actor;
@@ -64,9 +77,13 @@ export function generateTracks() {
     if (!block) {
         return [['<track>', '-1']];
     }
+
     const actorField = block.getField('actor');
-    if (actorField) {
-        const actorIdx = Number(actorField.getValue());
+    const actorIdx = actorField
+        ? Number(actorField.getValue())
+        : block.data && block.data.actor ? block.data.actor : null;
+
+    if (actorIdx !== null) {
         if (actorIdx === -1) {
             return [['<track>', '-1']];
         }
@@ -105,20 +122,63 @@ export function generateActors() {
     );
 }
 
-export function generateZones() {
-    const block = this.getSourceBlock();
+function generateZones(block, zonetype) {
     const scene = block && block.workspace.scene;
     if (!scene) {
         return [['<zone>', '-1']];
     }
-    const zones = filter(scene.zones, zone => zone instanceof ScenericZone) as any;
+    const zones = filter(scene.zones, zone => zone instanceof zonetype) as any;
     return map(
         zones,
-        (zone: ScenericZone) => {
+        (zone: Zone) => {
             const name = getObjectName('zone', scene.index, zone.props.index);
-            return [name, `${zone.id}`];
+            if (zone instanceof TeleportZone
+                || zone instanceof CameraZone
+                || zone instanceof ScenericZone
+                || zone instanceof FragmentZone
+                || zone instanceof LadderZone
+                || zone instanceof ConveyorZone
+                || zone instanceof SpikeZone
+                || zone instanceof RailZone) {
+                return [name, `${zone.id}`];
+            }
+
+            // Shouldn't happen.
+            return [];
         }
     );
+}
+
+export function generateTeleportZones() {
+    return generateZones(this.getSourceBlock(), TeleportZone);
+}
+
+export function generateCameraZones() {
+    return generateZones(this.getSourceBlock(), CameraZone);
+}
+
+export function generateScenericZones() {
+    return generateZones(this.getSourceBlock(), ScenericZone);
+}
+
+export function generateFragmentZones() {
+    return generateZones(this.getSourceBlock(), FragmentZone);
+}
+
+export function generateLadderZones() {
+    return generateZones(this.getSourceBlock(), LadderZone);
+}
+
+export function generateConveyorZones() {
+    return generateZones(this.getSourceBlock(), ConveyorZone);
+}
+
+export function generateSpikeZones() {
+    return generateZones(this.getSourceBlock(), SpikeZone);
+}
+
+export function generateRailZones() {
+    return generateZones(this.getSourceBlock(), RailZone);
 }
 
 export function generatePoints() {
@@ -216,6 +276,44 @@ export function generateVars() {
     return [['<var>', '-1']];
 }
 
+export function generateVarValues() {
+    const block = this.getSourceBlock();
+    if (block && block.workspace) {
+        let scope = block.getFieldValue('scope');
+        let which = block.getFieldValue('param');
+
+        if (block.data && block.data.scope) {
+            scope = block.data.scope;
+            which = block.data.param;
+        }
+
+        switch (scope)
+        {
+            case 'inventory':
+            case 'game':
+                scope = 'vargame';
+                break;
+
+            case 'scene':
+                scope = 'varcube';
+                break;
+        }
+
+        const info = getVarInfo({type: scope, idx: which});
+        if (info) {
+            if (info.type === 'boolean') {
+                return [['FALSE', '0'], ['TRUE', '1']];
+            }
+
+            if (info.type === 'enum') {
+                return map(info.enumValues, (v, k) => [v, k]);
+            }
+        }
+    }
+
+    return map([...Array(255).keys()], v => [`${v}`, `${v}`]);
+}
+
 export function generateItems() {
     return generateVarGame(true);
 }
@@ -290,5 +388,43 @@ export function generateHeroBehaviours() {
         ['SPACESUIT_OUTDOORS_ATHLETIC', '11'],
         ['CAR', '12'],
         ['ELECTROCUTED', '13']
+    ];
+}
+
+export function generateFallTypes() {
+    return [
+        ['NO FALLING', '0'],
+        ['CAN FALL', '1'],
+        ['NO FALLING; STOP CURRENT FALL', '2'],
+    ];
+}
+
+export function generateCollisionTypes() {
+    return [
+        ['MOVE THROUGH TERRAIN', '0'],
+        ['BLOCKED BY TERRAIN', '1'],
+        ['BLOCKED BY TERRAIN; CRAWLING', '2'],
+    ];
+}
+
+export function generateBuggyInitTypes() {
+    return [
+        ['NO INIT', '0'],
+        ['INIT IF NEEDED', '1'],
+        ['INIT ALWAYS', '2'],
+    ];
+}
+
+export function generatePcxEffectTypes() {
+    return [
+        ['NO EFFECT', '0'],
+        ['BLINDS', '1'],
+    ];
+}
+
+export function generateEnabledTypes() {
+    return [
+        ['DISABLED', '0'],
+        ['ENABLED', '1'],
     ];
 }

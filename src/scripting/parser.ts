@@ -74,7 +74,6 @@ export function parseScript(actor: number, type: 'life' | 'move', script: DataVi
         state.opMap[state.offset] = state.commands.length;
         const code = script.getUint8(state.offset);
         const op = type === 'life' ? getLifeOpcode(code) : getMoveOpcode(code);
-        checkEndSwitch(state, code);
         checkNewComportment(state, code);
         try {
             state.commands.push(parseCommand(state, script, op, type));
@@ -98,15 +97,6 @@ function checkEndIf(state) {
     while (state.ifStack.length > 0 && state.offset === last(state.ifStack)) {
         state.commands.push({ op: getLifeOpcode(0x10) });
         state.ifStack.pop();
-    }
-}
-
-function checkEndSwitch(state, code) {
-    while (code !== 0x76 && code !== 0x72 && code !== 0x73 && code !== 0x74
-            && state.switchStack.length > 0
-            && state.offset === last(state.switchStack)) {
-        state.commands.push({ op: getLifeOpcode(0x76) });
-        state.switchStack.pop();
     }
 }
 

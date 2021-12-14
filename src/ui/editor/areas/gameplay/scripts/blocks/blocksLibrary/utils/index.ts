@@ -1,7 +1,14 @@
 import Blockly from 'blockly';
 import {
     generateActors,
-    generateZones,
+    generateTeleportZones,
+    generateCameraZones,
+    generateScenericZones,
+    generateFragmentZones,
+    generateLadderZones,
+    generateSpikeZones,
+    generateConveyorZones,
+    generateRailZones,
     generatePoints,
     generateAnims,
     generateBodies,
@@ -12,7 +19,13 @@ import {
     generateTexts,
     generateScenes,
     generateDirModes,
-    generateHeroBehaviours
+    generateHeroBehaviours,
+    generateFallTypes,
+    generateCollisionTypes,
+    generateBuggyInitTypes,
+    generatePcxEffectTypes,
+    generateEnabledTypes,
+    generateVarValues,
 } from './optionsGenerators';
 import DebugData from '../../../../../../DebugData';
 
@@ -70,7 +83,14 @@ export class FieldActor extends Blockly.FieldDropdown {
 
 const typeGenerator = {
     actor: generateActors,
-    zone: generateZones,
+    teleport_zone: generateTeleportZones,
+    camera_zone: generateCameraZones,
+    sceneric_zone: generateScenericZones,
+    fragment_zone: generateFragmentZones,
+    ladder_zone: generateLadderZones,
+    spike_zone: generateSpikeZones,
+    conveyor_zone: generateConveyorZones,
+    rail_zone: generateRailZones,
     point: generatePoints,
     anim: generateAnims,
     body: generateBodies,
@@ -81,7 +101,14 @@ const typeGenerator = {
     text: generateTexts,
     scene: generateScenes,
     dirmode: generateDirModes,
-    hero_behaviour: generateHeroBehaviours
+    hero_behaviour: generateHeroBehaviours,
+    fall_type: generateFallTypes,
+    collision_type: generateCollisionTypes,
+    buggy_init_type: generateBuggyInitTypes,
+    pcx_effect_type: generatePcxEffectTypes,
+    enabled: generateEnabledTypes,
+    choice_value: generateTexts,
+    var_value: generateVarValues,
 };
 
 export class FieldDropdownLBA extends Blockly.FieldDropdown {

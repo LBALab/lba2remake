@@ -118,8 +118,8 @@ function GENERIC_SETTER(type, scope, workspace, cmd, {connection}) {
         scope = 'inventory';
     }
     block.setFieldValue(scope, 'scope');
-    block.setFieldValue(mapArgValue(cmd, 0), 'arg_0');
-    block.setFieldValue(mapArgValue(cmd, 1), 'arg_1');
+    block.setFieldValue(mapArgValue(cmd, 0), 'param');
+    block.setFieldValue(mapArgValue(cmd, 1), 'value');
     return { connection: block.nextConnection };
 }
 
@@ -159,7 +159,7 @@ export const RESTORE_HERO = GENERIC_ACTION.bind(null, 'lba_restore_hero', 0);
 export const SET_MAGIC_LEVEL = GENERIC_ACTION.bind(null, 'lba_set_magic_level', 1);
 
 export const CINEMA_MODE = GENERIC_ACTION.bind(null, 'lba_cinema_mode', 1);
-export const SET_CAMERA = GENERIC_ACTION.bind(null, 'lba_set_camera', 1);
+export const SET_CAMERA = GENERIC_ACTION.bind(null, 'lba_set_camera', 2);
 export const CAMERA_CENTER = GENERIC_ACTION.bind(null, 'lba_camera_center', 1);
 export const CAM_FOLLOW = GENERIC_ACTION.bind(null, 'lba_cam_follow', 1);
 
@@ -228,14 +228,14 @@ export const BRICK_COL = GENERIC_ACTION.bind(null, 'lba_brick_col', 1);
 export const OBJ_COL = GENERIC_ACTION.bind(null, 'lba_obj_col', 1);
 export const NO_SHOCK = GENERIC_ACTION.bind(null, 'lba_no_shock', 1);
 export const PCX = GENERIC_ACTION.bind(null, 'lba_pcx', 1);
-export const SET_GRM = GENERIC_ACTION.bind(null, 'lba_set_grm', 2);
+export const SET_FRAGMENT_ZONE = GENERIC_ACTION.bind(null, 'lba_set_fragment_zone', 2);
 export const SET_TELEPORT_ZONE = GENERIC_ACTION.bind(null, 'lba_set_teleport_zone', 2);
 export const FADE_TO_PAL = GENERIC_ACTION.bind(null, 'lba_fade_to_pal', 1);
 export const PALETTE = GENERIC_ACTION.bind(null, 'lba_palette', 1);
 export const FLOW_POINT = GENERIC_ACTION.bind(null, 'lba_flow_point', 2);
 export const SHADOW_OBJ = GENERIC_ACTION_OBJ.bind(null, 'lba_shadow_obj', 2);
 export const ANIM_SET = GENERIC_ACTION.bind(null, 'lba_anim_set', 1);
-export const PCX_MESS_OBJ = GENERIC_ACTION_OBJ.bind(null, 'lba_pcx_mess_obj', 2);
+export const PCX_MESS_OBJ = GENERIC_ACTION.bind(null, 'lba_pcx_mess_obj', 4);
 export const SET_FRAME = GENERIC_ACTION.bind(null, 'lba_set_frame', 1);
 export const FLOW_OBJ = GENERIC_ACTION.bind(null, 'lba_flow_obj', 1);
 export const IMPACT_OBJ = GENERIC_ACTION_OBJ.bind(null, 'lba_impact_obj', 2);

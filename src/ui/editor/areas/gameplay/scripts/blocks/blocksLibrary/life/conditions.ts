@@ -39,12 +39,12 @@ export const lba_collision_obj = condition({
 
 export const lba_zone = condition({
     label: 'current zone',
-    operand: 'zone'
+    operand: 'sceneric_zone'
 });
 
 export const lba_zone_obj = condition({
     label: "'s current zone",
-    operand: 'zone',
+    operand: 'sceneric_zone',
     objMode: true
 });
 
@@ -159,7 +159,7 @@ export const lba_using_inventory = condition({
 
 export const lba_choice = condition({
     label: 'choice',
-    operand: 'number'
+    operand: 'choice_value'
 });
 
 export const lba_fuel = condition({
@@ -186,6 +186,7 @@ export const lba_cdrom = condition({
 
 export const lba_ladder = condition({
     label: 'ladder',
+    param: 'ladder_zone',
     operand: 'number'
 });
 
@@ -197,7 +198,7 @@ export const lba_random = condition({
 
 export const lba_rail = condition({
     label: 'rail',
-    param: 'number',
+    param: 'rail_zone',
     operand: 'number'
 });
 
@@ -302,7 +303,7 @@ const operators = [
     ['≤', '<=']
 ];
 
-const numberTypes = ['number', 'label', 'var_value'];
+const numberTypes = ['number', 'label'];
 
 export function addOperand(input, operandType) {
     input.appendField(new Blockly.FieldDropdown(operators), 'operator');
