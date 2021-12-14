@@ -40,7 +40,7 @@ interface State {
 
 const POSSIBLE_TEXTURE_SIZES = [32, 64, 128, 256, 512, 1024, 2048, 4096];
 const POSSIBLE_DENOISE_MODES = ['NONE', 'FAST', 'ACCURATE'];
-const POSSIBLE_DUMP_VALUES = ['none', 'import', 'bake', 'denoise', 'apply'];
+const POSSIBLE_DUMP_VALUES = ['none', 'import', 'bake', 'denoise', 'apply', 'export'];
 
 const wrapperStyle = {
     padding: '1em',

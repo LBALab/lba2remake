@@ -30,7 +30,7 @@ parser.add_argument('--hdriRotation', type=float, default=0.0)
 parser.add_argument('--hdriExposure', type=float, default=1.0)
 parser.add_argument('--input', required=True)
 parser.add_argument('--output')
-parser.add_argument('--dumpAfter', default="none", choices=["none", "import", "bake", "denoise", "apply"])
+parser.add_argument('--dumpAfter', default="none", choices=["none", "import", "bake", "denoise", "apply", "export"])
 parser.add_argument('--dumpFile')
 
 args = parser.parse_args(argv)
@@ -335,7 +335,7 @@ if "probes" in steps:
 ###  EXPORT
 #############################################################################
 if "export" in steps:
-    print("[PROGRESS]:Exporting model", flush=True)
+    print("[PROGRESS]:Exporting baked model", flush=True)
     bpy.ops.object.select_all(action='DESELECT')
     for obj in objects_to_bake:
         obj.select_set(True)
@@ -345,3 +345,7 @@ if "export" in steps:
     for obj in objects_to_export:
         obj.select_set(True)
     bpy.ops.export_scene.gltf(filepath=output_file, export_tangents=True, use_selection=True)
+
+if args.dumpAfter == "export":
+    print("[PROGRESS]:Dumping", flush=True)
+    bpy.ops.wm.save_as_mainfile(filepath=args.dumpFile)
