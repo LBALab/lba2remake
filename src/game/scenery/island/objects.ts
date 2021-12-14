@@ -200,11 +200,11 @@ function loadFaceSection(
                 if (!(patch.group in geometries)) {
                     geometries[patch.group] = {
                         positions: [],
-                        normals: [],
-                        uvs: 'uvs' in geometries[group] ? [] : undefined,
-                        uvGroups: 'uvGroups' in geometries[group] ? [] : undefined,
-                        colors: 'colors' in geometries[group] ? [] : undefined,
-                        material: patch.getMaterial(geometries[group]),
+                            normals: [],
+                            uvs: 'uvs' in geometries[group] ? [] : undefined,
+                            uvGroups: 'uvGroups' in geometries[group] ? [] : undefined,
+                            colors: 'colors' in geometries[group] ? [] : undefined,
+                            material: patch.getMaterial(geometries[group]),
                     };
                 }
                 group = patch.group;
