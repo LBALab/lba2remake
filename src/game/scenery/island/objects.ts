@@ -195,19 +195,25 @@ function loadFaceSection(
                     pos[2] -= TransparentObjectOffset[island.name] * normalVec.z;
                 }
             }
-            if (patch &&
-                (!patch.onlyIf || patch.onlyIf({ faceNormal }))) {
-                if (!(patch.group in geometries)) {
-                    geometries[patch.group] = {
-                        positions: [],
+            if (patch) {
+                const basePos = rotate([
+                    model.vertices[index * 4] * WORLD_SCALE,
+                    model.vertices[(index * 4) + 1] * WORLD_SCALE,
+                    model.vertices[(index * 4) + 2] * WORLD_SCALE
+                ], info.angle);
+                if (!patch.onlyIf || patch.onlyIf({ faceNormal, basePos })) {
+                    if (!(patch.group in geometries)) {
+                        geometries[patch.group] = {
+                            positions: [],
                             normals: [],
                             uvs: 'uvs' in geometries[group] ? [] : undefined,
                             uvGroups: 'uvGroups' in geometries[group] ? [] : undefined,
                             colors: 'colors' in geometries[group] ? [] : undefined,
                             material: patch.getMaterial(geometries[group]),
-                    };
+                        };
+                    }
+                    group = patch.group;
                 }
-                group = patch.group;
             }
             push.apply(geometries[group].positions, pos);
             push.apply(geometries[group].normals, normal);
