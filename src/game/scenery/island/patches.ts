@@ -5,6 +5,8 @@ import { IslandObjectInfo } from './IslandLayout';
 import { IslandModel } from './model';
 import { IslandObjectSection } from './objects';
 
+let DEBUG_OBJECTS = false;
+
 const patchesPerIsland: Record<string, PatchDefinition[]> = {
     CITADEL: [
         {
@@ -82,15 +84,13 @@ interface PatchDefinition {
     addObjects?: () => THREE.Object3D[];
 }
 
-let debugObjects = false;
-
 export function getObjectPatch(
     island: IslandProps,
     model: IslandModel,
     section: IslandObjectSection,
     options: IslandOptions,
 ): IslandObjectPatch {
-    if ((options.export || debugObjects) && island.name in patchesPerIsland) {
+    if ((options.export || DEBUG_OBJECTS) && island.name in patchesPerIsland) {
         const patches = patchesPerIsland[island.name];
         for (const patch of patches) {
             if (patch.model === model.index && patch.sections.includes(section.index)) {
@@ -114,7 +114,7 @@ export function addObjects(island: string, obj: IslandObjectInfo): THREE.Object3
 
 // @ts-ignore
 function debugObject(island: string, model: number) {
-    debugObjects = true;
+    DEBUG_OBJECTS = true;
     const colors = [
         0x00ff00,
         0x0000ff,
