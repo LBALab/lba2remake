@@ -265,6 +265,7 @@ export class ScenericZone extends Zone {
 }
 
 export class FragmentZone extends Zone {
+    id: number;
     fragment: number;
     enabled: boolean;
 
@@ -272,6 +273,7 @@ export class FragmentZone extends Zone {
         assert(props.type === ZoneType.FRAGMENT);
         super(props, is3DCam);
 
+        this.id = this.props.param;
         this.fragment = this.props.info0;
         this.enabled = this.props.info2 !== 0;
     }
