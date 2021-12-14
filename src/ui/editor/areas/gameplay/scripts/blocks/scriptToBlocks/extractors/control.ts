@@ -1,4 +1,4 @@
-import { last, dropRight, each } from 'lodash';
+import { last, dropRight, each, filter } from 'lodash';
 import { newBlock, findLastConnection } from './utils';
 import * as conditions from './conditions';
 import { lbaToDegrees } from '../../../../../../../../utils/lba';
@@ -9,7 +9,7 @@ import { lbaToDegrees } from '../../../../../../../../utils/lba';
 
 export function GENERIC_IF(type, workspace, cmd, ctx) {
     const { connection, logicStack } = ctx;
-    const ifBlocks = ctx.ifBlocks || [];
+    const controlBlocks = ctx.controlBlocks || [];
     const block = newBlock(workspace, type, cmd);
     connection.connect(block.previousConnection);
     const condConnection = block.getInput('condition').connection;
@@ -30,13 +30,13 @@ export function GENERIC_IF(type, workspace, cmd, ctx) {
     }
     return {
         connection: thenConnection,
-        ifBlocks: [...ifBlocks, block],
+        controlBlocks: [...controlBlocks, block],
         logicStack: null
     };
 }
 
 export function ELSE(_workspace, _cmd, ctx) {
-    const ifBlock = last(ctx.ifBlocks) as any;
+    const ifBlock = last(ctx.controlBlocks) as any;
     ifBlock.enableElseBlock();
     const elseConnection = ifBlock.getInput('else_statements').connection;
     return {
@@ -45,9 +45,9 @@ export function ELSE(_workspace, _cmd, ctx) {
 }
 
 export function ENDIF(_workspace, _cmd, ctx) {
-    const ifBlock = last(ctx.ifBlocks) as any;
+    const ifBlock = last(ctx.controlBlocks) as any;
     return {
-        ifBlocks: dropRight(ctx.ifBlocks),
+        controlBlocks: dropRight(ctx.controlBlocks),
         connection: ifBlock.nextConnection
     };
 }
@@ -84,7 +84,7 @@ function addCondition(workspace, cmd, ctx) {
 export function SWITCH(workspace, cmd, ctx) {
     const { connection } = ctx;
     const block = newBlock(workspace, 'lba_switch', cmd);
-    const switchBlocks = ctx.switchBlocks || [];
+    const controlBlocks = ctx.controlBlocks || [];
     connection.connect(block.previousConnection);
     const condName = cmd.data.condition.op.command;
     if (condName in conditions) {
@@ -94,8 +94,9 @@ export function SWITCH(workspace, cmd, ctx) {
         });
     }
     return {
-        switchBlocks: [...switchBlocks, block],
-        logicStack: null
+        controlBlocks: [...controlBlocks, block],
+        logicStack: null,
+        connection: block.getInput('statements').connection,
     };
 }
 
@@ -108,9 +109,14 @@ function addCaseOperand(workspace, cmd, { connection }) {
 
 export function CASE(workspace, cmd, ctx) {
     const block = newBlock(workspace, 'lba_case', cmd);
-    const { switchBlocks, logicStack } = ctx;
-    const swBlock = last(switchBlocks) as any;
-    let connection = findLastConnection(swBlock.getInput('statements').connection);
+    const { controlBlocks, logicStack } = ctx;
+
+    // Note: this may be an if block; nesting of if inside switch is allowed.
+    const controlBlock = last(controlBlocks) as any;
+    const switchBlock = last(filter(controlBlocks, b => b.type === 'lba_switch'));
+    const statements = controlBlock.getInput('statements') || controlBlock.getInput('then_statements');
+
+    let connection = findLastConnection(statements.connection);
     each(logicStack, (logicCmd) => {
         const orBlock = newBlock(workspace, 'lba_or_case', logicCmd);
         addCaseOperand(workspace, logicCmd, { connection: orBlock.getInput('operand').connection });
@@ -129,9 +135,13 @@ export function CASE(workspace, cmd, ctx) {
 
 export function DEFAULT(workspace, cmd, ctx) {
     const block = newBlock(workspace, 'lba_default', cmd);
-    const { switchBlocks } = ctx;
-    const swBlock = last(switchBlocks) as any;
-    const swConnection = findLastConnection(swBlock.getInput('statements').connection);
+    const { controlBlocks } = ctx;
+
+    // Note: this may be an if block; nesting of if inside switch is allowed.
+    const controlBlock = last(controlBlocks) as any;
+    const statements = controlBlock.getInput('statements') || controlBlock.getInput('then_statements');
+
+    const swConnection = findLastConnection(statements.connection);
     swConnection.connect(block.previousConnection);
     const statementsInput = block.getInput('statements');
     return {
@@ -140,10 +150,11 @@ export function DEFAULT(workspace, cmd, ctx) {
 }
 
 export function END_SWITCH(_workspace, _cmd, ctx) {
-    const switchBlocks = last(ctx.switchBlocks) as any;
+    // We're assuming control statements are properly nested here...
+    const controlBlocks = last(ctx.controlBlocks) as any;
     return {
-        switchBlocks: dropRight(ctx.switchBlocks),
-        connection: switchBlocks.nextConnection
+        controlBlocks: dropRight(ctx.controlBlocks),
+        connection: controlBlocks.nextConnection
     };
 }
 

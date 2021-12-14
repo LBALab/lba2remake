@@ -23,7 +23,6 @@ export function getDebugListing(type, scene, actor) {
 
 function mapCommands(type, scene, actor, commands) {
     let indent = 0;
-    let prevCommand = null;
     let section = -1;
     const state = {
         condition: null
@@ -44,11 +43,10 @@ function mapCommands(type, scene, actor, commands) {
             unimplemented: cmd.op.handler.unimplemented,
         };
         if (type === 'life') {
-            indent = processIndent(newCmd, prevCommand, cmd.op, indent);
+            indent = processIndent(newCmd, cmd.op, indent);
         } else {
             newCmd.indent = 0;
         }
-        prevCommand = newCmd;
         return newCmd;
     });
 }
@@ -188,13 +186,7 @@ function mapOperator(scene: Scene, condition, operator, state) {
     return null;
 }
 
-function processIndent(cmd, prevCmd, op, indent) {
-    if (prevCmd && prevCmd.name !== 'BREAK' &&
-            prevCmd.name !== 'SWITCH' &&
-            prevCmd.name !== 'OR_CASE' &&
-            (op.command === 'CASE' || op.command === 'OR_CASE' || op.command === 'DEFAULT')) {
-        indent = Math.max(indent - 1, 0);
-    }
+function processIndent(cmd, op, indent) {
     const { indent: indentChange } = LifeProps[op.command];
     switch (indentChange) {
         case Indent.ZERO:

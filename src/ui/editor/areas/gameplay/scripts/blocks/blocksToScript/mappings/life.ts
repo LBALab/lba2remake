@@ -200,7 +200,9 @@ function caseDetailsHandler(block, cmd, ctx) {
     if (conn.targetBlock()) {
         const operandBlock = conn.targetBlock();
         const operand = last(ctx.switchOperandDefs);
-        handleOperand(operandBlock, cmd, operand);
+        if (operand) {
+            handleOperand(operandBlock, cmd, operand);
+        }
         if (ctx.lastCase) {
             ctx.lastCase.args[0].value = ctx.commands.length;
             ctx.lastCase = null;
