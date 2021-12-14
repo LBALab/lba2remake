@@ -78,6 +78,7 @@ export default class PaletteAreaContent extends FrameListener<TickerProps, State
         this.saveLUT = this.saveLUT.bind(this);
         this.reset = this.reset.bind(this);
         this.eyeDrop = this.eyeDrop.bind(this);
+        this.copyColor = this.copyColor.bind(this);
 
         this.onMouseDown = this.onMouseDown.bind(this);
         this.onMouseMove = this.onMouseMove.bind(this);
@@ -251,6 +252,7 @@ export default class PaletteAreaContent extends FrameListener<TickerProps, State
                     onMouseMove={this.onMouseMove}
                     onMouseUp={this.onMouseUp}
                     onMouseLeave={this.onMouseUp}
+                    onDoubleClick={this.copyColor}
                 />
             </div>
             <div style={wrapperStyle}>
@@ -284,6 +286,14 @@ export default class PaletteAreaContent extends FrameListener<TickerProps, State
                 />
             </div>
         </div>;
+    }
+
+    copyColor() {
+        const { selectedColor } = this.state;
+        if (selectedColor) {
+            const code = selectedColor.split(' = ')[1];
+            navigator.clipboard.writeText(code);
+        }
     }
 
     eyeDrop() {
@@ -347,7 +357,10 @@ export default class PaletteAreaContent extends FrameListener<TickerProps, State
                     if (dist < closest.dist) {
                         closest.idx = i;
                         closest.dist = dist;
-                        closest.color = `rgb(${pColor})`;
+                        const r = p[(i * 3) + 0].toString(16).padStart(2, '0');
+                        const g = p[(i * 3) + 1].toString(16).padStart(2, '0');
+                        const b = p[(i * 3) + 2].toString(16).padStart(2, '0');
+                        closest.color = `#${r}${g}${b}`;
                         closest.x = i % 16;
                         closest.y = Math.floor(i / 16);
                     }
@@ -360,6 +373,7 @@ export default class PaletteAreaContent extends FrameListener<TickerProps, State
                         yMax: closest.y
                     }
                 ];
+                navigator.clipboard.writeText(closest.color);
                 that.setState({selectedColor: `[${closest.x},${closest.y}] = ${closest.color}`});
                 that.draw();
 
@@ -570,12 +584,16 @@ export default class PaletteAreaContent extends FrameListener<TickerProps, State
         const p = this.palette;
         if (p) {
             const idx = (y * 16) + x;
-            const color = `rgb(${p[idx * 3]},${p[(idx * 3) + 1]},${p[(idx * 3) + 2]})`;
-            if (this.ramp !== y) {
-                this.ramp = y;
-                this.drawCurves();
+            if (idx >= 0 && idx < 256) {
+                const r = p[(idx * 3) + 0].toString(16).padStart(2, '0');
+                const g = p[(idx * 3) + 1].toString(16).padStart(2, '0');
+                const b = p[(idx * 3) + 2].toString(16).padStart(2, '0');
+                if (this.ramp !== y) {
+                    this.ramp = y;
+                    this.drawCurves();
+                }
+                this.setState({activeColor: `[${x},${y}] = #${r}${g}${b}`});
             }
-            this.setState({activeColor: `[${x},${y}] = ${color}`});
         }
     }
 
@@ -593,8 +611,10 @@ export default class PaletteAreaContent extends FrameListener<TickerProps, State
                     const { xMin: x, yMin: y } = bbs;
                     const idx = (y * 16) + x;
                     const p = this.palette;
-                    const color = `rgb(${p[idx * 3]},${p[(idx * 3) + 1]},${p[(idx * 3) + 2]})`;
-                    this.setState({selectedColor: `[${x},${y}] ${color}`});
+                    const r = p[(idx * 3) + 0].toString(16).padStart(2, '0');
+                    const g = p[(idx * 3) + 1].toString(16).padStart(2, '0');
+                    const b = p[(idx * 3) + 2].toString(16).padStart(2, '0');
+                    this.setState({selectedColor: `[${x},${y}] = #${r}${g}${b}`});
                 }
             }
             if (!singleColor) {
