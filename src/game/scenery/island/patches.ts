@@ -7,6 +7,11 @@ import { IslandObjectSection } from './objects';
 
 let DEBUG_OBJECTS = false;
 
+const emeraldRoofLampMat = new THREE.MeshPhysicalMaterial({
+    emissive: 0x00ff77,
+    emissiveIntensity: 20.0,
+});
+
 const patchesPerIsland: Record<string, PatchDefinition[]> = {
     CITADEL: [
         {
@@ -43,6 +48,17 @@ const patchesPerIsland: Record<string, PatchDefinition[]> = {
                 }),
                 onlyIf: ({faceNormal}) => Math.abs(faceNormal[1]) < 0.000001,
             }
+        },
+        {
+            model: 31,
+            sections: [0],
+            data: {
+                group: 'windows',
+                getMaterial: () => new THREE.MeshPhysicalMaterial({
+                    emissive: 0xffff88,
+                    emissiveIntensity: 2.0,
+                }),
+            }
         }
     ],
     EMERAUDE: [
@@ -58,16 +74,83 @@ const patchesPerIsland: Record<string, PatchDefinition[]> = {
             }
         },
         {
+            model: 20,
+            sections: [2, 3],
+            data: {
+                group: 'spaceship_windows',
+                getMaterial: () => new THREE.MeshPhysicalMaterial({
+                    color: 0x2787A7,
+                    emissive: 0x2787A7,
+                    emissiveIntensity: 1.0,
+                }),
+            }
+        },
+        {
+            model: 21,
+            sections: [2],
+            data: {
+                group: 'spaceship_windows',
+                getMaterial: () => new THREE.MeshPhysicalMaterial({
+                    color: 0x2787A7,
+                    emissive: 0x2787A7,
+                    emissiveIntensity: 1.0,
+                }),
+                onlyIf: ({basePos}) => basePos[0] > -1
+            }
+        },
+        {
             model: 0,
             sections: [2],
             data: {
                 group: 'roof_lamps',
-                getMaterial: () => new THREE.MeshPhysicalMaterial({
-                    emissive: 0x00ffcc,
-                    emissiveIntensity: 20.0,
-                }),
+                getMaterial: () => emeraldRoofLampMat,
+            }
+        },
+        {
+            model: 2,
+            sections: [1],
+            data: {
+                group: 'roof_lamps',
+                getMaterial: () => emeraldRoofLampMat,
+            }
+        },
+        {
+            model: 3,
+            sections: [0],
+            data: {
+                group: 'roof_lamps',
+                getMaterial: () => emeraldRoofLampMat,
+            }
+        },
+        {
+            model: 4,
+            sections: [0],
+            data: {
+                group: 'roof_lamps',
+                getMaterial: () => emeraldRoofLampMat,
+            }
+        },
+        {
+            model: 12,
+            sections: [0, 1],
+            data: {
+                group: 'roof_lamps',
+                getMaterial: () => emeraldRoofLampMat,
             }
         }
+    ],
+    OTRINGAL: [
+        {
+            model: 2,
+            sections: [0],
+            data: {
+                group: 'lamps',
+                getMaterial: () => new THREE.MeshPhysicalMaterial({
+                    emissive: 0xffffdd,
+                    emissiveIntensity: 100.0,
+                }),
+            }
+        },
     ]
 };
 
