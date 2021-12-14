@@ -299,7 +299,7 @@ const baseTree = `<xml id="toolbox" style="display: none">
     <block type="lba_obj_col"/>
     <block type="lba_no_shock"/>
     <block type="lba_pcx"/>
-    <block type="lba_set_grm"/>
+    <block type="lba_set_fragment_zone"/>
     <block type="lba_set_teleport_zone"/>
     <block type="lba_fade_to_pal"/>
     <block type="lba_palette"/>

@@ -499,7 +499,7 @@ export const lba_pcx = action((_block, field) => {
     field(new Blockly.FieldNumber(), 'arg_0');
 });
 
-export const lba_set_grm = action((_block, field) => {
+export const lba_set_fragment_zone = action((_block, field) => {
     field('(?) set grm');
     field(new Blockly.FieldNumber(), 'arg_0');
     field(new Blockly.FieldNumber(), 'arg_1');

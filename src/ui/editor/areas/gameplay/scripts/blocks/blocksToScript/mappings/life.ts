@@ -383,7 +383,7 @@ export default {
     lba_obj_col: { code: 0x35 },
     lba_no_shock: { code: 0x5A },
     lba_pcx: { code: 0x94 },
-    lba_set_grm: { code: 0x4C },
+    lba_set_fragment_zone: { code: 0x4C },
     lba_set_teleport_zone: { code: 0x4D },
     lba_fade_to_pal: { code: 0x51 },
     lba_palette: { code: 0xA },

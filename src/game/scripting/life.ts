@@ -593,7 +593,7 @@ export function SUB_FUEL(this: ScriptContext, fuel) {
     }
 }
 
-export const SET_GRM = unimplemented();
+export const SET_FRAGMENT = unimplemented();
 
 export function SET_TELEPORT_ZONE(this: ScriptContext, id: number, flag: number) {
     for (const zone of this.scene.zones) {
@@ -853,7 +853,7 @@ export function SAY_MESSAGE_OBJ(this: ScriptContext, cmdState, actor: Actor, id)
     MESSAGE_OBJ.call(this, cmdState, actor, id, true);
 }
 
-export const GRM_OFF = unimplemented();
+export const FRAGMENT_OFF = unimplemented();
 
 export const FADE_PAL_RED = unimplemented();
 

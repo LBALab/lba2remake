@@ -330,7 +330,7 @@ export default {
         indent: Indent.KEEP,
         prop: 'fuel'
     },
-    SET_GRM: {
+    SET_FRAGMENT: {
         type: 'assignment',
         indent: Indent.KEEP
     },
@@ -674,7 +674,7 @@ export default {
         type: 'fct',
         indent: Indent.KEEP
     },
-    GRM_OFF: {
+    FRAGMENT_OFF: {
         type: 'fct',
         indent: Indent.KEEP
     },

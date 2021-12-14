@@ -463,8 +463,8 @@ export const LifeOpcode = [
     },
     {
         opcode: 0x4C,
-        command: 'SET_GRM',
-        handler: lf.SET_GRM,
+        command: 'SET_FRAGMENT',
+        handler: lf.SET_FRAGMENT,
         args: ['Uint8', 'Uint8']
     },
     {
