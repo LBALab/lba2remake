@@ -188,8 +188,10 @@ const angleMatrix = {
     3: new THREE.Matrix4().set(0, 0, -1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1) // 90 degrees
 };
 
+const V = new THREE.Vector3();
+
 function rotate(vec, angle) {
     const index = (angle + 3) % 4;
-    const v = new THREE.Vector3().fromArray(vec);
-    return v.applyMatrix4(angleMatrix[index]).toArray();
+    V.fromArray(vec);
+    return V.applyMatrix4(angleMatrix[index]).toArray();
 }
