@@ -16,7 +16,7 @@ import {
 import { loadEntities } from './browser/entitities';
 import DebugData from '../../DebugData';
 import { getParams } from '../../../../params';
-import { loadHDREnv } from '../../../../graphics/gi/LightProbeUtils';
+import { loadHDREnv } from '../../../../graphics/probes/LightProbeUtils';
 
 interface Props extends TickerProps {
     params: any;

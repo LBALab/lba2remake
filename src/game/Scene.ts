@@ -27,7 +27,7 @@ import { processPhysicsFrame } from './loop/physics';
 import { SpriteType } from './data/spriteType';
 import { LBA2PointOffsets } from './scripting/data/lba2/points';
 import { getBodyFromGameState } from './loop/hero';
-import { loadHDREnv } from '../graphics/gi/LightProbeUtils';
+import { loadHDREnv } from '../graphics/probes/LightProbeUtils';
 
 export interface SceneProps {
     index: number;

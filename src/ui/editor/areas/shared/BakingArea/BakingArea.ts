@@ -1,4 +1,4 @@
-import { BakeParams } from '../../../../../graphics/gi/baking/bake';
+import { BakeParams } from '../../../../../graphics/baking/bake';
 import BakingAreaContent from './BakingAreaContent';
 
 const GLTFViewer = {

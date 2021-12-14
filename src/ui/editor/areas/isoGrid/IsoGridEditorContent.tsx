@@ -27,7 +27,7 @@ import { loadModel } from '../../../../game/scenery/isometric/metadata/models';
 import { loadLUTTexture } from '../../../../utils/lut';
 import { loadPaletteTexture } from '../../../../texture';
 import { replaceMaterialsForPreview } from '../../../../game/scenery/isometric/metadata/preview';
-import { buildAtlas } from '../../../../graphics/uvAltas/atlas';
+import { buildAtlas } from '../../../../graphics/baking/xatlas/atlas';
 
 enum CursorType {
     BRICK,

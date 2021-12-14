@@ -1,27 +1,40 @@
-import * as THREE from 'three';
-import xatlasModule from '@agrande/xatlas-web';
+self.importScripts('xatlas-web.js', 'three.js');
 
-interface GeometryInfo {
-    mesh: THREE.Mesh;
-    geom: THREE.BufferGeometry;
-    material: THREE.Material;
-    atlasMeshId?: number;
+const stages = [
+    'Xatlas: Adding meshes',
+	'Xatlas: Computing Charts',
+	'Xatlas: Packing Charts',
+	'Xatlas: Rebuilding meshes'
+];
+
+self.onmessage = async function handleXatlasJob(msg) {
+    try {
+        const { geometries, params } = msg.data;
+        const xatlas = await self.Module();
+
+        xatlas.createAtlas();
+        geometries.forEach(addMesh.bind(null, xatlas));
+        xatlas.generateAtlas({
+            ...params,
+            onProgress(stage, progress) {
+                self.postMessage({
+                    type: 'progress',
+                    stage: stages[stage],
+                    progress: progress / 100
+                });
+            }
+        });
+        geometries.forEach(updateMesh.bind(null, xatlas));
+        xatlas.destroyAtlas();
+
+        self.postMessage({ type: 'done', result: geometries });
+    } catch (e) {
+        self.postMessage({ type: 'error', error: e });
+    }
 }
 
-export async function buildAtlas(scene: THREE.Object3D) {
-    const xatlas = await xatlasModule();
-
-    const geometries = collectGeometries(scene);
-
-    xatlas.createAtlas();
-    geometries.forEach(addMesh.bind(null, xatlas));
-    xatlas.generateAtlas();
-    geometries.forEach(updateMesh.bind(null, xatlas));
-    xatlas.destroyAtlas();
-}
-
-function addMesh(xatlas, geomInfo: GeometryInfo) {
-    const { index, attributes} = geomInfo.geom;
+function addMesh(xatlas, geomInfo) {
+    const { index, attributes} = geomInfo;
     const { position, normal, uv } = attributes;
     const mesh = xatlas.createMesh(
         position.array.length / 3,
@@ -61,9 +74,8 @@ function addMesh(xatlas, geomInfo: GeometryInfo) {
     xatlas.addMesh();
 }
 
-function updateMesh(xatlas, geomInfo: GeometryInfo) {
-    const geom = geomInfo.geom;
-    const meshData = xatlas.getMeshData(geomInfo.atlasMeshId);
+function updateMesh(xatlas, geom) {
+    const meshData = xatlas.getMeshData(geom.atlasMeshId);
     const { index, attributes } = geom;
     const originalIndexArray = new Uint32Array(
         xatlas.HEAPU8.buffer,
@@ -72,7 +84,7 @@ function updateMesh(xatlas, geomInfo: GeometryInfo) {
     );
     for (const name in attributes) {
         const attr = attributes[name];
-        const ArrayType = attr.array.constructor as any;
+        const ArrayType = attr.array.constructor;
         const newArray = new ArrayType(meshData.newVertexCount * attr.itemSize);
         for (let i = 0; i < meshData.newVertexCount; i += 1) {
             const idx = i * attr.itemSize;
@@ -82,7 +94,6 @@ function updateMesh(xatlas, geomInfo: GeometryInfo) {
             }
         }
         attributes[name] = new THREE.BufferAttribute(newArray, attr.itemSize, attr.normalized);
-        attributes[name].needsUpdate = true;
     }
     const uv2_src = new Float32Array(
         xatlas.HEAPU8.buffer,
@@ -92,7 +103,6 @@ function updateMesh(xatlas, geomInfo: GeometryInfo) {
     const uv2 = new Float32Array(meshData.newVertexCount * 2);
     uv2.set(uv2_src);
     geom.attributes.uv2 = new THREE.BufferAttribute(uv2, 2);
-    geom.attributes.uv2.needsUpdate = true;
     if (!geom.attributes.uv) {
         geom.attributes.uv = geom.attributes.uv2;
     }
@@ -101,26 +111,5 @@ function updateMesh(xatlas, geomInfo: GeometryInfo) {
         meshData.indexOffset,
         index.array.length
     );
-    (index.array as any).set(tgtIndex);
-    index.needsUpdate = true;
-}
-
-function collectGeometries(scene: THREE.Object3D): GeometryInfo[] {
-    const geometries: GeometryInfo[] = [];
-    scene.traverse((node) => {
-        if (node instanceof THREE.Mesh
-            && (!node.material.emissive
-                || node.material.emissive.getHex() === 0x000000)) {
-            node.updateMatrix();
-            node.updateMatrixWorld();
-            if (node.geometry instanceof THREE.BufferGeometry) {
-                geometries.push({
-                    mesh: node,
-                    geom: node.geometry,
-                    material: node.material
-                });
-            }
-        }
-    });
-    return geometries;
+    index.array.set(tgtIndex);
 }

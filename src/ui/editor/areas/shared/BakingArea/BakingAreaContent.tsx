@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { bake, BakeState, BakeProgress, ProgressHandler, BakeParams } from '../../../../../graphics/gi/baking/bake';
+import { bake, BakeState, BakeProgress, ProgressHandler, BakeParams } from '../../../../../graphics/baking/bake';
 
 interface Props {
     sharedState: BakeParams;

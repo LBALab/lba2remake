@@ -16,7 +16,7 @@ import {
 import islandOffsets from './data/islandOffsets';
 import { setCurrentFog } from '../../fog';
 import DebugData from '../../DebugData';
-import { exportIslandForBaking } from '../../../../graphics/gi/baking/bake_island';
+import { exportIslandForBaking } from '../../../../graphics/baking/bake_island';
 
 interface Props extends TickerProps {
     params: any;

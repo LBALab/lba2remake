@@ -146,7 +146,10 @@ app.use('/api', apiRouter);
 app.use('/', express.static('./www'));
 app.use('/doc', express.static('./doc'));
 app.use('/webxr-assets', express.static('./node_modules/@webxr-input-profiles/assets/dist/profiles'));
+app.use('/xatlas-web.js', express.static('./node_modules/@agrande/xatlas-web/dist/xatlas-web.js'));
 app.use('/xatlas-web.wasm', express.static('./node_modules/@agrande/xatlas-web/dist/xatlas-web.wasm'));
+app.use('/xatlas-worker.js', express.static('./src/graphics/baking/xatlas/worker.js'));
+app.use('/three.js', express.static('./node_modules/three/build/three.min.js'));
 
 const indexBody = renderToStaticMarkup(React.createElement(Main, {
     script: 'window.ga=function(){};\nwindow.isLocalServer=true;'

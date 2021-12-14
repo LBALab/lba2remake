@@ -3,10 +3,10 @@ import { GLTFExporter } from 'three/examples/jsm/exporters/GLTFExporter';
 
 import {
     getPalette,
-} from '../../../resources';
-import { buildAtlas } from '../../uvAltas/atlas';
-import Island from '../../../game/scenery/island/Island';
-import IslandAmbience from '../../../ui/editor/areas/island/browser/ambience';
+} from '../../resources';
+import { buildAtlas } from './xatlas/atlas';
+import Island from '../../game/scenery/island/Island';
+import IslandAmbience from '../../ui/editor/areas/island/browser/ambience';
 import { BakeObject, BakeState } from './bake';
 
 const cache: Record<string, BakeObject> = {};
@@ -37,14 +37,11 @@ export async function exportIslandForBaking(
     const objToExport = island.threeObject;
     await patchIslandObject(objToExport);
     p?.done();
-    p = params?.startProgress('Building atlas');
-    if (params?.cancelled)
-        throw new Error('Cancelled');
-    await buildAtlas(objToExport);
-    p?.progress(0.8);
+    await buildAtlas(objToExport, params);
+    p = params?.startProgress('Patching texture coords');
     await patchTextureCoords(objToExport);
     p?.done();
-    p = params?.startProgress('Preparing GLB file');
+    p = params?.startProgress('Exporting model');
     if (params?.cancelled)
         throw new Error('Cancelled');
     const glb = exportAsGLB(objToExport);

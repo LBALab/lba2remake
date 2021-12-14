@@ -1,4 +1,4 @@
-import { getParams } from '../../../params';
+import { getParams } from '../../params';
 import { bakeIsland } from './bake_island';
 
 export interface BakeProgress {
