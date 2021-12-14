@@ -1,5 +1,5 @@
 import { map, filter, take, drop, each, sortBy } from 'lodash';
-import DebugData, { getVarName, getObjectName } from '../../../../../../DebugData';
+import DebugData, { getVarName, getObjectName, getVarInfo } from '../../../../../../DebugData';
 import LocationsNode from '../../../../locator/LocationsNode';
 import { ActorDirMode } from '../../../../../../../../game/Actor';
 import { GetInventorySize } from '../../../../../../../../game/data/inventory';
@@ -266,6 +266,44 @@ export function generateVars() {
         case 'scene': return generateVarScene(block.workspace);
     }
     return [['<var>', '-1']];
+}
+
+export function generateVarValues() {
+    const block = this.getSourceBlock();
+    if (block && block.workspace) {
+        let scope = block.getFieldValue('scope');
+        let which = block.getFieldValue('param');
+
+        if (block.data && block.data.scope) {
+            scope = block.data.scope;
+            which = block.data.param;
+        }
+
+        switch (scope)
+        {
+            case 'inventory':
+            case 'game':
+                scope = 'vargame';
+                break;
+
+            case 'scene':
+                scope = 'varcube';
+                break;
+        }
+
+        const info = getVarInfo({type: scope, idx: which});
+        if (info) {
+            if (info.type === 'boolean') {
+                return [['FALSE', '0'], ['TRUE', '1']];
+            }
+
+            if (info.type === 'enum') {
+                return map(info.enumValues, (v, k) => [v, k]);
+            }
+        }
+    }
+
+    return map([...Array(255).keys()], v => [`${v}`, `${v}`]);
 }
 
 export function generateItems() {

@@ -100,25 +100,25 @@ export const lba_ask_choice_obj = action((_block, field) => {
 export const lba_set_var = action((_block, field) => {
     field('set');
     field(new FieldScope('unknown'), 'scope');
-    field(new FieldDropdownLBA('var'), 'arg_0');
+    field(new FieldDropdownLBA('var'), 'param');
     field('to');
-    field(new Blockly.FieldNumber(0, 0, 255, 0, Math.round), 'arg_1');
+    field(new FieldDropdownLBA('var_value'), 'value');
 });
 
 export const lba_add_var = action((_block, field) => {
     field('add');
-    field(new Blockly.FieldNumber(), 'arg_1');
+    field(new Blockly.FieldNumber(), 'value');
     field('to');
     field(new FieldScope('unknown'), 'scope');
-    field(new FieldDropdownLBA('var'), 'arg_0');
+    field(new FieldDropdownLBA('var'), 'param');
 });
 
 export const lba_sub_var = action((_block, field) => {
     field('subtract');
-    field(new Blockly.FieldNumber(), 'arg_1');
+    field(new Blockly.FieldNumber(), 'value');
     field('to');
     field(new FieldScope('unknown'), 'scope');
-    field(new FieldDropdownLBA('var'), 'arg_0');
+    field(new FieldDropdownLBA('var'), 'param');
 });
 
 /*

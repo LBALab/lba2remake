@@ -303,7 +303,7 @@ const operators = [
     ['≤', '<=']
 ];
 
-const numberTypes = ['number', 'label', 'var_value'];
+const numberTypes = ['number', 'label'];
 
 export function addOperand(input, operandType) {
     input.appendField(new Blockly.FieldDropdown(operators), 'operator');

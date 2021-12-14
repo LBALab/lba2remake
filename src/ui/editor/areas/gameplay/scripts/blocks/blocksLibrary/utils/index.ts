@@ -25,6 +25,7 @@ import {
     generateBuggyInitTypes,
     generatePcxEffectTypes,
     generateEnabledTypes,
+    generateVarValues,
 } from './optionsGenerators';
 import DebugData from '../../../../../../DebugData';
 
@@ -107,6 +108,7 @@ const typeGenerator = {
     pcx_effect_type: generatePcxEffectTypes,
     enabled: generateEnabledTypes,
     choice_value: generateTexts,
+    var_value: generateVarValues,
 };
 
 export class FieldDropdownLBA extends Blockly.FieldDropdown {

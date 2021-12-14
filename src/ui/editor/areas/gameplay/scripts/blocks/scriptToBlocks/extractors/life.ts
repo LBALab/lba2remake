@@ -118,8 +118,8 @@ function GENERIC_SETTER(type, scope, workspace, cmd, {connection}) {
         scope = 'inventory';
     }
     block.setFieldValue(scope, 'scope');
-    block.setFieldValue(mapArgValue(cmd, 0), 'arg_0');
-    block.setFieldValue(mapArgValue(cmd, 1), 'arg_1');
+    block.setFieldValue(mapArgValue(cmd, 0), 'param');
+    block.setFieldValue(mapArgValue(cmd, 1), 'value');
     return { connection: block.nextConnection };
 }
 
