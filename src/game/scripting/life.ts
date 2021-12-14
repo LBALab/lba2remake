@@ -595,9 +595,9 @@ export function SUB_FUEL(this: ScriptContext, fuel) {
 
 export const SET_GRM = unimplemented();
 
-export function SET_TELEPORT_ZONE(this: ScriptContext, targetScene: number, flag: number) {
+export function SET_TELEPORT_ZONE(this: ScriptContext, id: number, flag: number) {
     for (const zone of this.scene.zones) {
-        if ((zone instanceof TeleportZone) && zone.targetScene === targetScene) {
+        if ((zone instanceof TeleportZone) && zone.id === id) {
             zone.enabled = (flag !== 0);
         }
     }
