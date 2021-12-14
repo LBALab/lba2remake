@@ -344,3 +344,41 @@ export function generateHeroBehaviours() {
         ['ELECTROCUTED', '13']
     ];
 }
+
+export function generateFallTypes() {
+    return [
+        ['NO FALLING', '0'],
+        ['CAN FALL', '1'],
+        ['NO FALLING; STOP CURRENT FALL', '2'],
+    ];
+}
+
+export function generateCollisionTypes() {
+    return [
+        ['MOVE THROUGH TERRAIN', '0'],
+        ['BLOCKED BY TERRAIN', '1'],
+        ['BLOCKED BY TERRAIN; CRAWLING', '2'],
+    ];
+}
+
+export function generateBuggyInitTypes() {
+    return [
+        ['NO INIT', '0'],
+        ['INIT IF NEEDED', '1'],
+        ['INIT ALWAYS', '2'],
+    ];
+}
+
+export function generatePcxEffectTypes() {
+    return [
+        ['NO EFFECT', '0'],
+        ['BLINDS', '1'],
+    ];
+}
+
+export function generateEnabledTypes() {
+    return [
+        ['DISABLED', '0'],
+        ['ENABLED', '1'],
+    ];
+}

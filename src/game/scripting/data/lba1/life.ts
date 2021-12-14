@@ -169,7 +169,7 @@ export const LifeOpcode = [
         opcode: 0x1A,
         command: 'CAN_FALL',
         handler: lf.CAN_FALL,
-        args: ['Uint8']
+        args: ['Uint8:fall_type']
     },
     {
         opcode: 0x1B,

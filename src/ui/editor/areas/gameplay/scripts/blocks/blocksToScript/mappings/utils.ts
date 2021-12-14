@@ -19,6 +19,7 @@ export function mapValue(value, type) {
         case 'scene':
         case 'dirmode':
         case 'hero_behaviour':
+        case 'choice_value':
             return Number(value);
     }
     return value;

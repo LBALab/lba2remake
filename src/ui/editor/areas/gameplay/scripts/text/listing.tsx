@@ -243,7 +243,7 @@ export function mapDataName(scene: Scene, data) {
     if (!data) {
         return null;
     }
-    if (data.type === 'text' && data.text) {
+    if ((data.type === 'text' || data.type === 'choice_value') && data.text) {
         const ellipsis = data.text.length > 50 ? '_[...]' : '';
         return ['`', data.text.substring(0, 50), ellipsis, '`'].join('');
     }

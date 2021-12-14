@@ -19,7 +19,12 @@ import {
     generateTexts,
     generateScenes,
     generateDirModes,
-    generateHeroBehaviours
+    generateHeroBehaviours,
+    generateFallTypes,
+    generateCollisionTypes,
+    generateBuggyInitTypes,
+    generatePcxEffectTypes,
+    generateEnabledTypes,
 } from './optionsGenerators';
 import DebugData from '../../../../../../DebugData';
 
@@ -95,7 +100,13 @@ const typeGenerator = {
     text: generateTexts,
     scene: generateScenes,
     dirmode: generateDirModes,
-    hero_behaviour: generateHeroBehaviours
+    hero_behaviour: generateHeroBehaviours,
+    fall_type: generateFallTypes,
+    collision_type: generateCollisionTypes,
+    buggy_init_type: generateBuggyInitTypes,
+    pcx_effect_type: generatePcxEffectTypes,
+    enabled: generateEnabledTypes,
+    choice_value: generateTexts,
 };
 
 export class FieldDropdownLBA extends Blockly.FieldDropdown {

@@ -159,7 +159,7 @@ export const lba_using_inventory = condition({
 
 export const lba_choice = condition({
     label: 'choice',
-    operand: 'number'
+    operand: 'choice_value'
 });
 
 export const lba_fuel = condition({

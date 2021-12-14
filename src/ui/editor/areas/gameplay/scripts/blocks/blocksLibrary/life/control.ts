@@ -133,7 +133,8 @@ const allowedOperandTypes = map(
         'body',
         'track',
         'var_value',
-        'angle'
+        'angle',
+        'choice_value',
     ],
     type => `operand_${type}`
 );
@@ -285,6 +286,7 @@ export const lba_operand_body = makeOperand('body');
 export const lba_operand_track = makeOperand('track');
 export const lba_operand_var_value = makeOperand('var_value');
 export const lba_operand_angle = makeOperand('angle');
+export const lba_operand_choice_value = makeOperand('choice_value');
 
 export const lba_and = logicOperator('and');
 export const lba_or = logicOperator('or');
