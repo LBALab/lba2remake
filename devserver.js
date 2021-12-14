@@ -4,6 +4,13 @@ require('@babel/register')({
     presets: ['@babel/preset-env', '@babel/preset-react']
 });
 
+const { config } = require('dotenv');
+
+config({ path: `${process.cwd()}/.env` });
+
+if (!('BLENDER_EXEC_PATH' in process.env))
+    console.warn('BLENDER_EXEC_PATH not set in .env file');
+
 const fs = require('fs');
 const http = require('http');
 const React = require('react');
@@ -14,6 +21,7 @@ const webpackConfig = require('./webpack.config.js');
 const webpack = require('webpack');
 const bodyParser = require('body-parser');
 const Main = require('./main.jsx');
+const apiRouter = require('./api');
 
 const app = express();
 
@@ -132,6 +140,8 @@ app.get('/layout_models/:game', function(req, res) {
         res.end(JSON.stringify(files));
     });
 });
+
+app.use('/api', apiRouter);
 
 app.use('/', express.static('./www'));
 app.use('/doc', express.static('./doc'));

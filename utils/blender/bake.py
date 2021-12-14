@@ -6,15 +6,21 @@ import os
 from mathutils import Vector
 
 #############################################################################
+###  CONFIGURE BLENDER
+#############################################################################
+bpy.ops.preferences.addon_install(overwrite=True, filepath="./utils/blender/gltf_lba_addon.py")
+bpy.ops.preferences.addon_enable(module="gltf_lba_addon")
+
+
+#############################################################################
 ###  PARSE ARGUMENTS
 #############################################################################
-
 argv = sys.argv
 argv = argv[argv.index("--") + 1:]
 
 parser = argparse.ArgumentParser(description='Perform light baking')
 parser.add_argument('--steps', default="import,bake,apply,probes,export")
-parser.add_argument('--samples', default=64, type=int)
+parser.add_argument('--samples', default=50, type=int)
 parser.add_argument('--resolution', default=512, type=int)
 parser.add_argument('--margin', default=2, type=int)
 parser.add_argument('--denoise', default="FAST", choices=["FAST", "ACCURATE"])
@@ -35,23 +41,26 @@ if steps == "no_probes":
     steps = "import,bake,apply,export"
 steps = steps.split(',')
 
-print("LIGHT BAKING")
-print(f"  STEPS: {steps}")
-print(f"  SAMPLES: {args.samples}")
-print(f"  RESOLUTION: {args.resolution}")
-print(f"  DENOISE: {args.denoise}")
-print(f"  INPUT: {args.input}")
-print(f"  OUTPUT: {output_file}")
+print(flush=True)
+
+print("[INFO]:LIGHT BAKING")
+print(f"[INFO]:  STEPS: {steps}")
+print(f"[INFO]:  SAMPLES: {args.samples}")
+print(f"[INFO]:  RESOLUTION: {args.resolution}")
+print(f"[INFO]:  MARGIN: {args.margin}")
+print(f"[INFO]:  DENOISE: {args.denoise}")
+print(f"[INFO]:  INPUT: {args.input}")
+print(f"[INFO]:  OUTPUT: {output_file}", flush=True)
+
 
 #############################################################################
 ###  SETUP INITIAL SCENE
 #############################################################################
-
 bpy.data.objects.remove(bpy.data.objects["Cube"], do_unlink=True)
 bpy.data.objects.remove(bpy.data.objects["Light"], do_unlink=True)
 
-bpy.data.scenes['Scene'].use_nodes = True
 bpy.data.scenes['Scene'].render.engine = 'CYCLES'
+bpy.data.scenes['Scene'].use_nodes = True
 nodes = bpy.data.scenes['Scene'].node_tree.nodes
 nodes.new('CompositorNodeDenoise')
 nodes.new('CompositorNodeViewer')
@@ -67,6 +76,7 @@ nodes['Denoise'].prefilter = args.denoise
 nodes["Viewer"].use_alpha = False
 
 bpy.context.scene.cycles.samples = args.samples
+bpy.context.scene.cycles.device = 'GPU'
 
 if (args.hdri is not None):
     bpy.data.worlds['World'].use_nodes = True
@@ -83,10 +93,11 @@ if (args.hdri is not None):
     links.new(nodes["Mapping"].outputs[0], nodes["Environment Texture"].inputs[0])
     links.new(nodes["Texture Coordinate"].outputs[0], nodes["Mapping"].inputs[0])
 
+
 #############################################################################
 ###  IMPORT
 #############################################################################
-print("[PROGRESS]:IMPORT:LOAD_GLB")
+print("[PROGRESS]:Importing model", flush=True)
 filename = os.path.basename(args.input)
 bpy.ops.import_scene.gltf(filepath=args.input, files=[{"name": filename}], loglevel=50)
 
@@ -96,7 +107,6 @@ noise_detail = 2.0
 # Patch ground texture material for islands
 ground_textured = bpy.data.objects.get('ground_textured')
 if ground_textured:
-    print("[PROGRESS]:IMPORT:PATCH_GROUND_TEXTURE")
     mat = ground_textured.data.materials[0]
     nodes = mat.node_tree.nodes
     links = mat.node_tree.links
@@ -126,7 +136,6 @@ if ground_textured:
 
 ground_colored = bpy.data.objects.get('ground_colored')
 if ground_colored:
-    print("[PROGRESS]:IMPORT:PATCH_GROUND_COLORED")
     mat = ground_colored.data.materials[0]
     nodes = mat.node_tree.nodes
     links = mat.node_tree.links
@@ -149,7 +158,6 @@ if ground_colored:
 texture_size = bpy.data.images['Image_1'].size
 textured_objects = [o for o in bpy.data.objects if o.name.startswith('objects_textured')]
 for obj in textured_objects:
-    print("[PROGRESS]:IMPORT:PATCH_OBJECT_TEXTURE")
     mat = obj.data.materials[0]
     nodes = mat.node_tree.nodes
     links = mat.node_tree.links
@@ -194,12 +202,14 @@ objects_to_bake = [o for o in bpy.data.objects if o.type == 'MESH'
 ###  BAKE
 #############################################################################
 if "bake" in steps:
-    print("[PROGRESS]:BAKE")
+    print("[PROGRESS]:Baking", flush=True)
     resolution = args.resolution
     margin = args.margin
     bake_target = bpy.data.images.new(name="BakeTarget", width=resolution, height=resolution, float_buffer=True)
+    i = 0.0
     for obj in objects_to_bake:
-        print(f"[PROGRESS]:BAKE:OBJECT={obj.name}")
+        print(f"[PROGRESS]:Baking:{i / len(objects_to_bake)}:{obj.name}", flush=True)
+        i += 1.0
 
         mat = obj.data.materials[0]
 
@@ -229,7 +239,7 @@ if "bake" in steps:
 ###  APPLY
 #############################################################################
 if "apply" in steps:
-    print("[PROGRESS]:APPLY")
+    print("[PROGRESS]:Denoising", flush=True)
     baked_mat = bpy.data.materials.new(name="LBABakedMaterial")
     baked_mat.use_nodes = True
 
@@ -274,7 +284,7 @@ if "apply" in steps:
 ###  LIGHT PROBES
 #############################################################################
 if "probes" in steps:
-    print("[PROGRESS]:PROBES")
+    print("[PROGRESS]:Light Probes", flush=True)
     bpy.context.scene.render.resolution_percentage = 25
     bpy.context.scene.render.filepath = 'light_probe.hdr'
     bpy.context.scene.render.image_settings.file_format = 'HDR'
@@ -285,7 +295,7 @@ if "probes" in steps:
 ###  EXPORT
 #############################################################################
 if "export" in steps:
-    print("[PROGRESS]:EXPORT")
+    print("[PROGRESS]:Exporting model", flush=True)
     bpy.ops.object.select_all(action='DESELECT')
     for obj in objects_to_bake:
         obj.select_set(True)

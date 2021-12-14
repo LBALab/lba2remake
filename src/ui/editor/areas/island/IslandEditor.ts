@@ -7,6 +7,7 @@ import {
 import InspectorArea from '../shared/InspectorArea/InspectorArea';
 import PaletteArea from '../gameplay/palette/PaletteArea';
 import SceneGraphArea from '../shared/SceneGraphArea/SceneGraphArea';
+import BakingArea from '../shared/BakingArea/BakingArea';
 
 const IslandEditor = {
     id: 'island',
@@ -38,6 +39,7 @@ const IslandEditor = {
         InspectorArea,
         PaletteArea,
         SceneGraphArea,
+        BakingArea,
     ],
     defaultLayout: {
         type: Type.LAYOUT,

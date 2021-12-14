@@ -1,7 +1,6 @@
 import * as React from 'react';
 import * as THREE from 'three';
 import { saveAs } from 'file-saver';
-import { GLTFExporter } from 'three/examples/jsm/exporters/GLTFExporter';
 
 import Renderer from '../../../../renderer';
 import { fullscreen } from '../../../styles/index';
@@ -13,12 +12,11 @@ import { TickerProps } from '../../../utils/Ticker';
 import {
     registerResources,
     preloadResources,
-    getPalette,
 } from '../../../../resources';
 import islandOffsets from './data/islandOffsets';
 import { setCurrentFog } from '../../fog';
 import DebugData from '../../DebugData';
-import { buildAtlas } from '../../../../graphics/uvAltas/atlas';
+import { exportIslandForBaking } from '../../../../graphics/gi/baking/bake_island';
 
 interface Props extends TickerProps {
     params: any;
@@ -92,7 +90,7 @@ export default class IslandEditorContent extends FrameListener<Props, State> {
         this.onKeyDown = this.onKeyDown.bind(this);
         this.onKeyUp = this.onKeyUp.bind(this);
         this.onPointerLockChange = this.onPointerLockChange.bind(this);
-        this.export = this.export.bind(this);
+        this.exportIsland = this.exportIsland.bind(this);
 
         document.addEventListener('mousemove', this.onMouseMove, false);
         document.addEventListener('pointerlockchange', this.onPointerLockChange, false);
@@ -316,10 +314,12 @@ export default class IslandEditorContent extends FrameListener<Props, State> {
         }
     }
 
-    export() {
+    async exportIsland() {
         const { island } = this.state;
         if (island) {
-            exportIsland(island.threeObject);
+            const glb = await exportIslandForBaking(island.threeObject);
+            const blob = new Blob([glb], {type: 'application/octet-stream'});
+            saveAs(blob, `${island.threeObject.name}.glb`);
         }
     }
 
@@ -342,10 +342,9 @@ export default class IslandEditorContent extends FrameListener<Props, State> {
         if (island) {
             return <div style={infoStyle}>
                 <div style={{position: 'absolute', right: 0, top: 2, textAlign: 'right'}}>
-                    <button style={infoButton} onClick={this.export}>
+                    <button style={infoButton} onClick={this.exportIsland}>
                         Export
                     </button>
-                    <br/>
                 </div>
             </div>;
         }
@@ -369,108 +368,4 @@ function handleMouseEvent(controlsState, event) {
     euler.x = 0;
     euler.y -= movementX * 0.002;
     controlsState.cameraOrientation.setFromEuler(euler);
-}
-
-async function exportIsland(islandObject: THREE.Object3D) {
-    const palette = await getPalette();
-    const objToExport = islandObject.clone(true);
-    const namesToRemove = ['Rain', 'Sea', 'Clouds', 'GroundClouds', 'Stars', 'Lightning'];
-    const toRemove = [];
-    objToExport.traverse((node) => {
-        if (namesToRemove.includes(node.name)) {
-            toRemove.push(node);
-        } else if (node instanceof THREE.Mesh) {
-            const geom = node.geometry.clone() as THREE.BufferGeometry;
-            node.geometry = geom;
-            if (!geom.index) {
-                const numVertex = geom.attributes.position.count;
-                const indexArray = new Uint32Array(numVertex);
-                for (let i = 0; i < numVertex; i += 1) {
-                    indexArray[i] = i;
-                }
-                geom.setIndex(new THREE.BufferAttribute(
-                    indexArray,
-                    1
-                ));
-            }
-            const transformTexture = () => {
-                const mat = node.material as THREE.RawShaderMaterial;
-                node.material = new THREE.MeshStandardMaterial({
-                    map: mat.uniforms.uTexture.value,
-                    transparent: mat.transparent
-                });
-            };
-            switch (node.name) {
-                case 'ground_textured': {
-                    transformTexture();
-                    node.material.userData.mixColorAndTexture = true;
-                    geom.attributes.uv.normalized = true;
-                    break;
-                }
-                case 'objects_textured':
-                case 'objects_textured_transparent': {
-                    transformTexture();
-                    node.material.userData.useTextureAtlas = true;
-                    break;
-                }
-                default: {
-                    node.material = new THREE.MeshStandardMaterial();
-                    break;
-                }
-            }
-            if (geom.attributes.color) {
-                const numVertex = geom.attributes.color.count;
-                const colorArray = new Uint8Array(numVertex * 3);
-                for (let i = 0; i < numVertex; i += 1) {
-                    const p = geom.attributes.color.array[i];
-                    if (p > 0) {
-                        const pal = p * 16 + 7;
-                        colorArray[i * 3] = palette[pal * 3];
-                        colorArray[i * 3 + 1] = palette[pal * 3 + 1];
-                        colorArray[i * 3 + 2] = palette[pal * 3 + 2];
-                    } else {
-                        colorArray[i * 3] = 0xFF;
-                        colorArray[i * 3 + 1] = 0xFF;
-                        colorArray[i * 3 + 2] = 0xFF;
-                    }
-                }
-                geom.attributes.color = new THREE.BufferAttribute(
-                    colorArray,
-                    3,
-                    true
-                );
-            }
-        }
-    });
-    for (const node of toRemove) {
-        node.parent.remove(node);
-    }
-    await buildAtlas(objToExport);
-    objToExport.traverse((node) => {
-        if (node instanceof THREE.Mesh) {
-            const geom = node.geometry;
-            const uvGroup = geom.attributes.uvGroup;
-            if (uvGroup) {
-                const uv3 = new Uint16Array(uvGroup.count * 2);
-                const uv4 = new Uint16Array(uvGroup.count * 2);
-                for (let i = 0; i < uvGroup.count; i += 1) {
-                    uv3[i * 2] = uvGroup.array[i * 4];
-                    uv3[i * 2 + 1] = uvGroup.array[i * 4 + 1];
-                    uv4[i * 2] = uvGroup.array[i * 4 + 2];
-                    uv4[i * 2 + 1] = uvGroup.array[i * 4 + 3];
-                }
-                geom.attributes.TEXCOORD_2 = new THREE.BufferAttribute(uv3, 2);
-                geom.attributes.TEXCOORD_3 = new THREE.BufferAttribute(uv4, 2);
-            }
-            delete geom.attributes.uvGroup;
-        }
-    });
-    const exporter = new GLTFExporter();
-    exporter.parse(objToExport, (gltf: ArrayBuffer) => {
-        const blob = new Blob([gltf], {type: 'application/octet-stream'});
-        saveAs(blob, `${islandObject.name}.glb`);
-    }, {
-        binary: true,
-        embedImages: true
-    });
 }

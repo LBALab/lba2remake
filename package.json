@@ -26,6 +26,7 @@
     "@webxr-input-profiles/motion-controllers": "^1.0.0",
     "blockly": "^3.20200924.4",
     "color-convert": "^2.0.1",
+    "dotenv": "^10.0.0",
     "file-saver": "^2.0.5",
     "hash-wasm": "^4.9.0",
     "jest-diff": "^25.5.0",
