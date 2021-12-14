@@ -100,9 +100,26 @@ export function SWITCH(workspace, cmd, ctx) {
     };
 }
 
-function addCaseOperand(workspace, cmd, { connection }) {
+function addCaseOperand(workspace, cmd, { connection }, switchBlock) {
     const { operator } = cmd.data;
     const operandBlock = newBlock(workspace, `lba_operand_${operator.operand.type}`, cmd);
+
+    // Unlike if statements, case statements are separated from the variable that they are testing.
+    // This means that we need to pass down some information about that variable in order for the
+    // dropdown menus to be able to offer rich selections for the variable.
+    const condBlock = switchBlock.getInput('condition').connection.targetBlock();
+    const type = operator.operand.type;
+    if (type === 'var_value') {
+        const scope = condBlock.getFieldValue('scope');
+        const param = condBlock.getFieldValue('param');
+
+        operandBlock.data = { scope, param };
+    } else if (type === 'anim' || type === 'behaviour' || type === 'track') {
+        const actor = condBlock.getFieldValue('actor');
+
+        operandBlock.data = { actor };
+    }
+
     setOperand(cmd, operandBlock);
     operandBlock.outputConnection.connect(connection);
 }
@@ -119,12 +136,14 @@ export function CASE(workspace, cmd, ctx) {
     let connection = findLastConnection(statements.connection);
     each(logicStack, (logicCmd) => {
         const orBlock = newBlock(workspace, 'lba_or_case', logicCmd);
-        addCaseOperand(workspace, logicCmd, { connection: orBlock.getInput('operand').connection });
+        addCaseOperand(workspace, logicCmd, { connection: orBlock.getInput('operand').connection },
+            switchBlock);
         connection.connect(orBlock.previousConnection);
         connection = orBlock.nextConnection;
     });
     connection.connect(block.previousConnection);
-    addCaseOperand(workspace, cmd, { connection: block.getInput('operand').connection });
+    addCaseOperand(workspace, cmd, { connection: block.getInput('operand').connection },
+        switchBlock);
 
     const statementsInput = block.getInput('statements');
     return {

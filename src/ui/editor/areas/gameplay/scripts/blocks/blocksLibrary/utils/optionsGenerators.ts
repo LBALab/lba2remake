@@ -19,11 +19,15 @@ function getActor(field) {
     if (!block) {
         return null;
     }
+
     const actorField = block.getField('actor');
-    if (actorField) {
-        const idx = Number(actorField.getValue());
-        if (idx !== -1) {
-            return block.workspace.scene.actors[idx];
+    const actorIdx = actorField
+        ? Number(actorField.getValue())
+        : block.data && block.data.actor ? block.data.actor : null;
+
+    if (actorIdx !== null) {
+        if (actorIdx !== -1) {
+            return block.workspace.scene.actors[actorIdx];
         }
     }
     return block.workspace.actor;
@@ -73,9 +77,13 @@ export function generateTracks() {
     if (!block) {
         return [['<track>', '-1']];
     }
+
     const actorField = block.getField('actor');
-    if (actorField) {
-        const actorIdx = Number(actorField.getValue());
+    const actorIdx = actorField
+        ? Number(actorField.getValue())
+        : block.data && block.data.actor ? block.data.actor : null;
+
+    if (actorIdx !== null) {
         if (actorIdx === -1) {
             return [['<track>', '-1']];
         }
