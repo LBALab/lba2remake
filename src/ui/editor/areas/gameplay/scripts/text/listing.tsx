@@ -8,7 +8,7 @@ import LifeProps from './data/life';
 import MoveProps from './data/move';
 import ConditionProps from './data/condition';
 import {formatVar} from './format';
-import { ScenericZone } from '../../../../../../game/Zone';
+import { LadderZone, RailZone, ScenericZone } from '../../../../../../game/Zone';
 
 export function getDebugListing(type, scene, actor) {
     if (scene && actor) {
@@ -252,11 +252,31 @@ export function mapDataName(scene: Scene, data) {
             return 'none';
         return getObjectName(data.type, scene.index, data.value);
     }
-    if (data.type === 'zone') {
+    if (data.type === 'sceneric_zone') {
         if (data.value === -1)
             return 'none';
         const foundZone = find(scene.zones, zone =>
             zone instanceof ScenericZone && zone.id === data.value);
+        if (foundZone) {
+            return getObjectName('zone', scene.index, foundZone.props.index);
+        }
+        return 'none';
+    }
+    if (data.type === 'ladder_zone') {
+        if (data.value === -1)
+            return 'none';
+        const foundZone = find(scene.zones, zone =>
+            zone instanceof LadderZone && zone.id === data.value);
+        if (foundZone) {
+            return getObjectName('zone', scene.index, foundZone.props.index);
+        }
+        return 'none';
+    }
+    if (data.type === 'rail_zone') {
+        if (data.value === -1)
+            return 'none';
+        const foundZone = find(scene.zones, zone =>
+            zone instanceof RailZone && zone.id === data.value);
         if (foundZone) {
             return getObjectName('zone', scene.index, foundZone.props.index);
         }

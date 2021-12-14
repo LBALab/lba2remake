@@ -165,7 +165,7 @@ export const lba_cinema_mode = action((_block, field) => {
 
 export const lba_set_camera = action((_block, field) => {
     field('set camera');
-    field(new Blockly.FieldNumber(), 'arg_0');
+    field(new FieldDropdownLBA('camera_zone'), 'arg_0');
 });
 
 export const lba_camera_center = action((_block, field) => {
@@ -391,8 +391,8 @@ export const lba_hit = action((_block, field) => {
 
 export const lba_set_spike_zone = action((_block, field) => {
     field('set spike zone');
-    field(new Blockly.FieldNumber(), 'arg_0');
     field(new Blockly.FieldNumber(), 'arg_1');
+    field(new FieldDropdownLBA('spike_zone'), 'arg_0');
 });
 
 /*
@@ -421,15 +421,15 @@ export const lba_set_invisible = action((_block, field) => {
 */
 export const lba_set_rail = action((_block, field) => {
     field('set rail');
-    field(new Blockly.FieldNumber(), 'arg_0');
+    field(new FieldDropdownLBA('rail_zone'), 'arg_0');
     field('to');
     field(new Blockly.FieldNumber(), 'arg_1');
 });
 
 export const lba_conveyor = action((_block, field) => {
     field('conveyor');
-    field(new Blockly.FieldNumber(), 'arg_0');
     field(new Blockly.FieldNumber(), 'arg_1');
+    field(new FieldDropdownLBA('conveyor_zone'), 'arg_0');
 });
 
 export const lba_init_buggy = action((_block, field) => {
@@ -501,13 +501,13 @@ export const lba_pcx = action((_block, field) => {
 
 export const lba_set_fragment_zone = action((_block, field) => {
     field('(?) set grm');
-    field(new Blockly.FieldNumber(), 'arg_0');
     field(new Blockly.FieldNumber(), 'arg_1');
+    field(new FieldDropdownLBA('fragment_zone'), 'arg_0');
 });
 
 export const lba_set_teleport_zone = action((_block, field) => {
     field('set teleport zone');
-    field(new Blockly.FieldNumber(), 'arg_0');
+    field(new FieldDropdownLBA('teleport_zone'), 'arg_0');
     field(new Blockly.FieldNumber(), 'arg_1');
 });
 
@@ -573,8 +573,8 @@ export const lba_pos_obj_around = action((_block, field) => {
 
 export const lba_ladder = action((_block, field) => {
     field('ladder');
-    field(new Blockly.FieldNumber(), 'arg_0');
     field(new Blockly.FieldNumber(), 'arg_1');
+    field(new FieldDropdownLBA('ladder_zone'), 'arg_0');
 });
 
 export const lba_popcorn = action((_block, field) => {

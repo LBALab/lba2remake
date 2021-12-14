@@ -126,7 +126,9 @@ const allowedOperandTypes = map(
     [
         'number',
         'actor',
-        'zone',
+        'sceneric_zone',
+        'ladder_zone',
+        'rail_zone',
         'anim',
         'body',
         'track',
@@ -275,7 +277,9 @@ function makeOperand(type) {
 
 export const lba_operand_number = makeOperand('number');
 export const lba_operand_actor = makeOperand('actor');
-export const lba_operand_zone = makeOperand('zone');
+export const lba_operand_sceneric_zone = makeOperand('sceneric_zone');
+export const lba_operand_ladder_zone = makeOperand('ladder_zone');
+export const lba_operand_rail_zone = makeOperand('rail_zone');
 export const lba_operand_anim = makeOperand('anim');
 export const lba_operand_body = makeOperand('body');
 export const lba_operand_track = makeOperand('track');

@@ -3,7 +3,16 @@ import DebugData, { getVarName, getObjectName } from '../../../../../../DebugDat
 import LocationsNode from '../../../../locator/LocationsNode';
 import { ActorDirMode } from '../../../../../../../../game/Actor';
 import { GetInventorySize } from '../../../../../../../../game/data/inventory';
-import { ScenericZone } from '../../../../../../../../game/Zone';
+import Zone, {
+    CameraZone,
+    ConveyorZone,
+    FragmentZone,
+    LadderZone,
+    RailZone,
+    ScenericZone,
+    SpikeZone,
+    TeleportZone,
+} from '../../../../../../../../game/Zone';
 
 function getActor(field) {
     const block = field.getSourceBlock();
@@ -105,20 +114,63 @@ export function generateActors() {
     );
 }
 
-export function generateZones() {
-    const block = this.getSourceBlock();
+function generateZones(block, zonetype) {
     const scene = block && block.workspace.scene;
     if (!scene) {
         return [['<zone>', '-1']];
     }
-    const zones = filter(scene.zones, zone => zone instanceof ScenericZone) as any;
+    const zones = filter(scene.zones, zone => zone instanceof zonetype) as any;
     return map(
         zones,
-        (zone: ScenericZone) => {
+        (zone: Zone) => {
             const name = getObjectName('zone', scene.index, zone.props.index);
-            return [name, `${zone.id}`];
+            if (zone instanceof TeleportZone
+                || zone instanceof CameraZone
+                || zone instanceof ScenericZone
+                || zone instanceof FragmentZone
+                || zone instanceof LadderZone
+                || zone instanceof ConveyorZone
+                || zone instanceof SpikeZone
+                || zone instanceof RailZone) {
+                return [name, `${zone.id}`];
+            }
+
+            // Shouldn't happen.
+            return [];
         }
     );
+}
+
+export function generateTeleportZones() {
+    return generateZones(this.getSourceBlock(), TeleportZone);
+}
+
+export function generateCameraZones() {
+    return generateZones(this.getSourceBlock(), CameraZone);
+}
+
+export function generateScenericZones() {
+    return generateZones(this.getSourceBlock(), ScenericZone);
+}
+
+export function generateFragmentZones() {
+    return generateZones(this.getSourceBlock(), FragmentZone);
+}
+
+export function generateLadderZones() {
+    return generateZones(this.getSourceBlock(), LadderZone);
+}
+
+export function generateConveyorZones() {
+    return generateZones(this.getSourceBlock(), ConveyorZone);
+}
+
+export function generateSpikeZones() {
+    return generateZones(this.getSourceBlock(), SpikeZone);
+}
+
+export function generateRailZones() {
+    return generateZones(this.getSourceBlock(), RailZone);
 }
 
 export function generatePoints() {
