@@ -1,6 +1,6 @@
 import * as React from 'react';
 import DebugData, {getObjectName, renameObject, locateObject} from '../../../../DebugData';
-import {SceneGraphNode} from '../../sceneGraph/SceneGraphNode';
+import {SceneGraphNode} from '../../../shared/SceneGraphArea/SceneGraphNode';
 import {makeObjectsNode} from '../node_factories/objects';
 import Scene from '../../../../../../game/Scene';
 import Zone, { TextZone, ZONE_TYPE } from '../../../../../../game/Zone';

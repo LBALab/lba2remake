@@ -1,6 +1,6 @@
 import * as React from 'react';
 import DebugData, {locateObject} from '../../../../DebugData';
-import {SceneGraphNode} from '../../sceneGraph/SceneGraphNode';
+import {SceneGraphNode} from '../../../shared/SceneGraphArea/SceneGraphNode';
 import {makeObjectsNode} from '../node_factories/objects';
 
 const Point = {

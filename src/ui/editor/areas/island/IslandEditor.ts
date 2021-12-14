@@ -6,6 +6,7 @@ import {
 } from './browser/IslandsBrowserArea';
 import InspectorArea from '../shared/InspectorArea/InspectorArea';
 import PaletteArea from '../gameplay/palette/PaletteArea';
+import SceneGraphArea from '../shared/SceneGraphArea/SceneGraphArea';
 
 const IslandEditor = {
     id: 'island',
@@ -36,6 +37,7 @@ const IslandEditor = {
         IslandsBrowserArea,
         InspectorArea,
         PaletteArea,
+        SceneGraphArea,
     ],
     defaultLayout: {
         type: Type.LAYOUT,
