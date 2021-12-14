@@ -4,7 +4,7 @@ import {Orientation, Type} from '../../layout';
 import InspectorArea from '../shared/InspectorArea/InspectorArea';
 import IsoBrowserArea from './browser/IsoBrowserArea';
 import PaletteArea from '../gameplay/palette/PaletteArea';
-import SceneGraphArea from '../gameplay/sceneGraph/SceneGraphArea';
+import SceneGraphArea from '../shared/SceneGraphArea/SceneGraphArea';
 
 const IsoGridEditor = {
     id: 'iso_grid',
