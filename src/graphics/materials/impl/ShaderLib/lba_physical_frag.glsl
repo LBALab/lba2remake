@@ -52,6 +52,7 @@ varying vec3 vViewPosition;
 #include <uv2_pars_fragment>
 #include <uvgroup_pars_fragment>
 #include <map_pars_fragment>
+#include <lba_map_pars_fragment>
 #include <alphamap_pars_fragment>
 #include <aomap_pars_fragment>
 #include <lightmap_pars_fragment>

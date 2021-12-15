@@ -6,7 +6,7 @@
         #else
             vec2 uv = vUv / (vUvGroup.zw + 1.0);
         #endif
-        vec4 texelColor = texture2D( map, uv );
+        vec4 texelColor = textureMipMap( map, uv );
         texelColor = mapTexelToLinear( texelColor );
         diffuseColor *= texelColor;
     #else
