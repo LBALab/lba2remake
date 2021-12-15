@@ -1,7 +1,8 @@
 #ifdef USE_MAP
     #ifdef USE_TEXTURE_ATLAS
         #ifdef USE_ATLAS_ISLAND_MODE
-            vec2 uv = (mod(vUv, vUvGroup.zw) + vUvGroup.xy) / 512.0;
+            vec2 atlasDim = vec2(textureSize(map, 0));
+            vec2 uv = (mod(vUv, vUvGroup.zw) + vUvGroup.xy) / atlasDim;
         #else
             vec2 uv = vUv / (vUvGroup.zw + 1.0);
         #endif
