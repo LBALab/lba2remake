@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import { GLTFExporter } from 'three/examples/jsm/exporters/GLTFExporter';
 
 import {
     getPalette,
@@ -8,6 +7,7 @@ import { buildAtlas } from './xatlas/atlas';
 import Island from '../../game/scenery/island/Island';
 import IslandAmbience from '../../ui/editor/areas/island/browser/ambience';
 import { BakeObject, BakeState } from './bake';
+import { exportAsGLB } from './export_glb';
 
 export async function bakeIsland(name: string, params: BakeState): Promise<BakeObject> {
     const ambience = IslandAmbience[name];
@@ -113,19 +113,4 @@ async function patchTextureCoords(islandObject: THREE.Object3D) {
             delete geom.attributes.uvGroup;
         }
     });
-}
-
-async function exportAsGLB(threeObject: THREE.Object3D, params: BakeState) {
-    const p = params?.startProgress('Exporting model');
-    const exporter = new GLTFExporter();
-    const glb = await new Promise<ArrayBuffer>((resolve) => {
-        exporter.parse(threeObject, (buffer: ArrayBuffer) => {
-            resolve(buffer);
-        }, {
-            binary: true,
-            embedImages: true
-        });
-    });
-    p?.done();
-    return glb;
 }
