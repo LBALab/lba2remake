@@ -18,7 +18,16 @@ import { loadModel } from './metadata/models';
 import { getParams } from '../../../params';
 import { replaceMaterialsForPreview } from './metadata/preview';
 
-export async function loadMesh(grid, entry, ambience, gridMetadata, is3D, editorData, numActors) {
+export async function loadMesh(
+    grid,
+    entry,
+    ambience,
+    gridMetadata,
+    is3D: boolean,
+    isForExport: boolean,
+    editorData,
+    numActors: number
+) {
     const threeObject = new THREE.Object3D();
 
     const {library, cells} = grid;
@@ -27,6 +36,7 @@ export async function loadMesh(grid, entry, ambience, gridMetadata, is3D, editor
         entry,
         ambience,
         is3D,
+        isForExport,
         !!editorData,
         numActors
     );

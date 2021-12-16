@@ -10,6 +10,19 @@ import Game from '../../Game';
 import { loadMesh } from './mesh';
 import { loadBrickMask } from './mask';
 
+export interface GridInfo {
+    sceneryIndex: number;
+    ambience: Record<string, number>;
+    actors?: any[];
+}
+
+interface GridData extends GridInfo {
+    numActors: number;
+    is3D: boolean;
+    isGridEditor: boolean;
+    isForExport: boolean;
+}
+
 export default class IsoScenery {
     props: any;
     threeObject: THREE.Object3D;
@@ -19,34 +32,47 @@ export default class IsoScenery {
     private domeEnv?: any;
     editorData: any;
 
-    static async load(game: Game, sceneData): Promise<IsoScenery> {
+    static async load(game: Game, gridInfo: GridInfo): Promise<IsoScenery> {
         const params = getParams();
         return IsoScenery.loadGeneric({
-            ...sceneData,
-            numActors: sceneData.actors.length,
-            is3D: game.vr || params.iso3d || params.isoCam3d
+            ...gridInfo,
+            numActors: gridInfo.actors?.length || 0,
+            is3D: game.vr || params.iso3d || params.isoCam3d,
+            isGridEditor: false,
+            isForExport: false
         });
     }
 
-    static async loadForEditor(sceneData): Promise<IsoScenery> {
+    static async loadForEditor(gridInfo: GridInfo): Promise<IsoScenery> {
         return IsoScenery.loadGeneric({
-            ...sceneData,
+            ...gridInfo,
             numActors: 0,
             is3D: true,
             isGridEditor: true,
+            isForExport: false
         });
     }
 
-    static async loadForExport(sceneData): Promise<IsoScenery> {
+    static async loadForExport(gridInfo: GridInfo): Promise<IsoScenery> {
         return IsoScenery.loadGeneric({
-            ...sceneData,
+            ...gridInfo,
             numActors: 0,
             is3D: true,
+            isGridEditor: false,
+            isForExport: true
         });
     }
 
-    private static async loadGeneric(data): Promise<IsoScenery> {
-        const { sceneryIndex, ambience, is3D, isGridEditor, numActors } = data;
+    private static async loadGeneric(data: GridData): Promise<IsoScenery> {
+        const {
+            sceneryIndex,
+            ambience,
+            is3D,
+            isGridEditor,
+            isForExport,
+            numActors
+        } = data;
+
         const [palette, bricks, gridMetadata, mask] = await Promise.all([
             getPalette(),
             getBricks(),
@@ -71,6 +97,7 @@ export default class IsoScenery {
             ambience,
             gridMetadata,
             is3D,
+            isForExport,
             editorData,
             numActors
         );

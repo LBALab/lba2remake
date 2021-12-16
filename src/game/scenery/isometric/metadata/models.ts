@@ -48,7 +48,8 @@ export async function loadFullSceneModel(
     numActors: number
 ) : Promise<FullSceneModel> {
     const { game: gameId } = getParams();
-    const model = await loadModel(`/models/${gameId}/iso_scenes/${entry}.glb`, !isEditor);
+    const folder = isBakedReplacement ? 'iso_scenes_baked' : 'iso_scenes';
+    const model = await loadModel(`/models/${gameId}/${folder}/${entry}.glb`, !isEditor);
     const threeObject = model.scene.children[0];
     const effects: Fx[] = [];
     if (isBakedReplacement) {

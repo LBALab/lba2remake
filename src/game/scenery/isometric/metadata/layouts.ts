@@ -4,15 +4,31 @@ import { getBricksHQR } from '../../../../resources';
 import { loadLayout } from '../layouts';
 import { getParams } from '../../../../params';
 
-export async function loadLayoutsMetadata(entry, library, isEditor, mergeReplacements = false) {
+export async function loadLayoutsMetadata(
+    entry,
+    library,
+    isEditor: boolean,
+    isForExport: boolean,
+    mergeReplacements = false
+) {
     const { game } = getParams();
     const bkg = await getBricksHQR();
     const layoutsReq = await fetch(`/metadata/${game}/layouts.json`);
     const layoutsMetadata = await layoutsReq.json();
-    const sceneriesReq = await fetch(`/metadata/${game}/sceneries.json`);
-    const sceneriesMetadata = await sceneriesReq.json();
-    const hasReplacements = !mergeReplacements && entry in sceneriesMetadata;
-    const hasBakedReplacements = hasReplacements && sceneriesMetadata[entry].baked;
+    let hasReplacements = false;
+    if (!mergeReplacements) {
+        const res = await fetch(`/models/${game}/iso_scenes/${entry}.glb`, {
+            method: 'HEAD'
+        });
+        hasReplacements = res.ok;
+    }
+    let hasBakedReplacements = false;
+    if (!mergeReplacements && !isForExport) {
+        const res = await fetch(`/models/${game}/iso_scenes_baked/${entry}.glb`, {
+            method: 'HEAD'
+        });
+        hasBakedReplacements = res.ok;
+    }
     const libMetadata = layoutsMetadata[library.index];
     const layouts = {};
     const variants = [];

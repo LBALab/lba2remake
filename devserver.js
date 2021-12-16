@@ -118,19 +118,6 @@ app.post('/iso_replacements/:game/:entry', function(req, res) {
     fs.writeFile(`./www/models/${game}/iso_scenes/${entry}.glb`, req.body, () => {
         console.log(`Saved models/${game}/iso_scenes/${entry}.glb`);
         res.end();
-        fs.readFile(`./www/metadata/${game}/sceneries.json`, 'utf8', (err, file) => {
-            if (err) {
-                console.error(err);
-            } else {
-                const content = JSON.parse(file);
-                if (!(entry in content)) {
-                    content[entry] = { baked: false };
-                    fs.writeFile(`./www/metadata/${game}/sceneries.json`, JSON.stringify(content, null, 2), () => {
-                        console.log('Saved scenery metadata');
-                    });
-                }
-            }
-        });
     });
 });
 

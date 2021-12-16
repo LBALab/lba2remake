@@ -17,6 +17,7 @@ export async function extractBricksReplacementInfo(
     entry,
     ambience,
     is3D,
+    isForExport,
     isEditor,
     numActors
 ) {
@@ -26,7 +27,7 @@ export async function extractBricksReplacementInfo(
             mirrors: null
         };
     }
-    const layoutsMetadata = await loadLayoutsMetadata(entry, grid.library, isEditor);
+    const layoutsMetadata = await loadLayoutsMetadata(entry, grid.library, isEditor, isForExport);
 
     const replacements = await initReplacements(
         entry,
@@ -76,7 +77,7 @@ export async function saveSceneReplacementModel(entry, ambience) {
         noCache: true
     });
 
-    const layoutsMetadata = await loadLayoutsMetadata(entry, grid.library, true, true);
+    const layoutsMetadata = await loadLayoutsMetadata(entry, grid.library, true, true, true);
 
     if (layoutsMetadata.hasBakedReplacements) {
         return;
