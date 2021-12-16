@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as THREE from 'three';
-import { saveAs } from 'file-saver';
 
 import Renderer from '../../../../renderer';
 import { fullscreen } from '../../../styles/index';
@@ -16,7 +15,6 @@ import {
 import islandOffsets from './data/islandOffsets';
 import { setCurrentFog } from '../../fog';
 import DebugData from '../../DebugData';
-import { exportIslandForBaking } from '../../../../graphics/baking/bake_island';
 
 interface Props extends TickerProps {
     params: any;
@@ -47,24 +45,9 @@ const canvasStyle = {
     left: 0,
     right: 0,
     top: 0,
-    bottom: 30,
+    bottom: 0,
     cursor: 'move',
     background: 'black'
-};
-
-const infoStyle = {
-    position: 'absolute' as const,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    height: 30,
-    borderTop: '1px solid white',
-    background: 'rgb(45,45,48)'
-};
-
-const infoButton = {
-    margin: '2px',
-    padding: '0.2em 0.4em'
 };
 
 export default class IslandEditorContent extends FrameListener<Props, State> {
@@ -92,7 +75,6 @@ export default class IslandEditorContent extends FrameListener<Props, State> {
         this.onKeyDown = this.onKeyDown.bind(this);
         this.onKeyUp = this.onKeyUp.bind(this);
         this.onPointerLockChange = this.onPointerLockChange.bind(this);
-        this.exportIsland = this.exportIsland.bind(this);
 
         document.addEventListener('mousemove', this.onMouseMove, false);
         document.addEventListener('pointerlockchange', this.onPointerLockChange, false);
@@ -336,15 +318,6 @@ export default class IslandEditorContent extends FrameListener<Props, State> {
         }
     }
 
-    async exportIsland() {
-        const { island } = this.state;
-        if (island) {
-            const glb = await exportIslandForBaking(this.name);
-            const blob = new Blob([glb], {type: 'application/octet-stream'});
-            saveAs(blob, `${island.threeObject.name}.glb`);
-        }
-    }
-
     render() {
         return <div
             id="renderZone"
@@ -354,23 +327,8 @@ export default class IslandEditorContent extends FrameListener<Props, State> {
             onKeyUp={this.onKeyUp}
         >
             <div ref={this.onLoad} style={canvasStyle} onClick={this.handleClick}/>
-            {this.renderInfo()}
             <div id="stats" style={{position: 'absolute', top: 0, left: 0, width: '50%'}}/>
         </div>;
-    }
-
-    renderInfo() {
-        const { island } = this.state;
-        if (island) {
-            return <div style={infoStyle}>
-                <div style={{position: 'absolute', right: 0, top: 2, textAlign: 'right'}}>
-                    <button style={infoButton} onClick={this.exportIsland}>
-                        Export
-                    </button>
-                </div>
-            </div>;
-        }
-        return null;
     }
 }
 
