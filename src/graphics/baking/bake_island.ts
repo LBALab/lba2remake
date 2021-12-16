@@ -9,35 +9,18 @@ import Island from '../../game/scenery/island/Island';
 import IslandAmbience from '../../ui/editor/areas/island/browser/ambience';
 import { BakeObject, BakeState } from './bake';
 
-const cache: Record<string, BakeObject> = {};
-
 export async function bakeIsland(name: string, params: BakeState): Promise<BakeObject> {
-    if (name in cache) {
-        params.startProgress('Loading from cache').done();
-        return cache[name];
-    }
-    // tslint:disable-next-line:no-console
-    const glb = await exportIslandForBaking(name, params);
-    const obj = {
-        type: 'island' as const,
-        glb,
-        name,
-    };
-    cache[name] = obj;
-    return obj;
-}
-
-export async function exportIslandForBaking(
-    name: string,
-    params?: BakeState
-) {
     const ambience = IslandAmbience[name];
     const island = await Island.loadForExport(name, ambience);
     const objToExport = island.threeObject;
     await patchIslandObject(objToExport);
     await buildAtlas(objToExport, params);
     await patchTextureCoords(objToExport);
-    return exportAsGLB(objToExport, params);
+    return {
+        type: 'island' as const,
+        glb: await exportAsGLB(objToExport, params),
+        name,
+    };
 }
 
 async function patchIslandObject(islandObject: THREE.Object3D) {
