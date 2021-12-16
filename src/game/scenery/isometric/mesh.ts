@@ -25,6 +25,7 @@ export async function loadMesh(
     gridMetadata,
     is3D: boolean,
     isForExport: boolean,
+    useBaked: boolean | undefined,
     editorData,
     numActors: number
 ) {
@@ -37,6 +38,7 @@ export async function loadMesh(
         ambience,
         is3D,
         isForExport,
+        useBaked,
         !!editorData,
         numActors
     );

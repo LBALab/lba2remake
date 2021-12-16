@@ -5,6 +5,7 @@ import InspectorArea from '../shared/InspectorArea/InspectorArea';
 import IsoBrowserArea from './browser/IsoBrowserArea';
 import PaletteArea from '../gameplay/palette/PaletteArea';
 import SceneGraphArea from '../shared/SceneGraphArea/SceneGraphArea';
+import BakingArea from '../shared/BakingArea/BakingArea';
 
 const IsoGridEditor = {
     id: 'iso_grid',
@@ -35,7 +36,8 @@ const IsoGridEditor = {
         IsoBrowserArea,
         InspectorArea,
         PaletteArea,
-        SceneGraphArea
+        SceneGraphArea,
+        BakingArea,
     ],
     defaultLayout: {
         type: Type.LAYOUT,

@@ -9,6 +9,7 @@ export async function loadLayoutsMetadata(
     library,
     isEditor: boolean,
     isForExport: boolean,
+    useBaked: boolean | undefined,
     mergeReplacements = false
 ) {
     const { game } = getParams();
@@ -23,7 +24,7 @@ export async function loadLayoutsMetadata(
         hasReplacements = res.ok;
     }
     let hasBakedReplacements = false;
-    if (!mergeReplacements && !isForExport) {
+    if (!mergeReplacements && !isForExport && (useBaked === undefined || useBaked)) {
         const res = await fetch(`/models/${game}/iso_scenes_baked/${entry}.glb`, {
             method: 'HEAD'
         });

@@ -21,6 +21,7 @@ interface GridData extends GridInfo {
     is3D: boolean;
     isGridEditor: boolean;
     isForExport: boolean;
+    useBaked?: boolean;
 }
 
 export default class IsoScenery {
@@ -43,13 +44,14 @@ export default class IsoScenery {
         });
     }
 
-    static async loadForEditor(gridInfo: GridInfo): Promise<IsoScenery> {
+    static async loadForEditor(gridInfo: GridInfo, baked: boolean): Promise<IsoScenery> {
         return IsoScenery.loadGeneric({
             ...gridInfo,
             numActors: 0,
             is3D: true,
             isGridEditor: true,
-            isForExport: false
+            isForExport: false,
+            useBaked: baked
         });
     }
 
@@ -70,6 +72,7 @@ export default class IsoScenery {
             is3D,
             isGridEditor,
             isForExport,
+            useBaked,
             numActors
         } = data;
 
@@ -98,6 +101,7 @@ export default class IsoScenery {
             gridMetadata,
             is3D,
             isForExport,
+            useBaked,
             editorData,
             numActors
         );

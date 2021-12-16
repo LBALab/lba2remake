@@ -11,7 +11,7 @@ interface GeomCollection {
     geomInfo: GeometryInfo[];
 }
 
-export async function buildAtlas(scene: THREE.Object3D, params?: BakeState) {
+export async function buildAtlas(scene: THREE.Object3D, params: BakeState) {
     const { geom, geomInfo } = collectGeometries(scene);
     const worker = new window.Worker('/xatlas-worker.js');
     let p;
@@ -21,7 +21,7 @@ export async function buildAtlas(scene: THREE.Object3D, params?: BakeState) {
             const data = msg.data;
             switch (data.type) {
                 case 'progress':
-                    if (params?.cancelled) {
+                    if (params.cancelled) {
                         worker.terminate();
                         p?.cancel();
                         reject(new Error('Cancelled'));
@@ -29,7 +29,7 @@ export async function buildAtlas(scene: THREE.Object3D, params?: BakeState) {
                     }
                     if (currentStage !== data.stage) {
                         p?.done();
-                        p = params?.startProgress(data.stage);
+                        p = params.startProgress(data.stage);
                         currentStage = data.stage;
                     }
                     p?.progress(data.progress);
@@ -48,8 +48,8 @@ export async function buildAtlas(scene: THREE.Object3D, params?: BakeState) {
         worker.postMessage({
             geometries: geomInfo,
             params: {
-                resolution: params?.textureSize,
-                margin: params?.margin
+                resolution: params.textureSize,
+                margin: params.margin
             }
         });
     });

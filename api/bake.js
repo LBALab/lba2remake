@@ -14,7 +14,7 @@ export function bake(req, res) {
     const inputFile = path.join(tmpDir, `${name}.glb`);
     const targetDir = type === 'island'
         ? path.normalize(`www/models/${game}/islands`)
-        : path.normalize(`www/models/${game}/iso_scenes`);
+        : path.normalize(`www/models/${game}/iso_scenes_baked`);
     const outputFile = path.join(process.cwd(), targetDir, `${name}.glb`);
     const dumpFile = path.join(downloadsFolder, `${name}.blend`);
     req.pipe(fs.createWriteStream(inputFile));

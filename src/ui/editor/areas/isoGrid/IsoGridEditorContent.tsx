@@ -27,7 +27,6 @@ import { loadModel } from '../../../../game/scenery/isometric/metadata/models';
 import { loadLUTTexture } from '../../../../utils/lut';
 import { loadPaletteTexture } from '../../../../texture';
 import { replaceMaterialsForPreview } from '../../../../game/scenery/isometric/metadata/preview';
-import { buildAtlas } from '../../../../graphics/baking/xatlas/atlas';
 
 enum CursorType {
     BRICK,
@@ -82,6 +81,7 @@ interface State {
         cameraSpeed: THREE.Vector3;
         freeCamera: boolean;
     };
+    baked: boolean;
     cursorObj: THREE.Object3D;
     cursor?: Cursor;
     showCursorGizmo: boolean;
@@ -149,6 +149,7 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
     lastTick = 0;
     angle = 0;
     cam = 0;
+    baked;
 
     constructor(props) {
         super(props);
@@ -166,6 +167,7 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
         this.setShowCursorGizmo = this.setShowCursorGizmo.bind(this);
         this.toggleGizmoRotation = this.toggleGizmoRotation.bind(this);
         this.setHighlight = this.setHighlight.bind(this);
+        this.setBaked = this.setBaked.bind(this);
         this.add3DModel = this.add3DModel.bind(this);
         this.closeReplacement = this.closeReplacement.bind(this);
         this.useFile = this.useFile.bind(this);
@@ -209,7 +211,8 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
             isoGridIdx: 0,
             cameras,
             highlight: false,
-            showOriginal: false
+            showOriginal: false,
+            baked: false,
         };
         this.boxHelper = new THREE.BoxHelper(DUMMY_OBJ, 0xffff00);
         this.boxHelper.visible = false;
@@ -549,7 +552,7 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
         this.loading = true;
         this.isoGridIdx = isoGridIdx;
         const sceneData = await getScene(isoGridIdx);
-        const isoGrid = await IsoScenery.loadForEditor(sceneData);
+        const isoGrid = await IsoScenery.loadForEditor(sceneData, this.baked);
         const { isoGrid: oldIsoGrid } = this.state;
         if (oldIsoGrid) {
             this.state.scene.threeScene.remove(oldIsoGrid.threeObject);
@@ -582,13 +585,16 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
             controlsState,
             isoGrid,
             highlight,
+            baked,
             cursor,
             showOriginal,
             showCursorGizmo,
         } = this.state;
         const { cam, isoGridIdx } = this.props.sharedState;
-        if (this.isoGridIdx !== isoGridIdx && isoGridIdx !== undefined) {
-            this.loadIsoGrid(isoGridIdx);
+        if ((this.isoGridIdx !== isoGridIdx || baked !== this.baked) && isoGridIdx !== undefined) {
+            this.baked = baked;
+            const resetCamera = this.isoGridIdx !== isoGridIdx;
+            this.loadIsoGrid(isoGridIdx, resetCamera);
         }
         if (this.cam !== cam && cam !== undefined) {
             this.cam = cam;
@@ -747,6 +753,10 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
         this.setState({ highlight: e.target.checked }, this.saveDebugScope);
     }
 
+    setBaked(e) {
+        this.setState({ baked: e.target.checked }, this.saveDebugScope);
+    }
+
     async add3DModel() {
         if (!this.state.cursor) {
             return;
@@ -781,7 +791,7 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
     }
 
     renderInfo() {
-        const { cursor, highlight, showOriginal, showCursorGizmo } = this.state;
+        const { cursor, highlight, showOriginal, showCursorGizmo, baked } = this.state;
         return <div style={infoStyle}>
             <div>
                 <div>Cursor: {this.renderCursorInfo()}</div>
@@ -803,26 +813,36 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
                 <br/>
                 {this.renderSelectionData()}
             </div>
-            <div style={{position: 'absolute', right: 0, top: 2, textAlign: 'right'}}>
+            <div style={{position: 'absolute', right: 0, top: 2, textAlign: 'left'}}>
                 <label style={{cursor: 'pointer', userSelect: 'none'}}>
                     <input type="checkBox"
                             checked={showOriginal}
                             onChange={this.setShowOriginal} />
-                    Show original bricks
+                    Original bricks
+                </label><br/>
+                <label style={{cursor: 'pointer', userSelect: 'none', opacity: baked ? 0.5 : 1}}>
+                    <input type="checkBox"
+                            checked={highlight}
+                            onChange={this.setHighlight}
+                            disabled={baked} />
+                    <span style={{color: '#FF0000'}}>Replaced</span>
+                    &nbsp;and&nbsp;
+                    <span style={{color: '#00FF00'}}>hidden</span> bricks
                 </label><br/>
                 <label style={{cursor: 'pointer', userSelect: 'none'}}>
                     <input type="checkBox"
-                            checked={highlight}
-                            onChange={this.setHighlight} />
-                    Highlight <span style={{color: '#FF0000'}}>replaced</span><br/>
-                    and <span style={{color: '#00FF00'}}>hidden</span> bricks
+                            checked={baked}
+                            onChange={this.setBaked} />
+                    Baked grid
                 </label><br/>
-                {cursor && <button style={infoButton} onClick={this.add3DModel}>
-                    Add 3D model
-                </button>}
-                <button style={infoButton} onClick={this.export}>
-                    Export
-                </button>
+                <div style={{ textAlign: 'right', paddingTop: '0.5em' }}>
+                    {cursor && <button style={infoButton} onClick={this.add3DModel}>
+                        Add 3D model
+                    </button>}
+                    <button style={infoButton} onClick={this.export}>
+                        Export
+                    </button>
+                </div>
             </div>
         </div>;
     }
@@ -1039,7 +1059,6 @@ async function exportGrid(isoGridIdx: number) {
             }
         }
     });
-    await buildAtlas(threeObject);
     exporter.parse(threeObject, (gltf: ArrayBuffer) => {
         const blob = new Blob([gltf], {type: 'application/octet-stream'});
         saveAs(blob, `${threeObject.name}.glb`);

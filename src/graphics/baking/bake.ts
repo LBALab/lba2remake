@@ -1,5 +1,6 @@
 import { getParams } from '../../params';
 import { bakeIsland } from './bake_island';
+import { bakeIsoGrid } from './bake_iso_grid';
 
 export interface BakeProgress {
     stage: string;
@@ -39,18 +40,19 @@ export interface BakeObject {
 }
 
 export async function bake(params: BakeState) {
-    const island = DebugData.scope.island;
-    if (island) {
-        const obj = await bakeIsland(island.name, params);
-        if (params?.cancelled)
-            throw new Error('Cancelled');
-        await bakeObject(obj, params);
-    } else {
-        // TODO: bake iso scene
-    }
+    const { island, isoGridIdx } = DebugData.scope;
+
+    let obj;
+    if (island) obj = await bakeIsland(island.name, params);
+    else if (isoGridIdx !== undefined) obj = await bakeIsoGrid(isoGridIdx, params);
+    else throw new Error('Nothing to bake');
+
+    await bakeObject(obj, params);
 }
 
 async function bakeObject(obj: BakeObject, params: BakeState) {
+    if (params?.cancelled)
+        throw new Error('Cancelled');
     let p = params.startProgress('Uploading');
     const { game } = getParams();
     const q = [];
