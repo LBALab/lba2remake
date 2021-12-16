@@ -33,20 +33,11 @@ export async function exportIslandForBaking(
 ) {
     const ambience = IslandAmbience[name];
     const island = await Island.loadForExport(name, ambience);
-    let p = params?.startProgress('Patching island');
     const objToExport = island.threeObject;
     await patchIslandObject(objToExport);
-    p?.done();
     await buildAtlas(objToExport, params);
-    p = params?.startProgress('Patching texture coords');
     await patchTextureCoords(objToExport);
-    p?.done();
-    p = params?.startProgress('Exporting model');
-    if (params?.cancelled)
-        throw new Error('Cancelled');
-    const glb = exportAsGLB(objToExport);
-    p?.done();
-    return glb;
+    return exportAsGLB(objToExport, params);
 }
 
 async function patchIslandObject(islandObject: THREE.Object3D) {
@@ -141,14 +132,17 @@ async function patchTextureCoords(islandObject: THREE.Object3D) {
     });
 }
 
-async function exportAsGLB(threeObject: THREE.Object3D) {
+async function exportAsGLB(threeObject: THREE.Object3D, params: BakeState) {
+    const p = params?.startProgress('Exporting model');
     const exporter = new GLTFExporter();
-    return new Promise<ArrayBuffer>((resolve) => {
-        exporter.parse(threeObject, (glb: ArrayBuffer) => {
-            resolve(glb);
+    const glb = await new Promise<ArrayBuffer>((resolve) => {
+        exporter.parse(threeObject, (buffer: ArrayBuffer) => {
+            resolve(buffer);
         }, {
             binary: true,
             embedImages: true
         });
     });
+    p?.done();
+    return glb;
 }
