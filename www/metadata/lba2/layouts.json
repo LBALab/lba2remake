@@ -4478,6 +4478,61 @@
       "file": "OT_039_080_magritte_plants.glb",
       "orientation": 0
     },
+    "43": {
+      "replace": true,
+      "file": "OT_043_145_148_149_broken_wall_corner_deco.glb",
+      "orientation": 2
+    },
+    "46": {
+      "replace": true,
+      "file": "OT_046_047_broken_wall_deco.glb",
+      "orientation": 0
+    },
+    "47": {
+      "replace": true,
+      "file": "OT_046_047_broken_wall_deco.glb",
+      "orientation": 3
+    },
+    "48": {
+      "replace": true,
+      "file": "OT_048_054_broken_wall_vert_back_deco.glb",
+      "orientation": 0
+    },
+    "49": {
+      "replace": true,
+      "file": "OT_049_broken_wall_vert_deco.glb",
+      "orientation": 3
+    },
+    "50": {
+      "replace": true,
+      "file": "OT_050_051_broken_wall_corner_out_deco.glb",
+      "orientation": 0
+    },
+    "51": {
+      "replace": true,
+      "file": "OT_050_051_broken_wall_corner_out_deco.glb",
+      "orientation": 3
+    },
+    "52": {
+      "replace": true,
+      "file": "OT_052_150_broken_wall_corner_in_backface_deco.glb",
+      "orientation": 0
+    },
+    "53": {
+      "replace": true,
+      "file": "OT_053_broken_wall_corner_in_deco.glb",
+      "orientation": 3
+    },
+    "54": {
+      "replace": true,
+      "file": "OT_048_054_broken_wall_vert_back_deco.glb",
+      "orientation": 2
+    },
+    "56": {
+      "replace": true,
+      "file": "OT_056_broken_wall_arch_deco.glb",
+      "orientation": 0
+    },
     "58": {
       "replace": true,
       "file": "OT_058_059_round_wall_lamp.glb",
@@ -4732,6 +4787,36 @@
       "file": "OT_143_office_u_table.glb",
       "orientation": 0
     },
+    "145": {
+      "replace": true,
+      "file": "OT_043_145_148_149_broken_wall_corner_deco.glb",
+      "orientation": 0
+    },
+    "146": {
+      "replace": true,
+      "file": "OT_146_147_broken_wall_small_deco.glb",
+      "orientation": 3
+    },
+    "147": {
+      "replace": true,
+      "file": "OT_146_147_broken_wall_small_deco.glb",
+      "orientation": 0
+    },
+    "148": {
+      "replace": true,
+      "file": "OT_043_145_148_149_broken_wall_corner_deco.glb",
+      "orientation": 3
+    },
+    "149": {
+      "replace": true,
+      "file": "OT_043_145_148_149_broken_wall_corner_deco.glb",
+      "orientation": 1
+    },
+    "150": {
+      "replace": true,
+      "file": "OT_052_150_broken_wall_corner_in_backface_deco.glb",
+      "orientation": 2
+    },
     "151": {
       "replace": true,
       "file": "OT_151_gambler_control_panel.glb",
@@ -4910,6 +4995,71 @@
     "180:5x3x3:0,0,0,0,14648,0,0,0,0,14649,14650,-1,-1,-1,14653,0,0,0,0,14654,0,0,0,0,14655,14656,-1,-1,-1,14659,14664,14665,127,127,14666,14667,14668,127,127,14669,14670,-1,-1,-1,14673": {
       "replace": true,
       "file": "OT_180_table_var1.glb",
+      "orientation": 0
+    },
+    "48:1x2x1:6869,6874": {
+      "replace": true,
+      "file": "OT_048_broken_wall_vert_deco_var6.glb",
+      "orientation": 0
+    },
+    "49:1x8x1:6875,6880,6875,6876,6877,6878,6879,6880": {
+      "replace": true,
+      "file": "OT_049_broken_wall_vert_deco_var4.glb",
+      "orientation": 3
+    },
+    "49:1x11x1:6875,6876,6877,6878,6879,6880,6876,6877,6878,6879,6880": {
+      "replace": true,
+      "file": "OT_049_broken_wall_vert_deco_var3.glb",
+      "orientation": 3
+    },
+    "48:1x11x1:6869,6870,6872,6873,6874,6869,6870,6871,6872,6873,6874": {
+      "replace": true,
+      "file": "OT_048_broken_wall_vert_deco_var4.glb",
+      "orientation": 0
+    },
+    "49:1x8x1:6875,6876,6877,6878,6879,6878,6879,6880": {
+      "replace": true,
+      "file": "OT_049_broken_wall_vert_deco_var2.glb",
+      "orientation": 3
+    },
+    "48:1x8x1:6869,6870,6871,6872,6873,6874,6873,6874": {
+      "replace": true,
+      "file": "OT_048_broken_wall_vert_deco_var3.glb",
+      "orientation": 0
+    },
+    "46:8x2x1:6858,6859,6857,6858,6859,6857,6858,6859,6861,6862,6860,6861,6862,6860,6861,6862": {
+      "replace": true,
+      "file": "OT_046_broken_wall_deco_var4.glb",
+      "orientation": 0
+    },
+    "46:15x2x1:6857,6858,6859,6857,6858,6859,6857,6858,6859,6857,6858,6859,6857,6858,6859,6860,6861,6862,6860,6861,6862,6860,6861,6862,6860,6861,6862,6860,6861,6862": {
+      "replace": true,
+      "file": "OT_046_broken_wall_deco_var2.glb",
+      "orientation": 0
+    },
+    "49:1x15x1:6875,6876,6877,6878,6879,6880,6875,6876,6877,6878,6879,6880,6878,6879,6880": {
+      "replace": true,
+      "file": "OT_049_broken_wall_vert_deco_var1.glb",
+      "orientation": 3
+    },
+    "48:1x3x1:6869,6873,6874": {
+      "replace": true,
+      "file": "OT_048_broken_wall_vert_deco_var1.glb",
+      "orientation": 0
+    },
+    "48:1x11x1:6869,6870,6871,6872,6873,6874,6869,6870,6872,6873,6874": {
+      "replace": true,
+      "file": "OT_048_broken_wall_vert_deco_var2.glb",
+      "orientation": 0
+    },
+    "46:8x2x1:6857,6858,6859,6857,6858,6859,6858,6859,6860,6861,6862,6860,6861,6862,6861,6862": {
+      "replace": true,
+      "file": "OT_046_broken_wall_deco_var3.glb",
+      "orientation": 0
+    },
+    "46:12x2x1:6857,6858,6859,6857,6858,6859,6857,6858,6859,6857,6858,6859,6860,6861,6862,6860,6861,6862,6860,6861,6862,6860,6861,6862": {
+      "replace": true,
+      "file": "OT_046_broken_wall_deco_var5.glb",
       "orientation": 0
     }
   },
