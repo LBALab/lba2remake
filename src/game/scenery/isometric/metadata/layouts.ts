@@ -39,7 +39,10 @@ export async function loadLayoutsMetadata(
             if (hasReplacements) {
                 info = {...data};
             } else {
-                const model = await loadModel(`/models/${game}/layouts/${data.file}`, !isEditor);
+                const model = await loadModel(
+                    `/models/${game}/layouts/${data.file}`,
+                    !isEditor && !isForExport
+                );
                 model.scene.name = data.file;
                 info = {
                     ...data,
