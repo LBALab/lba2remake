@@ -40,15 +40,12 @@ function patchIsoScenery(threeObject: THREE.Object3D) {
                 node.material = new THREE.MeshStandardMaterial({
                     map: mat.uniforms.library.value,
                 });
-            } else if (node.name.startsWith('textured_')
-                    && node.material instanceof THREE.RawShaderMaterial) {
+            } else if (node.material instanceof THREE.RawShaderMaterial) {
                 const mat = node.material as THREE.RawShaderMaterial;
                 node.material = new THREE.MeshStandardMaterial({
-                    map: mat.uniforms.uTexture.value,
+                    map: mat.uniforms.uTexture?.value || null,
                     transparent: mat.transparent
                 });
-            } else if (!(node.material instanceof THREE.MeshStandardMaterial)) {
-                node.material = new THREE.MeshStandardMaterial();
             }
         }
     });
