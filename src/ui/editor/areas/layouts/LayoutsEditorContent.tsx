@@ -149,7 +149,7 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
         this.onMouseUp = this.onMouseUp.bind(this);
         this.onMouseMove = this.onMouseMove.bind(this);
         this.onWheel = this.onWheel.bind(this);
-        this.listener = this.listener.bind(this);
+        this.onKeyDown = this.onKeyDown.bind(this);
         this.export = this.export.bind(this);
         this.exportTexture = this.exportTexture.bind(this);
         this.replaceByModel = this.replaceByModel.bind(this);
@@ -234,18 +234,18 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
 
     componentWillMount() {
         super.componentWillMount();
-        window.addEventListener('keydown', this.listener);
+        window.addEventListener('keydown', this.onKeyDown);
     }
 
     componentWillUnmount() {
         if (this.state.renderer) {
             this.state.renderer.dispose();
         }
-        window.removeEventListener('keydown', this.listener);
+        window.removeEventListener('keydown', this.onKeyDown);
         super.componentWillUnmount();
     }
 
-    listener(event) {
+    onKeyDown(event) {
         if (this.state.library) {
             switch (event.code) {
                 case 'ArrowLeft': {
@@ -274,6 +274,11 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
                 case 'KeyM': {
                     this.replaceByModel();
                     break;
+                }
+                case 'Enter': {
+                    if (event.shiftKey) {
+                        this.applyChanges();
+                    }
                 }
             }
         }
