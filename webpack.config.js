@@ -22,7 +22,7 @@ module.exports = {
     },
     module: {
         rules: [{
-            test: /((blockly|file-saver)\/.*\.js)$/,
+            test: /((blockly|file-saver|xxhash-wasm)\/.*\.js)$/,
             enforce: "pre",
             use: ["source-map-loader"],
         }, {
