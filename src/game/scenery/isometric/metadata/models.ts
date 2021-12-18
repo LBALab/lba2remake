@@ -123,7 +123,7 @@ export async function saveFullSceneModel(replacements, entry): Promise<void> {
             const uTexture = shaderMat.uniforms.uTexture;
             node.material = new THREE.MeshStandardMaterial({
                 opacity: shaderMat.opacity,
-                map: uTexture && uTexture.value
+                map: uTexture?.value || null
             });
         }
     });
