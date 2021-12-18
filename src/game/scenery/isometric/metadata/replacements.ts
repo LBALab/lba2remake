@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { each, last, find } from 'lodash';
-import XXH from 'xxhashjs';
+import XXH from 'xxhash-wasm';
 
 import { loadLUTTexture } from '../../../../utils/lut';
 import { loadPaletteTexture } from '../../../../texture';
@@ -15,6 +15,11 @@ import { loadFullSceneModel } from './models';
 import { getCommonResource } from '../../../../resources';
 import { getPartialMatrixWorld } from '../../../../utils/math';
 import { GROUND_TYPES } from '../grid';
+
+let h32Raw;
+XXH().then((xxh) => {
+    h32Raw = xxh.h32Raw;
+});
 
 export async function initReplacements(
     entry,
@@ -373,7 +378,7 @@ function appendMeshGeometry(
             canvas.height = image.height;
             context.drawImage(image, 0, 0);
             const imageData = context.getImageData(0, 0, image.width, image.height);
-            const textureId = XXH.h32(imageData.data.buffer, 0).toString(16);
+            const textureId = h32Raw(imageData.data.buffer, 0).toString(16);
             textureIdCache[texture.uuid] = textureId;
             geomGroup = `textured_${textureId}`;
         }
