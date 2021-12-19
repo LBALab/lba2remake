@@ -28,6 +28,7 @@ const patchesPerIsland: Record<string, PatchDefinition[]> = {
                 const lamp = new THREE.PointLight();
                 lamp.color.set(0xffffbb);
                 lamp.intensity = 500.0;
+                lamp.decay = 2;
                 lamp.userData.radius = 0.6;
                 lamp.position.set(0, 3, 0);
                 return [lamp];
