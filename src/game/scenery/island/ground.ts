@@ -221,7 +221,7 @@ export function loadGroundNormals(geometries, normalInfo: NormalInfo) {
             NORM2.fromArray(n);
             NORM.add(NORM2);
         });
-        NORM.divideScalar(normals.length);
+        NORM.normalize();
         vertexNormals.set(key, NORM.toArray());
     }
     for (const key of ground_colored) {

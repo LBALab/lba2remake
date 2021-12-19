@@ -166,11 +166,6 @@ function loadFaceSection(
     for (let i = 0; i < section.numFaces; i += 1) {
         const uvGroup = getUVGroup(model, section, i, atlas);
         const faceNormal = getFaceNormal(model, section, info, i);
-        const normalVec = new THREE.Vector3(
-            faceNormal[0],
-            faceNormal[1],
-            faceNormal[2]
-        ).normalize();
         const getNormal = (index) => {
             if (section.blockSize === 12 || section.blockSize === 16) {
                 return section.type === 1 ? faceNormal : getVertexNormal(model, info, index);
@@ -190,9 +185,9 @@ function loadFaceSection(
                 group = section.isTransparent ? 'objects_textured_transparent' : 'objects_textured';
                 textured = true;
                 if (section.isTransparent && TransparentObjectOffset[island.name]) {
-                    pos[0] -= TransparentObjectOffset[island.name] * normalVec.x;
-                    pos[1] -= TransparentObjectOffset[island.name] * normalVec.y;
-                    pos[2] -= TransparentObjectOffset[island.name] * normalVec.z;
+                    pos[0] -= TransparentObjectOffset[island.name] * faceNormal[0];
+                    pos[1] -= TransparentObjectOffset[island.name] * faceNormal[1];
+                    pos[2] -= TransparentObjectOffset[island.name] * faceNormal[2];
                 }
             }
             if (patch) {
@@ -235,6 +230,8 @@ function loadFaceSection(
     }
 }
 
+const TMP_NORMAL = new THREE.Vector3();
+
 function getFaceNormal(object, section: IslandObjectSection, info, i) {
     const vert = [];
     for (let j = 0; j < 3; j += 1) {
@@ -251,19 +248,26 @@ function getFaceNormal(object, section: IslandObjectSection, info, i) {
         vert[2][1] - vert[0][1],
         vert[2][2] - vert[0][2]
     ];
-    return [
+    TMP_NORMAL.set(
         (u[1] * v[2]) - (u[2] * v[1]),
         (u[2] * v[0]) - (u[0] * v[2]),
         (u[0] * v[1]) - (u[1] * v[0])
-    ];
+    );
+    TMP_NORMAL.normalize();
+    return TMP_NORMAL.toArray();
 }
 
 function getVertexNormal(object, info, index) {
-    return rotate([
+    TMP_NORMAL.fromArray(rotate([
         object.normals[index * 4],
         object.normals[(index * 4) + 1],
         object.normals[(index * 4) + 2]
-    ], info.angle);
+    ], info.angle));
+    if (TMP_NORMAL.x === 0 && TMP_NORMAL.y === 0 && TMP_NORMAL.z === 0) {
+        TMP_NORMAL.set(1, 0, 0);
+    }
+    TMP_NORMAL.normalize();
+    return TMP_NORMAL.toArray();
 }
 
 function getPosition(object, info, index) {
