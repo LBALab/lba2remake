@@ -57,6 +57,7 @@
     "json-loader": "^0.5.7",
     "node-libs-browser": "^1.1.1",
     "raw-loader": "^0.5.1",
+    "registry-js": "^1.15.1",
     "source-map-loader": "^0.2.4",
     "style-loader": "^2.0.0",
     "synth-js": "^0.1.2",
