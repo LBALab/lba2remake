@@ -252,7 +252,6 @@ if "bake" in steps:
 
         mat.node_tree.nodes.active = node_img
         obj.data.uv_layers['UVMap.001'].active = True
-        obj.data.use_auto_smooth = False
 
         bpy.ops.object.bake(use_clear=False, margin=margin, type='DIFFUSE', pass_filter={'DIRECT', 'INDIRECT'})
 
