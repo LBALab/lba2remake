@@ -49,7 +49,7 @@ export async function buildAtlas(scene: THREE.Object3D, params: BakeState) {
             geometries: geomInfo,
             params: {
                 resolution: params.textureSize,
-                margin: params.margin * 2
+                padding: params.padding
             }
         });
     });

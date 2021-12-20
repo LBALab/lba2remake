@@ -10,6 +10,7 @@ const GLTFViewer = {
         textureSize: 512,
         samples: 50,
         margin: 2,
+        padding: 2,
         denoise: 'FAST',
         dumpAfter: 'none',
         hdriRotation: 0,
@@ -24,6 +25,9 @@ const GLTFViewer = {
         },
         setMargin(margin) {
             this.setState({ margin });
+        },
+        setPadding(padding) {
+            this.setState({ padding });
         },
         setDenoise(denoise) {
             this.setState({ denoise });

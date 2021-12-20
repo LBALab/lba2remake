@@ -21,6 +21,7 @@ export interface BakeParams {
     textureSize: number;
     samples: number;
     margin: number;
+    padding: number;
     denoise: 'NONE' | 'FAST' | 'ACCURATE';
     dumpAfter: 'none' | 'import' | 'bake' | 'denoise' | 'apply';
     hdri?: string;

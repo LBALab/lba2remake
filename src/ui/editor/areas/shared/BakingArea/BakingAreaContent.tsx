@@ -7,6 +7,7 @@ interface Props {
         setTextureSize: (value: number) => void;
         setSamples: (value: number) => void;
         setMargin: (value: number) => void;
+        setPadding: (value: number) => void;
         setDenoise: (value: 'NONE' | 'FAST' | 'ACCURATE') => void;
         setDumpAfter: (value: string) => void;
         setHdri: (value?: string) => void;
@@ -176,13 +177,23 @@ export default class BakingAreaContent extends React.Component<Props, State> {
                     </div>
                 </div>
                 <div style={formLineStyle}>
-                    Margin:
+                    Bake margin:
                     <div style={formControlStyle}>
                         <input type="number"
                                 value={sharedState.margin}
                                 min={0}
                                 max={32}
                                 onChange={e => stateHandler.setMargin(Number(e.target.value))}/>
+                    </div>
+                </div>
+                <div style={formLineStyle}>
+                    UV charts padding:
+                    <div style={formControlStyle}>
+                        <input type="number"
+                                value={sharedState.padding}
+                                min={0}
+                                max={32}
+                                onChange={e => stateHandler.setPadding(Number(e.target.value))}/>
                     </div>
                 </div>
                 <div style={formLineStyle}>
