@@ -63,9 +63,17 @@ export function bake(req, res) {
 
             const errors = [];
             bl.stderr.on('data', (data) => {
-                const content = data.toString();
-                console.error(`[JOB:${jobId}][ERROR]: ${content}`);
-                errors.push(content);
+                data.toString().split('\n').forEach((content) => {
+                    let severity = 'WARNING';
+                    const isWhiteSpace = /^[\r\n\s]*$/.test(content);
+                    if (!content.includes('E1220') && !isWhiteSpace) {
+                        severity = 'ERROR';
+                        errors.push(content);
+                    }
+                    if (!isWhiteSpace) {
+                        console.error(`[JOB:${jobId}][${severity}]: ${content}`);
+                    }
+                })
             });
 
             bl.on('close', (code) => {
