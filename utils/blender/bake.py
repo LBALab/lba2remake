@@ -268,6 +268,8 @@ if "apply" in steps:
         print("[PROGRESS]:Denoising", flush=True)
         scene_nodes = bpy.data.scenes["Scene"].node_tree.nodes
         scene_nodes['Image'].image = bpy.data.images['BakeTarget']
+        bpy.data.images['BakeTarget'].use_fake_user = True
+        bpy.data.images['BakeTarget'].pack()
         tmpfilename = '/tmp/lightmap0001.exr'
         print("Saving lightmap: ", tmpfilename)
         scene_nodes['File Output'].base_path = '/tmp'
@@ -281,6 +283,9 @@ if "apply" in steps:
     else:
         lightmap = bpy.data.images['BakeTarget']
         lightmap.name = 'Lightmap'
+
+    lightmap.use_fake_user = True
+    lightmap.pack()
 
     if args.dumpAfter == "denoise":
         print("[PROGRESS]:Dumping", flush=True)
