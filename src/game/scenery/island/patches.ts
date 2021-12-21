@@ -12,6 +12,11 @@ const emeraldRoofLampMat = new THREE.MeshPhysicalMaterial({
     emissiveIntensity: 20.0,
 });
 
+const doorSignMat = new THREE.MeshPhysicalMaterial({
+    emissive: 0xe04c39,
+    emissiveIntensity: 10.0,
+});
+
 const patchesPerIsland: Record<string, PatchDefinition[]> = {
     CITADEL: [
         {
@@ -137,6 +142,38 @@ const patchesPerIsland: Record<string, PatchDefinition[]> = {
             data: {
                 group: 'roof_lamps',
                 getMaterial: () => emeraldRoofLampMat,
+            }
+        },
+        {
+            model: 18,
+            sections: [0, 1],
+            data: {
+                group: 'door_signs',
+                getMaterial: () => doorSignMat,
+            }
+        },
+        {
+            model: 19,
+            sections: [0, 1],
+            data: {
+                group: 'door_signs',
+                getMaterial: () => doorSignMat,
+            }
+        },
+        {
+            model: 27,
+            sections: [0, 1],
+            data: {
+                group: 'door_signs',
+                getMaterial: () => doorSignMat,
+            }
+        },
+        {
+            model: 28,
+            sections: [0, 1],
+            data: {
+                group: 'door_signs',
+                getMaterial: () => doorSignMat,
             }
         }
     ],
