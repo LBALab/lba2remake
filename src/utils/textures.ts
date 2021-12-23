@@ -1,4 +1,6 @@
+import * as THREE from 'three';
 import { saveAs } from 'file-saver';
+import { getPalette } from '../resources';
 
 let expCanvas;
 let expCtx;
@@ -35,11 +37,27 @@ export async function convertTextureForExport(texture, index) {
     return newTexture;
 }
 
+// @ts-ignore
+async function savePalette(filename) {
+    const palette = await getPalette();
+    const texture = new THREE.DataTexture(palette, 16, 16, THREE.RGBFormat, THREE.UnsignedByteType);
+    saveTexture(texture, 'palette.png');
+}
+
 async function extractImageFromTexture(texture) {
     const {width, height, data: image_data} = texture.image;
-    const arr = new Uint8ClampedArray(width * height * 4);
-    for (let i = 0; i < arr.length; i += 1) {
-        arr[i] = image_data[i];
+    const numPix = width * height;
+    const numElems = texture.format === THREE.RGBAFormat ? 4 : 3;
+    const arr = new Uint8ClampedArray(numPix * 4);
+    for (let i = 0; i < numPix; i += 1) {
+        arr[i * 4] = image_data[i * numElems];
+        arr[i * 4 + 1] = image_data[i * numElems + 1];
+        arr[i * 4 + 2] = image_data[i * numElems + 2];
+        if (texture.format === THREE.RGBAFormat) {
+            arr[i * 4 + 3] = image_data[i * numElems + 3];
+        } else {
+            arr[i * 4 + 3] = 255;
+        }
     }
     const imageData = new ImageData(arr, width, height);
     const img = await createImageBitmap(imageData);

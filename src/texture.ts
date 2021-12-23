@@ -31,7 +31,7 @@ export function loadPaletteTexture(palette: Uint8Array) {
     return texture;
 }
 
-export function loadTexture(buffer: ArrayBuffer, palette: Uint8Array) {
+export function loadTexture(buffer: ArrayBuffer, palette: Uint8Array, useMipMaps = true) {
     const pixel_data = new Uint8Array(buffer);
     let image_data = new Uint8Array(256 * 256 * 4);
     for (let x = 0; x < 256; x += 1) {
@@ -40,11 +40,11 @@ export function loadTexture(buffer: ArrayBuffer, palette: Uint8Array) {
             image_data[idx * 4] = pixel_data[idx];
             image_data[(idx * 4) + 1] = 0;
             image_data[(idx * 4) + 2] = 0;
-            image_data[(idx * 4) + 3] = 0;
+            image_data[(idx * 4) + 3] = pixel_data[idx] === 0 ? 0 : 0xFF;
         }
     }
     const texture = new THREE.DataTexture(
-        null,
+        useMipMaps ? null : image_data,
         256,
         256,
         THREE.RGBAFormat,
@@ -55,21 +55,23 @@ export function loadTexture(buffer: ArrayBuffer, palette: Uint8Array) {
         THREE.NearestFilter,
         THREE.NearestMipMapNearestFilter
     );
-    texture.mipmaps = [{
-        // @ts-ignore
-        data: image_data,
-        width: 256,
-        height: 256
-    }];
-    for (let level = 1; level <= 8; level += 1) {
-        const dim = Math.pow(2, 8 - level);
-        image_data = loadMipmapLevelPal(image_data, level, palette);
-        texture.mipmaps.push({
+    if (useMipMaps) {
+        texture.mipmaps = [{
             // @ts-ignore
             data: image_data,
-            width: dim,
-            height: dim
-        });
+            width: 256,
+            height: 256
+        }];
+        for (let level = 1; level <= 8; level += 1) {
+            const dim = Math.pow(2, 8 - level);
+            image_data = loadMipmapLevelPal(image_data, level, palette);
+            texture.mipmaps.push({
+                // @ts-ignore
+                data: image_data,
+                width: dim,
+                height: dim
+            });
+        }
     }
     texture.needsUpdate = true;
     texture.generateMipmaps = false;
