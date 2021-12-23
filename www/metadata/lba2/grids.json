@@ -5365,6 +5365,35 @@
             }
         }
     },
+    "92": {
+        "models": [
+            {
+                "name": "OT_187_bottle_cap.glb",
+                "position": {
+                    "x": 21.5,
+                    "y": 1,
+                    "z": 36
+                },
+                "quaternion": [
+                    0,
+                    0.7071067811865474,
+                    0,
+                    -0.7071067811865477
+                ]
+            }
+        ],
+        "patches": {
+            "21x2x37": {
+                "hide": true
+            },
+            "21x2x36": {
+                "hide": true
+            },
+            "20x2x37": {
+                "hide": true
+            }
+        }
+    },
     "111": {
         "models": [],
         "patches": {
