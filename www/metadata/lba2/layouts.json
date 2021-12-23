@@ -4977,6 +4977,11 @@
       "file": "OT_201_animal_cage.glb",
       "orientation": 0
     },
+    "202": {
+      "replace": true,
+      "file": "OT_202_candelabra.glb",
+      "orientation": 0
+    },
     "203": {
       "replace": true,
       "file": "OT_203_three_teapots.glb",
