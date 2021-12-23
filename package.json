@@ -25,6 +25,7 @@
     "blockly": "^3.20200924.4",
     "color-convert": "^2.0.1",
     "file-saver": "^2.0.5",
+    "hash-wasm": "^4.9.0",
     "jest-diff": "^25.5.0",
     "jszip": "^3.7.0",
     "lodash": "^4.17.21",
@@ -35,8 +36,7 @@
     "sass-loader": "^12.3.0",
     "simplex-noise": "^2.4.0",
     "three": "^0.127.0",
-    "webxr-polyfill": "^2.0.3",
-    "xxhash-wasm": "^0.4.2"
+    "webxr-polyfill": "^2.0.3"
   },
   "devDependencies": {
     "@babel/core": "^7.14.3",

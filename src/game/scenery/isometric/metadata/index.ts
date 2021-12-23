@@ -3,6 +3,7 @@ import {
     initReplacements,
     applyReplacement,
     buildReplacementMeshes,
+    addReplacementObject,
 } from './replacements';
 import { processLayoutMirror, buildMirrors } from './mirrors';
 import { saveFullSceneModel } from './models';
@@ -36,7 +37,7 @@ export async function extractBricksReplacementInfo(
     );
     const mirrorGroups = {};
 
-    computeReplacements({
+    await computeReplacements({
         grid,
         layoutsMetadata,
         replacements,
@@ -70,21 +71,25 @@ export async function saveSceneReplacementModel(entry, ambience) {
     const layoutsMetadata = await loadLayoutsMetadata(entry, grid.library, true, true);
     const replacements = await initReplacements(entry, layoutsMetadata, ambience, true, 0);
 
-    computeReplacements({grid, layoutsMetadata, replacements});
+    await computeReplacements({grid, layoutsMetadata, replacements});
     buildReplacementMeshes(replacements);
     await saveFullSceneModel(replacements, entry);
 }
 
-function computeReplacements({
+async function computeReplacements({
     grid,
     layoutsMetadata,
     replacements,
     mirrorGroups = null,
     apply = false
 }) {
+    const objectsToAdd = [];
     for (const variant of layoutsMetadata.variants) {
         forEachCell(grid, layoutsMetadata, (_layoutInfo, layout, x, y, z) => {
-            checkVariant(grid, x, y, z, replacements, variant, layout);
+            const objToAdd = checkVariant(grid, x, y, z, replacements, variant, layout);
+            if (objToAdd) {
+                objectsToAdd.push(objToAdd);
+            }
         });
     }
     forEachCell(grid, layoutsMetadata, (layoutInfo, layout, x, y, z) => {
@@ -99,11 +104,14 @@ function computeReplacements({
             }
         }
     });
+    for (const objToAdd of objectsToAdd) {
+        await addReplacementObject(objToAdd);
+    }
 }
 
 function checkVariant(grid, xStart, yStart, zStart, replacements, variant, layout) {
     if (checkVariantMatch(grid, xStart, yStart, zStart, variant.props, replacements)) {
-        applyReplacement(xStart, yStart, zStart, replacements, {
+        return applyReplacement(xStart, yStart, zStart, replacements, {
             type: 'variant',
             data: variant.props,
             replacementData: {
