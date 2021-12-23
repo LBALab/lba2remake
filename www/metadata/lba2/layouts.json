@@ -4972,6 +4972,11 @@
       "file": "OT_200_blue_wooden_box.glb",
       "orientation": 0
     },
+    "201": {
+      "replace": true,
+      "file": "OT_201_animal_cage.glb",
+      "orientation": 0
+    },
     "203": {
       "replace": true,
       "file": "OT_203_three_teapots.glb",
