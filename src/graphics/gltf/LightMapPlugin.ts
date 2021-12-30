@@ -9,6 +9,7 @@ interface GLTFParserExt extends GLTFParser {
 
 const exrLoader = new EXRLoader();
 const rgbeLoader = new RGBELoader();
+rgbeLoader.setDataType(THREE.FloatType);
 
 export default class LightMapPlugin implements GLTFLoaderPlugin {
     parser: GLTFParserExt;
@@ -63,7 +64,7 @@ export default class LightMapPlugin implements GLTFLoaderPlugin {
                     texture.flipY = 'exrImageIndex' in details;
                     texture.minFilter = THREE.LinearFilter;
                     texture.magFilter = THREE.LinearFilter;
-                    if ('hdrImageIndex' in details) {
+                    if ('hdrImageIndex' in details && texture.type === THREE.UnsignedByteType) {
                         texture.encoding = THREE.RGBEEncoding;
                     }
                     materialParams.lightMap = texture;
