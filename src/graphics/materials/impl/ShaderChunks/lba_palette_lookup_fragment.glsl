@@ -12,6 +12,7 @@
     if (palIndex < 16.0) {
         diffuseColor.a = 0.0;
     }
-    reflectedLight.indirectDiffuse /= lIntensity;
+    vec3 hsv = rgb2hsv(reflectedLight.indirectDiffuse);
+    reflectedLight.indirectDiffuse = hsv2rgb(vec3(hsv.x, hsv.y, 1.0));
+    // diffuseColor.rgb = vec3(1.0);
 #endif
-// diffuseColor.rgb *= lightColor;
