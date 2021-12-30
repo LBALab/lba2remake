@@ -13,8 +13,8 @@ const emeraldRoofLampMat = new THREE.MeshPhysicalMaterial({
 });
 
 const doorSignMat = new THREE.MeshPhysicalMaterial({
-    emissive: 0xe04c39,
-    emissiveIntensity: 10.0,
+    emissive: 0x892e22,
+    emissiveIntensity: 7.0,
 });
 
 const patchesPerIsland: Record<string, PatchDefinition[]> = {
@@ -74,34 +74,9 @@ const patchesPerIsland: Record<string, PatchDefinition[]> = {
             data: {
                 group: 'ground_lamps',
                 getMaterial: () => new THREE.MeshPhysicalMaterial({
-                    emissive: 0xffffcc,
-                    emissiveIntensity: 10.0,
+                    emissive: 0xacae33,
+                    emissiveIntensity: 20.0,
                 }),
-            }
-        },
-        {
-            model: 20,
-            sections: [2, 3],
-            data: {
-                group: 'spaceship_windows',
-                getMaterial: () => new THREE.MeshPhysicalMaterial({
-                    color: 0x2787A7,
-                    emissive: 0x2787A7,
-                    emissiveIntensity: 1.0,
-                }),
-            }
-        },
-        {
-            model: 21,
-            sections: [2],
-            data: {
-                group: 'spaceship_windows',
-                getMaterial: () => new THREE.MeshPhysicalMaterial({
-                    color: 0x2787A7,
-                    emissive: 0x2787A7,
-                    emissiveIntensity: 1.0,
-                }),
-                onlyIf: ({basePos}) => basePos[0] > -1
             }
         },
         {
@@ -185,7 +160,7 @@ const patchesPerIsland: Record<string, PatchDefinition[]> = {
                 group: 'lamps',
                 getMaterial: () => new THREE.MeshPhysicalMaterial({
                     emissive: 0xffffdd,
-                    emissiveIntensity: 100.0,
+                    emissiveIntensity: 200.0,
                 }),
             }
         },
