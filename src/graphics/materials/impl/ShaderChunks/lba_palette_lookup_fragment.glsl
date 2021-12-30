@@ -1,8 +1,6 @@
 #ifdef USE_INDEXED_COLORS
     float lIntensity = length(reflectedLight.indirectDiffuse);
-    float x = mod(palIndex, 16.0);
-    x -= 8.0;
-    x += lIntensity * 8.0; // 3.0 for CITABAU
+    float x = mod(palIndex, 16.0) + lIntensity * PAL_EXPOSURE - 8.0;
     float y = floor(palIndex / 16.0);
     vec2 uvP = vec2(x, y) * 0.0625 + 0.03125;
     vec3 palColor1 = texture2D( palette, uvP ).rgb;

@@ -7,10 +7,16 @@ export default class LBAMaterialsPlugin implements GLTFLoaderPlugin {
     parser: GLTFParser;
     name = 'LBA2R_lba_materials';
     textures: Record<string, THREE.DataTexture>;
+    palExposure: number;
 
-    constructor(parser: GLTFParser, textures: Record<string, THREE.DataTexture> = {}) {
+    constructor(
+        parser: GLTFParser,
+        textures: Record<string, THREE.DataTexture> = {},
+        palExposure = 3
+    ) {
         this.parser = parser;
         this.textures = textures;
+        this.palExposure = palExposure;
     }
 
     async afterRoot(result: GLTF) {
@@ -108,6 +114,7 @@ export default class LBAMaterialsPlugin implements GLTFLoaderPlugin {
             }
             if (useIndexedColors) {
                 materialParams.useIndexedColors = true;
+                materialParams.palExposure = this.palExposure;
             }
         }
         return;

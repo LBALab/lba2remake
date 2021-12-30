@@ -15,6 +15,7 @@ interface LBABasicMaterialParams extends THREE.MeshBasicMaterialParameters {
     useTextureAtlas?: boolean;
     atlasMode?: 'model' | 'island';
     useIndexedColors?: boolean;
+    palExposure?: number;
     bones?: BoneBindings;
 }
 
@@ -28,11 +29,22 @@ export default class LBABasicMaterial extends THREE.MeshBasicMaterial {
     useTextureAtlas = false;
     atlasMode: 'model' | 'island' = 'model';
     useIndexedColors = false;
+    palExposure = 3;
 
     constructor(parameters: LBABasicMaterialParams = {}) {
-        super(omit(parameters, ['mixColorAndTexture', 'useTextureAtlas', 'atlasMode', 'useIndexedColors']));
+        super(omit(parameters, [
+            'mixColorAndTexture',
+            'useTextureAtlas',
+            'atlasMode',
+            'useIndexedColors',
+            'palExposure',
+        ]));
 
         this.type = 'LBABasicMaterial';
+
+        if ('palExposure' in parameters) {
+            this.palExposure = parameters.palExposure;
+        }
 
         if (parameters.mixColorAndTexture) {
             this.defines.USE_MIX_MAP_COLOR = '';
@@ -46,6 +58,7 @@ export default class LBABasicMaterial extends THREE.MeshBasicMaterial {
         }
         if (parameters.useIndexedColors) {
             this.defines.USE_INDEXED_COLORS = '';
+            this.defines.PAL_EXPOSURE = this.palExposure.toFixed(3);
         }
 
         this.mixColorAndTexture = !!parameters.mixColorAndTexture;
@@ -71,12 +84,14 @@ export default class LBABasicMaterial extends THREE.MeshBasicMaterial {
         }
         if (source.useIndexedColors) {
             this.defines.USE_INDEXED_COLORS = '';
+            this.defines.PAL_EXPOSURE = source.palExposure.toFixed(3);
         }
 
         this.useTextureAtlas = source.useTextureAtlas;
         this.mixColorAndTexture = source.mixColorAndTexture;
         this.atlasMode = source.atlasMode;
         this.useIndexedColors = source.useIndexedColors;
+        this.palExposure = source.palExposure;
 
         return this;
     }

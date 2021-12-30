@@ -15,6 +15,12 @@ export async function hasBakedModel(name: string) {
     return info.ok;
 }
 
+const palExposures = {
+    CITADEL: 9,
+    CITABAU: 5,
+    DESERT: 5,
+};
+
 export async function loadBakedModel(
     data: IslandData,
     models: IslandModel[]
@@ -26,7 +32,7 @@ export async function loadBakedModel(
     };
     const loader = new GLTFLoader();
     loader.register(parser => new LightMapPlugin(parser));
-    loader.register(parser => new LBAMaterialsPlugin(parser, textures));
+    loader.register(parser => new LBAMaterialsPlugin(parser, textures, palExposures[data.name]));
     await registerPalette();
     const gltf = await loader.loadAsync(`models/lba2/islands/${data.name}.glb`);
     return gltf.scene;

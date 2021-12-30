@@ -15,6 +15,7 @@ interface LBAStandardMaterialParams extends THREE.MeshStandardMaterialParameters
     useTextureAtlas?: boolean;
     atlasMode?: 'model' | 'island';
     useIndexedColors?: boolean;
+    palExposure?: number;
     bones?: BoneBindings;
 }
 
@@ -28,6 +29,7 @@ export default class LBAStandardMaterial extends THREE.MeshStandardMaterial {
     useTextureAtlas = false;
     atlasMode: 'model' | 'island' = 'model';
     useIndexedColors = false;
+    palExposure = 3;
     bones: BoneBindings;
 
     constructor(parameters: LBAStandardMaterialParams = {}) {
@@ -37,11 +39,16 @@ export default class LBAStandardMaterial extends THREE.MeshStandardMaterial {
             'atlasMode',
             'bones',
             'useIndexedColors',
+            'palExposure',
         ]));
 
         this.roughness = 0.75;
 
         this.type = 'LBAStandardMaterial';
+
+        if ('palExposure' in parameters) {
+            this.palExposure = parameters.palExposure;
+        }
 
         if (parameters.mixColorAndTexture) {
             this.defines.USE_MIX_MAP_COLOR = '';
@@ -54,6 +61,7 @@ export default class LBAStandardMaterial extends THREE.MeshStandardMaterial {
         }
         if (parameters.useIndexedColors) {
             this.defines.USE_INDEXED_COLORS = '';
+            this.defines.PAL_EXPOSURE = this.palExposure.toFixed(3);
         }
         if (parameters.bones) {
             this.defines.USE_LBA_BONES = '';
@@ -84,6 +92,7 @@ export default class LBAStandardMaterial extends THREE.MeshStandardMaterial {
         }
         if (source.useIndexedColors) {
             this.defines.USE_INDEXED_COLORS = '';
+            this.defines.PAL_EXPOSURE = source.palExposure.toFixed(3);
         }
         if (source.bones) {
             this.defines.USE_LBA_BONES = '';
@@ -95,6 +104,7 @@ export default class LBAStandardMaterial extends THREE.MeshStandardMaterial {
         this.mixColorAndTexture = source.mixColorAndTexture;
         this.atlasMode = source.atlasMode;
         this.useIndexedColors = source.useIndexedColors;
+        this.palExposure = source.palExposure;
         this.bones = source.bones;
 
         return this;
