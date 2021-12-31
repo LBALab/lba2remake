@@ -45,7 +45,6 @@ export function loadTexture(buffer: ArrayBuffer, palette: Uint8Array, useMipMaps
         THREE.NearestFilter,
         useMipMaps ? THREE.NearestMipMapNearestFilter : THREE.NearestFilter
     );
-    texture.anisotropy = 16;
     if (useMipMaps) {
         texture.mipmaps = [{
             // @ts-ignore

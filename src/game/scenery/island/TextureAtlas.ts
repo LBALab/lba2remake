@@ -170,7 +170,6 @@ export default class TextureAtlas {
         );
         texture.needsUpdate = true;
         texture.generateMipmaps = !this.useIndexedTexture;
-        texture.anisotropy = 16;
         return texture;
     }
 
