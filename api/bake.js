@@ -66,7 +66,7 @@ export function bake(req, res) {
                 data.toString().split('\n').forEach((content) => {
                     let severity = 'WARNING';
                     const isWhiteSpace = /^[\r\n\s]*$/.test(content);
-                    if (!content.includes('E1220') && !isWhiteSpace) {
+                    if (!content.includes('E1220') && !content.includes('E1231') && !isWhiteSpace) {
                         severity = 'ERROR';
                         errors.push(content);
                     }
