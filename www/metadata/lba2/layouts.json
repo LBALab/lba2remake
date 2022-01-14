@@ -5375,6 +5375,11 @@
       "file": "FI_033_table.glb",
       "orientation": 0
     },
+    "36": {
+      "replace": true,
+      "file": "FI_036_stool.glb",
+      "orientation": 0
+    },
     "37": {
       "replace": true,
       "file": "FI_037_francos_building_wall_short_var.glb",
@@ -5403,6 +5408,11 @@
     "56": {
       "replace": true,
       "file": "FI_056_drinks_and_flower.glb",
+      "orientation": 0
+    },
+    "69": {
+      "replace": true,
+      "file": "FI_069_short_stool.glb",
       "orientation": 0
     },
     "72": {
