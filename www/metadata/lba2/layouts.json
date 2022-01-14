@@ -5310,6 +5310,11 @@
       "file": "FI_006_francos_building_wall_corner_front.glb",
       "orientation": 0
     },
+    "7": {
+      "replace": true,
+      "file": "FI_007_bar_counter_pillar.glb",
+      "orientation": 0
+    },
     "8": {
       "replace": true,
       "file": "FI_008_francos_building_wall_round_corner.glb",
