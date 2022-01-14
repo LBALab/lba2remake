@@ -5284,6 +5284,153 @@
       "mirror": true
     }
   },
+  "15": {
+    "2": {
+      "replace": true,
+      "file": "FI_002_003_francos_building_wall.glb",
+      "orientation": 0
+    },
+    "3": {
+      "replace": true,
+      "file": "FI_002_003_francos_building_wall.glb",
+      "orientation": 1
+    },
+    "4": {
+      "replace": true,
+      "file": "FI_004_005_francos_building_wall_corner_side.glb",
+      "orientation": 0
+    },
+    "5": {
+      "replace": true,
+      "file": "FI_004_005_francos_building_wall_corner_side.glb",
+      "orientation": 2
+    },
+    "6": {
+      "replace": true,
+      "file": "FI_006_francos_building_wall_corner_front.glb",
+      "orientation": 0
+    },
+    "8": {
+      "replace": true,
+      "file": "FI_008_francos_building_wall_round_corner.glb",
+      "orientation": 0
+    },
+    "17": {
+      "replace": true,
+      "file": "FI_017_francos_building_wall_window_big.glb",
+      "orientation": 0
+    },
+    "18": {
+      "replace": true,
+      "file": "FI_018_francos_building_wall_window_big.glb",
+      "orientation": 0
+    },
+    "19": {
+      "replace": true,
+      "file": "FI_019_francos_building_wall_short_window.glb",
+      "orientation": 2
+    },
+    "20": {
+      "replace": true,
+      "file": "FI_020_francos_building_wall_window.glb",
+      "orientation": 0
+    },
+    "23": {
+      "replace": true,
+      "file": "FI_023_francos_doorframe.glb",
+      "orientation": 0
+    },
+    "24": {
+      "replace": true,
+      "file": "FI_024_francos_doorframe.glb",
+      "orientation": 0
+    },
+    "26": {
+      "replace": true,
+      "file": "FI_026_ice_creams_and_cup.glb",
+      "orientation": 0
+    },
+    "27": {
+      "replace": true,
+      "file": "FI_027_francos_building_wall_key_cupboard_closed.glb",
+      "orientation": 0
+    },
+    "29": {
+      "replace": true,
+      "file": "FI_029_030_francos_building_wall_shelf.glb",
+      "orientation": 0
+    },
+    "30": {
+      "replace": true,
+      "file": "FI_029_030_francos_building_wall_shelf.glb",
+      "orientation": 1
+    },
+    "33": {
+      "replace": true,
+      "file": "FI_033_table.glb",
+      "orientation": 0
+    },
+    "37": {
+      "replace": true,
+      "file": "FI_037_francos_building_wall_short_var.glb",
+      "orientation": 3
+    },
+    "38": {
+      "replace": true,
+      "file": "FI_038_francos_building_wall_short_var.glb",
+      "orientation": 0
+    },
+    "39": {
+      "replace": true,
+      "file": "FI_039_francos_building_wall_corner_short.glb",
+      "orientation": 2
+    },
+    "40": {
+      "replace": true,
+      "file": "FI_040_francos_building_wall_short_round_corner.glb",
+      "orientation": 2
+    },
+    "43": {
+      "replace": true,
+      "file": "FI_043_francos_building_wall_table.glb",
+      "orientation": 0
+    },
+    "56": {
+      "replace": true,
+      "file": "FI_056_drinks_and_flower.glb",
+      "orientation": 0
+    },
+    "72": {
+      "replace": true,
+      "file": "FI_072_baby_bottles.glb",
+      "orientation": 0
+    },
+    "76": {
+      "replace": true,
+      "file": "FI_076_francos_building_wall_key_cupboard_open.glb",
+      "orientation": 0
+    },
+    "77": {
+      "replace": true,
+      "file": "FI_077_francos_building_wall_cupboard.glb",
+      "orientation": 0
+    },
+    "81": {
+      "replace": true,
+      "file": "FI_081_francos_building_wall_window_covered.glb",
+      "orientation": 0
+    },
+    "82": {
+      "replace": true,
+      "file": "FI_082_francos_building_wall_window_big_covered.glb",
+      "orientation": 0
+    },
+    "84": {
+      "replace": true,
+      "file": "FI_084_dark_monk_altar.glb",
+      "orientation": 0
+    }
+  },
   "16": {
     "2": {
       "mirror": true
