@@ -386,7 +386,9 @@
       "type": "boolean"
     },
     null,
-    null,
+    {
+      "name": "desert_island_peddler_location"
+    },
     {
       "name": "weather_wizard_disappeared",
       "type": "boolean"
