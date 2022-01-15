@@ -582,7 +582,10 @@
       "type": "boolean"
     },
     null,
-    null,
+    {
+      "name": "emperor_has_launched_moon",
+      "type": "boolean"
+    },
     {
       "name": "joe_state",
       "type": "enum",
