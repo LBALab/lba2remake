@@ -5405,9 +5405,44 @@
       "file": "FI_043_francos_building_wall_table.glb",
       "orientation": 0
     },
+    "45": {
+      "replace": true,
+      "file": "FI_045_health_heart.glb",
+      "orientation": 0
+    },
+    "51": {
+      "replace": true,
+      "file": "FI_051_empty_mug.glb",
+      "orientation": 0
+    },
+    "52": {
+      "replace": true,
+      "file": "FI_052_flower_pot.glb",
+      "orientation": 0
+    },
+    "53": {
+      "replace": true,
+      "file": "FI_053_liquor_bottle_and_mug.glb",
+      "orientation": 0
+    },
+    "54": {
+      "replace": true,
+      "file": "FI_054_liquor_bottle.glb",
+      "orientation": 0
+    },
+    "55": {
+      "replace": true,
+      "file": "FI_055_empty_mug.glb",
+      "orientation": 0
+    },
     "56": {
       "replace": true,
       "file": "FI_056_drinks_and_flower.glb",
+      "orientation": 0
+    },
+    "61": {
+      "replace": true,
+      "file": "FI_061_magic_bottle.glb",
       "orientation": 0
     },
     "69": {
