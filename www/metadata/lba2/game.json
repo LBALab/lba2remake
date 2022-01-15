@@ -514,7 +514,14 @@
     null,
     null,
     null,
-    null,
+    {
+      "name": "cx_to_mosquibee_elevator_direction",
+      "type": "enum",
+      "enumValues": {
+        "0": "mosquibee_to_cx",
+        "1": "cx_to_mosquibee"
+      }
+    },
     null,
     null,
     null,

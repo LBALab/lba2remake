@@ -12,5 +12,20 @@
     "to_outside",
     "stones1",
     "stones2"
+  ],
+  "varcubes": [
+    {
+      "name": "unused_0"
+    },
+    {
+      "name": "in_conversation_with",
+      "type": "enum",
+      "enumValues": {
+        "0": "None",
+        "1": "EscapedMosquibee1",
+        "2": "EscapedMosquibee2",
+        "3": "EscapedMosquibee3"
+      }
+    }
   ]
 }
