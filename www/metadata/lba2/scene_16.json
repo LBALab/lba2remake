@@ -31,5 +31,11 @@
     "conveyor_belt_altitude3",
     "conveyor_belt_altitude4",
     "conveyor_belt_altitude5"
+  ],
+  "varcubes": [
+    {
+      "name": "following_box_movement",
+      "type": "boolean"
+    }
   ]
 }

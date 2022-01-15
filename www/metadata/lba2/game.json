@@ -217,7 +217,15 @@
       "name": "baggage_claim_downstairs_door_opened",
       "type": "boolean"
     },
-    null,
+    {
+      "name": "baggage_claim_package_state",
+      "type": "enum",
+      "enumValues": {
+        "0": "available_in_labyrinth",
+        "1": "collected_in_labyrinth",
+        "2": "broken_collected_and_exited_baggage_claim"
+      }
+    },
     {
       "name": "lighthouse_keeper",
       "type": "enum",
