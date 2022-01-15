@@ -487,7 +487,17 @@
     },
     null,
     null,
-    null,
+    {
+      "name": "dissidents_story_progress",
+      "type": "enum",
+      "enumValues": {
+        "0": "talk_to_souvenir_vendor",
+        "1": "reach_ortingal_harbor",
+        "2": "talk_to_rick",
+        "3": "talk_to_johnny_rocket",
+        "4": "deliver_dissidents_ring"
+      }
+    },
     null,
     null,
     null,
