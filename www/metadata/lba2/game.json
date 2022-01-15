@@ -520,10 +520,38 @@
     null,
     null,
     null,
-    null,
-    null,
-    null,
-    null,
+    {
+      "name": "mosquibee_island_upper_exit_gem_found",
+      "type": "boolean"
+    },
+    {
+      "name": "volcano_island_ferryman_area_gem_bitmask",
+      "type": "enum",
+      "enumValues": {
+        "0": "none",
+        "1": "1",
+        "2": "2",
+        "3": "1,2"
+      }
+    },
+    {
+      "name": "volcano_island_cave_area_gem_bitmask",
+      "type": "enum",
+      "enumValues": {
+        "0": "none",
+        "1": "1",
+        "2": "2",
+        "3": "1,2",
+        "4": "3",
+        "5": "1,3",
+        "6": "1,2",
+        "7": "1,2,3"
+      }
+    },
+    {
+      "name": "volcano_island_cave_gem_found",
+      "type": "boolean"
+    },
     null,
     null,
     null,
@@ -664,7 +692,10 @@
     },
     null,
     null,
-    null,
+    {
+      "name": "volcano_island_or_islandcx_corridor_cloverbox_collected",
+      "type": "boolean"
+    },
     null,
     null,
     null,
