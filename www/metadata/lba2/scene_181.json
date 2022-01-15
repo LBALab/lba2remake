@@ -40,5 +40,13 @@
     "emperors_chest",
     "cam_time_lever_platform",
     "fire_extiguisher"
+  ],
+  "varcubes": [
+    {
+      "name": "unused_0"
+    },
+    {
+      "name": "emperor_hit_counter"
+    }
   ]
 }
