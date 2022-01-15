@@ -18,5 +18,11 @@
     "elevator_shaft",
     "under_bridge1",
     "under_bridge2"
+  ],
+  "varcubes": [
+    {
+      "name": "give_spider_bonus",
+      "type": "boolean"
+    }
   ]
 }

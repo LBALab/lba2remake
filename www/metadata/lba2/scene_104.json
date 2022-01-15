@@ -47,5 +47,20 @@
     "soldier1_placement",
     "bridge_soldier1_left",
     "throne_front"
+  ],
+  "varcubes": [
+    {
+      "name": "in_conversation_with",
+      "type": "enum",
+      "enumValues": {
+        "0": "None",
+        "1": "QueenAstrid",
+        "2": "JoanLoumin"
+      }
+    },
+    {
+      "name": "tried_to_leave",
+      "type": "boolean"
+    }
   ]
 }
