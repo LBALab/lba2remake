@@ -418,7 +418,10 @@
     null,
     null,
     null,
-    null,
+    {
+      "name": "moon_alarm_active",
+      "type": "boolean"
+    },
     null,
     null,
     null,

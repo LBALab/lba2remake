@@ -10,8 +10,8 @@
     "MetallicDoor2",
     "MetallicDoor3",
     "Spacesuit",
-    null,
-    null,
+    "AlarmedFrancoGuard",
+    "AlarmButton",
     "Fan"
   ],
   "zoneNames": [

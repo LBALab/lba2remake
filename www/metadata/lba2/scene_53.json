@@ -8,8 +8,8 @@
     "Door",
     "Spacesuit",
     "Baldino",
-    null,
-    null,
+    "AlarmedFrancoGuard",
+    "Alarmbutton",
     "Fan"
   ],
   "zoneNames": [
