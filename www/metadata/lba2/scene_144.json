@@ -12,7 +12,7 @@
     "Lever1",
     "Lever2",
     "Lever3",
-    null,
+    "DoorController",
     "Lever4"
   ],
   "zoneNames": [
@@ -23,5 +23,34 @@
     "barrel3",
     "entrance_area",
     "door_to_zeppelin_port"
+  ],
+  "varcubes": [
+    {
+      "name": "interacting_with",
+      "type": "enum",
+      "enumValues": {
+        "0": "none",
+        "1": "Lever1",
+        "2": "Lever2",
+        "3": "Lever3",
+        "4": "Lever4"
+      }
+    },
+    {
+      "name": "lever_1",
+      "type": "boolean"
+    },
+    {
+      "name": "lever_2",
+      "type": "boolean"
+    },
+    {
+      "name": "lever_3",
+      "type": "boolean"
+    },
+    {
+      "name": "lever_4",
+      "type": "boolean"
+    }
   ]
 }
