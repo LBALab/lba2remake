@@ -5375,6 +5375,11 @@
       "file": "FI_033_table.glb",
       "orientation": 0
     },
+    "34": {
+      "replace": true,
+      "file": "FI_034_big_flower_pot.glb",
+      "orientation": 0
+    },
     "36": {
       "replace": true,
       "file": "FI_036_stool.glb",
@@ -5440,6 +5445,11 @@
       "file": "FI_056_drinks_and_flower.glb",
       "orientation": 0
     },
+    "58": {
+      "replace": true,
+      "file": "FI_058_pick_axes.glb",
+      "orientation": 0
+    },
     "61": {
       "replace": true,
       "file": "FI_061_magic_bottle.glb",
@@ -5453,6 +5463,16 @@
     "72": {
       "replace": true,
       "file": "FI_072_baby_bottles.glb",
+      "orientation": 0
+    },
+    "74": {
+      "replace": true,
+      "file": "FI_074_abacus.glb",
+      "orientation": 0
+    },
+    "75": {
+      "replace": true,
+      "file": "FI_075_pan.glb",
       "orientation": 0
     },
     "76": {
