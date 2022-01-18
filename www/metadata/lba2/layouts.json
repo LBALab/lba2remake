@@ -5360,6 +5360,11 @@
       "file": "FI_027_francos_building_wall_key_cupboard_closed.glb",
       "orientation": 0
     },
+    "28": {
+      "replace": true,
+      "file": "FI_028_big_table_with_chairs_and_flowers.glb",
+      "orientation": 0
+    },
     "29": {
       "replace": true,
       "file": "FI_029_030_francos_building_wall_shelf.glb",
@@ -5448,6 +5453,11 @@
     "58": {
       "replace": true,
       "file": "FI_058_pick_axes.glb",
+      "orientation": 0
+    },
+    "59": {
+      "replace": true,
+      "file": "FI_059_chair.glb",
       "orientation": 0
     },
     "61": {
