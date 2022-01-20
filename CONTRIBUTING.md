@@ -17,11 +17,11 @@ For more details, check [how to contribute metadata](doc/how_to_metadata.md).
 
 You can try to make the [game](https://www.lba2remake.net/) or the [editor](https://www.lba2remake.net/#editor=true) crash, and use the `Send crash report` button to inform us of what needs fixing.
 
-If you observe a bug you can report it [here](https://github.com/agrande/lba2remake/issues/new).
+If you observe a bug you can report it [here](https://github.com/LBALab/lba2remake/issues/new).
 
 ### Propose features
 
-If you have an idea that is not already listed there, you can [open an issue](https://github.com/agrande/lba2remake/issues/new) to suggest a new feature.
+If you have an idea that is not already listed there, you can [open an issue](https://github.com/LBALab/lba2remake/issues/new) to suggest a new feature.
 
 
 ## Contributing as a developer

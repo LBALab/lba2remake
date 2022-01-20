@@ -68,7 +68,7 @@
     "webpack-dev-middleware": "^3.7.3",
     "yml-loader": "^2.1.0"
   },
-  "repository": "https://github.com/agrande/lba2remake.git",
+  "repository": "https://github.com/LBALab/lba2remake.git",
   "author": "Adrien Grandemange",
   "license": "MIT",
   "readme": "README.md"
