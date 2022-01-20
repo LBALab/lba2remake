@@ -20,7 +20,7 @@ You can obtain an original copy of the game from [GOG](https://www.gog.com/game/
 If you own it already, make sure you updated your game installation to the latest.
 
 #### Get a copy of the project
-- [Fork](https://help.github.com/en/github/getting-started-with-github/fork-a-repo) the [project](https://github.com/agrande/lba2remake) on github
+- [Fork](https://help.github.com/en/github/getting-started-with-github/fork-a-repo) the [project](https://github.com/LBALab/lba2remake) on github
 - `git clone` your forked version of the project to get the code on your computer
 
 #### Open the command shell
