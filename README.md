@@ -1,8 +1,8 @@
 # LBA2 Remake
-![CircleCI](https://circleci.com/gh/agrande/lba2remake.png?style=shield&circle-token=:circle-token)
-![LatestTag](https://badgen.net/github/tag/agrande/lba2remake)
-[![Total alerts](https://img.shields.io/lgtm/alerts/g/agrande/lba2remake.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/agrande/lba2remake/alerts/)
-[![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/agrande/lba2remake.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/agrande/lba2remake/context:javascript)
+![CircleCI](https://circleci.com/gh/LBALab/lba2remake.png?style=shield&circle-token=:circle-token)
+![LatestTag](https://badgen.net/github/tag/LBALab/lba2remake)
+[![Total alerts](https://img.shields.io/lgtm/alerts/g/LBALab/lba2remake.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/LBALab/lba2remake/alerts/)
+[![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/LBALab/lba2remake.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/LBALab/lba2remake/context:javascript)
 
 A Little Big Adventure 2 / Twinsen's Odyssey reimplementation in Typescript / Three.js / React
 
