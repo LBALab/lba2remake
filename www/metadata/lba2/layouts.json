@@ -5420,6 +5420,16 @@
       "file": "FI_045_health_heart.glb",
       "orientation": 0
     },
+    "48": {
+      "replace": true,
+      "file": "FI_048_049_green_dragon.glb",
+      "orientation": 2
+    },
+    "49": {
+      "replace": true,
+      "file": "FI_048_049_green_dragon.glb",
+      "orientation": 0
+    },
     "51": {
       "replace": true,
       "file": "FI_051_empty_mug.glb",
@@ -5463,6 +5473,11 @@
     "61": {
       "replace": true,
       "file": "FI_061_magic_bottle.glb",
+      "orientation": 0
+    },
+    "68": {
+      "replace": true,
+      "file": "FI_068_baby_cradle.glb",
       "orientation": 0
     },
     "69": {
