@@ -35,7 +35,7 @@
     "sass": "^1.43.4",
     "sass-loader": "^12.3.0",
     "simplex-noise": "^2.4.0",
-    "three": "^0.127.0",
+    "three": "^0.137.0",
     "webxr-polyfill": "^2.0.3"
   },
   "devDependencies": {
