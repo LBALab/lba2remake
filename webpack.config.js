@@ -10,7 +10,10 @@ module.exports = {
         publicPath: path.join(__dirname, './www'),
     },
     resolve: {
-        extensions: ['.ts', '.tsx', '.js', '.glsl', '.proto', '.yaml', '.md']
+        extensions: ['.ts', '.tsx', '.js', '.glsl', '.proto', '.yaml', '.md'],
+        alias: {
+            three$: path.resolve(__dirname, 'node_modules/three/build/three.module.js'),
+        }
     },
     resolveLoader: {
         alias: {

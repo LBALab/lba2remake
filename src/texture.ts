@@ -251,7 +251,7 @@ export function makeNoiseTexture(seed = 'LBA') {
     }
 
     const texture = new THREE.DataTexture(image_data, dim, dim);
-    texture.format = THREE.AlphaFormat;
+    texture.format = THREE.RedFormat;
     texture.type = THREE.UnsignedByteType;
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
