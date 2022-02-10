@@ -25,7 +25,7 @@ export async function loadLayoutsMetadata(
     }
     let hasBakedReplacements = false;
     if (!mergeReplacements && !isForExport && (useBaked === undefined || useBaked)) {
-        const res = await fetch(`/models/${game}/iso_scenes_baked/${entry}.glb`, {
+        const res = await fetch(`/baked_models/${game}/iso_scenes/${entry}.glb`, {
             method: 'HEAD'
         });
         hasBakedReplacements = res.ok;

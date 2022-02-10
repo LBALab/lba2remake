@@ -12,9 +12,10 @@ export function bake(req, res) {
     const { steps, samples, textureSize, margin, denoise, dumpAfter, hdri, hdriRotation, hdriExposure } = req.query;
     const tmpDir = os.tmpdir();
     const inputFile = path.join(tmpDir, `${name}.glb`);
+    const bakeFolder = process.env.BAKED_MODELS_PATH;
     const targetDir = type === 'island'
-        ? path.normalize(`www/models/${game}/islands`)
-        : path.normalize(`www/models/${game}/iso_scenes_baked`);
+        ? path.normalize(path.join(bakeFolder, `${game}/islands`))
+        : path.normalize(path.join(bakeFolder, `${game}/iso_scenes`));
     const outputFile = path.join(process.cwd(), targetDir, `${name}.glb`);
     const dumpFile = path.join(downloadsFolder, `${name}.blend`);
     req.pipe(fs.createWriteStream(inputFile));

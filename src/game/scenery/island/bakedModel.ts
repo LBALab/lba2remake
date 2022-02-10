@@ -9,7 +9,7 @@ import { IslandModel } from './model';
 import { registerPalette } from '../../../graphics/materials/impl/PalUtils';
 
 export async function hasBakedModel(name: string) {
-    const info = await fetch(`models/lba2/islands/${name}.glb`, {
+    const info = await fetch(`baked_models/lba2/islands/${name}.glb`, {
         method: 'HEAD'
     });
     return info.ok;
@@ -34,6 +34,6 @@ export async function loadBakedModel(
     loader.register(parser => new LightMapPlugin(parser));
     loader.register(parser => new LBAMaterialsPlugin(parser, textures, palExposures[data.name]));
     await registerPalette();
-    const gltf = await loader.loadAsync(`models/lba2/islands/${data.name}.glb`);
+    const gltf = await loader.loadAsync(`baked_models/lba2/islands/${data.name}.glb`);
     return gltf.scene;
 }

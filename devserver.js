@@ -11,6 +11,9 @@ config({ path: `${process.cwd()}/.env` });
 if (!('BLENDER_EXEC_PATH' in process.env))
     console.warn('BLENDER_EXEC_PATH not set in .env file');
 
+if (!('BAKED_MODELS_PATH' in process.env))
+    console.warn('BAKED_MODELS_PATH not set in .env file');
+
 const fs = require('fs');
 const http = require('http');
 const React = require('react');
@@ -132,6 +135,7 @@ app.use('/api', apiRouter);
 
 app.use('/', express.static('./www'));
 app.use('/doc', express.static('./doc'));
+app.use('/baked_models', express.static(process.env.BAKED_MODELS_PATH));
 app.use('/webxr-assets', express.static('./node_modules/@webxr-input-profiles/assets/dist/profiles'));
 app.use('/xatlas-web.js', express.static('./node_modules/@agrande/xatlas-web/dist/xatlas-web.js'));
 app.use('/xatlas-web.wasm', express.static('./node_modules/@agrande/xatlas-web/dist/xatlas-web.wasm'));
