@@ -84,6 +84,9 @@ export async function loadFullSceneModel(
                         uNormalMatrix: {value: new THREE.Matrix3()}
                     }
                 });
+                if (texture) {
+                    texture.encoding = THREE.LinearEncoding;
+                }
             }
             if (node.userData.render_order) {
                 node.renderOrder = node.userData.render_order;

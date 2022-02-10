@@ -1,4 +1,4 @@
-import { LightningStrike } from 'three/examples/jsm/geometries/LightningStrike.js';
+import { LightningStrike } from 'three/examples/jsm/geometries/LightningStrike';
 import * as THREE from 'three';
 
 import { WORLD_SIZE } from '../../../../utils/lba';

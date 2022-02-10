@@ -126,7 +126,7 @@ export default class Zone {
         this.icon = new Image(32, 32);
         this.icon.src = `editor/icons/zones/${this.zoneType}.svg`;
         this.labelTexture = new THREE.CanvasTexture(this.labelCanvas);
-        this.labelTexture.encoding = THREE.GammaEncoding;
+        this.labelTexture.encoding = THREE.sRGBEncoding;
         this.labelTexture.anisotropy = 16;
 
         this.icon.onload = () => this.updateLabel();

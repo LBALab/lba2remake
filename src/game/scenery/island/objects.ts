@@ -46,7 +46,7 @@ function createObjectLabel(name, bb: THREE.Box3) {
     const icon = new Image(32, 32);
     icon.src = 'editor/icons/mesh.svg';
     const texture = new THREE.CanvasTexture(canvas);
-    texture.encoding = THREE.GammaEncoding;
+    texture.encoding = THREE.sRGBEncoding;
     texture.anisotropy = 16;
 
     const draw = (selected = false) => {

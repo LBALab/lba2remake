@@ -318,7 +318,7 @@ function loadBillboardSprite(index, sprite, is3DCam) {
         THREE.LinearFilter
     );
 
-    texture.encoding = THREE.GammaEncoding;
+    texture.encoding = THREE.sRGBEncoding;
     texture.needsUpdate = true;
     texture.generateMipmaps = false;
 
@@ -423,13 +423,13 @@ export async function loadSpriteReplacement(ambience, {file, fx}) {
                 m.scene.add(glow);
             }
             m.scene.traverse((node) => {
-                if (node instanceof THREE.Mesh) {
+                    if (node instanceof THREE.Mesh) {
                     const material = node.material as THREE.MeshStandardMaterial;
                     if (material.name.substring(0, 8) === 'keepMat_') {
                         return;
                     }
                     const texture = node.material.map;
-                    const mColor = node.material.color.clone().convertLinearToGamma();
+                    const mColor = node.material.color.clone().convertLinearToSRGB();
                     const color = new THREE.Vector4().fromArray(
                         [...mColor.toArray(), node.material.opacity]
                     );

@@ -130,7 +130,7 @@ export function createActorLabel(actor: Actor, name, is3DCam) {
     const icon = new Image(32, 32);
     icon.src = 'editor/icons/actor.svg';
     const texture = new THREE.CanvasTexture(canvas);
-    texture.encoding = THREE.GammaEncoding;
+    texture.encoding = THREE.sRGBEncoding;
     texture.anisotropy = 16;
 
     const draw = (selected = false) => {
