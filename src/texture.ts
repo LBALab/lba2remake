@@ -63,6 +63,7 @@ export function loadTexture(buffer: ArrayBuffer, palette: Uint8Array, useMipMaps
             });
         }
     }
+    texture.encoding = THREE.LinearEncoding;
     texture.needsUpdate = true;
     texture.generateMipmaps = false;
     return texture;
@@ -249,6 +250,7 @@ export function makeNoiseTexture(seed = 'LBA') {
     texture.anisotropy = 16;
     texture.needsUpdate = true;
     texture.generateMipmaps = true;
+    texture.encoding = THREE.LinearEncoding;
 
     return texture;
 }

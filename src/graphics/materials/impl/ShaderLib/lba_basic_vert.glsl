@@ -20,20 +20,21 @@ void main() {
         #include <color_vertex>
     #endif
     #include <lba_palette_vertex>
-    #include <skinbase_vertex>
-    #ifdef USE_ENVMAP
-    #include <beginnormal_vertex>
-    #include <morphnormal_vertex>
-    #include <skinnormal_vertex>
-    #include <defaultnormal_vertex>
+    #if defined ( USE_ENVMAP ) || defined ( USE_SKINNING )
+        #include <skinbase_vertex>
+        #include <beginnormal_vertex>
+        #include <morphnormal_vertex>
+        #include <skinnormal_vertex>
+        #include <defaultnormal_vertex>
     #endif
     #include <begin_vertex>
     #include <morphtarget_vertex>
     #include <skinning_vertex>
     #include <project_vertex>
     #include <logdepthbuf_vertex>
-    #include <worldpos_vertex>
     #include <clipping_planes_vertex>
+
+    #include <worldpos_vertex>
     #include <envmap_vertex>
     #include <fog_vertex>
 }

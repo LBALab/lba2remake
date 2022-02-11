@@ -13,7 +13,7 @@
     #ifdef USE_INDEXED_COLORS
         float palIndex = texelColor.r * 255.0;
     #else
-        texelColor = mapTexelToLinear( texelColor );
+        // texelColor = linearToOutputTexel( texelColor );
         diffuseColor *= texelColor;
     #endif
 #endif

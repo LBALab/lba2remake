@@ -168,6 +168,7 @@ export default class TextureAtlas {
             this.useIndexedTexture ? THREE.NearestFilter : THREE.LinearFilter,
             this.useIndexedTexture ? THREE.NearestFilter : THREE.LinearMipMapLinearFilter
         );
+        texture.encoding = this.useIndexedTexture ? THREE.LinearEncoding : THREE.sRGBEncoding;
         texture.needsUpdate = true;
         texture.generateMipmaps = !this.useIndexedTexture;
         return texture;

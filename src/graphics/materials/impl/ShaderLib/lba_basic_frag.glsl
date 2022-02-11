@@ -15,6 +15,7 @@ uniform float opacity;
 #include <lba_map_pars_fragment>
 #include <lba_palette_pars_fragment>
 #include <alphamap_pars_fragment>
+#include <alphatest_pars_fragment>
 #include <aomap_pars_fragment>
 #include <lightmap_pars_fragment>
 #include <envmap_common_pars_fragment>
@@ -46,10 +47,14 @@ void main() {
     // modulation
     #include <aomap_fragment>
     #include <lba_palette_lookup_fragment>
+
     reflectedLight.indirectDiffuse *= diffuseColor.rgb;
+
     vec3 outgoingLight = reflectedLight.indirectDiffuse;
+
     #include <envmap_fragment>
-    gl_FragColor = vec4( outgoingLight, diffuseColor.a );
+
+    #include <output_fragment>
     #include <tonemapping_fragment>
     #ifndef USE_INDEXED_COLORS
         #include <encodings_fragment>

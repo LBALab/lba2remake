@@ -64,6 +64,9 @@ export default class LBAMaterialsPlugin implements GLTFLoaderPlugin {
                             node.geometry.deleteAttribute('color_1');
                         }
                     }
+                    if (material.map && material.userData.encoding) {
+                        material.map.encoding = material.userData.encoding;
+                    }
                 }
             }
         });
@@ -107,6 +110,9 @@ export default class LBAMaterialsPlugin implements GLTFLoaderPlugin {
             if (lbaTexture) {
                 if (lbaTexture in this.textures) {
                     materialParams.map = this.textures[lbaTexture];
+                    materialParams.userData = {
+                        encoding: materialParams.map.encoding
+                    };
                 } else {
                     // tslint:disable-next-line:no-console
                     console.warn(`Texture ${lbaTexture} not found for material ${materialIndex}`);

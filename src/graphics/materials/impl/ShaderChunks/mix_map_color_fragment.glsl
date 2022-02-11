@@ -7,7 +7,7 @@
         }
         float palIndex = mix(vPalIndex, texelColor.r * 255.0, a);
     #else
-        texelColor = mapTexelToLinear( texelColor );
+        // texelColor = mapTexelToLinear( texelColor );
         vec3 mixedColor = mix(vColor.rgb, texelColor.rgb, texelColor.a);
         diffuseColor *= vec4(mixedColor, 1.0);
     #endif
