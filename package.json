@@ -28,7 +28,6 @@
     "file-saver": "^2.0.5",
     "hash-wasm": "^4.9.0",
     "jest-diff": "^25.5.0",
-    "jszip": "^3.7.0",
     "lodash": "^4.17.21",
     "react": "16.8.6",
     "react-dom": "16.8.6",
