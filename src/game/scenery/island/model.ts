@@ -1,3 +1,5 @@
+import { IslandData } from './data';
+
 export interface IslandModel {
     index: number;
     bbXMin: number;
@@ -23,7 +25,16 @@ export interface IslandModel {
     buffer: ArrayBuffer;
 }
 
-export function loadModel(buffer: ArrayBuffer, index: number): IslandModel {
+export function loadIslandModels(data: IslandData): IslandModel[] {
+  const models: IslandModel[] = [];
+  const { obl } = data;
+  for (let i = 0; i < obl.length; i += 1) {
+      models.push(loadModel(obl.getEntry(i), i));
+  }
+  return models;
+}
+
+function loadModel(buffer: ArrayBuffer, index: number): IslandModel {
   const data = new DataView(buffer);
   const model = {
     index,

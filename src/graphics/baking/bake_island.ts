@@ -70,10 +70,12 @@ async function patchIslandObject(islandObject: THREE.Object3D) {
             if (geom.attributes.color) {
                 const numVertex = geom.attributes.color.count;
                 const colorArray = new Uint8Array(numVertex * 3);
+                const palColorArray = new Uint8Array(numVertex * 3);
                 for (let i = 0; i < numVertex; i += 1) {
                     const p = geom.attributes.color.array[i];
+                    const pal = p * 16 + 7;
+                    palColorArray[i * 3] = pal;
                     if (p > 0) {
-                        const pal = p * 16 + 7;
                         colorArray[i * 3] = palette[pal * 3];
                         colorArray[i * 3 + 1] = palette[pal * 3 + 1];
                         colorArray[i * 3 + 2] = palette[pal * 3 + 2];
@@ -85,6 +87,11 @@ async function patchIslandObject(islandObject: THREE.Object3D) {
                 }
                 geom.attributes.color = new THREE.BufferAttribute(
                     colorArray,
+                    3,
+                    true
+                );
+                geom.attributes.COLOR_1 = new THREE.BufferAttribute(
+                    palColorArray,
                     3,
                     true
                 );

@@ -3,7 +3,10 @@
 #include <uv2_pars_vertex>
 #include <uvgroup_pars_vertex>
 #include <envmap_pars_vertex>
-#include <color_pars_vertex>
+#ifndef USE_INDEXED_COLORS
+    #include <color_pars_vertex>
+#endif
+#include <lba_palette_pars_vertex>
 #include <fog_pars_vertex>
 #include <morphtarget_pars_vertex>
 #include <skinning_pars_vertex>
@@ -13,7 +16,10 @@ void main() {
     #include <uv_vertex>
     #include <uv2_vertex>
     #include <uvgroup_vertex>
-    #include <color_vertex>
+    #ifndef USE_INDEXED_COLORS
+        #include <color_vertex>
+    #endif
+    #include <lba_palette_vertex>
     #include <skinbase_vertex>
     #ifdef USE_ENVMAP
     #include <beginnormal_vertex>

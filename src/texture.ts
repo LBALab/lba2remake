@@ -32,29 +32,20 @@ export function loadPaletteTexture(palette: Uint8Array) {
 }
 
 export function loadTexture(buffer: ArrayBuffer, palette: Uint8Array, useMipMaps = true) {
-    const pixel_data = new Uint8Array(buffer);
-    let image_data = new Uint8Array(256 * 256 * 4);
-    for (let x = 0; x < 256; x += 1) {
-        for (let y = 0; y < 256; y += 1) {
-            const idx = (x * 256) + y;
-            image_data[idx * 4] = pixel_data[idx];
-            image_data[(idx * 4) + 1] = 0;
-            image_data[(idx * 4) + 2] = 0;
-            image_data[(idx * 4) + 3] = pixel_data[idx] === 0 ? 0 : 0xFF;
-        }
-    }
+    let image_data = new Uint8ClampedArray(buffer);
     const texture = new THREE.DataTexture(
         useMipMaps ? null : image_data,
         256,
         256,
-        THREE.RGBAFormat,
+        THREE.RedFormat,
         THREE.UnsignedByteType,
         THREE.UVMapping,
         THREE.ClampToEdgeWrapping,
         THREE.ClampToEdgeWrapping,
         THREE.NearestFilter,
-        THREE.NearestMipMapNearestFilter
+        useMipMaps ? THREE.NearestMipMapNearestFilter : THREE.NearestFilter
     );
+    texture.anisotropy = 16;
     if (useMipMaps) {
         texture.mipmaps = [{
             // @ts-ignore
@@ -113,28 +104,25 @@ export function loadTextureRGBA(buffer: ArrayBuffer, palette: Uint8Array) {
     return texture;
 }
 
-function loadMipmapLevelPal(source_data: Uint8Array, level: number, palette: Uint8Array) {
+function loadMipmapLevelPal(source_data: Uint8ClampedArray, level: number, palette: Uint8Array) {
     const dim = Math.pow(2, 8 - level);
-    const tgt_data = new Uint8Array(dim * dim * 4);
+    const tgt_data = new Uint8ClampedArray(dim * dim);
     for (let y = 0; y < dim; y += 1) {
         for (let x = 0; x < dim; x += 1) {
             const idx = (y * dim) + x;
-            const yd = y * dim * 4;
+            const yd = y * dim;
             const yd1 = ((y * 2) + 1) * dim * 2;
             const indices = [
-                source_data[(yd + (x * 2)) * 4],
-                source_data[(yd + (x * 2) + 1) * 4],
-                source_data[(yd1 + (x * 2)) * 4],
-                source_data[(yd1 + (x * 2) + 1) * 4],
+                source_data[yd + (x * 2)],
+                source_data[yd + (x * 2) + 1],
+                source_data[yd1 + (x * 2)],
+                source_data[yd1 + (x * 2) + 1],
             ];
             const colors = map(
                 indices,
                 i => [palette[i * 3], palette[(i * 3) + 1], palette[(i * 3) + 2], i]
             );
-            tgt_data[idx * 4] = findNearestColor(palette, colors);
-            tgt_data[(idx * 4) + 1] = 0;
-            tgt_data[(idx * 4) + 2] = 0;
-            tgt_data[(idx * 4) + 3] = 0;
+            tgt_data[idx] = findNearestColor(palette, colors);
         }
     }
     return tgt_data;

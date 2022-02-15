@@ -7,10 +7,12 @@
             vec2 uv = vUv / (vUvGroup.zw + 1.0);
         #endif
         vec4 texelColor = textureMipMap( map, uv );
-        texelColor = mapTexelToLinear( texelColor );
-        diffuseColor *= texelColor;
     #else
         vec4 texelColor = texture2D( map, vUv );
+    #endif
+    #ifdef USE_INDEXED_COLORS
+        float palIndex = texelColor.r * 255.0;
+    #else
         texelColor = mapTexelToLinear( texelColor );
         diffuseColor *= texelColor;
     #endif

@@ -1,14 +1,35 @@
 import * as THREE from 'three';
 import {each, find} from 'lodash';
 
+interface ModelWithUvGroups {
+    uvGroups: [number, number, number, number][];
+}
+
 export default class TextureAtlas {
     texture: THREE.DataTexture;
+    useIndexedTexture: boolean;
     groups: any;
     private rawTexture: Uint8ClampedArray;
     private palette: Uint8Array;
 
-    constructor({ile, palette}, uvGroups, debug = false) {
+    constructor(
+        {ile, palette},
+        models: ModelWithUvGroups[],
+        useIndexedTexture = false,
+        debug = false
+    ) {
+        const uvGroupsS : Set<string> = new Set();
+        for (const model of models) {
+            for (const group of model.uvGroups) {
+                uvGroupsS.add(group.join(','));
+            }
+        }
+        const uvGroups = [...uvGroupsS]
+            .map(g => g.split(',').map(v => Number(v)))
+            .sort((g1, g2) => (g2[2] * g2[3]) - (g1[2] * g1[3]));
+
         this.rawTexture = new Uint8ClampedArray(ile.getEntry(2));
+        this.useIndexedTexture = useIndexedTexture;
         this.palette = palette;
 
         this.groups = {
@@ -133,26 +154,28 @@ export default class TextureAtlas {
     }
 
     private createAtlasTexture(dim) {
-        const image_data = new Uint8ClampedArray(dim * dim * 4);
+        const numComponents = this.useIndexedTexture ? 1 : 4;
+        const image_data = new Uint8ClampedArray(dim * dim * numComponents);
         const texture = new THREE.DataTexture(
             image_data,
             dim,
             dim,
-            THREE.RGBAFormat,
+            this.useIndexedTexture ? THREE.RedFormat : THREE.RGBAFormat,
             THREE.UnsignedByteType,
             THREE.UVMapping,
             THREE.RepeatWrapping,
             THREE.RepeatWrapping,
-            THREE.LinearFilter,
-            THREE.LinearMipMapLinearFilter
+            this.useIndexedTexture ? THREE.NearestFilter : THREE.LinearFilter,
+            this.useIndexedTexture ? THREE.NearestFilter : THREE.LinearMipMapLinearFilter
         );
         texture.needsUpdate = true;
-        texture.generateMipmaps = true;
+        texture.generateMipmaps = !this.useIndexedTexture;
         texture.anisotropy = 16;
         return texture;
     }
 
     private copySubImage(srcX, srcY, width, height, tgtX, tgtY) {
+        const numComponents = this.useIndexedTexture ? 1 : 4;
         const { image } = this.texture;
         for (let y = 0; y < height; y += 1) {
             for (let x = 0; x < width; x += 1) {
@@ -161,13 +184,17 @@ export default class TextureAtlas {
                 const tX = tgtX + x;
                 const tY = tgtY + y;
                 const sIdx = (sY * 256) + sX;
-                const tIdx = ((tY * image.width) + tX) * 4;
-                const pIdx = this.rawTexture[sIdx] * 3;
-                if (pIdx !== 0) {
-                    image.data[tIdx] = this.palette[pIdx];
-                    image.data[tIdx + 1] = this.palette[pIdx + 1];
-                    image.data[tIdx + 2] = this.palette[pIdx + 2];
-                    image.data[tIdx + 3] = 0xFF;
+                const tIdx = ((tY * image.width) + tX) * numComponents;
+                if (this.useIndexedTexture) {
+                    image.data[tIdx] = this.rawTexture[sIdx];
+                } else {
+                    const pIdx = this.rawTexture[sIdx] * 3;
+                    if (pIdx !== 0) {
+                        image.data[tIdx] = this.palette[pIdx];
+                        image.data[tIdx + 1] = this.palette[pIdx + 1];
+                        image.data[tIdx + 2] = this.palette[pIdx + 2];
+                        image.data[tIdx + 3] = 0xFF;
+                    }
                 }
             }
         }

@@ -4,6 +4,7 @@ import { registerShaderChunks } from './impl/ShaderChunks';
 import lba_physical_frag from './impl/ShaderLib/lba_physical_frag.glsl';
 import lba_physical_vert from './impl/ShaderLib/lba_physical_vert.glsl';
 import { BoneBindings } from '../../model/anim/types';
+import { paletteUniform, registerPalette } from './impl/PalUtils';
 
 const { UniformsLib } = THREE;
 
@@ -13,6 +14,7 @@ interface LBAStandardMaterialParams extends THREE.MeshStandardMaterialParameters
     mixColorAndTexture?: boolean;
     useTextureAtlas?: boolean;
     atlasMode?: 'model' | 'island';
+    useIndexedColors?: boolean;
     bones?: BoneBindings;
 }
 
@@ -25,6 +27,7 @@ export default class LBAStandardMaterial extends THREE.MeshStandardMaterial {
     mixColorAndTexture = false;
     useTextureAtlas = false;
     atlasMode: 'model' | 'island' = 'model';
+    useIndexedColors = false;
     bones: BoneBindings;
 
     constructor(parameters: LBAStandardMaterialParams = {}) {
@@ -32,7 +35,8 @@ export default class LBAStandardMaterial extends THREE.MeshStandardMaterial {
             'mixColorAndTexture',
             'useTextureAtlas',
             'atlasMode',
-            'bones'
+            'bones',
+            'useIndexedColors',
         ]));
 
         this.roughness = 0.75;
@@ -48,6 +52,9 @@ export default class LBAStandardMaterial extends THREE.MeshStandardMaterial {
         if (parameters.atlasMode === 'island') {
             this.defines.USE_ATLAS_ISLAND_MODE = '';
         }
+        if (parameters.useIndexedColors) {
+            this.defines.USE_INDEXED_COLORS = '';
+        }
         if (parameters.bones) {
             this.defines.USE_LBA_BONES = '';
             this.uniforms.bonePos.value = parameters.bones.position;
@@ -57,7 +64,10 @@ export default class LBAStandardMaterial extends THREE.MeshStandardMaterial {
         this.mixColorAndTexture = !!parameters.mixColorAndTexture;
         this.useTextureAtlas = !!parameters.useTextureAtlas;
         this.atlasMode = parameters.atlasMode || 'model';
+        this.useIndexedColors = !!parameters.useIndexedColors;
         this.bones = parameters.bones;
+
+        registerPalette();
     }
 
     copy(source: LBAStandardMaterial) {
@@ -72,6 +82,9 @@ export default class LBAStandardMaterial extends THREE.MeshStandardMaterial {
         if (source.atlasMode === 'island') {
             this.defines.USE_ATLAS_ISLAND_MODE = '';
         }
+        if (source.useIndexedColors) {
+            this.defines.USE_INDEXED_COLORS = '';
+        }
         if (source.bones) {
             this.defines.USE_LBA_BONES = '';
             this.uniforms.bonePos.value = source.bones.position;
@@ -81,6 +94,7 @@ export default class LBAStandardMaterial extends THREE.MeshStandardMaterial {
         this.useTextureAtlas = source.useTextureAtlas;
         this.mixColorAndTexture = source.mixColorAndTexture;
         this.atlasMode = source.atlasMode;
+        this.useIndexedColors = source.useIndexedColors;
         this.bones = source.bones;
 
         return this;
@@ -108,6 +122,7 @@ export default class LBAStandardMaterial extends THREE.MeshStandardMaterial {
             envMapIntensity: { value: 1 },
             bonePos: { value: [] },
             boneRot: { value: [] },
+            palette: paletteUniform,
         }
     ]);
 }

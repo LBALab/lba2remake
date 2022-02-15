@@ -6,9 +6,11 @@ import LBAStandardMaterial from '../materials/LBAStandardMaterial';
 export default class LBAMaterialsPlugin implements GLTFLoaderPlugin {
     parser: GLTFParser;
     name = 'LBA2R_lba_materials';
+    textures: Record<string, THREE.DataTexture>;
 
-    constructor(parser: GLTFParser) {
+    constructor(parser: GLTFParser, textures: Record<string, THREE.DataTexture> = {}) {
         this.parser = parser;
+        this.textures = textures;
     }
 
     async afterRoot(result: GLTF) {
@@ -17,7 +19,7 @@ export default class LBAMaterialsPlugin implements GLTFLoaderPlugin {
                 const material = node.material;
                 if (material instanceof LBAStandardMaterial ||
                     material instanceof LBABasicMaterial) {
-                    const { useTextureAtlas, atlasMode } = material;
+                    const { useTextureAtlas, atlasMode, useIndexedColors } = material;
                     if (useTextureAtlas && atlasMode === 'island') {
                         const { attributes } = node.geometry;
                         if ('texcoord_2' in attributes && 'texcoord_3' in attributes) {
@@ -38,6 +40,24 @@ export default class LBAMaterialsPlugin implements GLTFLoaderPlugin {
                             node.geometry.deleteAttribute('texcoord_3');
                         }
                     }
+                    if (useIndexedColors) {
+                        const { attributes } = node.geometry;
+                        if ('color_1' in attributes) {
+                            const color_1 = attributes.color_1.array;
+                            const itemSize = attributes.color_1.itemSize;
+                            const count = attributes.color_1.count;
+                            const pal_color = new Uint8Array(count);
+                            for (let i = 0; i < count; i += 1) {
+                                pal_color[i] = color_1[i * itemSize] / 255;
+                            }
+                            node.geometry.setAttribute(
+                                'pal_color',
+                                new THREE.BufferAttribute(pal_color, 1)
+                            );
+                            node.geometry.deleteAttribute('color');
+                            node.geometry.deleteAttribute('color_1');
+                        }
+                    }
                 }
             }
         });
@@ -48,9 +68,9 @@ export default class LBAMaterialsPlugin implements GLTFLoaderPlugin {
         const materialDef = parser.json.materials[materialIndex];
         if (materialDef.extensions && materialDef.extensions[this.name]) {
             const details = materialDef.extensions[this.name];
-            const { mixColorAndTexture, useTextureAtlas } = details;
+            const { mixColorAndTexture, useTextureAtlas, useIndexedColors } = details;
             const unlit = materialDef.extensions.LBA2R_lightmaps;
-            if (mixColorAndTexture || useTextureAtlas) {
+            if (mixColorAndTexture || useTextureAtlas || useIndexedColors) {
                 return unlit ? LBABasicMaterial : LBAStandardMaterial;
             }
         }
@@ -62,7 +82,13 @@ export default class LBAMaterialsPlugin implements GLTFLoaderPlugin {
         const materialDef = parser.json.materials[materialIndex];
         if (materialDef.extensions && materialDef.extensions[this.name]) {
             const details = materialDef.extensions[this.name];
-            const { mixColorAndTexture, useTextureAtlas, atlasMode } = details;
+            const {
+                mixColorAndTexture,
+                useTextureAtlas,
+                atlasMode,
+                lbaTexture,
+                useIndexedColors,
+            } = details;
             if (mixColorAndTexture) {
                 materialParams.mixColorAndTexture = true;
             }
@@ -71,6 +97,17 @@ export default class LBAMaterialsPlugin implements GLTFLoaderPlugin {
             }
             if (atlasMode) {
                 materialParams.atlasMode = atlasMode;
+            }
+            if (lbaTexture) {
+                if (lbaTexture in this.textures) {
+                    materialParams.map = this.textures[lbaTexture];
+                } else {
+                    // tslint:disable-next-line:no-console
+                    console.warn(`Texture ${lbaTexture} not found for material ${materialIndex}`);
+                }
+            }
+            if (useIndexedColors) {
+                materialParams.useIndexedColors = true;
             }
         }
         return;

@@ -8,8 +8,6 @@ import {
 import {compile} from '../../../utils/shaders';
 import { getTileUsage, loadGround, loadGroundNormals } from './ground';
 import { loadBoundingBox, loadObjectGeometries } from './objects';
-import { IslandModel, loadModel } from './model';
-import TextureAtlas from './TextureAtlas';
 import Lightning from './environment/Lightning';
 
 import GROUND_COLORED__VERT from './shaders/ground/colored.vert.glsl';
@@ -25,9 +23,12 @@ import OBJECTS_TEXTURED__VERT from './shaders/objects/textured.vert.glsl';
 import OBJECTS_TEXTURED__FRAG from './shaders/objects/textured.frag.glsl';
 
 import { WORLD_SIZE } from '../../../utils/lba';
-import { IslandData, IslandOptions } from './Island';
+import { IslandOptions } from './Island';
 import IslandLayout from './IslandLayout';
 import { IslandProps } from './data/islands';
+import { IslandData } from './data';
+import TextureAtlas from './TextureAtlas';
+import { IslandModel } from './model';
 
 const fakeNoiseBuffer = new Uint8Array(1);
 fakeNoiseBuffer[0] = 128;
@@ -58,25 +59,13 @@ export function loadGeometries(
     props: IslandProps,
     data: IslandData,
     options: IslandOptions,
-    layout: IslandLayout
+    layout: IslandLayout,
+    models: IslandModel[],
 ): IslandGeometryInfo {
     const usedTiles = new Map<string, number[]>();
-    const models: IslandModel[] = [];
-    const uvGroupsS : Set<string> = new Set();
-    const { obl } = data;
-    for (let i = 0; i < obl.length; i += 1) {
-        const model = loadModel(obl.getEntry(i), i);
-        models.push(model);
-        for (const group of model.uvGroups) {
-            uvGroupsS.add(group.join(','));
-        }
-    }
-    const allUvGroups = [...uvGroupsS]
-        .map(g => g.split(',').map(v => Number(v)))
-        .sort((g1, g2) => (g2[2] * g2[3]) - (g1[2] * g1[3]));
-    const atlas = new TextureAtlas(data, allUvGroups);
 
     const light = getLightVector(data.ambience);
+    const atlas = new TextureAtlas(data, models);
     const geometries = prepareGeometries(props, data, atlas, light);
 
     const normalInfo = {
@@ -151,15 +140,9 @@ export function loadGeometriesInfoOnly(
     threeObject: THREE.Object3D,
     data: IslandData,
     layout: IslandLayout,
+    models: IslandModel[],
 ) {
     const light = getLightVector(data.ambience);
-
-    const { obl } = data;
-    const models = [];
-    for (let i = 0; i < obl.length; i += 1) {
-        const model = loadModel(obl.getEntry(i), i);
-        models.push(model);
-    }
 
     const usedTiles = new Map<string, number[]>();
     for (const section of layout.groundSections) {
@@ -184,7 +167,12 @@ export function loadGeometriesInfoOnly(
     return { matByName, usedTiles, light };
 }
 
-function prepareGeometries(island, data, atlas, light) {
+function prepareGeometries(
+    island: IslandProps,
+    data: IslandData,
+    atlas: TextureAtlas,
+    light: THREE.Vector3
+) {
     const {envInfo} = island;
     const {ile, palette, lutTexture} = data;
     const paletteTexture = loadPaletteTexture(palette);

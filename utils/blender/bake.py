@@ -119,6 +119,7 @@ ground_textured = bpy.data.objects.get('ground_textured')
 if ground_textured:
     mat = ground_textured.data.materials[0]
     mat["LBA_MixColorAndTexture"] = True
+    mat["LBA_Texture"] = "ground"
     nodes = mat.node_tree.nodes
     links = mat.node_tree.links
 
@@ -171,6 +172,7 @@ textured_objects = [o for o in bpy.data.objects if o.name.startswith('objects_te
 for obj in textured_objects:
     mat = obj.data.materials[0]
     mat["LBA_Atlas"] = True
+    mat["LBA_Texture"] = "objects"
     nodes = mat.node_tree.nodes
     links = mat.node_tree.links
 
@@ -348,6 +350,10 @@ if "export" in steps:
         and o['LBAExport'] == True]
     for obj in objects_to_export:
         obj.select_set(True)
+        mat = obj.data.materials[0]
+        mat["LBA_IndexedColors"] = True
+        if "LBA_Texture" in mat:
+            mat.node_tree.nodes['Image Texture'].image = None
     bpy.ops.export_scene.gltf(filepath=output_file, export_tangents=True, use_selection=True)
 
 if args.dumpAfter == "export":

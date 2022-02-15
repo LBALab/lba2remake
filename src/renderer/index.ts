@@ -145,8 +145,6 @@ function setupThreeRenderer(pixelRatio, canvas, webgl2, rendererOptions) {
     } else {
         renderer.setClearColor(0x000000);
     }
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.0;
     renderer.setPixelRatio(pixelRatio);
     renderer.setSize(0, 0);
     renderer.autoClear = true;

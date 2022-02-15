@@ -44,12 +44,22 @@ class glTF2ExportUserExtension:
 
         obj_mat = blender_mesh.materials[0]
         if "LBA_Atlas" in obj_mat:
-            gltf2_mat.extensions['LBA2R_lba_materials'] = {}
+            if not 'LBA2R_lba_materials' in gltf2_mat.extensions:
+                gltf2_mat.extensions['LBA2R_lba_materials'] = {}
             gltf2_mat.extensions['LBA2R_lba_materials']['useTextureAtlas'] = True
             gltf2_mat.extensions['LBA2R_lba_materials']['atlasMode'] = 'island'
         if "LBA_MixColorAndTexture" in obj_mat:
-            gltf2_mat.extensions['LBA2R_lba_materials'] = {}
+            if not 'LBA2R_lba_materials' in gltf2_mat.extensions:
+                gltf2_mat.extensions['LBA2R_lba_materials'] = {}
             gltf2_mat.extensions['LBA2R_lba_materials']['mixColorAndTexture'] = True
+        if "LBA_Texture" in obj_mat:
+            if not 'LBA2R_lba_materials' in gltf2_mat.extensions:
+                gltf2_mat.extensions['LBA2R_lba_materials'] = {}
+            gltf2_mat.extensions['LBA2R_lba_materials']['lbaTexture'] = obj_mat['LBA_Texture']
+        if "LBA_IndexedColors" in obj_mat:
+            if not 'LBA2R_lba_materials' in gltf2_mat.extensions:
+                gltf2_mat.extensions['LBA2R_lba_materials'] = {}
+            gltf2_mat.extensions['LBA2R_lba_materials']['useIndexedColors'] = True
 
     def get_tex_from_socket(self, socket):
         result = self.gltf2_blender_search_node_tree.from_socket(
