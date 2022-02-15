@@ -39,8 +39,9 @@ const videoConvertor = async (game) => {
     const hqr = HQR.fromArrayBuffer(toArrayBuffer(file));
     for (let i = 0; i < hqr.entries.length; i += 1) {
         const ind = i + 1;
-        const fileName = `${videoFolderPath}VIDEO${ind.toString().padStart(2, '0')}`;
-        const writePath = path.normalize(`${os.tmpdir()}/${fileName}.smk`);
+        const baseName = `VIDEO${ind.toString().padStart(2, '0')}`;
+        const fileBasePath = `${videoFolderPath}${baseName}`;
+        const writePath = path.normalize(`${os.tmpdir()}/${baseName}.smk`);
         await fs.writeFileSync(writePath, Buffer.from(hqr.entries[i].content));
         console.log(`Successfully extracted ${writePath}`);
         const languageTracks: string[] = getVideoLanguageTracks(ind);
@@ -48,7 +49,7 @@ const videoConvertor = async (game) => {
         const writeMp4Paths: string[] = [];
         for (let j = 0; j < languageTracks.length; j += 1) {
             const lang = languageTracks[j];
-            const writeMp4Path = lang ? `${fileName}_${lang}.mp4` : `${fileName}.mp4`;
+            const writeMp4Path = lang ? `${fileBasePath}_${lang}.mp4` : `${fileBasePath}.mp4`;
             await convertToMp4(lang ? videoLanguageTracks[lang] : -1, writePath, writeMp4Path);
             writeMp4Paths.push(writeMp4Path);
         }
