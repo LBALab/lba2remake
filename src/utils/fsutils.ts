@@ -10,7 +10,7 @@ export const createFolderIfNotExists = (folderPath: string) => {
 };
 
 export const executeCommand = async (cmd: string) => {
-    return new Promise((resolve) => {
+    return new Promise<void>((resolve) => {
         exec(cmd, (error, _stdout, stderr) => {
             if (error) {
                 console.log(`error: ${error.message}`);
