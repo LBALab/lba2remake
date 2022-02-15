@@ -1,5 +1,5 @@
 
-import HQR, { loadHqr } from '../hqr';
+import { HQR } from '@lbalab/hqr';
 import WebApi from '../webapi';
 import { ResourceTypes } from './parse';
 
@@ -13,7 +13,6 @@ const HQRExtensions = [
     '.VOX',
     '.ILE',
     '.OBL',
-    '.zip',
 ];
 
 const ResourceName = {
@@ -61,13 +60,20 @@ interface Resource {
     getBuffer: Function;
     getBufferUint8: Function;
     getEntry: Function;
-    getEntryAsync: Function;
-    hasHiddenEntries: Function;
-    getNextHiddenEntry: Function;
+    getHiddenEntries: Function;
     load: Function;
     parse: Function;
     parseSync: Function;
     entries: [];
+}
+
+async function loadHqr(file: string): Promise<HQR> {
+    const res = await fetch(`data/${file}`);
+    if (res.status >= 400) {
+        throw new Error(`Failed to load HQR file ${file} (status=${res.status})`);
+    }
+    const buffer = await res.arrayBuffer();
+    return HQR.fromArrayBuffer(buffer);
 }
 
 const Resources = {};
@@ -143,15 +149,14 @@ const register = (
         getBuffer: null,
         getBufferUint8: null,
         getEntry: null,
-        getEntryAsync: null,
         load: null,
         length: 0,
-        hasHiddenEntries: null,
-        getNextHiddenEntry: null,
+        getHiddenEntries: null,
         ref: null,
         buffer: null,
         json: null,
         entries: [],
+        hiddenEntries: [],
         parse: null,
         parseSync: null,
         parsedEntries: {},
@@ -178,7 +183,7 @@ const register = (
                 resource.ref.buffer = buffer;
                 return buffer;
             }
-            buffer = resource.hqr.getEntry(resource.index);
+            buffer = resource.hqr.entries[resource.index].content;
             resource.buffer = buffer;
             return buffer;
         }
@@ -202,23 +207,20 @@ const register = (
             resource.entries[index] = entry;
             return entry;
         }
-        entry = resource.hqr.getEntry(index);
-        resource.entries[index] = entry;
-        return entry;
+        entry = resource.hqr.entries[index];
+        const content = entry?.content;
+        resource.entries[index] = content;
+        return content;
     };
 
-    resource.hasHiddenEntries = (index: number) => {
-        return resource.hqr.hasHiddenEntries(index);
-    };
-
-    resource.getNextHiddenEntry = (index: number) => {
-        return resource.hqr.getNextHiddenEntry(index);
-    };
-    resource.getEntryAsync = async (index: number) => {
-        if (resource.ref) {
-            return resource.ref.getEntryAsync(index);
+    resource.getHiddenEntries = (index: number) => {
+        if (resource.hiddenEntries[index]) {
+            return resource.hiddenEntries[index];
         }
-        return await resource.hqr.getEntryAsync(index);
+        const entry = resource.hqr.entries[index];
+        const hiddenEntries = entry ? entry.hiddenEntries.map(e => e.content) : [];
+        resource.hiddenEntries[index] = hiddenEntries;
+        return hiddenEntries;
     };
 
     resource.load = async () => {
@@ -230,7 +232,7 @@ const register = (
             return;
         }
         if (!resource.loading) {
-            resource.loading = new Promise(async (resolve) => {
+            resource.loading = new Promise<void>(async (resolve) => {
                 if (resource.ref) {
                     await resource.ref.load();
                     resource.length = resource.ref.length;
@@ -241,7 +243,7 @@ const register = (
                     }
                 } else if (resource.isHQR) {
                     resource.hqr = await loadHqr(resource.path);
-                    resource.length = resource.hqr.length;
+                    resource.length = resource.hqr.entries.length;
                 } else if (resource.type === 'JSON') {
                     const res = await fetch(resource.path);
                     resource.json = await res.json();
