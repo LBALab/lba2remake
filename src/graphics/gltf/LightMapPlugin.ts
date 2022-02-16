@@ -64,6 +64,7 @@ export default class LightMapPlugin implements GLTFLoaderPlugin {
                     texture.flipY = 'exrImageIndex' in details;
                     texture.minFilter = THREE.LinearFilter;
                     texture.magFilter = THREE.LinearFilter;
+                    texture.needsUpdate = true;
                     if ('hdrImageIndex' in details && texture.type === THREE.UnsignedByteType) {
                         texture.encoding = THREE.RGBEEncoding;
                     }

@@ -44,6 +44,8 @@ export default class LBAStandardMaterial extends THREE.MeshStandardMaterial {
 
         this.roughness = 0.75;
 
+        this.uniforms.palette = paletteUniform;
+
         this.type = 'LBAStandardMaterial';
 
         if ('palExposure' in parameters) {
@@ -132,7 +134,6 @@ export default class LBAStandardMaterial extends THREE.MeshStandardMaterial {
             envMapIntensity: { value: 1 },
             bonePos: { value: [] },
             boneRot: { value: [] },
-            palette: paletteUniform,
         }
     ]);
 }

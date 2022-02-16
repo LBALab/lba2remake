@@ -40,6 +40,8 @@ export default class LBABasicMaterial extends THREE.MeshBasicMaterial {
             'palExposure',
         ]));
 
+        this.uniforms.palette = paletteUniform;
+
         this.type = 'LBABasicMaterial';
 
         if ('palExposure' in parameters) {
@@ -106,8 +108,5 @@ export default class LBABasicMaterial extends THREE.MeshBasicMaterial {
         UniformsLib.aomap,
         UniformsLib.lightmap,
         UniformsLib.fog,
-        {
-            palette: paletteUniform,
-        }
     ]);
 }
