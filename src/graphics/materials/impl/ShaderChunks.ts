@@ -5,7 +5,6 @@ import lba_bones_vertex from './ShaderChunks/lba_bones_vertex.glsl';
 import lba_lightmap_fragment from './ShaderChunks/lba_lightmap_fragment.glsl';
 import lba_map_pars_fragment from './ShaderChunks/lba_map_pars_fragment.glsl';
 import lba_palette_fragment from './ShaderChunks/lba_palette_fragment.glsl';
-import lba_palette_lookup_fragment from './ShaderChunks/lba_palette_lookup_fragment.glsl';
 import lba_palette_pars_fragment from './ShaderChunks/lba_palette_pars_fragment.glsl';
 import lba_palette_pars_vertex from './ShaderChunks/lba_palette_pars_vertex.glsl';
 import lba_palette_vertex from './ShaderChunks/lba_palette_vertex.glsl';
@@ -29,7 +28,6 @@ export function registerShaderChunks()  {
         lba_map_fragment,
         lba_map_pars_fragment,
         lba_palette_fragment,
-        lba_palette_lookup_fragment,
         lba_palette_pars_fragment,
         lba_palette_pars_vertex,
         lba_palette_vertex,

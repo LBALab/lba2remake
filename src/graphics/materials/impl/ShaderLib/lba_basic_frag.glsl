@@ -37,7 +37,6 @@ void main() {
             #include <color_fragment>
         #endif
     #endif
-    #include <lba_palette_fragment>
     #include <alphamap_fragment>
     #include <alphatest_fragment>
     #include <specularmap_fragment>
@@ -46,7 +45,7 @@ void main() {
     #include <lba_lightmap_fragment>
     // modulation
     #include <aomap_fragment>
-    #include <lba_palette_lookup_fragment>
+    #include <lba_palette_fragment>
 
     reflectedLight.indirectDiffuse *= diffuseColor.rgb;
 
