@@ -1,11 +1,11 @@
 import { getPalette } from '..';
 import { Resource } from '../load';
-import { loadTextureRGBA } from '../../texture';
+import { loadTexture } from '../../texture';
 
-const parseTextureRGBA = async (resource: Resource) => {
+const parseTexture = async (resource: Resource) => {
     const buffer = resource.getBuffer();
     const palette = await getPalette();
-    return loadTextureRGBA(buffer, palette);
+    return loadTexture(buffer, palette, false);
 };
 
-export { parseTextureRGBA };
+export { parseTexture };

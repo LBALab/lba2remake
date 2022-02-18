@@ -159,38 +159,33 @@ function findNearestColor(palette: Uint8Array, colors: number[][]) {
     return minIdx;
 }
 
-export function loadSubTexture(buffer: ArrayBuffer,
-                               palette: Uint8Array,
-                               x_offset: number,
-                               y_offset: number,
-                               width: number,
-                               height: number) {
-    const pixel_data = new Uint8Array(buffer);
-    const image_data = new Uint8Array(width * height * 4);
+export function loadSubTexture(source: Uint8Array,
+                                x_offset: number,
+                                y_offset: number,
+                                width: number,
+                                height: number) {
+    const image_data = new Uint8Array(width * height);
     for (let y = 0; y < height; y += 1) {
         for (let x = 0; x < width; x += 1) {
-            const src_i = ((y + y_offset) * 256) + x + x_offset;
-            const tgt_i = (y * width) + x;
-            image_data[tgt_i * 4] = palette[pixel_data[src_i] * 3];
-            image_data[(tgt_i * 4) + 1] = palette[(pixel_data[src_i] * 3) + 1];
-            image_data[(tgt_i * 4) + 2] = palette[(pixel_data[src_i] * 3) + 2];
-            image_data[(tgt_i * 4) + 3] = 0xFF;
+            const idx = (y * width) + x;
+            const src_idx = ((y + y_offset) * 256) + (x + x_offset);
+            image_data[idx] = source[src_idx];
         }
     }
     const texture = new THREE.DataTexture(
         image_data,
         width,
         height,
-        THREE.RGBAFormat,
+        THREE.RedFormat,
         THREE.UnsignedByteType,
         THREE.UVMapping,
         THREE.RepeatWrapping,
         THREE.RepeatWrapping,
-        THREE.LinearFilter,
-        THREE.LinearMipMapLinearFilter
+        THREE.NearestFilter,
+        THREE.NearestFilter
     );
     texture.needsUpdate = true;
-    texture.generateMipmaps = true;
+    texture.generateMipmaps = false;
     return texture;
 }
 
@@ -225,6 +220,41 @@ export function loadSubTextureRGBA(source: Uint8Array,
     texture.needsUpdate = true;
     texture.generateMipmaps = true;
     texture.anisotropy = 16;
+    return texture;
+}
+
+export function loadSubTexturePalToRGBA(buffer: ArrayBuffer,
+                                        palette: Uint8Array,
+                                        x_offset: number,
+                                        y_offset: number,
+                                        width: number,
+                                        height: number) {
+    const pixel_data = new Uint8Array(buffer);
+    const image_data = new Uint8Array(width * height * 4);
+    for (let y = 0; y < height; y += 1) {
+        for (let x = 0; x < width; x += 1) {
+            const src_i = ((y + y_offset) * 256) + x + x_offset;
+            const tgt_i = (y * width) + x;
+            image_data[tgt_i * 4] = palette[pixel_data[src_i] * 3];
+            image_data[(tgt_i * 4) + 1] = palette[(pixel_data[src_i] * 3) + 1];
+            image_data[(tgt_i * 4) + 2] = palette[(pixel_data[src_i] * 3) + 2];
+            image_data[(tgt_i * 4) + 3] = 0xFF;
+        }
+    }
+    const texture = new THREE.DataTexture(
+        image_data,
+        width,
+        height,
+        THREE.RGBAFormat,
+        THREE.UnsignedByteType,
+        THREE.UVMapping,
+        THREE.RepeatWrapping,
+        THREE.RepeatWrapping,
+        THREE.LinearFilter,
+        THREE.LinearMipMapLinearFilter
+    );
+    texture.needsUpdate = true;
+    texture.generateMipmaps = true;
     return texture;
 }
 

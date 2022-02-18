@@ -150,17 +150,12 @@ export default class Model extends FrameListener<Props, State> {
         const envInfo = {
             skyColor: [0, 0, 0]
         };
-        const ambience = {
-            lightingAlpha: 309,
-            lightingBeta: 2500
-        };
         const model = await loadModel(
             this.props.sharedState.entity,
             this.props.sharedState.body,
             this.props.sharedState.anim,
             animState,
             envInfo,
-            ambience
         );
         model.entity = this.entity;
         this.state.scene.threeScene.add(model.mesh);

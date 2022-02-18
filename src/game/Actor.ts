@@ -550,7 +550,6 @@ export default class Actor {
                 animIndex,
                 this.animState,
                 this.scene.scenery.props.envInfo,
-                this.scene.props.ambience
             );
             if (model !== null) {
                 // model.mesh.visible = actor.isVisible;

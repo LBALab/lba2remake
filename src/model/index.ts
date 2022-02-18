@@ -4,7 +4,6 @@ import { Entity } from './entity';
 import AnimState from './anim/AnimState';
 import { loadMesh } from './geometries';
 import { createBoundingBox } from '../utils/rendering';
-import { loadLUTTexture } from '../utils/lut';
 import {
     getCommonResource,
     getPalette,
@@ -32,16 +31,14 @@ export async function loadModel(
     animIdx: number,
     animState: any,
     envInfo: any,
-    ambience: any
 ) {
-    const [ress, pal, entities, body, texture, anim, lutTexture] = await Promise.all([
+    const [ress, pal, entities, body, texture, anim] = await Promise.all([
         getCommonResource(),
         getPalette(),
         getEntities(),
         getModels(bodyIdx, entityIdx),
         getModelsTexture(),
-        getAnimations(animIdx, entityIdx),
-        loadLUTTexture()
+        getAnimations(animIdx, entityIdx)
     ]);
     const resources = { ress, pal, entities, body, texture, anim };
     return loadModelData(
@@ -51,8 +48,6 @@ export async function loadModel(
         animIdx,
         animState,
         envInfo,
-        ambience,
-        lutTexture
     );
 }
 
@@ -67,8 +62,6 @@ function loadModelData(
     bodyIdx,
     animIdx,
     animState: AnimState,
-    envInfo: any,
-    ambience: any,
     lutTexture: THREE.Texture
 ) {
     if (entityIdx === -1 || bodyIdx === -1 || animIdx === -1)
@@ -101,10 +94,6 @@ function loadModelData(
         body,
         model.texture,
         bones,
-        model.palette,
-        model.lutTexture,
-        envInfo,
-        ambience
     );
     model.mesh = object;
     model.materials = materials;

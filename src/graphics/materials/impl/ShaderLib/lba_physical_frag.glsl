@@ -51,12 +51,15 @@ varying vec3 vViewPosition;
 #include <common>
 #include <packing>
 #include <dithering_pars_fragment>
-#include <color_pars_fragment>
+#ifndef USE_INDEXED_COLORS
+    #include <color_pars_fragment>
+#endif
 #include <uv_pars_fragment>
 #include <uv2_pars_fragment>
 #include <uvgroup_pars_fragment>
 #include <map_pars_fragment>
 #include <lba_map_pars_fragment>
+#include <lba_palette_pars_fragment>
 #include <alphamap_pars_fragment>
 #include <alphatest_pars_fragment>
 #include <aomap_pars_fragment>
@@ -93,7 +96,9 @@ void main() {
         #include <mix_map_color_fragment>
     #else
         #include <lba_map_fragment>
-        #include <color_fragment>
+        #ifndef USE_INDEXED_COLORS
+            #include <color_fragment>
+        #endif
     #endif
     #include <alphamap_fragment>
     #include <alphatest_fragment>
@@ -113,6 +118,9 @@ void main() {
 
     // modulation
     #include <aomap_fragment>
+    #include <lba_palette_fragment>
+
+    reflectedLight.indirectDiffuse *= diffuseColor.rgb;
 
     vec3 totalDiffuse = reflectedLight.directDiffuse + reflectedLight.indirectDiffuse;
     vec3 totalSpecular = reflectedLight.directSpecular + reflectedLight.indirectSpecular;
@@ -147,4 +155,6 @@ void main() {
     #include <fog_fragment>
     #include <premultiplied_alpha_fragment>
     #include <dithering_fragment>
+
+    gl_FragColor = vec4( outgoingLight, 1.0 );
 }

@@ -3,7 +3,6 @@ import * as THREE from 'three';
 import AnimState from './anim/AnimState';
 import { loadMesh } from './geometries';
 import { createBoundingBox } from '../utils/rendering';
-import { loadLUTTexture } from '../utils/lut';
 import { getCommonResource, getPalette, getInventoryObjects, getModelsTexture } from '../resources';
 
 export interface Model {
@@ -12,25 +11,18 @@ export interface Model {
     mesh: THREE.Object3D;
 }
 
-export async function loadInventoryModel(params: any,
-                          invIdx: number,
-                          envInfo: any,
-                          ambience: any) {
-    const [ress, pal, body, texture, lutTexture] = await Promise.all([
+export async function loadInventoryModel(params: any, invIdx: number) {
+    const [ress, pal, body, texture] = await Promise.all([
         getCommonResource(),
         getPalette(),
         getInventoryObjects(invIdx),
         getModelsTexture(),
-        loadLUTTexture()
     ]);
     const resources = { ress, pal, body, texture };
     return loadInventoryModelData(
         params,
         resources,
         invIdx,
-        envInfo,
-        ambience,
-        lutTexture
     );
 }
 
@@ -39,12 +31,7 @@ export async function loadInventoryModel(params: any,
  *  This will allow to mantain different states for body animations.
  *  This module will still kept data reloaded to avoid reload twice for now.
  */
-function loadInventoryModelData(params: any,
-                       resources,
-                       invIdx,
-                       envInfo: any,
-                       ambience: any,
-                       lutTexture: THREE.Texture) {
+function loadInventoryModelData(params: any, resources, invIdx) {
     if (invIdx === -1)
         return null;
 
@@ -54,7 +41,6 @@ function loadInventoryModelData(params: any,
 
     const model = {
         palette,
-        lutTexture,
         files: resources,
         bodies: [],
         texture,
@@ -71,10 +57,6 @@ function loadInventoryModelData(params: any,
         body,
         model.texture,
         bones,
-        model.palette,
-        model.lutTexture,
-        envInfo,
-        ambience
     );
     model.mesh = object;
     model.materials = materials;

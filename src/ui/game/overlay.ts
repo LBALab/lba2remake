@@ -10,11 +10,6 @@ const envInfo = {
     skyColor: [0, 0, 0]
 };
 
-const ambience = {
-    lightingAlpha: 309,
-    lightingBeta: 2500
-};
-
 const createOverlayScene = (rval = -1) => {
     const camera = get3DOrbitCamera(0.3, rval);
     const scene = {
@@ -47,7 +42,6 @@ const loadSceneModel = async (sce, b, bodyIndex, anims) => {
         0,
         anims,
         envInfo,
-        ambience
     );
 
     if (sce &&
@@ -62,12 +56,7 @@ const loadSceneModel = async (sce, b, bodyIndex, anims) => {
 };
 
 const loadSceneInventoryModel = async (sce, invId) => {
-    const m = await loadInventoryModel(
-        {},
-        invId,
-        envInfo,
-        ambience
-    );
+    const m = await loadInventoryModel({}, invId);
 
     if (sce &&
         sce.threeScene &&

@@ -304,12 +304,7 @@ export default class Extra {
                 scene.is3DCam
             );
         } else {
-            obj = await loadInventoryModel(
-                {},
-                this.modelIndex,
-                scene.scenery.props.envInfo,
-                scene.props.ambience
-            );
+            obj = await loadInventoryModel({}, this.modelIndex);
         }
 
         // // Debug Bounding Box

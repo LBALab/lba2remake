@@ -2,7 +2,11 @@
     #if defined(USE_COLOR) && !defined(USE_MAP)
         float palIndex = vPalIndex;
     #endif
-    float lIntensity = length(reflectedLight.indirectDiffuse);
+    #ifdef STANDARD
+        float lIntensity = length(reflectedLight.directDiffuse) * 2.2 + 0.1;
+    #else
+        float lIntensity = length(reflectedLight.indirectDiffuse);
+    #endif
     float x = mod(palIndex, 16.0) + lIntensity * PAL_EXPOSURE - 8.0;
     float y = floor(palIndex / 16.0);
     vec2 uvP = vec2(x, y) * 0.0625 + 0.03125;
@@ -17,5 +21,6 @@
     }
     vec3 hsv = rgb2hsv(reflectedLight.indirectDiffuse);
     reflectedLight.indirectDiffuse = hsv2rgb(vec3(hsv.x, hsv.y, 1.0));
+    reflectedLight.directDiffuse = vec3(0.0);
     // diffuseColor.rgb = vec3(1.0);
 #endif

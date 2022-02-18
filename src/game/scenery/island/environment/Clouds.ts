@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 
 import { WORLD_SIZE } from '../../../../utils/lba';
-import { loadSubTexture } from '../../../../texture';
+import { loadSubTexturePalToRGBA } from '../../../../texture';
 import { compile } from '../../../../utils/shaders';
 
 import Lightning from './Lightning';
@@ -23,7 +23,7 @@ export default class Clouds {
             uniforms: {
                 txSmoke: {value: data.smokeTexture},
                 txEnv: {
-                    value: loadSubTexture(
+                    value: loadSubTexturePalToRGBA(
                         data.ress.getEntry(envInfo.index),
                         data.palette,
                         props.ground ? 0 : 128,

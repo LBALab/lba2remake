@@ -4,7 +4,7 @@ import * as THREE from 'three';
 import { compile } from '../../../../utils/shaders';
 import VERT_SEA from './shaders/sea.vert.glsl';
 import FRAG_SEA from './shaders/sea.frag.glsl';
-import { loadSubTexture, makeNoiseTexture } from '../../../../texture';
+import { loadSubTexturePalToRGBA, makeNoiseTexture } from '../../../../texture';
 import Lightning from './Lightning';
 import { IslandGeometryInfo } from '../geometries';
 import IslandLayout from '../IslandLayout';
@@ -44,7 +44,7 @@ export default class Sea {
 
         this.uniforms = {
             uTexture: {
-                value: loadSubTexture(
+                value: loadSubTexturePalToRGBA(
                     data.ress.getEntry(envInfo.index),
                     data.palette,
                     0,
