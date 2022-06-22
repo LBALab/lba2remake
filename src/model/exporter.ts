@@ -103,8 +103,8 @@ function loadMesh(body, palette, name) {
     const {
         positions,
         normals,
-        bones: boneIndices,
-        material,
+        boneIndices,
+        materials,
         colors,
     } = geometry;
 
@@ -146,8 +146,17 @@ function loadMesh(body, palette, name) {
         new THREE.BufferAttribute(new Uint8Array(colors), 4, true)
     );
     bufferGeometry.name = name;
+    bufferGeometry.clearGroups();
+    for (const group of geometry.groups) {
+        bufferGeometry.addGroup(group.start, group.count, group.mat);
+    }
+    const indices = [];
+    for (let i = 0; i < positions.length; i += 1) {
+        indices.push(i);
+    }
+    bufferGeometry.setIndex(new THREE.BufferAttribute(new Uint16Array(indices), 1));
 
-    const modelMesh = new THREE.SkinnedMesh(bufferGeometry, material);
+    const modelMesh = new THREE.SkinnedMesh(bufferGeometry, materials);
     modelMesh.name = name;
     modelMesh.matrixAutoUpdate = false;
     modelMesh.bind(skeleton);
@@ -157,36 +166,53 @@ function loadMesh(body, palette, name) {
 
 function loadGeometry(body, palette) {
     const geometry = {
+        currentMat: -1,
+        groups: [],
         positions: [],
         normals: [],
         colors: [],
-        intensities: [],
-        bones: [],
-        polyTypes: [],
-        linePositions: [],
-        lineNormals: [],
-        lineColors: [],
-        lineIntensities: [],
-        lineBones: [],
-        material: new THREE.MeshStandardMaterial()
+        boneIndices: [],
+        materials: [
+            new THREE.MeshStandardMaterial(),
+            new THREE.MeshBasicMaterial(),
+        ],
     };
 
     loadFaceGeometry(geometry, body, palette);
     loadSphereGeometry(geometry, body, palette);
     loadLineGeometry(geometry, body, palette);
-    // debugBoneGeometry(geometries, body);
+    finishMaterialState(geometry);
 
     return geometry;
 }
 
+function finishMaterialState(geometry) {
+    if (geometry.groups.length > 0) {
+        const lastGroup = geometry.groups[geometry.groups.length - 1];
+        lastGroup.count = (geometry.positions.length / 3) - lastGroup.start;
+    }
+}
+
+function setMaterialState(geometry, mat) {
+    if (geometry.currentMat !== mat) {
+        finishMaterialState(geometry);
+        geometry.groups.push({
+            mat,
+            start: geometry.positions.length / 3,
+        });
+        geometry.currentMat = mat;
+    }
+}
+
 function loadFaceGeometry(geometry, body, palette) {
+    setMaterialState(geometry, 0);
     each(body.polygons, (p) => {
         const faceNormal = getFaceNormal(body, p);
         const addVertex = (j) => {
             const vertexIndex = p.vertex[j];
             push.apply(geometry.positions, getPosition(body, vertexIndex));
             push.apply(geometry.normals, faceNormal || getNormal(body, vertexIndex));
-            push.apply(geometry.bones, getBone(body, vertexIndex));
+            push.apply(geometry.boneIndices, getBone(body, vertexIndex));
             push.apply(geometry.colors, getColor(p.colour, p.intensity, palette));
         };
         for (let j = 0; j < 3; j += 1) {
@@ -201,6 +227,7 @@ function loadFaceGeometry(geometry, body, palette) {
 }
 
 function loadSphereGeometry(geometry, body, palette) {
+    setMaterialState(geometry, 1);
     each(body.spheres, (s) => {
         const centerPos = getPosition(body, s.vertex);
         const sphereGeometry = new THREE.SphereGeometry(s.size, 8, 8);
@@ -213,7 +240,7 @@ function loadSphereGeometry(geometry, body, palette) {
                 z + centerPos[2]
             ]);
             push.apply(geometry.normals, normal);
-            push.apply(geometry.bones, getBone(body, s.vertex));
+            push.apply(geometry.boneIndices, getBone(body, s.vertex));
             push.apply(geometry.colors, getColor(s.colour, s.intensity, palette));
         };
 
@@ -233,6 +260,7 @@ const P = new THREE.Vector3();
 const Q = new THREE.Quaternion();
 
 function loadLineGeometry(geometry, body, palette) {
+    setMaterialState(geometry, 1);
     each(body.lines, (line) => {
         const startPos = getPosition(body, line.vertex1);
         const endPos = getPosition(body, line.vertex2);
@@ -254,7 +282,7 @@ function loadLineGeometry(geometry, body, palette) {
                 P.z + startPos[2]
             ]);
             push.apply(geometry.normals, normal);
-            push.apply(geometry.bones, getBone(body, y > 0 ? line.vertex2 : line.vertex1));
+            push.apply(geometry.boneIndices, getBone(body, y > 0 ? line.vertex2 : line.vertex1));
             push.apply(geometry.colors, getColor(line.colour, line.intensity, palette));
         };
 
@@ -319,7 +347,6 @@ function getNormal(body, index) {
     return [
         normal.x,
         normal.y,
-        normal.z/* ,
-        normal.colour */
+        normal.z
     ];
 }
