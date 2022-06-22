@@ -41,7 +41,7 @@ async function loadAnimations(entityIdx, body) {
     const entity = entities[entityIdx];
     const clips = [];
     for (const animInfo of entity.anims) {
-        const anim = await getAnimations(animInfo.animIndex, entityIdx);
+        const anim = await getAnimations(animInfo.index, entityIdx);
         const times = [];
         let t = 0.0;
         const numBones = Math.min(body.bones.length, anim.numBoneframes);
@@ -69,7 +69,7 @@ async function loadAnimations(entityIdx, body) {
                 : new THREE.VectorKeyframeTrack(`.bones[bone_${b}].position`, times, values);
             tracks.push(track);
         }
-        const name = DebugData.metadata.anims[animInfo.animIndex] || `anim_${animInfo.animIndex}`;
+        const name = DebugData.metadata.anims[animInfo.index] || `anim_${animInfo.index}`;
         const clip = new THREE.AnimationClip(name, t, tracks);
         clips.push(clip);
     }
