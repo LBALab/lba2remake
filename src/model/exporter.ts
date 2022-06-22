@@ -49,12 +49,13 @@ async function loadAnimations(entityIdx, body) {
             times.push(t);
             t += anim.keyframes[i].duration / 1000;
         }
+        times.push(t);
         const tracks = [];
         for (let b = 0; b < numBones; b += 1) {
             const type = anim.keyframes.length > 0 ? anim.keyframes[0].boneframes[b].type : 0;
             const values = [];
-            for (let i = 0; i < anim.keyframes.length; i += 1) {
-                const frame = anim.keyframes[i].boneframes[b];
+            for (let i = 0; i <= anim.keyframes.length; i += 1) {
+                const frame = anim.keyframes[i % anim.keyframes.length].boneframes[b];
                 if (type === 0) {
                     const q = frame.quat;
                     values.push(q.x, q.y, q.z, q.w);
@@ -62,7 +63,6 @@ async function loadAnimations(entityIdx, body) {
                     const p = frame.pos;
                     values.push(p.x, p.y, p.z);
                 }
-
             }
             const track = type === 0
                 ? new THREE.QuaternionKeyframeTrack(`.bones[bone_${b}].quaternion`, times, values)
