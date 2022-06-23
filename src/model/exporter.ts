@@ -2,12 +2,8 @@ import { getAnimations, getEntities, getModels, getPalette } from '../resources'
 import { GLTFExporter } from 'three/examples/jsm/exporters/GLTFExporter';
 
 import * as THREE from 'three';
-import {each} from 'lodash';
 
 import { saveAs } from 'file-saver';
-
-// import { loadSubTextureRGBA } from '../texture';
-import { PolygonType } from '../utils/lba';
 
 const push = Array.prototype.push;
 
@@ -377,28 +373,7 @@ function getColor(color, intensity, palette) {
     ];
 }
 
-const U = new THREE.Vector3();
-const V = new THREE.Vector3();
-const P1 = new THREE.Vector3();
 const N = new THREE.Vector3();
-
-// Face normal algorithm from:
-// https://www.khronos.org/opengl/wiki/Calculating_a_Surface_Normal
-function getFaceNormal(body, poly) {
-    if (poly.polyType === PolygonType.FLAT) {
-        P1.fromArray(getPosition(body, poly.vertex[0]));
-        U.fromArray(getPosition(body, poly.vertex[1])).sub(P1);
-        V.fromArray(getPosition(body, poly.vertex[2])).sub(P1);
-        N.set(
-            (U.y * V.z) - (U.z * V.y),
-            (U.z * V.x) - (U.x * V.z),
-            (U.x * V.y) - (U.y * V.x),
-        );
-        N.normalize();
-        return [N.x, N.y, N.z];
-    }
-    return null;
-}
 
 function getNormal(body, index) {
     const normal = body.normals[index];
