@@ -24,7 +24,7 @@ export async function exportModel(
     const body = await getModels(bodyIdx, entityIdx);
     const palette = await getPalette();
     const mesh = loadMesh(body, palette, name);
-    const animations = await loadAnimations(entityIdx, body);
+    const animations = await loadAnimations(entityIdx, body, mesh.skeleton);
 
     exporter.parse(mesh, (gltf: ArrayBuffer) => {
         const blob = new Blob([gltf], {type: 'model/gltf-binary'});
@@ -36,7 +36,7 @@ export async function exportModel(
     });
 }
 
-async function loadAnimations(entityIdx, body) {
+async function loadAnimations(entityIdx, body, skeleton: THREE.Skeleton) {
     const entities = await getEntities();
     const entity = entities[entityIdx];
     const clips = [];
@@ -61,7 +61,12 @@ async function loadAnimations(entityIdx, body) {
                     values.push(q.x, q.y, q.z, q.w);
                 } else {
                     const p = frame.pos;
-                    values.push(p.x, p.y, p.z);
+                    const bp = skeleton.bones[b].position;
+                    values.push(
+                        bp.x + p.x,
+                        bp.y + p.y,
+                        bp.z + p.z
+                    );
                 }
             }
             const track = type === 0
@@ -76,7 +81,7 @@ async function loadAnimations(entityIdx, body) {
     return clips;
 }
 
-function loadMesh(body, palette, name) {
+function loadMesh(body, palette, name): THREE.SkinnedMesh {
     const geometry = loadGeometry(body, palette);
 
     const bones: THREE.Bone[] = [];
@@ -322,6 +327,7 @@ function getColor(color, intensity, palette) {
 const U = new THREE.Vector3();
 const V = new THREE.Vector3();
 const P1 = new THREE.Vector3();
+const N = new THREE.Vector3();
 
 // Face normal algorithm from:
 // https://www.khronos.org/opengl/wiki/Calculating_a_Surface_Normal
@@ -330,23 +336,23 @@ function getFaceNormal(body, poly) {
         P1.fromArray(getPosition(body, poly.vertex[0]));
         U.fromArray(getPosition(body, poly.vertex[1])).sub(P1);
         V.fromArray(getPosition(body, poly.vertex[2])).sub(P1);
-        return [
+        N.set(
             (U.y * V.z) - (U.z * V.y),
             (U.z * V.x) - (U.x * V.z),
             (U.x * V.y) - (U.y * V.x),
-        ];
+        );
+        N.normalize();
+        return [N.x, N.y, N.z];
     }
     return null;
 }
 
 function getNormal(body, index) {
     const normal = body.normals[index];
-    if (!normal) {
-        return [0, 1, 0];
+    if (!normal || (normal.x === 0 && normal.y === 0 && normal.z === 0)) {
+        return [1, 0, 0];
     }
-    return [
-        normal.x,
-        normal.y,
-        normal.z
-    ];
+    N.set(normal.x, normal.y, normal.z);
+    N.normalize();
+    return [N.x, N.y, N.z];
 }
