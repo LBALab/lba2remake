@@ -155,11 +155,7 @@ function loadMesh(body, palette, name): THREE.SkinnedMesh {
     for (const group of geometry.groups) {
         bufferGeometry.addGroup(group.start, group.count, group.mat);
     }
-    const indices = [];
-    for (let i = 0; i < positions.length; i += 1) {
-        indices.push(i);
-    }
-    bufferGeometry.setIndex(new THREE.BufferAttribute(new Uint16Array(indices), 1));
+    bufferGeometry.setIndex(new THREE.BufferAttribute(new Uint16Array(geometry.indices), 1));
 
     const modelMesh = new THREE.SkinnedMesh(bufferGeometry, materials);
     modelMesh.name = name;
@@ -176,6 +172,7 @@ function loadGeometry(body, palette) {
         positions: [],
         normals: [],
         colors: [],
+        indices: [],
         boneIndices: [],
         materials: [
             new THREE.MeshStandardMaterial(),
@@ -194,7 +191,7 @@ function loadGeometry(body, palette) {
 function finishMaterialState(geometry) {
     if (geometry.groups.length > 0) {
         const lastGroup = geometry.groups[geometry.groups.length - 1];
-        lastGroup.count = (geometry.positions.length / 3) - lastGroup.start;
+        lastGroup.count = (geometry.indices.length) - lastGroup.start;
     }
 }
 
@@ -203,7 +200,7 @@ function setMaterialState(geometry, mat) {
         finishMaterialState(geometry);
         geometry.groups.push({
             mat,
-            start: geometry.positions.length / 3,
+            start: geometry.indices.length,
         });
         geometry.currentMat = mat;
     }
@@ -211,51 +208,89 @@ function setMaterialState(geometry, mat) {
 
 function loadFaceGeometry(geometry, body, palette) {
     setMaterialState(geometry, 0);
-    each(body.polygons, (p) => {
-        const faceNormal = getFaceNormal(body, p);
+    const usedColors = [];
+    const colorMap = new Map<string, number>();
+    for (let i = 0; i < body.vertices.length; i += 1) {
+        push.apply(geometry.positions, getPosition(body, i));
+        push.apply(geometry.normals, getNormal(body, i));
+        push.apply(geometry.boneIndices, getBone(body, i));
+        push.apply(geometry.colors, [0xFF, 0xFF, 0xFF, 0xFF]);
+    }
+
+    const sameColor = (idx, color) =>
+        geometry.colors[idx * 4] === color[0] &&
+        geometry.colors[idx * 4 + 1] === color[1] &&
+        geometry.colors[idx * 4 + 2] === color[2] &&
+        geometry.colors[idx * 4 + 3] === color[3];
+
+    for (const p of body.polygons) {
         const addVertex = (j) => {
-            const vertexIndex = p.vertex[j];
-            push.apply(geometry.positions, getPosition(body, vertexIndex));
-            push.apply(geometry.normals, faceNormal || getNormal(body, vertexIndex));
-            push.apply(geometry.boneIndices, getBone(body, vertexIndex));
-            push.apply(geometry.colors, getColor(p.colour, p.intensity, palette));
+            let vertexIndex = p.vertex[j];
+            const color = getColor(p.colour, p.intensity, palette);
+            if (!usedColors[vertexIndex]) {
+                geometry.colors[vertexIndex * 4] = color[0];
+                geometry.colors[vertexIndex * 4 + 1] = color[1];
+                geometry.colors[vertexIndex * 4 + 2] = color[2];
+                geometry.colors[vertexIndex * 4 + 3] = color[3];
+                usedColors[vertexIndex] = true;
+            } else if (!sameColor(vertexIndex, color)) {
+                const key = `${vertexIndex}:${color[0]},${color[1]},${color[2]},${color[3]}`;
+                if (colorMap.has(key)) {
+                    vertexIndex = colorMap.get(key);
+                } else {
+                    const newIndex = geometry.positions.length / 3;
+                    push.apply(geometry.positions, getPosition(body, vertexIndex));
+                    push.apply(geometry.normals, getNormal(body, vertexIndex));
+                    push.apply(geometry.boneIndices, getBone(body, vertexIndex));
+                    push.apply(geometry.colors, color);
+                    vertexIndex = newIndex;
+                    colorMap.set(key, newIndex);
+                }
+            }
+            geometry.indices.push(vertexIndex);
         };
         for (let j = 0; j < 3; j += 1) {
             addVertex(j);
         }
         if (p.numVertex >= 4) { // quad
-            each([0, 2, 3], (j) => {
+            for (const j of [0, 2, 3]) {
                 addVertex(j);
-            });
+            }
         }
-    });
+    }
 }
 
 function loadSphereGeometry(geometry, body, palette) {
     setMaterialState(geometry, 1);
-    each(body.spheres, (s) => {
+    for (const s of body.spheres) {
         const centerPos = getPosition(body, s.vertex);
         const sphereGeometry = new THREE.SphereGeometry(s.size, 8, 8);
-        const normal = getNormal(body, s.vertex);
+        const baseIndex = geometry.positions.length / 3;
 
-        const addVertex = (x, y, z) => {
-            push.apply(geometry.positions, [
-                x + centerPos[0],
-                y + centerPos[1],
-                z + centerPos[2]
-            ]);
-            push.apply(geometry.normals, normal);
-            push.apply(geometry.boneIndices, getBone(body, s.vertex));
-            push.apply(geometry.colors, getColor(s.colour, s.intensity, palette));
-        };
+        const color = getColor(s.colour, s.intensity, palette);
+        const bone = getBone(body, s.vertex);
 
         const { array: vertex } = sphereGeometry.attributes.position;
+        const { array: normals } = sphereGeometry.attributes.normal;
         const { array: index, count } = sphereGeometry.index;
-        for (let i = 0; i < count; i += 1) {
-            const idx = index[i] * 3;
-            addVertex(vertex[idx], vertex[idx + 1], vertex[idx + 2]);
+        for (let i = 0; i < vertex.length; i += 3) {
+            push.apply(geometry.positions, [
+                vertex[i] + centerPos[0],
+                vertex[i + 1] + centerPos[1],
+                vertex[i + 2] + centerPos[2]
+            ]);
+            push.apply(geometry.normals, [
+                normals[i],
+                normals[i + 1],
+                normals[i + 2]
+            ]);
+            push.apply(geometry.boneIndices, bone);
+            push.apply(geometry.colors, color);
         }
-    });
+        for (let i = 0; i < count; i += 1) {
+            geometry.indices.push(baseIndex + index[i]);
+        }
+    }
 }
 
 const BASE = new THREE.Vector3(0, 1, 0);
@@ -266,7 +301,9 @@ const Q = new THREE.Quaternion();
 
 function loadLineGeometry(geometry, body, palette) {
     setMaterialState(geometry, 1);
-    each(body.lines, (line) => {
+    for (const line of body.lines) {
+        const baseIndex = geometry.positions.length / 3;
+
         const startPos = getPosition(body, line.vertex1);
         const endPos = getPosition(body, line.vertex2);
         V1.fromArray(startPos);
@@ -275,29 +312,45 @@ function loadLineGeometry(geometry, body, palette) {
         const dist = V2.length();
         V2.normalize();
         Q.setFromUnitVectors(BASE, V2);
-        const segmentGeometry = new THREE.CylinderGeometry(0.005, 0.005, 1, 6, 1);
-        const normal = getNormal(body, line.vertex1);
 
-        const addVertex = (x, y, z) => {
-            P.set(x, (y + 0.5) * dist, z);
+        const thickness = 0.002;
+        const segmentGeometry = new THREE.CylinderGeometry(thickness, thickness, 1, 6, 1);
+        const color = getColor(line.colour, line.intensity, palette);
+
+        const { array: vertex } = segmentGeometry.attributes.position;
+        const { array: normals } = segmentGeometry.attributes.normal;
+        const { array: index, count } = segmentGeometry.index;
+        for (let i = 0; i < vertex.length; i += 3) {
+            P.set(
+                vertex[i],
+                (vertex[i + 1] + 0.5) * dist,
+                vertex[i + 2]
+            );
             P.applyQuaternion(Q);
             push.apply(geometry.positions, [
                 P.x + startPos[0],
                 P.y + startPos[1],
                 P.z + startPos[2]
             ]);
-            push.apply(geometry.normals, normal);
-            push.apply(geometry.boneIndices, getBone(body, y > 0 ? line.vertex2 : line.vertex1));
-            push.apply(geometry.colors, getColor(line.colour, line.intensity, palette));
-        };
-
-        const { array: vertex } = segmentGeometry.attributes.position;
-        const { array: index, count } = segmentGeometry.index;
-        for (let i = 0; i < count; i += 1) {
-            const idx = index[i] * 3;
-            addVertex(vertex[idx], vertex[idx + 1], vertex[idx + 2]);
+            const bone = getBone(body, vertex[i + 1] > 0 ? line.vertex2 : line.vertex1);
+            P.set(
+                normals[i],
+                normals[i + 1],
+                normals[i + 2]
+            );
+            P.applyQuaternion(Q);
+            push.apply(geometry.normals, [
+                P.x,
+                P.y,
+                P.z
+            ]);
+            push.apply(geometry.boneIndices, bone);
+            push.apply(geometry.colors, color);
         }
-    });
+        for (let i = 0; i < count; i += 1) {
+            geometry.indices.push(baseIndex + index[i]);
+        }
+    }
 }
 
 function getBone(body, index) {
