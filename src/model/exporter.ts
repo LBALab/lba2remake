@@ -43,43 +43,55 @@ async function loadAnimations(entityIdx, body, skeleton: THREE.Skeleton) {
     const clips = [];
     for (const animInfo of entity.anims) {
         const anim = await getAnimations(animInfo.index, entityIdx);
-        const times = [];
-        let t = 0.0;
-        const numBones = Math.min(body.bones.length, anim.numBoneframes);
-        for (let i = 0; i < anim.keyframes.length; i += 1) {
-            times.push(t);
-            t += anim.keyframes[i].duration / 1000;
+        if (anim.loopFrame > 0) {
+            clips.push(makeAnimationClip(animInfo, anim, body, skeleton, true));
+            clips.push(makeAnimationClip(animInfo, anim, body, skeleton, false));
+        } else {
+            clips.push(makeAnimationClip(animInfo, anim, body, skeleton, false));
         }
-        times.push(t);
-        const tracks = [];
-        for (let b = 0; b < numBones; b += 1) {
-            const type = anim.keyframes.length > 0 ? anim.keyframes[0].boneframes[b].type : 0;
-            const values = [];
-            for (let i = 0; i <= anim.keyframes.length; i += 1) {
-                const frame = anim.keyframes[i % anim.keyframes.length].boneframes[b];
-                if (type === 0) {
-                    const q = frame.quat;
-                    values.push(q.x, q.y, q.z, q.w);
-                } else {
-                    const p = frame.pos;
-                    const bp = skeleton.bones[b].position;
-                    values.push(
-                        bp.x + p.x,
-                        bp.y + p.y,
-                        bp.z + p.z
-                    );
-                }
-            }
-            const track = type === 0
-                ? new THREE.QuaternionKeyframeTrack(`.bones[bone_${b}].quaternion`, times, values)
-                : new THREE.VectorKeyframeTrack(`.bones[bone_${b}].position`, times, values);
-            tracks.push(track);
-        }
-        const name = DebugData.metadata.anims[animInfo.index] || `anim_${animInfo.index}`;
-        const clip = new THREE.AnimationClip(name, t, tracks);
-        clips.push(clip);
     }
     return clips;
+}
+
+function makeAnimationClip(animInfo, anim, body, skeleton: THREE.Skeleton, intro: boolean) {
+    const times = [];
+    let t = 0.0;
+    const numBones = Math.min(body.bones.length, anim.numBoneframes);
+    const min = intro ? 0 : anim.loopFrame;
+    const max = intro ? anim.loopFrame : anim.numKeyframes;
+    for (let i = min; i < max; i += 1) {
+        times.push(t);
+        t += anim.keyframes[i].duration / 1000;
+    }
+    times.push(t);
+    const tracks = [];
+    for (let b = 0; b < numBones; b += 1) {
+        const type = anim.keyframes.length > 0 ? anim.keyframes[0].boneframes[b].type : 0;
+        const values = [];
+        for (let i = min; i <= max; i += 1) {
+            const frameNum = intro ? i : (i === max ? min : i);
+            const frame = anim.keyframes[frameNum].boneframes[b];
+            if (type === 0) {
+                const q = frame.quat;
+                values.push(q.x, q.y, q.z, q.w);
+            } else {
+                const p = frame.pos;
+                const bp = skeleton.bones[b].position;
+                values.push(
+                    bp.x + p.x,
+                    bp.y + p.y,
+                    bp.z + p.z
+                );
+            }
+        }
+        const track = type === 0
+            ? new THREE.QuaternionKeyframeTrack(`.bones[bone_${b}].quaternion`, times, values)
+            : new THREE.VectorKeyframeTrack(`.bones[bone_${b}].position`, times, values);
+        tracks.push(track);
+    }
+    const name = DebugData.metadata.anims[animInfo.index] || `anim_${animInfo.index}`;
+    const suffix = intro ? '.intro' : '';
+    return new THREE.AnimationClip(`${name}${suffix}`, t, tracks);
 }
 
 function loadMesh(body, palette, name): THREE.SkinnedMesh {
