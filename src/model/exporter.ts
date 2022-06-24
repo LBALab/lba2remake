@@ -20,6 +20,11 @@ export async function exportModel(
     const body = await getModels(bodyIdx, entityIdx);
     const palette = await getPalette();
     const mesh = loadMesh(body, palette, name);
+    mesh.userData.isRoot = true;
+    mesh.userData.entityName = entityName;
+    mesh.userData.bodyName = bodyName;
+    mesh.userData.entityIdx = entityIdx;
+    mesh.userData.bodyIdx = bodyIdx;
     const animations = await loadAnimations(entityIdx, body, mesh.skeleton);
 
     exporter.parse(mesh, (gltf: ArrayBuffer) => {
