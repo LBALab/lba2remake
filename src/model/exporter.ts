@@ -1,9 +1,10 @@
-import { getAnimations, getEntities, getModels, getPalette } from '../resources';
+import { getAnimations, getEntities, getModels, getModelsTexture, getPalette } from '../resources';
 import { GLTFExporter } from 'three/examples/jsm/exporters/GLTFExporter';
 
 import * as THREE from 'three';
 
 import { saveAs } from 'file-saver';
+import { loadSubTextureRGBA } from '../texture';
 
 const push = Array.prototype.push;
 
@@ -19,7 +20,8 @@ export async function exportModel(
 
     const body = await getModels(bodyIdx, entityIdx);
     const palette = await getPalette();
-    const mesh = loadMesh(body, palette, name);
+    const texture = await getModelsTexture();
+    const mesh = loadMesh(body, texture, palette, name);
     mesh.userData.isRoot = true;
     mesh.userData.entityName = entityName;
     mesh.userData.bodyName = bodyName;
@@ -94,8 +96,8 @@ function makeAnimationClip(animInfo, anim, body, skeleton: THREE.Skeleton, intro
     return new THREE.AnimationClip(`${name}${suffix}`, t, tracks);
 }
 
-function loadMesh(body, palette, name): THREE.SkinnedMesh {
-    const geometry = loadGeometry(body, palette);
+function loadMesh(body, texture, palette, name): THREE.SkinnedMesh {
+    const geometry = loadGeometry(body, texture, palette);
 
     const bones: THREE.Bone[] = [];
     for (let i = 0; i < body.bones.length; i += 1) {
@@ -124,6 +126,7 @@ function loadMesh(body, palette, name): THREE.SkinnedMesh {
         boneIndices,
         materials,
         colors,
+        uvs,
     } = geometry;
 
     if (positions.length === 0) {
@@ -163,6 +166,10 @@ function loadMesh(body, palette, name): THREE.SkinnedMesh {
         'color',
         new THREE.BufferAttribute(new Uint8Array(colors), 4, true)
     );
+    bufferGeometry.setAttribute(
+        'uv',
+        new THREE.BufferAttribute(new Float32Array(uvs), 2)
+    );
     bufferGeometry.name = name;
     bufferGeometry.clearGroups();
     for (const group of geometry.groups) {
@@ -178,7 +185,7 @@ function loadMesh(body, palette, name): THREE.SkinnedMesh {
     return modelMesh;
 }
 
-function loadGeometry(body, palette) {
+function loadGeometry(body, texture, palette) {
     const geometry = {
         currentMat: -1,
         groups: [],
@@ -187,13 +194,15 @@ function loadGeometry(body, palette) {
         colors: [],
         indices: [],
         boneIndices: [],
+        uvs: [],
+        texGroups: {},
         materials: [
             new THREE.MeshStandardMaterial(),
             new THREE.MeshBasicMaterial(),
         ],
     };
 
-    loadFaceGeometry(geometry, body, palette);
+    loadFaceGeometry(geometry, body, texture, palette);
     loadSphereGeometry(geometry, body, palette);
     loadLineGeometry(geometry, body, palette);
     finishMaterialState(geometry);
@@ -219,7 +228,7 @@ function setMaterialState(geometry, mat) {
     }
 }
 
-function loadFaceGeometry(geometry, body, palette) {
+function loadFaceGeometry(geometry, body, texture, palette) {
     setMaterialState(geometry, 0);
     const usedColors = [];
     const colorMap = new Map<string, number>();
@@ -227,6 +236,7 @@ function loadFaceGeometry(geometry, body, palette) {
         push.apply(geometry.positions, getPosition(body, i));
         push.apply(geometry.normals, getNormal(body, i));
         push.apply(geometry.boneIndices, getBone(body, i));
+        push.apply(geometry.uvs, [0, 0]);
         push.apply(geometry.colors, [0xFF, 0xFF, 0xFF, 0xFF]);
     }
 
@@ -237,10 +247,26 @@ function loadFaceGeometry(geometry, body, palette) {
         geometry.colors[idx * 4 + 3] === color[3];
 
     for (const p of body.polygons) {
+        const uvGroup = getUVGroup(body, p);
+        if (uvGroup) {
+            const matIndex = getTexMaterialIndex(geometry, uvGroup, texture);
+            setMaterialState(geometry, matIndex);
+        } else {
+            setMaterialState(geometry, 0);
+        }
+
         const addVertex = (j) => {
             let vertexIndex = p.vertex[j];
             const color = getColor(p.colour, p.intensity, palette);
-            if (!usedColors[vertexIndex]) {
+            if (uvGroup) {
+                const newIndex = geometry.positions.length / 3;
+                push.apply(geometry.positions, getPosition(body, vertexIndex));
+                push.apply(geometry.normals, getNormal(body, vertexIndex));
+                push.apply(geometry.boneIndices, getBone(body, vertexIndex));
+                push.apply(geometry.colors, color);
+                push.apply(geometry.uvs, getUVs(uvGroup, p, j));
+                vertexIndex = newIndex;
+            } else if (!usedColors[vertexIndex]) {
                 geometry.colors[vertexIndex * 4] = color[0];
                 geometry.colors[vertexIndex * 4 + 1] = color[1];
                 geometry.colors[vertexIndex * 4 + 2] = color[2];
@@ -256,6 +282,7 @@ function loadFaceGeometry(geometry, body, palette) {
                     push.apply(geometry.normals, getNormal(body, vertexIndex));
                     push.apply(geometry.boneIndices, getBone(body, vertexIndex));
                     push.apply(geometry.colors, color);
+                    push.apply(geometry.uvs, [0, 0]);
                     vertexIndex = newIndex;
                     colorMap.set(key, newIndex);
                 }
@@ -299,6 +326,7 @@ function loadSphereGeometry(geometry, body, palette) {
             ]);
             push.apply(geometry.boneIndices, bone);
             push.apply(geometry.colors, color);
+            push.apply(geometry.uvs, [0, 0]);
         }
         for (let i = 0; i < count; i += 1) {
             geometry.indices.push(baseIndex + index[i]);
@@ -359,6 +387,7 @@ function loadLineGeometry(geometry, body, palette) {
             ]);
             push.apply(geometry.boneIndices, bone);
             push.apply(geometry.colors, color);
+            push.apply(geometry.uvs, [0, 0]);
         }
         for (let i = 0; i < count; i += 1) {
             geometry.indices.push(baseIndex + index[i]);
@@ -390,6 +419,23 @@ function getColor(color, intensity, palette) {
     ];
 }
 
+function getUVs(uvGroup, p, vertex) {
+    if (p.hasTex) {
+        return [
+            p.u[vertex] / (uvGroup[2] + 1),
+            p.v[vertex] / (uvGroup[3] + 1)
+        ];
+    }
+    return [0, 0];
+}
+
+function getUVGroup(body, p) {
+    if (p.hasTex) {
+        return body.uvGroups[p.tex];
+    }
+    return null;
+}
+
 const N = new THREE.Vector3();
 
 function getNormal(body, index) {
@@ -400,4 +446,26 @@ function getNormal(body, index) {
     N.set(normal.x, normal.y, normal.z);
     N.normalize();
     return [N.x, N.y, N.z];
+}
+
+function getTexMaterialIndex(geometries, group, baseTexture) {
+    if (group in geometries.texGroups) {
+        return geometries.texGroups[group];
+    }
+    let groupTexture = baseTexture;
+    if (group.join(',') !== '0,0,255,255') {
+        groupTexture = loadSubTextureRGBA(
+            baseTexture.image.data,
+            group[0],
+            group[1],
+            group[2] + 1,
+            group[3] + 1
+        );
+    }
+    const index = geometries.materials.length;
+    geometries.texGroups[group] = index;
+    geometries.materials.push(new THREE.MeshStandardMaterial({
+        map: groupTexture,
+    }));
+    return index;
 }
