@@ -198,8 +198,12 @@ function loadGeometry(body, texture, palette) {
         uvs: [],
         texGroups: {},
         materials: [
-            new THREE.MeshStandardMaterial(),
-            new THREE.MeshBasicMaterial(),
+            new THREE.MeshStandardMaterial({
+                name: 'lba_default_lit'
+            }),
+            new THREE.MeshBasicMaterial({
+                name: 'lba_default_unlit',
+            }),
         ],
     };
 
@@ -469,6 +473,7 @@ function getTexMaterialIndex(geometries, group, baseTexture) {
     const index = geometries.materials.length;
     geometries.texGroups[group] = index;
     geometries.materials.push(new THREE.MeshStandardMaterial({
+        name: `lba_textured_${group.join('_')}`,
         map: groupTexture,
     }));
     return index;
