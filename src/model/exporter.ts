@@ -215,6 +215,9 @@ function finishMaterialState(geometry) {
     if (geometry.groups.length > 0) {
         const lastGroup = geometry.groups[geometry.groups.length - 1];
         lastGroup.count = (geometry.indices.length) - lastGroup.start;
+        if (lastGroup.count === 0) {
+            geometry.groups.pop();
+        }
     }
 }
 
