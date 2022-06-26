@@ -5,6 +5,7 @@ import * as THREE from 'three';
 
 import { saveAs } from 'file-saver';
 import { loadSubTextureRGBA } from '../texture';
+import { PolygonType } from '../utils/lba';
 
 const push = Array.prototype.push;
 
@@ -263,17 +264,29 @@ function loadFaceGeometry(geometry, body, texture, palette) {
             setMaterialState(geometry, 0);
         }
 
+        const faceNormal = getFaceNormal(body, p);
+
         const addVertex = (j) => {
             let vertexIndex = p.vertex[j];
             const color = getColor(p.colour, p.intensity, palette);
-            if (uvGroup) {
+
+            const pushVertex = (useFaceNormal = false) => {
                 const newIndex = geometry.positions.length / 3;
                 push.apply(geometry.positions, getPosition(body, vertexIndex));
-                push.apply(geometry.normals, getNormal(body, vertexIndex));
+                push.apply(geometry.normals, useFaceNormal
+                    ? faceNormal
+                    : getNormal(body, vertexIndex)
+                );
                 push.apply(geometry.boneIndices, getBone(body, vertexIndex));
                 push.apply(geometry.colors, color);
                 push.apply(geometry.uvs, getUVs(uvGroup, p, j));
                 vertexIndex = newIndex;
+            };
+
+            if (p.polyType === PolygonType.FLAT) {
+                pushVertex(true);
+            } else if (uvGroup) {
+                pushVertex();
             } else if (!usedColors[vertexIndex]) {
                 geometry.colors[vertexIndex * 4] = color[0];
                 geometry.colors[vertexIndex * 4 + 1] = color[1];
@@ -285,14 +298,8 @@ function loadFaceGeometry(geometry, body, texture, palette) {
                 if (colorMap.has(key)) {
                     vertexIndex = colorMap.get(key);
                 } else {
-                    const newIndex = geometry.positions.length / 3;
-                    push.apply(geometry.positions, getPosition(body, vertexIndex));
-                    push.apply(geometry.normals, getNormal(body, vertexIndex));
-                    push.apply(geometry.boneIndices, getBone(body, vertexIndex));
-                    push.apply(geometry.colors, color);
-                    push.apply(geometry.uvs, [0, 0]);
-                    vertexIndex = newIndex;
-                    colorMap.set(key, newIndex);
+                    pushVertex();
+                    colorMap.set(key, vertexIndex);
                 }
             }
             geometry.indices.push(vertexIndex);
@@ -444,7 +451,28 @@ function getUVGroup(body, p) {
     return null;
 }
 
+const U = new THREE.Vector3();
+const V = new THREE.Vector3();
+const P1 = new THREE.Vector3();
 const N = new THREE.Vector3();
+
+// Face normal algorithm from:
+// https://www.khronos.org/opengl/wiki/Calculating_a_Surface_Normal
+function getFaceNormal(body, poly) {
+    if (poly.polyType !== PolygonType.FLAT) {
+        return null;
+    }
+    P1.fromArray(getPosition(body, poly.vertex[0]));
+    U.fromArray(getPosition(body, poly.vertex[1])).sub(P1);
+    V.fromArray(getPosition(body, poly.vertex[2])).sub(P1);
+    N.set(
+        (U.y * V.z) - (U.z * V.y),
+        (U.z * V.x) - (U.x * V.z),
+        (U.x * V.y) - (U.y * V.x),
+    );
+    N.normalize();
+    return [N.x, N.y, N.z];
+}
 
 function getNormal(body, index) {
     const normal = body.normals[index];
