@@ -16,7 +16,8 @@ export async function exportModel(
 ) {
     const entityName = DebugData.metadata.entities[entityIdx] || `entity_${entityIdx}`;
     const bodyName = DebugData.metadata.bodies[bodyIdx] || `body_${bodyIdx}`;
-    const name = `${entityName}_${bodyName}`;
+    const bodySuffix = bodyName === 'default' ? '' : `_${bodyName}`;
+    const name = `${entityName}${bodySuffix}`;
 
     const body = await getModels(bodyIdx, entityIdx);
     const palette = await getPalette();
