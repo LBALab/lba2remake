@@ -44,4 +44,4 @@ jobs:
       # build
       - run:
           name: Build
-          command: npm run -s build
+          command: npm run -s build:bundle
