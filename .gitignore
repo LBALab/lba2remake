@@ -3,7 +3,12 @@ node_modules
 /apps/win10/bin
 /apps/win10/obj
 /www/data
+/www/index.html
+/www/bundle.js
+/www/webxr-assets
 /crash_report.json
 /dist
 /yarn.lock
 .DS_Store
+.build-config.js
+.netlify

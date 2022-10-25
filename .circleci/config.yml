@@ -45,13 +45,3 @@ jobs:
       - run:
           name: Build
           command: npm run -s build
-
-      # Copy files over
-      - run:
-          name: Build archive
-          command: npm pack && mv lba2remake-`node -p "require('./package.json').version"`.tgz /tmp/lba2remake.tgz
-
-      # Store artifacts
-      - run:
-          name: Store artifact
-          command: node utils/upload-build.js /tmp/lba2remake.tgz ${CIRCLE_BUILD_NUM}.tgz
