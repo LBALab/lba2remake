@@ -34,6 +34,7 @@
     "form-data": "^4.0.0",
     "hash-wasm": "^4.9.0",
     "jest-diff": "^25.5.0",
+    "loader-utils": "^3.2.1",
     "lodash": "^4.17.21",
     "node-fetch": "^2.6.7",
     "react": "16.8.6",
