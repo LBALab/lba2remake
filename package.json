@@ -57,7 +57,7 @@
     "body-parser": "^1.19.0",
     "cross-env": "^5.2.1",
     "css-loader": "^5.2.4",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "ffmpeg-cli": "^2.7.3",
     "json-loader": "^0.5.7",
     "node-libs-browser": "^1.1.1",
