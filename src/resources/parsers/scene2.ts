@@ -341,7 +341,7 @@ function loadZones(scene, offset) {
             info5: -1,
             info6: -1,
             info7: -1,
-            snap: -1,
+            param: -1,
             pos: null
         };
 
@@ -363,7 +363,7 @@ function loadZones(scene, offset) {
         zone.info6 = data.getInt32(offset + 24, true);
         zone.info7 = data.getInt32(offset + 28, true);
         zone.type = data.getInt16(offset + 32, true);
-        zone.snap = data.getInt16(offset + 34, true);
+        zone.param = data.getInt16(offset + 34, true);
         offset += 36;
 
         // normalising position

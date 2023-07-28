@@ -78,5 +78,21 @@
     "locked_door3",
     "middle_hole",
     "inside_locked_doors"
+  ],
+  "varcubes": [
+    {
+      "name": "unused_0"
+    },
+    {
+      "name": "event_started",
+      "type": "boolean"
+    },
+    {
+      "name": "random_seed_for_positions"
+    },
+    {
+      "name": "collected_blowgun",
+      "type": "boolean"
+    }
   ]
 }

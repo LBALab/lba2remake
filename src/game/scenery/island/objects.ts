@@ -3,6 +3,7 @@ import {each} from 'lodash';
 import {bits} from '../../../utils';
 import {WORLD_SCALE} from '../../../utils/lba';
 import { IslandSection, IslandObjectInfo } from './IslandLayout';
+import { getParams } from '../../../params';
 
 const push = Array.prototype.push;
 
@@ -32,6 +33,62 @@ function loadBoundingBox(obj: IslandObjectInfo, model) {
     bb.applyMatrix4(angleMatrix[(obj.angle + 3) % 4]);
     bb.translate(new THREE.Vector3(obj.x, obj.y, obj.z));
     obj.boundingBox = bb;
+    if (getParams().editor) {
+        obj.label = createObjectLabel(`obj_${obj.index}`, bb);
+    }
+}
+
+function createObjectLabel(name, bb: THREE.Box3) {
+    const canvas = document.createElement('canvas');
+    canvas.width = 256;
+    canvas.height = 64;
+    const ctx = canvas.getContext('2d');
+    const icon = new Image(32, 32);
+    icon.src = 'editor/icons/mesh.svg';
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.encoding = THREE.sRGBEncoding;
+    texture.anisotropy = 16;
+
+    const draw = (selected = false) => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.font = '22px LBA';
+        ctx.textAlign = 'center';
+        const textWidth = Math.min(ctx.measureText(name).width, 256 - 64);
+        if (selected) {
+            ctx.shadowColor = 'black';
+            ctx.shadowOffsetX = 2;
+            ctx.shadowOffsetY = 2;
+            ctx.fillStyle = 'white';
+            ctx.fillRect(128 - (textWidth * 0.5) - 18, 16, textWidth + 38, 32);
+            ctx.fillStyle = 'black';
+            ctx.shadowColor = 'transparent';
+            ctx.shadowOffsetX = 0;
+            ctx.shadowOffsetY = 0;
+        } else {
+            ctx.fillStyle = 'white';
+            ctx.shadowColor = 'black';
+            ctx.shadowOffsetX = 2;
+            ctx.shadowOffsetY = 2;
+        }
+        ctx.drawImage(icon, 128 - (textWidth * 0.5) - 16, 16, 32, 32);
+        ctx.fillText(name, 128 + 16, 42, 256 - 64);
+        texture.needsUpdate = true;
+    };
+
+    icon.onload = () => draw();
+    const spriteMaterial = new THREE.SpriteMaterial({
+        map: texture,
+        depthTest: false
+    });
+    // @ts-ignore
+    spriteMaterial.sizeAttenuation = false;
+    const sprite = new THREE.Sprite(spriteMaterial);
+    sprite.scale.set(0.2, 0.05, 1);
+    const height = (bb.max.y - bb.min.y) * 0.5;
+    sprite.position.set(0, height, 0);
+    sprite.renderOrder = 2;
+    sprite.name = `label:${name}`;
+    return sprite;
 }
 
 function loadFaces(geometries, model, info, atlas, island) {
@@ -188,8 +245,10 @@ const angleMatrix = {
     3: new THREE.Matrix4().set(0, 0, -1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1) // 90 degrees
 };
 
+const V = new THREE.Vector3();
+
 function rotate(vec, angle) {
     const index = (angle + 3) % 4;
-    const v = new THREE.Vector3().fromArray(vec);
-    return v.applyMatrix4(angleMatrix[index]).toArray();
+    V.fromArray(vec);
+    return V.applyMatrix4(angleMatrix[index]).toArray();
 }

@@ -8,6 +8,7 @@ import LifeProps from './data/life';
 import MoveProps from './data/move';
 import ConditionProps from './data/condition';
 import {formatVar} from './format';
+import { LadderZone, RailZone, ScenericZone } from '../../../../../../game/Zone';
 
 export function getDebugListing(type, scene, actor) {
     if (scene && actor) {
@@ -22,7 +23,6 @@ export function getDebugListing(type, scene, actor) {
 
 function mapCommands(type, scene, actor, commands) {
     let indent = 0;
-    let prevCommand = null;
     let section = -1;
     const state = {
         condition: null
@@ -43,11 +43,10 @@ function mapCommands(type, scene, actor, commands) {
             unimplemented: cmd.op.handler.unimplemented,
         };
         if (type === 'life') {
-            indent = processIndent(newCmd, prevCommand, cmd.op, indent);
+            indent = processIndent(newCmd, cmd.op, indent);
         } else {
             newCmd.indent = 0;
         }
-        prevCommand = newCmd;
         return newCmd;
     });
 }
@@ -187,13 +186,7 @@ function mapOperator(scene: Scene, condition, operator, state) {
     return null;
 }
 
-function processIndent(cmd, prevCmd, op, indent) {
-    if (prevCmd && prevCmd.name !== 'BREAK' &&
-            prevCmd.name !== 'SWITCH' &&
-            prevCmd.name !== 'OR_CASE' &&
-            (op.command === 'CASE' || op.command === 'OR_CASE' || op.command === 'DEFAULT')) {
-        indent = Math.max(indent - 1, 0);
-    }
+function processIndent(cmd, op, indent) {
     const { indent: indentChange } = LifeProps[op.command];
     switch (indentChange) {
         case Indent.ZERO:
@@ -242,7 +235,7 @@ export function mapDataName(scene: Scene, data) {
     if (!data) {
         return null;
     }
-    if (data.type === 'text' && data.text) {
+    if ((data.type === 'text' || data.type === 'choice_value') && data.text) {
         const ellipsis = data.text.length > 50 ? '_[...]' : '';
         return ['`', data.text.substring(0, 50), ellipsis, '`'].join('');
     }
@@ -251,11 +244,31 @@ export function mapDataName(scene: Scene, data) {
             return 'none';
         return getObjectName(data.type, scene.index, data.value);
     }
-    if (data.type === 'zone') {
+    if (data.type === 'sceneric_zone') {
         if (data.value === -1)
             return 'none';
         const foundZone = find(scene.zones, zone =>
-            zone.props.type === 2 && zone.props.snap === data.value);
+            zone instanceof ScenericZone && zone.id === data.value);
+        if (foundZone) {
+            return getObjectName('zone', scene.index, foundZone.props.index);
+        }
+        return 'none';
+    }
+    if (data.type === 'ladder_zone') {
+        if (data.value === -1)
+            return 'none';
+        const foundZone = find(scene.zones, zone =>
+            zone instanceof LadderZone && zone.id === data.value);
+        if (foundZone) {
+            return getObjectName('zone', scene.index, foundZone.props.index);
+        }
+        return 'none';
+    }
+    if (data.type === 'rail_zone') {
+        if (data.value === -1)
+            return 'none';
+        const foundZone = find(scene.zones, zone =>
+            zone instanceof RailZone && zone.id === data.value);
         if (foundZone) {
             return getObjectName('zone', scene.index, foundZone.props.index);
         }

@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { each, last, find } from 'lodash';
-import XXH from 'xxhashjs';
+import { xxhash3 } from 'hash-wasm';
 
 import { loadLUTTexture } from '../../../../utils/lut';
 import { loadPaletteTexture } from '../../../../texture';
@@ -65,13 +65,13 @@ export function applyReplacement(x, y, z, replacements, target) {
     const realZ = z - 1;
     suppressTargetBricks(replacements, target.data, x, y, z);
     if (replacements.mergeReplacements) {
-        addReplacementObject(
-            target.replacementData,
+        return {
+            info: target.replacementData,
             replacements,
-            x - (nX * 0.5) + 1,
-            realY - 0.5,
-            realZ - (nZ * 0.5) + 1
-        );
+            gx: x - (nX * 0.5) + 1,
+            gy: realY - 0.5,
+            gz: realZ - (nZ * 0.5) + 1
+        };
     }
 }
 
@@ -164,7 +164,7 @@ const angleMapping = [
 
 const identityMatrix = new THREE.Matrix4();
 
-async function addReplacementObject(info, replacements, gx, gy, gz) {
+export async function addReplacementObject({ info, replacements, gx, gy, gz }) {
     const { threeObject, animations, orientation } = info;
     const scale = 1 / 0.75;
     const angle = angleMapping[orientation];
@@ -258,12 +258,17 @@ async function addReplacementObject(info, replacements, gx, gy, gz) {
     animRoot.updateMatrix();
     animRoot.updateMatrixWorld(true);
 
+    const nodes = [];
+
     threeObject.traverse((node) => {
         if (skipMeshes.includes(node)) {
             return;
         }
         node.updateMatrix();
         node.updateMatrixWorld(true);
+        nodes.push(node);
+    });
+    for (const node of nodes) {
         for (const {binding, track} of bindings) {
             if (binding.node === node) {
                 if (node.parent !== threeObject) {
@@ -296,16 +301,16 @@ async function addReplacementObject(info, replacements, gx, gy, gz) {
             skip.add(node);
             if (node instanceof THREE.Mesh) {
                 const matrixWorld = getPartialMatrixWorld(node, last(animNodes).node);
-                appendMeshGeometry(
+                await appendMeshGeometry(
                     last(animNodes).data, identityMatrix, node, info, angle, matrixWorld
                 );
             }
             return;
         }
         if (node instanceof THREE.Mesh) {
-            appendMeshGeometry(replacements, gTransform, node, info, angle);
+            await appendMeshGeometry(replacements, gTransform, node, info, angle);
         }
-    });
+    }
     for (const {group, data} of animNodes) {
         buildReplacementMeshes({
             geometries: data.geometries,
@@ -324,7 +329,7 @@ const textureIdCache = {};
 const canvas = document.createElement('canvas');
 const context = canvas.getContext('2d');
 
-function appendMeshGeometry(
+async function appendMeshGeometry(
     {idCounters, geometries, data},
     gTransform,
     node,
@@ -373,7 +378,8 @@ function appendMeshGeometry(
             canvas.height = image.height;
             context.drawImage(image, 0, 0);
             const imageData = context.getImageData(0, 0, image.width, image.height);
-            const textureId = XXH.h32(imageData.data.buffer, 0).toString(16);
+            const uint8Buffer = new Uint8Array(imageData.data.buffer);
+            const textureId = await xxhash3(uint8Buffer);
             textureIdCache[texture.uuid] = textureId;
             geomGroup = `textured_${textureId}`;
         }
@@ -417,6 +423,7 @@ function appendMeshGeometry(
                 break;
             case 'transparent':
                 geometries[geomGroup] = {
+                    render_order: node.userData.render_order,
                     index: [],
                     positions: [],
                     normals: [],
@@ -450,6 +457,7 @@ function appendMeshGeometry(
                 break;
             case 'original':
                 geometries[geomGroup] = {
+                    render_order: node.userData.render_order,
                     index: [],
                     positions: [],
                     normals: [],
@@ -468,7 +476,7 @@ function appendMeshGeometry(
         uvs
     } = geometries[geomGroup];
     if (!baseMaterial.map) {
-        const mColor = baseMaterial.color.clone().convertLinearToGamma(2.1);
+        const mColor = baseMaterial.color.clone().convertLinearToSRGB();
         color = new THREE.Vector4().fromArray(
             [...mColor.toArray(), baseMaterial.opacity]
         );

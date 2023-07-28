@@ -15,11 +15,10 @@ function ifBlock(type) {
                 .setCheck(['COND', 'LOGIC'])
                 .appendField(type);
 
-            this.appendStatementInput('then_statements')
-                .setCheck('LIFE');
+            const checks = ['SWITCH', 'LIFE'];
+            this.appendStatementInput('then_statements').setCheck(checks);
             this.disableElseBlock();
             this.setInputsInline(true);
-            const checks = type === 'if' ? ['LIFE', 'SWITCH'] : 'LIFE';
             this.setPreviousStatement(true, checks);
             this.setNextStatement(true, checks);
             this.setColour(180);
@@ -32,7 +31,7 @@ function ifBlock(type) {
             }
             if (!this.getInput('else_statements')) {
                 this.appendStatementInput('else_statements')
-                    .setCheck('LIFE');
+                    .setCheck(['SWITCH', 'LIFE']);
             }
         },
         disableElseBlock() {
@@ -72,9 +71,9 @@ export const lba_switch = {
             .setCheck('COND')
             .appendField('switch');
 
-        this.appendStatementInput('statements')
-            .setCheck('SWITCH');
-
+        // Switch blocks can contain if statements (and, theoretically, anything else!).
+        const checks = ['SWITCH', 'LIFE'];
+        this.appendStatementInput('statements').setCheck(checks);
         this.setInputsInline(true);
         this.setPreviousStatement(true, 'LIFE');
         this.setNextStatement(true, 'LIFE');
@@ -106,16 +105,30 @@ export const lba_switch = {
         this.scriptType = 'life';
     },
     getCases() {
-        const cases = [];
-        let connection = this.getInput('statements').connection;
-        while (connection && connection.targetBlock()) {
-            const type = connection.targetBlock().type;
-            if (type === 'lba_case' || type === 'lba_or_case') {
-                cases.push(connection.targetBlock());
+        const search = (connection) => {
+            const cases = [];
+            while (connection && connection.targetBlock()) {
+                const type = connection.targetBlock().type;
+                if (type === 'lba_case' || type === 'lba_or_case') {
+                    cases.push(connection.targetBlock());
+                } else if (type === 'lba_if' || type === 'lba_swif' || type === 'lba_oneif') {
+                    cases.push(...search(
+                        connection.targetBlock().getInput('then_statements').connection
+                    ));
+                    if (connection.targetBlock().getInput('else_statements')) {
+                        cases.push(...search(
+                            connection.targetBlock().getInput('else_statements').connection
+                        ));
+                    }
+                }
+
+                connection = connection.targetBlock().nextConnection;
             }
-            connection = connection.targetBlock().nextConnection;
-        }
-        return cases;
+
+            return cases;
+        };
+
+        return search(this.getInput('statements').connection);
     },
     customContextMenu(options) {
         debuggerContextMenu(this, options);
@@ -126,12 +139,15 @@ const allowedOperandTypes = map(
     [
         'number',
         'actor',
-        'zone',
+        'sceneric_zone',
+        'ladder_zone',
+        'rail_zone',
         'anim',
         'body',
         'track',
         'var_value',
-        'angle'
+        'angle',
+        'choice_value',
     ],
     type => `operand_${type}`
 );
@@ -148,12 +164,14 @@ function makeCase(orCase) {
                     .appendField('or');
             } else {
                 this.appendStatementInput('statements')
-                    .setCheck(['SWITCH', 'LIFE']);
+                    .setCheck('LIFE');
             }
 
+            // We have to accept adjacent life script in order to support 'if'
+            // blocks around cases.
             this.setInputsInline(true);
-            this.setPreviousStatement(true, 'SWITCH');
-            this.setNextStatement(true, 'SWITCH');
+            this.setPreviousStatement(true, ['SWITCH', 'LIFE']);
+            this.setNextStatement(true, ['SWITCH', 'LIFE']);
             this.setColour(180);
             this.setOnChange((event) => {
                 if (event instanceof Blockly.Events.Move) {
@@ -236,7 +254,7 @@ export const lba_default = {
         this.appendStatementInput('statements')
             .setCheck('LIFE');
 
-        this.setPreviousStatement(true, 'SWITCH');
+        this.setPreviousStatement(true, ['SWITCH', 'LIFE']);
         this.setColour(180);
         this.scriptType = 'life';
     },
@@ -275,12 +293,15 @@ function makeOperand(type) {
 
 export const lba_operand_number = makeOperand('number');
 export const lba_operand_actor = makeOperand('actor');
-export const lba_operand_zone = makeOperand('zone');
+export const lba_operand_sceneric_zone = makeOperand('sceneric_zone');
+export const lba_operand_ladder_zone = makeOperand('ladder_zone');
+export const lba_operand_rail_zone = makeOperand('rail_zone');
 export const lba_operand_anim = makeOperand('anim');
 export const lba_operand_body = makeOperand('body');
 export const lba_operand_track = makeOperand('track');
 export const lba_operand_var_value = makeOperand('var_value');
 export const lba_operand_angle = makeOperand('angle');
+export const lba_operand_choice_value = makeOperand('choice_value');
 
 export const lba_and = logicOperator('and');
 export const lba_or = logicOperator('or');

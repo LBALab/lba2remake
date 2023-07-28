@@ -18,19 +18,21 @@ export async function replaceMaterialsForPreview(threeObject, shaderData) {
                 return;
             }
             if (material.map) {
+                material.map.encoding = THREE.LinearEncoding;
                 node.material = new THREE.RawShaderMaterial({
                     vertexShader: compile('vert', VERT_OBJECTS_TEXTURED_PREVIEW),
                     fragmentShader: compile('frag', FRAG_OBJECTS_TEXTURED),
                     uniforms: {
                         uNormalMatrix: {value: normalMatrix},
                         uTexture: {value: material.map},
+                        uOpacity: {value: material.opacity},
                         lutTexture: {value: lutTexture},
                         palette: {value: paletteTexture},
                         light: {value: light}
                     }
                 });
             } else {
-                const mColor = material.color.clone().convertLinearToGamma();
+                const mColor = material.color.clone().convertLinearToSRGB();
                 const color = new THREE.Vector4().fromArray(
                     [...mColor.toArray(), material.opacity]
                 );
@@ -41,6 +43,7 @@ export async function replaceMaterialsForPreview(threeObject, shaderData) {
                     uniforms: {
                         uNormalMatrix: {value: normalMatrix},
                         uColor: {value: color},
+                        uOpacity: {value: material.opacity},
                         lutTexture: {value: lutTexture},
                         palette: {value: paletteTexture},
                         light: {value: light}

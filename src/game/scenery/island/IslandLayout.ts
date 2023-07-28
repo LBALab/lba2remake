@@ -10,6 +10,7 @@ export interface IslandObjectInfo {
     iv: number;
     soundType: number;
     boundingBox?: THREE.Box3;
+    label?: THREE.Object3D;
     flags: number;
     flagValue: number;
 }
@@ -56,7 +57,8 @@ export default class IslandLayout {
             if (layout_raw[i]) {
                 const id = layout_raw[i];
                 const objInfoDV = new DataView(ile.getEntry((id * 6) - 3));
-                const objectsDV = new DataView(ile.getEntry((id * 6) - 2));
+                const objectsBuffer = ile.getEntry((id * 6) - 2);
+                const objectsDV = objectsBuffer && new DataView(objectsBuffer);
                 const numObjects = objInfoDV.getUint32(8, true);
                 const x = (16 - sX) - 8;
                 const z = sZ - 8;

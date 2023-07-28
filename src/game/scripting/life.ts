@@ -15,6 +15,7 @@ import { LBA2Items, GetInventoryItems, LBA1Items, GetInventorySize } from '../da
 import Extra, { getBonus } from '../Extra';
 import { CURRENT_TRACK, VAR_GAME } from './condition';
 import { SET_TRACK } from './structural';
+import { CameraZone, ConveyorZone, LadderZone, RailZone, SpikeZone, TeleportZone } from '../Zone';
 
 const isLBA1 = getParams().game === 'lba1';
 
@@ -35,7 +36,13 @@ export function ANIM_OBJ(this: ScriptContext, actor: Actor, animIndex: number) {
     actor.setAnim(animIndex);
 }
 
-export const SET_CAMERA = unimplemented();
+export function SET_CAMERA(this: ScriptContext, which: number, flag: number) {
+    for (const zone of this.scene.zones) {
+        if ((zone instanceof CameraZone) && zone.id === which) {
+            zone.enabled = (flag !== 0);
+        }
+    }
+}
 
 export const CAMERA_CENTER = unimplemented();
 
@@ -586,9 +593,15 @@ export function SUB_FUEL(this: ScriptContext, fuel) {
     }
 }
 
-export const SET_GRM = unimplemented();
+export const SET_FRAGMENT = unimplemented();
 
-export const SET_CHANGE_CUBE = unimplemented();
+export function SET_TELEPORT_ZONE(this: ScriptContext, id: number, flag: number) {
+    for (const zone of this.scene.zones) {
+        if ((zone instanceof TeleportZone) && zone.id === id) {
+            zone.enabled = (flag !== 0);
+        }
+    }
+}
 
 export function MESSAGE_ZOE(this: ScriptContext, cmdState, id) {
     const colorHero = this.actor.props.textColor;
@@ -661,7 +674,13 @@ export function THE_END(this: ScriptContext) {
     this.game.getState().hero.magic = 80;
 }
 
-export const ESCALATOR = unimplemented();
+export function CONVEYOR(this: ScriptContext, which: number, flag: number) {
+    for (const zone of this.scene.zones) {
+        if ((zone instanceof ConveyorZone) && zone.id === which) {
+            zone.enabled = (flag !== 0);
+        }
+    }
+}
 
 export function PLAY_MUSIC(this: ScriptContext, index) {
     const audio = this.game.getAudioManager();
@@ -691,7 +710,13 @@ export function BRUTAL_EXIT(this: ScriptContext) {
 
 export const REPLACE = unimplemented();
 
-export const SCALE = unimplemented();
+export function LADDER(this: ScriptContext, which: number, flag: number) {
+    for (const zone of this.scene.zones) {
+        if ((zone instanceof LadderZone) && zone.id === which) {
+            zone.enabled = (flag !== 0);
+        }
+    }
+}
 
 export function SET_ARMOR(this: ScriptContext, value: number) {
     SET_ARMOR_OBJ.call(this, this.actor, value);
@@ -715,7 +740,13 @@ export function STATE_INVENTORY(this: ScriptContext, item: number, state: number
     this.game.getState().flags.inventory[item] = state;
 }
 
-export const SET_HIT_ZONE = unimplemented();
+export function SET_SPIKE_ZONE(this: ScriptContext, which: number, damage: number) {
+    for (const zone of this.scene.zones) {
+        if ((zone instanceof SpikeZone) && zone.id === which) {
+            zone.damage = damage;
+        }
+    }
+}
 
 export function SAMPLE(this: ScriptContext, index) {
     this.actor.playSample(index);
@@ -743,8 +774,8 @@ export const BACKGROUND = unimplemented();
 
 export function SET_RAIL(this: ScriptContext, rail: number, value: number) {
     for (const zone of this.scene.zones) {
-        if (zone.props.type === 9 && zone.props.snap === rail) {
-            zone.props.info1 = value;
+        if ((zone instanceof RailZone) && zone.id === rail) {
+            zone.enabled = (value !== 0);
         }
     }
 }
@@ -822,7 +853,7 @@ export function SAY_MESSAGE_OBJ(this: ScriptContext, cmdState, actor: Actor, id)
     MESSAGE_OBJ.call(this, cmdState, actor, id, true);
 }
 
-export const GRM_OFF = unimplemented();
+export const FRAGMENT_OFF = unimplemented();
 
 export const FADE_PAL_RED = unimplemented();
 

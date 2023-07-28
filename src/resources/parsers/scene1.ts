@@ -267,7 +267,7 @@ function loadZones(scene, offset) {
             info5: -1,
             info6: -1,
             info7: -1,
-            snap: -1,
+            param: -1,
             pos: null
         };
 
@@ -281,7 +281,7 @@ function loadZones(scene, offset) {
         offset += 12;
 
         zone.type = data.getInt16(offset, true);
-        zone.snap = data.getInt16(offset + 2, true);
+        zone.param = data.getInt16(offset + 2, true);
         zone.info0 = data.getInt16(offset + 4, true);
         zone.info1 = data.getInt16(offset + 6, true);
         zone.info2 = data.getInt16(offset + 8, true);

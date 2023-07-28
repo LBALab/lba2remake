@@ -3,7 +3,7 @@
 If you'd like to contribute to the project, there are several ways you can help.
 Any kind of contribution is very much welcome, you don't necessarily need to know how to write code.
 
-We'd like to get in touch with you over [Slack](https://join.slack.com/t/lba2remake/shared_invite/zt-4497ew6p-NxlmHoAWtG6lXDG9lW0NMA) if you plan on giving us a hand, we can provide directions to help you get started.
+We'd like to get in touch with you over [Discord](https://discord.gg/jsTPWYXHsh) if you plan on giving us a hand, we can provide directions to help you get started.
 
 
 ## Contributing without writing code
@@ -17,16 +17,16 @@ For more details, check [how to contribute metadata](doc/how_to_metadata.md).
 
 You can try to make the [game](https://www.lba2remake.net/) or the [editor](https://www.lba2remake.net/#editor=true) crash, and use the `Send crash report` button to inform us of what needs fixing.
 
-If you observe a bug you can report it [here](https://github.com/agrande/lba2remake/issues/new).
+If you observe a bug you can report it [here](https://github.com/LBALab/lba2remake/issues/new).
 
 ### Propose features
 
-If you have an idea that is not already listed there, you can [open an issue](https://github.com/agrande/lba2remake/issues/new) to suggest a new feature.
+If you have an idea that is not already listed there, you can [open an issue](https://github.com/LBALab/lba2remake/issues/new) to suggest a new feature.
 
 
 ## Contributing as a developer
 
-The best way to start contributing as a developer is to get in touch with us over [Slack](https://join.slack.com/t/lba2remake/shared_invite/zt-4497ew6p-NxlmHoAWtG6lXDG9lW0NMA) and tell us what you'd like to do with the project so we can point you in the right direction.
+The best way to start contributing as a developer is to get in touch with us over [Discord](https://discord.gg/jsTPWYXHsh) and tell us what you'd like to do with the project so we can point you in the right direction.
 
 Or you can fork the project and work on whatever you want!
 

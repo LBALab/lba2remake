@@ -169,7 +169,7 @@ export const LifeOpcode = [
         opcode: 0x1A,
         command: 'CAN_FALL',
         handler: lf.CAN_FALL,
-        args: ['Uint8']
+        args: ['Uint8:fall_type']
     },
     {
         opcode: 0x1B,
@@ -467,8 +467,8 @@ export const LifeOpcode = [
     },
     {
         opcode: 0x4C,
-        command: 'SET_GRM',
-        handler: lf.SET_GRM,
+        command: 'SET_FRAGMENT',
+        handler: lf.SET_FRAGMENT,
         args: ['Uint8']
     },
     {
@@ -498,8 +498,8 @@ export const LifeOpcode = [
     },
     {
         opcode: 0x51,
-        command: 'GRM_OFF',
-        handler: lf.GRM_OFF,
+        command: 'FRAGMENT_OFF',
+        handler: lf.FRAGMENT_OFF,
     },
     {
         opcode: 0x52,

@@ -135,7 +135,7 @@ export const LifeOpcode = [
         opcode: 0x15,
         command: 'SET_CAMERA',
         handler: lf.SET_CAMERA,
-        args: ['Uint16']
+        args: ['Uint8:camera', 'Uint8']
     },
     {
         opcode: 0x16,
@@ -166,7 +166,7 @@ export const LifeOpcode = [
         opcode: 0x1A,
         command: 'CAN_FALL',
         handler: lf.CAN_FALL,
-        args: ['Uint8']
+        args: ['Uint8:fall_type']
     },
     {
         opcode: 0x1B,
@@ -463,14 +463,14 @@ export const LifeOpcode = [
     },
     {
         opcode: 0x4C,
-        command: 'SET_GRM',
-        handler: lf.SET_GRM,
+        command: 'SET_FRAGMENT',
+        handler: lf.SET_FRAGMENT,
         args: ['Uint8', 'Uint8']
     },
     {
         opcode: 0x4D,
-        command: 'SET_CHANGE_CUBE',
-        handler: lf.SET_CHANGE_CUBE,
+        command: 'SET_TELEPORT_ZONE',
+        handler: lf.SET_TELEPORT_ZONE,
         args: ['Uint8', 'Uint8']
     },
     {
@@ -598,8 +598,8 @@ export const LifeOpcode = [
     },
     {
         opcode: 0x63,
-        command: 'ESCALATOR',
-        handler: lf.ESCALATOR,
+        command: 'CONVEYOR',
+        handler: lf.CONVEYOR,
         args: ['Uint8', 'Uint8']
     },
     {
@@ -645,8 +645,8 @@ export const LifeOpcode = [
     },
     {
         opcode: 0x6B,
-        command: 'SCALE',
-        handler: lf.SCALE,
+        command: 'LADDER',
+        handler: lf.LADDER,
         args: ['Uint8', 'Uint8']
     },
     {
@@ -722,8 +722,8 @@ export const LifeOpcode = [
     },
     {
         opcode: 0x77,
-        command: 'SET_HIT_ZONE',
-        handler: lf.SET_HIT_ZONE,
+        command: 'SET_SPIKE_ZONE',
+        handler: lf.SET_SPIKE_ZONE,
         args: ['Uint8', 'Uint8']
     },
     {

@@ -25,14 +25,14 @@ export const ConditionOpcode = [
         opcode: 0x03,
         command: 'ZONE',
         handler: lc.ZONE,
-        operand: 'Uint8:zone',
+        operand: 'Uint8:sceneric_zone',
     },
     {
         opcode: 0x04,
         command: 'ZONE_OBJ',
         handler: lc.ZONE_OBJ,
         param: 'Uint8:actor',
-        operand: 'Uint8:zone'
+        operand: 'Uint8:sceneric_zone'
     },
     {
         opcode: 0x05,

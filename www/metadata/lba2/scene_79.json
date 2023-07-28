@@ -7,5 +7,15 @@
   "zoneNames": [
     "cam_room",
     "to_hotel"
+  ],
+  "varcubes": [
+    {
+      "name": "in_conversation_with",
+      "type": "enum",
+      "enumValues": {
+        "0": "None",
+        "1": "JohnnyRocket"
+      }
+    }
   ]
 }

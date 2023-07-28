@@ -64,7 +64,7 @@ export default class Point {
         this.ctx.textBaseline = 'middle';
         this.ctx.lineWidth = 4;
         this.labelTexture = new THREE.CanvasTexture(canvas);
-        this.labelTexture.encoding = THREE.GammaEncoding;
+        this.labelTexture.encoding = THREE.sRGBEncoding;
         this.labelTexture.anisotropy = 16;
 
         this.updateLabel();

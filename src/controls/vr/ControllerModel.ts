@@ -227,7 +227,7 @@ function makeLabel(center: THREE.Vector3, position: THREE.Vector3, radius: numbe
     // Sprite
     const canvas = makeLabelCanvas(name);
     const texture = new THREE.CanvasTexture(canvas);
-    texture.encoding = THREE.GammaEncoding;
+    texture.encoding = THREE.sRGBEncoding;
     texture.anisotropy = 16;
     texture.minFilter = THREE.LinearFilter;
     texture.wrapS = THREE.ClampToEdgeWrapping;

@@ -1,33 +1,26 @@
-# Project Authors
-## Core Team
-### Lead Developers
+# Project Contributors
+
+### Programmers
 * Adrien Grandemange (@agrande)
 * Alexandre Fontoura (@xesf)
 * Scott Williams (@slwilliams)
-
-### 3D Models
-* Sara González Ramajo (@SendellX)
-* Peter de Vos (@Bot13)
-
-### Metadata
-* Sara González Ramajo (@SendellX)
-* Alexandre Fontoura (@xesf)
 * Fraser Gordon (@fraserjgordon)
-
-## Contributions
-### Development
 * Andriy Tevelyev (@pleasenophp)
 * Jeffrey Veenhuis (@Jeffroiscool)
+* @chucksellick
 * Jesse Gorter (@Neko)
 * @Krampy
 
-### Metadata
+### 3D Modelers
 * Sara González Ramajo (@SendellX)
-* Jeffrey Veenhuis (@Jeffroiscool)
-* Fraser Gordon (@fraserjgordon)
+* Peter de Vos (@Bot13)
 
-### DevOps
-* @chucksellick
+### Metadata contributors
+* Sara González Ramajo (@SendellX)
+* Alexandre Fontoura (@xesf)
+* Fraser Gordon (@fraserjgordon)
+* Bernd Lörwald (@bloerwald)
+* Jeffrey Veenhuis (@Jeffroiscool)
 
 ### Bug Reports & Feature Suggestions
 * Felipe Corrêa da Silva Sanches

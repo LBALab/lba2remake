@@ -12,7 +12,7 @@ export function createVideoScreen(video) {
     texture.minFilter = THREE.LinearFilter;
     texture.magFilter = THREE.LinearFilter;
     texture.format = THREE.RGBFormat;
-    texture.encoding = THREE.GammaEncoding;
+    texture.encoding = THREE.sRGBEncoding;
 
     const geometry = new THREE.PlaneBufferGeometry(640 / density, 480 / density);
     const material = new THREE.MeshBasicMaterial({

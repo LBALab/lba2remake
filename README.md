@@ -1,8 +1,8 @@
 # LBA2 Remake
-![CircleCI](https://circleci.com/gh/agrande/lba2remake.png?style=shield&circle-token=:circle-token)
-![LatestTag](https://badgen.net/github/tag/agrande/lba2remake)
-[![Total alerts](https://img.shields.io/lgtm/alerts/g/agrande/lba2remake.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/agrande/lba2remake/alerts/)
-[![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/agrande/lba2remake.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/agrande/lba2remake/context:javascript)
+![CircleCI](https://circleci.com/gh/LBALab/lba2remake.png?style=shield&circle-token=:circle-token)
+![LatestTag](https://badgen.net/github/tag/LBALab/lba2remake)
+[![Total alerts](https://img.shields.io/lgtm/alerts/g/LBALab/lba2remake.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/LBALab/lba2remake/alerts/)
+[![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/LBALab/lba2remake.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/LBALab/lba2remake/context:javascript)
 
 A Little Big Adventure 2 / Twinsen's Odyssey reimplementation in Typescript / Three.js / React
 
@@ -68,8 +68,7 @@ A list of current and past contributors can be found [here](AUTHORS.md).
 
 ## Community
 
-* [Slack](https://join.slack.com/t/lba2remake/shared_invite/zt-4497ew6p-NxlmHoAWtG6lXDG9lW0NMA) - For development related discussions
-* [Discord](https://discord.gg/cDmFTWq)
+* [Discord](https://discord.gg/jsTPWYXHsh)
 * [MBN forum](https://forum.magicball.net/showthread.php?t=18208)
 * Reddit: [r/linux_gaming](https://www.reddit.com/r/linux_gaming/comments/8049mn/a_little_big_adventure_2_twinsens_odyssey/) or [r/gamedev](https://www.reddit.com/r/gamedev/comments/80cn9u/open_source_reimplementation_of_little_big/)
 * [Facebook](https://www.facebook.com/groups/twinsen/permalink/1565479966839300/)

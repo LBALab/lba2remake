@@ -22,7 +22,7 @@ void main() {
     float dp = dot(vNormal, light);
     vec2 af = vec2(1.8, 3.0);
     vec2 nzUv = sin(vPos * 0.5 + af * time) * 0.0003;
-    float nz = texture(noise, nzUv).a;
+    float nz = texture(noise, nzUv).r;
     vec4 tex = texture(uTexture, vUv + nz * 0.1);
     vec3 color = mix(vec3(1.0), tex.rgb, shore);
     vec3 colorWithLight = color.rgb * (dp * 0.3 + 1.0);

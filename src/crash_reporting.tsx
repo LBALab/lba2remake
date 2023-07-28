@@ -6,12 +6,18 @@ import {bigButton, center, editor as editor_style, fullscreen} from './ui/styles
 
 let sent_report = false;
 
+declare global {
+    interface Window {
+        crashReportUrl: string;
+    }
+}
+
 export function sendCrashReport(error) {
     if (sent_report)
         return;
 
     const request = new XMLHttpRequest();
-    request.open('POST', 'crash', true);
+    request.open('POST', window.crashReportUrl, true);
     request.onload = () => {
         // tslint:disable-next-line:no-console
         console.log('Sent crash report.');

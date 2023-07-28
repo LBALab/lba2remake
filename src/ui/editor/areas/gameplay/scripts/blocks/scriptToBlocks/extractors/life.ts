@@ -118,8 +118,8 @@ function GENERIC_SETTER(type, scope, workspace, cmd, {connection}) {
         scope = 'inventory';
     }
     block.setFieldValue(scope, 'scope');
-    block.setFieldValue(mapArgValue(cmd, 0), 'arg_0');
-    block.setFieldValue(mapArgValue(cmd, 1), 'arg_1');
+    block.setFieldValue(mapArgValue(cmd, 0), 'param');
+    block.setFieldValue(mapArgValue(cmd, 1), 'value');
     return { connection: block.nextConnection };
 }
 
@@ -159,7 +159,7 @@ export const RESTORE_HERO = GENERIC_ACTION.bind(null, 'lba_restore_hero', 0);
 export const SET_MAGIC_LEVEL = GENERIC_ACTION.bind(null, 'lba_set_magic_level', 1);
 
 export const CINEMA_MODE = GENERIC_ACTION.bind(null, 'lba_cinema_mode', 1);
-export const SET_CAMERA = GENERIC_ACTION.bind(null, 'lba_set_camera', 1);
+export const SET_CAMERA = GENERIC_ACTION.bind(null, 'lba_set_camera', 2);
 export const CAMERA_CENTER = GENERIC_ACTION.bind(null, 'lba_camera_center', 1);
 export const CAM_FOLLOW = GENERIC_ACTION.bind(null, 'lba_cam_follow', 1);
 
@@ -205,7 +205,7 @@ export const PLAY_MUSIC = GENERIC_ACTION.bind(null, 'lba_play_music', 1);
 export const PLAY_VIDEO = GENERIC_ACTION.bind(null, 'lba_play_video', 1);
 
 export const HIT = GENERIC_ACTION.bind(null, 'lba_hit', 2);
-export const SET_HIT_ZONE = GENERIC_ACTION.bind(null, 'lba_set_hit_zone', 2);
+export const SET_SPIKE_ZONE = GENERIC_ACTION.bind(null, 'lba_set_spike_zone', 2);
 
 export const SET_SPRITE = GENERIC_ACTION.bind(null, 'lba_set_sprite', 1);
 export const ANIM_TEXTURE = GENERIC_ACTION.bind(null, 'lba_anim_texture', 1);
@@ -213,7 +213,7 @@ export const ANIM_TEXTURE = GENERIC_ACTION.bind(null, 'lba_anim_texture', 1);
 export const INVISIBLE = GENERIC_ACTION.bind(null, 'lba_set_invisible', 1);
 
 export const SET_RAIL = GENERIC_ACTION.bind(null, 'lba_set_rail', 2);
-export const ESCALATOR = GENERIC_ACTION.bind(null, 'lba_escalator', 2);
+export const CONVEYOR = GENERIC_ACTION.bind(null, 'lba_conveyor', 2);
 export const INIT_BUGGY = GENERIC_ACTION.bind(null, 'lba_init_buggy', 1);
 
 export const RAIN = GENERIC_ACTION.bind(null, 'lba_rain', 1);
@@ -228,19 +228,19 @@ export const BRICK_COL = GENERIC_ACTION.bind(null, 'lba_brick_col', 1);
 export const OBJ_COL = GENERIC_ACTION.bind(null, 'lba_obj_col', 1);
 export const NO_SHOCK = GENERIC_ACTION.bind(null, 'lba_no_shock', 1);
 export const PCX = GENERIC_ACTION.bind(null, 'lba_pcx', 1);
-export const SET_GRM = GENERIC_ACTION.bind(null, 'lba_set_grm', 2);
-export const SET_CHANGE_CUBE = GENERIC_ACTION.bind(null, 'lba_set_change_cube', 2);
+export const SET_FRAGMENT_ZONE = GENERIC_ACTION.bind(null, 'lba_set_fragment_zone', 2);
+export const SET_TELEPORT_ZONE = GENERIC_ACTION.bind(null, 'lba_set_teleport_zone', 2);
 export const FADE_TO_PAL = GENERIC_ACTION.bind(null, 'lba_fade_to_pal', 1);
 export const PALETTE = GENERIC_ACTION.bind(null, 'lba_palette', 1);
 export const FLOW_POINT = GENERIC_ACTION.bind(null, 'lba_flow_point', 2);
 export const SHADOW_OBJ = GENERIC_ACTION_OBJ.bind(null, 'lba_shadow_obj', 2);
 export const ANIM_SET = GENERIC_ACTION.bind(null, 'lba_anim_set', 1);
-export const PCX_MESS_OBJ = GENERIC_ACTION_OBJ.bind(null, 'lba_pcx_mess_obj', 2);
+export const PCX_MESS_OBJ = GENERIC_ACTION.bind(null, 'lba_pcx_mess_obj', 4);
 export const SET_FRAME = GENERIC_ACTION.bind(null, 'lba_set_frame', 1);
 export const FLOW_OBJ = GENERIC_ACTION.bind(null, 'lba_flow_obj', 1);
 export const IMPACT_OBJ = GENERIC_ACTION_OBJ.bind(null, 'lba_impact_obj', 2);
 export const POS_OBJ_AROUND = GENERIC_ACTION.bind(null, 'lba_pos_obj_around', 2);
-export const SCALE = GENERIC_ACTION.bind(null, 'lba_scale', 2);
+export const LADDER = GENERIC_ACTION.bind(null, 'lba_ladder', 2);
 export const POPCORN = GENERIC_ACTION.bind(null, 'lba_popcorn', 0);
 export const SET_FRAME_3DS = GENERIC_ACTION.bind(null, 'lba_set_frame_3ds', 1);
 export const ACTION = GENERIC_ACTION.bind(null, 'lba_set_action', 0);

@@ -54,6 +54,9 @@ export async function loadFullSceneModel(
             }
             const material = (node.material as THREE.MeshStandardMaterial);
             if (material.name.substring(0, 8) === 'keepMat_') {
+                if (node.userData.render_order) {
+                    node.renderOrder = node.userData.render_order;
+                }
                 return;
             }
             const texture = material.map;
@@ -81,6 +84,9 @@ export async function loadFullSceneModel(
                         uNormalMatrix: {value: new THREE.Matrix3()}
                     }
                 });
+                if (texture) {
+                    texture.encoding = THREE.LinearEncoding;
+                }
             }
             if (node.userData.render_order) {
                 node.renderOrder = node.userData.render_order;
@@ -120,7 +126,7 @@ export async function saveFullSceneModel(replacements, entry): Promise<void> {
             const uTexture = shaderMat.uniforms.uTexture;
             node.material = new THREE.MeshStandardMaterial({
                 opacity: shaderMat.opacity,
-                map: uTexture && uTexture.value
+                map: uTexture?.value || null
             });
         }
     });

@@ -5,7 +5,9 @@ export function mapValue(value, type) {
         case 'angle':
             return degreesToLBA(value);
         case 'actor':
-        case 'zone':
+        case 'sceneric_zone':
+        case 'ladder_zone':
+        case 'rail_zone':
         case 'anim':
         case 'body':
         case 'vargame':
@@ -17,6 +19,7 @@ export function mapValue(value, type) {
         case 'scene':
         case 'dirmode':
         case 'hero_behaviour':
+        case 'choice_value':
             return Number(value);
     }
     return value;
