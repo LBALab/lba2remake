@@ -16,6 +16,7 @@ import {
 import { loadEntities } from './browser/entitities';
 import DebugData from '../../DebugData';
 import { getParams } from '../../../../params';
+import { exportModel } from '../../../../model/exporter';
 import { loadHDREnv } from '../../../../graphics/probes/LightProbeUtils';
 
 interface Props extends TickerProps {
@@ -29,6 +30,7 @@ interface Props extends TickerProps {
         grid: boolean;
         playbackSpeed: number;
     };
+    area: any;
     stateHandler: any;
 }
 
@@ -40,6 +42,19 @@ interface State {
     grid: any;
     animState?: AnimState;
 }
+
+const exportButtonWrapperStyle = {
+    position: 'absolute' as const,
+    right: 10,
+    bottom: 10
+};
+
+const mainInfoButton = {
+    margin: '4px',
+    padding: '5px 10px',
+    color: 'white',
+    background: 'rgb(45, 45, 48)'
+};
 
 export default class Model extends FrameListener<Props, State> {
     mouseSpeed: {
@@ -66,6 +81,7 @@ export default class Model extends FrameListener<Props, State> {
         this.onMouseUp = this.onMouseUp.bind(this);
         this.onMouseMove = this.onMouseMove.bind(this);
         this.onWheel = this.onWheel.bind(this);
+        this.exportModel = this.exportModel.bind(this);
 
         this.mouseSpeed = {
             x: 0,
@@ -96,7 +112,7 @@ export default class Model extends FrameListener<Props, State> {
         this.state = {
             scene,
             clock,
-            grid
+            grid,
         };
         clock.start();
     }
@@ -292,6 +308,18 @@ export default class Model extends FrameListener<Props, State> {
         >
             <div ref={this.onLoad} style={fullscreen}/>
             <div id="stats" style={{position: 'absolute', top: 0, left: 0, width: '50%'}}/>
+            <div style={exportButtonWrapperStyle}>
+                <button style={mainInfoButton} onClick={this.exportModel}>
+                    Export
+                </button>
+            </div>
         </div>;
+    }
+
+    async exportModel() {
+        exportModel(
+            this.props.sharedState.entity,
+            this.props.sharedState.body,
+        );
     }
 }

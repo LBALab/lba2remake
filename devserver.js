@@ -85,18 +85,6 @@ app.post('/crash', function (req, res) {
     console.log('Saving crash report');
     const report = req.body;
     fs.writeFile('./crash_report.json', JSON.stringify(report, null, 2), () => {});
-    const content = JSON.stringify(report);
-    const tgtReq = http.request({
-        host: 'www.lba2remake.net',
-        path: '/ws/crash/report',
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Content-Length': content.length
-        }
-    });
-    tgtReq.write(content);
-    tgtReq.end();
     res.end();
 });
 
@@ -143,7 +131,8 @@ app.use('/xatlas-worker.js', express.static('./src/graphics/baking/xatlas/worker
 app.use('/three.js', express.static('./node_modules/three/build/three.min.js'));
 
 const indexBody = renderToStaticMarkup(React.createElement(Main, {
-    script: 'window.ga=function(){};\nwindow.isLocalServer=true;'
+    script: 'window.ga=function(){};\nwindow.isLocalServer=true;',
+    crashReportUrl: '/crash'
 }));
 
 app.get('/', (req, res) => {

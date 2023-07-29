@@ -1,5 +1,38 @@
 # Version history
 
+## [v0.6.0](https://github.com/LBALab/lba2remake/compare/v0.5.0...v0.5.1) Big update!
+_October 10th, 2022_
+
+#### Gameplay
+
+- Improved collisions
+- Improved sprite rendering
+- Better inventory state tracking
+- Better handling of zone flags
+- More scripting commands implemented (tracks, armour, sprites, hit)
+
+#### Editor
+
+- Enhanced script debugger
+- Additional metadata
+- Palette: copy color to clipboard
+- Island object labels
+- Keyboard shortcuts in layout editor
+
+#### Replacement 3D models
+
+- New 3D layouts: Otringal and Franco island
+- Improved Citadel island layouts
+
+#### Other
+- Performance improvements
+- Use new LBALab HQR library
+
+#### Bug fixes
+- Fixed Pointer-Lock exception
+- Fixed clock reset when game is paused
+
+-----------------------------
 ## [v0.5.0](https://github.com/LBALab/lba2remake/compare/v0.4.0...v0.5.0) Big update!
 _May 29th, 2021_
 

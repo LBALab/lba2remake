@@ -5284,6 +5284,278 @@
       "mirror": true
     }
   },
+  "15": {
+    "2": {
+      "replace": true,
+      "file": "FI_002_003_francos_building_wall.glb",
+      "orientation": 0
+    },
+    "3": {
+      "replace": true,
+      "file": "FI_002_003_francos_building_wall.glb",
+      "orientation": 1
+    },
+    "4": {
+      "replace": true,
+      "file": "FI_004_005_francos_building_wall_corner_side.glb",
+      "orientation": 0
+    },
+    "5": {
+      "replace": true,
+      "file": "FI_004_005_francos_building_wall_corner_side.glb",
+      "orientation": 2
+    },
+    "6": {
+      "replace": true,
+      "file": "FI_006_francos_building_wall_corner_front.glb",
+      "orientation": 0
+    },
+    "7": {
+      "replace": true,
+      "file": "FI_007_bar_counter_pillar.glb",
+      "orientation": 0
+    },
+    "8": {
+      "replace": true,
+      "file": "FI_008_francos_building_wall_round_corner.glb",
+      "orientation": 0
+    },
+    "17": {
+      "replace": true,
+      "file": "FI_017_francos_building_wall_window_big.glb",
+      "orientation": 0
+    },
+    "18": {
+      "replace": true,
+      "file": "FI_018_francos_building_wall_window_big.glb",
+      "orientation": 0
+    },
+    "19": {
+      "replace": true,
+      "file": "FI_019_francos_building_wall_short_window.glb",
+      "orientation": 2
+    },
+    "20": {
+      "replace": true,
+      "file": "FI_020_francos_building_wall_window.glb",
+      "orientation": 0
+    },
+    "23": {
+      "replace": true,
+      "file": "FI_023_francos_doorframe.glb",
+      "orientation": 0
+    },
+    "24": {
+      "replace": true,
+      "file": "FI_024_francos_doorframe.glb",
+      "orientation": 0
+    },
+    "26": {
+      "replace": true,
+      "file": "FI_026_ice_creams_and_cup.glb",
+      "orientation": 0
+    },
+    "27": {
+      "replace": true,
+      "file": "FI_027_francos_building_wall_key_cupboard_closed.glb",
+      "orientation": 0
+    },
+    "28": {
+      "replace": true,
+      "file": "FI_028_big_table_with_chairs_and_flowers.glb",
+      "orientation": 0
+    },
+    "29": {
+      "replace": true,
+      "file": "FI_029_030_francos_building_wall_shelf.glb",
+      "orientation": 0
+    },
+    "30": {
+      "replace": true,
+      "file": "FI_029_030_francos_building_wall_shelf.glb",
+      "orientation": 1
+    },
+    "33": {
+      "replace": true,
+      "file": "FI_033_table.glb",
+      "orientation": 0
+    },
+    "34": {
+      "replace": true,
+      "file": "FI_034_big_flower_pot.glb",
+      "orientation": 0
+    },
+    "36": {
+      "replace": true,
+      "file": "FI_036_stool.glb",
+      "orientation": 0
+    },
+    "37": {
+      "replace": true,
+      "file": "FI_037_francos_building_wall_short_var.glb",
+      "orientation": 3
+    },
+    "38": {
+      "replace": true,
+      "file": "FI_038_francos_building_wall_short_var.glb",
+      "orientation": 0
+    },
+    "39": {
+      "replace": true,
+      "file": "FI_039_francos_building_wall_corner_short.glb",
+      "orientation": 2
+    },
+    "40": {
+      "replace": true,
+      "file": "FI_040_francos_building_wall_short_round_corner.glb",
+      "orientation": 2
+    },
+    "43": {
+      "replace": true,
+      "file": "FI_043_francos_building_wall_table.glb",
+      "orientation": 0
+    },
+    "45": {
+      "replace": true,
+      "file": "FI_045_health_heart.glb",
+      "orientation": 0
+    },
+    "48": {
+      "replace": true,
+      "file": "FI_048_049_green_dragon.glb",
+      "orientation": 2
+    },
+    "49": {
+      "replace": true,
+      "file": "FI_048_049_green_dragon.glb",
+      "orientation": 0
+    },
+    "51": {
+      "replace": true,
+      "file": "FI_051_empty_mug.glb",
+      "orientation": 0
+    },
+    "52": {
+      "replace": true,
+      "file": "FI_052_flower_pot.glb",
+      "orientation": 0
+    },
+    "53": {
+      "replace": true,
+      "file": "FI_053_liquor_bottle_and_mug.glb",
+      "orientation": 0
+    },
+    "54": {
+      "replace": true,
+      "file": "FI_054_liquor_bottle.glb",
+      "orientation": 0
+    },
+    "55": {
+      "replace": true,
+      "file": "FI_055_empty_mug.glb",
+      "orientation": 0
+    },
+    "56": {
+      "replace": true,
+      "file": "FI_056_drinks_and_flower.glb",
+      "orientation": 0
+    },
+    "58": {
+      "replace": true,
+      "file": "FI_058_pick_axes.glb",
+      "orientation": 0
+    },
+    "59": {
+      "replace": true,
+      "file": "FI_059_chair.glb",
+      "orientation": 0
+    },
+    "61": {
+      "replace": true,
+      "file": "FI_061_magic_bottle.glb",
+      "orientation": 0
+    },
+    "68": {
+      "replace": true,
+      "file": "FI_068_baby_cradle.glb",
+      "orientation": 0
+    },
+    "69": {
+      "replace": true,
+      "file": "FI_069_short_stool.glb",
+      "orientation": 0
+    },
+    "72": {
+      "replace": true,
+      "file": "FI_072_baby_bottles.glb",
+      "orientation": 0
+    },
+    "74": {
+      "replace": true,
+      "file": "FI_074_abacus.glb",
+      "orientation": 0
+    },
+    "75": {
+      "replace": true,
+      "file": "FI_075_pan.glb",
+      "orientation": 0
+    },
+    "76": {
+      "replace": true,
+      "file": "FI_076_francos_building_wall_key_cupboard_open.glb",
+      "orientation": 0
+    },
+    "77": {
+      "replace": true,
+      "file": "FI_077_francos_building_wall_cupboard.glb",
+      "orientation": 0
+    },
+    "79": {
+      "replace": true,
+      "file": "FI_079_big_candle.glb",
+      "orientation": 0
+    },
+    "81": {
+      "replace": true,
+      "file": "FI_081_francos_building_wall_window_covered.glb",
+      "orientation": 0
+    },
+    "82": {
+      "replace": true,
+      "file": "FI_082_francos_building_wall_window_big_covered.glb",
+      "orientation": 0
+    },
+    "84": {
+      "replace": true,
+      "file": "FI_084_dark_monk_altar.glb",
+      "orientation": 0
+    },
+    "33:2x3x3:0,15467,0,15468,15469,15470,0,15475,0,15476,15477,15478,15479,15480,15481,15482,15483,15484": {
+      "replace": true,
+      "file": "FI_033_table_var1.glb",
+      "orientation": 0
+    },
+    "33:2x3x2:0,15467,0,15468,15469,15470,15479,15480,15481,15482,15483,15484": {
+      "replace": true,
+      "file": "FI_033_table_var2.glb",
+      "orientation": 0
+    },
+    "33:2x2x2:0,15467,15469,15470,15479,15480,15483,15484": {
+      "replace": true,
+      "file": "FI_033_table_var3.glb",
+      "orientation": 0
+    },
+    "33:2x2x3:0,15467,15469,15470,0,15471,15473,15474,15479,15480,15483,15484": {
+      "replace": true,
+      "file": "FI_033_table_var4.glb",
+      "orientation": 0
+    },
+    "33:2x3x3:0,15467,0,15468,15469,15470,0,15471,0,15472,15473,15474,15479,15480,15481,15482,15483,15484": {
+      "replace": true,
+      "file": "FI_033_table_var1.glb",
+      "orientation": 0
+    }
+  },
   "16": {
     "2": {
       "mirror": true
