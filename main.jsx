@@ -1,6 +1,6 @@
 const React = require('react');
 
-module.exports = ({script, crashReportUrl}) => (<html lang="en">
+module.exports = ({scriptTag, script, crashReportUrl}) => (<html lang="en">
     <head>
         <meta charSet="UTF-8"/>
         <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"/>
@@ -12,7 +12,8 @@ module.exports = ({script, crashReportUrl}) => (<html lang="en">
         <link rel="stylesheet" href="layout.css"/>
         <title>LBA2</title>
         <script dangerouslySetInnerHTML={{__html: `window.crashReportUrl="${crashReportUrl}";`}} />
-        <script dangerouslySetInnerHTML={{__html: script || 'window.ga=function(){}'}} />
+        <script dangerouslySetInnerHTML={{__html: `const s=document.createElement('script');s.type='text/javascript';s.src='${scriptTag}';document.head.appendChild(s);` }} />
+        <script dangerouslySetInnerHTML={{__html: script || 'window.gtag=function(){}'}} />
     </head>
     <body>
         <div id="preload" className="loader">

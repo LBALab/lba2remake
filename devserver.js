@@ -126,7 +126,8 @@ app.use('/doc', express.static('./doc'));
 app.use('/webxr-assets', express.static('./node_modules/@webxr-input-profiles/assets/dist/profiles'));
 
 const indexBody = renderToStaticMarkup(React.createElement(Main, {
-    script: 'window.ga=function(){};\nwindow.isLocalServer=true;',
+    scriptTag: '',
+    script: 'window.gtag=function(){};\nwindow.isLocalServer=true;',
     crashReportUrl: '/crash'
 }));
 

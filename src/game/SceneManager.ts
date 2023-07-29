@@ -15,7 +15,7 @@ import {
 } from '../resources';
 
 declare global {
-    var ga: Function;
+    var gtag: Function;
 }
 
 const { initSceneDebugData } = DBG;
@@ -46,8 +46,8 @@ export class SceneManager {
         if ((!force && this.scene && index === this.scene.index) || this.game.isLoading())
             return this.scene;
 
-        ga('set', 'page', `/scene/${index}`);
-        ga('send', 'pageview');
+        gtag('set', 'page', `/scene/${index}`);
+        gtag('send', 'pageview');
 
         if (this.scene)
             this.scene.isActive = false;
