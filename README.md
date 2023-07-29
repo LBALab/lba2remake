@@ -1,10 +1,5 @@
-# LBA2 Remake
-![CircleCI](https://circleci.com/gh/LBALab/lba2remake.png?style=shield&circle-token=:circle-token)
-![LatestTag](https://badgen.net/github/tag/LBALab/lba2remake)
-[![Total alerts](https://img.shields.io/lgtm/alerts/g/LBALab/lba2remake.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/LBALab/lba2remake/alerts/)
-[![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/LBALab/lba2remake.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/LBALab/lba2remake/context:javascript)
-
-A Little Big Adventure 2 / Twinsen's Odyssey reimplementation in Typescript / Three.js / React
+# LBA1 & LBA2 Remake
+A Little Big Adventure 1 & 2 / Twinsen's Adveneture / Twinsen's Odyssey reimplementation in Typescript / Three.js / React
 
 #### [Live demo](https://www.lba2remake.net) (or [Editor mode](https://www.lba2remake.net/#editor=true))
 
@@ -16,7 +11,7 @@ A Little Big Adventure 2 / Twinsen's Odyssey reimplementation in Typescript / Th
 
 ## Vision / goals
 
-#### Phase 1: Reimplement the LBA2 game engine
+#### Phase 1: Reimplement the LBA1 and LBA2 game engine
   * Should look and play like the original
   * Full re-engineering instead of dissassembly-based approach
   * Focus on code quality, make it easy to read and modify
@@ -36,7 +31,8 @@ A Little Big Adventure 2 / Twinsen's Odyssey reimplementation in Typescript / Th
 Currently you can walk around every island and buildings of the original game.
 Most of the graphic elements are implemented and part of the gameplay. It is not however completable at this point.
 
-![Game screenshot](doc/images/screenshot_game.jpeg)
+![LBA1 Game Screenshot](doc/images/screenshot_game_lba1.png)
+![LBA2 Game Screenshot](doc/images/screenshot_game.jpeg)
 
 The editor mode allows navigating around the game scenes, inspecting scene content and variables, inspecting the game engine internal variables and debugging scripts (you can set breakpoints on actor scripts).
 
@@ -76,5 +72,5 @@ A list of current and past contributors can be found [here](AUTHORS.md).
 
 ## License
 
-While the original Little Big Adventure 2 game executable, assets and intellectual property belong to Didier Chanfray SARL, the code within this project is released under the [MIT License](LICENSE).
+While the original Little Big Adventure 2 game executable, assets and intellectual property belong to [2.21], the code within this project is released under the [MIT License](LICENSE).
 That being said, if you do anything interesting with this code, please let us know, we'd love to see it!
