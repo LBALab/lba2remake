@@ -130,6 +130,7 @@
         position: absolute;
         left: 545;
         img {
+            width: 20;
             margin-right: 26;
         }
     }
@@ -139,6 +140,7 @@
         left: 545;
         bottom: 0;
         img {
+            width: 37;
             margin-right: 10;
         }
     }
@@ -194,6 +196,7 @@
     display: flex;
 
     img {
+        width: 20;
         height: 20;
         margin-left: 15;
         &.life {
@@ -207,12 +210,14 @@
     &.life {
         margin-top: 15;
         img {
+            width: 20;
             margin-top: 5;
         }
     }
     &.magic {
         margin-top: 10;
         img {
+            width: 20;
             margin-top: 5;
         }
     }
