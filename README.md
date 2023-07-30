@@ -3,13 +3,18 @@ A Little Big Adventure 1 & 2 / Twinsen's Adveneture / Twinsen's Odyssey reimplem
 
 #### [Live demo](https://www.lba2remake.net) (or [Editor mode](https://www.lba2remake.net/#editor=true))
 
+
+### Support Original Game Series
+Studio [2.21] is creating a Remastered version of Twinsen's Little Big Adventure. It is important for us to support them and you can do it buy buying the original games on [itch.io](https://itch.io/s/61876/adeline-software-collection), [GOG](https://www.gog.com/game/little_big_adventure_2) or [Steam](http://store.steampowered.com/app/398000/Little_Big_Adventure_2/) and wishlist the Remastered version on [Steam](https://store.steampowered.com/app/2318070/Twinsens_Little_Big_Adventure_Remastered/).
+
 ## Videos
 
 * [Presenting the v0.5 update (2021)](https://www.youtube.com/watch?v=Ifa4C_R9pQc)
+* [DXDeus Playthrough v0.5 (2021)](https://youtu.be/NvR5dS7ywdk)
 * [Presenting the v0.4 update (2020)](https://www.youtube.com/watch?v=cZDVVcCLeY0)
 * [Introducing the project (2020)](https://www.youtube.com/watch?v=6bAzSgZ0nD0)
 
-## Vision / goals
+## Vision / Goals
 
 #### Phase 1: Reimplement the LBA1 and LBA2 game engine
   * Should look and play like the original
@@ -45,12 +50,13 @@ For more information, check the [FAQ](doc/FAQ.md).
 Any help is very much appreciated!
 Check the [How to Contribute](CONTRIBUTING.md) guide to know how to do that.
 A list of current and past contributors can be found [here](AUTHORS.md).
+There is a compreensive list of things [TODO](TODO.md) so feel free to pick one you like and start working on it.
 
 ## Getting started
 
 (**[more details here](doc/getting_started.md)**)
 
-* Make sure you own a copy of the original game: [GOG](https://www.gog.com/game/little_big_adventure_2) or [Steam](http://store.steampowered.com/app/398000/Little_Big_Adventure_2/)
+* Make sure you own a copy of the original game: [itch.io](https://itch.io/s/61876/adeline-software-collection), [GOG](https://www.gog.com/game/little_big_adventure_2) or [Steam](http://store.steampowered.com/app/398000/Little_Big_Adventure_2/)
 * Download [Node.js LTS](https://nodejs.org) (if you already have node.js installed, make sure it is a recent version: `>= 9.x.x`)
 * Clone the Git project and go to the root project folder in PowerShell on Windows or Terminal on Mac for the next commands.
 * Run `npm install`
@@ -65,6 +71,8 @@ A list of current and past contributors can be found [here](AUTHORS.md).
 ## Community
 
 * [Discord](https://discord.gg/jsTPWYXHsh)
+* [Discord 2.21](https://discord.gg/2xCu5Wag)
+* [Discord Speedrun](https://discord.gg/PdKVPbPF)
 * [MBN forum](https://forum.magicball.net/showthread.php?t=18208)
 * Reddit: [r/linux_gaming](https://www.reddit.com/r/linux_gaming/comments/8049mn/a_little_big_adventure_2_twinsens_odyssey/) or [r/gamedev](https://www.reddit.com/r/gamedev/comments/80cn9u/open_source_reimplementation_of_little_big/)
 * [Facebook](https://www.facebook.com/groups/twinsen/permalink/1565479966839300/)
