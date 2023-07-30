@@ -57,21 +57,25 @@ module.exports = {
             ]
         }, {
             test: /\.glsl?$/,
+            exclude: /node_modules/,
             use: [{
                 loader: 'glsl-custom-loader'
             }]
         }, {
             test: /\.md?$/,
+            exclude: /node_modules/,
             use: [{
                 loader: 'raw-loader'
             }]
         }, {
             test: /\.yaml?$/,
+            exclude: /node_modules/,
             use: [{
                 loader: 'yml-loader'
             }]
         }, {
             test: /\.css$/,
+            exclude: /node_modules/,
             use: [
                 "style-loader",
                 {
@@ -83,6 +87,7 @@ module.exports = {
             ]
         }, {
             test: /\.scss$/,
+            exclude: /node_modules/,
             use: [
                 "style-loader",
                 {
