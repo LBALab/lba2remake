@@ -1,5 +1,21 @@
 # Version history
 
+## [v0.6.1](https://github.com/LBALab/lba2remake/compare/v0.6.0...v0.6.1) Bugfixes
+_2023_
+
+#### Gameplay
+
+- Adding Push Objects (missing side-ways push in LBA2)
+
+#### Editor
+
+- 3d Model Exporter
+
+#### Bug fixes
+
+- LBA1 Climbing Ladders
+
+
 ## [v0.6.0](https://github.com/LBALab/lba2remake/compare/v0.5.0...v0.5.1) Big update!
 _October 10th, 2022_
 
