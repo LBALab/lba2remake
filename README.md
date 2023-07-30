@@ -5,7 +5,7 @@ A Little Big Adventure 1 & 2 / Twinsen's Adveneture / Twinsen's Odyssey reimplem
 
 
 ### Support Original Game Series
-Studio [2.21] is creating a Remastered version of Twinsen's Little Big Adventure. It is important for us to support them and you can do it buy buying the original games on [itch.io](https://itch.io/s/61876/adeline-software-collection), [GOG](https://www.gog.com/game/little_big_adventure_2) or [Steam](http://store.steampowered.com/app/398000/Little_Big_Adventure_2/) and wishlist the Remastered version on [Steam](https://store.steampowered.com/app/2318070/Twinsens_Little_Big_Adventure_Remastered/).
+Studio [2.21] is creating a Remastered version of Twinsen's Little Big Adventure. It is important for us to support them and you can do it so by buying the original games on [itch.io](https://itch.io/s/61876/adeline-software-collection), [GOG](https://www.gog.com/game/little_big_adventure_2) or [Steam](http://store.steampowered.com/app/398000/Little_Big_Adventure_2/) and wishlist the Remastered version on [Steam](https://store.steampowered.com/app/2318070/Twinsens_Little_Big_Adventure_Remastered/).
 
 ## Videos
 
