@@ -14,6 +14,7 @@ _2023_
 #### Bug fixes
 
 - LBA1 Climbing Ladders
+- Extra bonus speed
 
 
 ## [v0.6.0](https://github.com/LBALab/lba2remake/compare/v0.5.0...v0.5.1) Big update!

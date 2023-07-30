@@ -360,7 +360,7 @@ export default class Extra {
     }
 
     doTrajectory(time) {
-        const ts = (time.elapsed - this.spawnTime) * 0.002;
+        const ts = (time.elapsed - this.spawnTime) * 0.005;
         const gravity = 0.9 * Math.pow(1.275, this.weight) * 1000;
         const x = this.speed * ts * Math.cos(this.throwAngle);
         const y = this.speed * ts * Math.sin(this.throwAngle) - (0.5 * gravity * ts * ts);
