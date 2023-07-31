@@ -7,8 +7,9 @@ Below are some ideas we want to work on. Feel free to contribute with your own i
 - [x] LBA1: 3D Model Shading
 - [ ] LBA1: 3D Model Quad Strips
 - [x] LBA1: Ladders not working
-- [ ] LBA1: Sprites out of place
+- [x] Sprites out of place
 - [ ] LBA1: Remove island loading between scenes
+- [ ] LBA1: Twinsen stumbles in platforms (2 directions only)
 - [ ] Editor: Scene Flags not updating
 - [ ] 3D Audio Issues
 - [ ] Gameplay: Improve Collisions
