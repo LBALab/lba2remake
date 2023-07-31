@@ -17,6 +17,7 @@ _2023_
 - LBA1 3D Model Shading
 - Extra bonus speed
 - Behavioiur Menu Icons CSS
+- Fixed Sprites out of place caused by wrong scene point coordinates
 
 
 ## [v0.6.0](https://github.com/LBALab/lba2remake/compare/v0.5.0...v0.5.1) Big update!

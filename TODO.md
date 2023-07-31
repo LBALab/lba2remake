@@ -4,7 +4,7 @@ Below are some ideas we want to work on. Feel free to contribute with your own i
 
 ## 🐛 Bugs
 - [ ] Voices volume too low
-- [ ] LBA1: 3D Model Shading
+- [x] LBA1: 3D Model Shading
 - [ ] LBA1: 3D Model Quad Strips
 - [x] LBA1: Ladders not working
 - [ ] LBA1: Sprites out of place
@@ -22,6 +22,7 @@ Below are some ideas we want to work on. Feel free to contribute with your own i
 - [ ] Weird Colors on Island Ground Textures (Ex: Otringal or Undergas)
 
 ## 🎮 Gameplay
+- [ ] Intro Images/Scripting Images
 - [ ] Save & Load Games
 - [ ] Load Original Saved Games
 - [ ] Fight System / Weapons
@@ -47,6 +48,7 @@ Below are some ideas we want to work on. Feel free to contribute with your own i
 - [ ] Add Sun
 
 ## 🖥️ GUI
+- [ ] Game Selection Menu
 - [ ] Support Existing Additional Fan Translations
 - [ ] Language Selection Menu
 - [ ] Menu Options to Change Audio Volumes
