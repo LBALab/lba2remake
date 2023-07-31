@@ -11,6 +11,9 @@ import {compile} from '../utils/shaders';
 import { WORLD_SIZE, PolygonType } from '../utils/lba';
 import Lightning from '../game/scenery/island/environment/Lightning';
 import Renderer from '../renderer';
+import { getParams } from '../params';
+
+const isLBA1 = getParams().game === 'lba1';
 
 const push = Array.prototype.push;
 
@@ -344,7 +347,12 @@ function loadFaceGeometry(geometries, body) {
             if ((p.hasTransparency && p.polyType !== PolygonType.TRANS) || p.hasTex) {
                 createSubgroupGeometry(geometries, group, baseGroup, uvGroup);
                 push.apply(geometries[group].positions, getPosition(body, vertexIndex));
-                push.apply(geometries[group].normals, faceNormal || getNormal(body, vertexIndex));
+                push.apply(
+                    geometries[group].normals,
+                    faceNormal ||
+                    getPolyVertexNormal(body, p, j, vertexIndex) ||
+                    getNormal(body, vertexIndex)
+                );
                 push.apply(geometries[group].uvs, getUVs(body, p, j));
                 push.apply(geometries[group].uvGroups, getUVGroup(body, p));
                 push.apply(geometries[group].bones, getBone(body, vertexIndex));
@@ -354,7 +362,12 @@ function loadFaceGeometry(geometries, body) {
             } else {
                 const cGroup = p.polyType === PolygonType.TRANS ? 'colored_transparent' : 'colored';
                 push.apply(geometries[cGroup].positions, getPosition(body, vertexIndex));
-                push.apply(geometries[cGroup].normals, faceNormal || getNormal(body, vertexIndex));
+                push.apply(
+                    geometries[cGroup].normals,
+                    faceNormal ||
+                    getPolyVertexNormal(body, p, j, vertexIndex) ||
+                    getNormal(body, vertexIndex)
+                );
                 push.apply(geometries[cGroup].bones, getBone(body, vertexIndex));
                 geometries[cGroup].polyTypes.push(p.polyType);
                 geometries[cGroup].colors.push(p.colour);
@@ -476,6 +489,21 @@ function getFaceNormal(body, poly) {
     return null;
 }
 
+function getPolyVertexNormal(body, poly, vertice, index) {
+    if (poly && isLBA1) {
+        index = poly.normals[vertice];
+    }
+    const normal = body.normals[index];
+    if (!normal) {
+        return [0, 0, 0];
+    }
+    return [
+        normal.x,
+        normal.y,
+        normal.z,
+    ];
+}
+
 function getNormal(body, index) {
     const normal = body.normals[index];
     if (!normal) {
@@ -484,8 +512,7 @@ function getNormal(body, index) {
     return [
         normal.x,
         normal.y,
-        normal.z/* ,
-        normal.colour */
+        normal.z,
     ];
 }
 

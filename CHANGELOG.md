@@ -14,6 +14,7 @@ _2023_
 #### Bug fixes
 
 - LBA1 Climbing Ladders
+- LBA1 3D Model Shading
 - Extra bonus speed
 - Behavioiur Menu Icons CSS
 

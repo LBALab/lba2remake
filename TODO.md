@@ -5,6 +5,7 @@ Below are some ideas we want to work on. Feel free to contribute with your own i
 ## 🐛 Bugs
 - [ ] Voices volume too low
 - [ ] LBA1: 3D Model Shading
+- [ ] LBA1: 3D Model Quad Strips
 - [x] LBA1: Ladders not working
 - [ ] LBA1: Sprites out of place
 - [ ] LBA1: Remove island loading between scenes
