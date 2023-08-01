@@ -9,7 +9,6 @@ Below are some ideas we want to work on. Feel free to contribute with your own i
 - [ ] Shadows Missing
 - [ ] Fix Ground Tiles Atlas Bleeding
 - [ ] Weird Colors on Island Ground Textures (Ex: Otringal or Undergas)
-- [ ] LBA1: 3D Model Quad Strips
 - [ ] LBA1: Remove island loading between scenes
 - [ ] LBA1: Twinsen stumbles in platforms (2 directions only)
 - [ ] LBA1: Gargabe Truck backwards animation not playing correctly

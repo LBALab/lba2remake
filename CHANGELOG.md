@@ -18,6 +18,7 @@ _2023_
 - LBA1 Climbing Ladders
 - LBA1 3D Model Shading
 - LBA1 3D Model Spheres and Lines Colours
+- LBA1 3D Model Quads, Pentagons, Hexagons and Hepatagons
 - Extra bonus speed
 - Behavioiur Menu Icons CSS
 - Fixed Sprites out of place caused by wrong scene point coordinates

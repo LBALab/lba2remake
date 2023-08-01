@@ -374,13 +374,15 @@ function loadFaceGeometry(geometries, body) {
                 geometries[cGroup].intensities.push(p.intensity);
             }
         };
-        for (let j = 0; j < 3; j += 1) {
+        for (let j = 0; j < 3; j += 1) { // triangle
             addVertex(j);
         }
-        if (p.numVertex >= 4) { // quad
-            each([0, 2, 3], (j) => {
-                addVertex(j);
-            });
+        if (p.numVertex >= 4) { // quad, pentagon, hexagon, heptagon
+            for (let j = 0; j < p.numVertex - 2; j += 1) {
+                each([0, j + 1, j + 2], (k) => {
+                    addVertex(k);
+                });
+            }
         }
     });
 }
