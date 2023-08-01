@@ -51,7 +51,7 @@ const paramsDefinitions = {
     },
     audio3d: {
         type: 'boolean',
-        default: false
+        default: true
     },
     ball3d: {
         type: 'boolean',
