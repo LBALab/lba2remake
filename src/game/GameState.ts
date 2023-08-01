@@ -65,8 +65,8 @@ export function createGameState(): GameState {
     const gameState = {
         config: Object.assign({
             displayText: true,
-            musicVolume: 0.30,
-            soundFxVolume: 1.0,
+            musicVolume: 0.3,
+            soundFxVolume: 0.5,
             voiceVolume: 1.0,
             ambienceVolume: 0.2,
             positionalAudio: getParams().audio3d,
