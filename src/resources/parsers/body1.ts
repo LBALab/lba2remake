@@ -174,8 +174,8 @@ function loadLines(object: any, data: DataView, offset: number) {
     object.lines = [];
     for (let i = 0; i < object.linesSize; i += 1) {
         object.lines.push({
-            unk1: data.getUint16(offset, true),
-            colour: Math.floor((data.getUint16(offset + 2, true)) / 16),
+            unk1: data.getUint8(offset),
+            colour: Math.floor((data.getUint8(offset + 1)) / 16),
             vertex1: data.getUint16(offset + 4, true) / 6,
             vertex2: data.getUint16(offset + 6, true) / 6
         });
@@ -190,8 +190,8 @@ function loadSpheres(object: any, data: DataView, offset: number) {
     object.spheres = [];
     for (let i = 0; i < object.spheresSize; i += 1) {
         object.spheres.push({
-            unk1: data.getUint16(offset, true),
-            colour: Math.floor((data.getUint16(offset + 2, true)) / 16),
+            unk1: data.getUint8(offset),
+            colour: Math.floor((data.getUint8(offset + 1)) / 16),
             size: data.getUint16(offset + 4, true) * WORLD_SCALE,
             vertex: data.getUint16(offset + 6, true) / 6
         });
