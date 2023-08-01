@@ -111,7 +111,39 @@ export function ANGLE(this: ScriptContext, angle) {
     }
 }
 
-export const GOTO_SYM_POINT = unimplemented();
+export function GOTO_SYM_POINT(this: ScriptContext, point: Point) {
+    if (!point) {
+        return;
+    }
+    if (this.game.getState().actorTalking > -1) {
+        this.state.reentryOffset = this.state.offset;
+        this.state.continue = false;
+        return;
+    }
+    if (this.actor.index === 0 && this.game.controlsState.firstPerson) {
+        adjustFPAngle(this);
+    }
+
+    let distance = 0;
+    if (this.actor.props.flags.isSprite) {
+        distance = this.actor.gotoPosition(
+            point.physics.position,
+            this.time.delta * WORLD_SCALE * this.actor.props.speed
+        );
+    } else {
+        distance = this.actor.gotoBackwards(point.physics.position);
+    }
+
+    if (distance > 0.55) {
+        this.state.reentryOffset = this.state.offset;
+        this.state.continue = false;
+        this.state.goingToPoint = true;
+    } else {
+        this.actor.stop();
+        this.state.goingToPoint = false;
+        delete this.state.lastVRAngleAdjust;
+    }
+}
 
 export function WAIT_NUM_ANIM(this: ScriptContext, repeats) {
     if (!this.state.animCount) {

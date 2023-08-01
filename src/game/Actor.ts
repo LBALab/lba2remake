@@ -458,16 +458,23 @@ export default class Actor {
         this.physics = initPhysics(this.props);
     }
 
-    goto(position: THREE.Vector3) {
+    goto(position: THREE.Vector3, backwards: boolean = false) {
         this.physics.temp.destination = position;
         let destAngle = angleTo(this.physics.position, position);
         if (destAngle < 0) {
             destAngle += Math.PI * 2;
         }
+        if (backwards) {
+            destAngle += Math.PI;
+        }
         this.physics.temp.destAngle = destAngle;
         this.state.isWalking = true;
         this.state.isTurning = true;
         return this.getDistance(position);
+    }
+
+    gotoBackwards(position: THREE.Vector3) {
+        return this.goto(position, true);
     }
 
     gotoPosition(position: THREE.Vector3, delta: number) {

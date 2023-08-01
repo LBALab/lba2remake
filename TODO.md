@@ -11,12 +11,8 @@ Below are some ideas we want to work on. Feel free to contribute with your own i
 - [ ] Sprites not drawn fully (bottom half missing)
 - [ ] LBA1: Remove island loading between scenes
 - [ ] LBA1: Twinsen stumbles in platforms (2 directions only)
-- [ ] Editor: Scene Flags not updating
-- [ ] 3D Audio Issues
-- [ ] Gameplay: Improve Collisions
+- [x] Editor: Scene Flags not updating
 - [ ] Scripting: Investigate possible parsing error Scene 155, actor=Hussar, line 135
-- [ ] Fix Interjections
-- [ ] Improve Bounding Boxes (orientation - LBA1 Truck Citadel)
 - [ ] Invisible Bricks Issues
 - [ ] Shadows Missing
 - [ ] Fix Ground Tiles Atlas Bleeding

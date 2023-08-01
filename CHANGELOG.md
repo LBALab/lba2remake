@@ -6,6 +6,7 @@ _2023_
 #### Gameplay
 
 - Adding Push Objects (missing side-ways push in LBA2)
+- Adding GOTO_SYM_POINT move command (truck can go backwards)
 
 #### Editor
 
@@ -18,6 +19,7 @@ _2023_
 - Extra bonus speed
 - Behavioiur Menu Icons CSS
 - Fixed Sprites out of place caused by wrong scene point coordinates
+- Fixed Editor Scene Node Variables
 
 
 ## [v0.6.0](https://github.com/LBALab/lba2remake/compare/v0.5.0...v0.5.1) Big update!
