@@ -55,8 +55,11 @@ export const Var = {
                 if (varDef.key in varEdits) {
                     const info = getVarInfo(varDef);
                     const actualValue = varDef.value();
-                    const close = () => {
+                    const close = (event) => {
                         delete varEdits[varDef.key];
+                        const v = Number(event.target.value);
+                        if (!Number.isNaN(v))
+                            varDef.edit(v);
                     };
                     if (info && info.type === 'enum') {
                         const onChange = (e) => {
