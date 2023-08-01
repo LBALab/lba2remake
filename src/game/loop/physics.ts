@@ -70,6 +70,9 @@ function processCarriedPosition(scene: Scene, actor: Actor) {
     }
 
     const carrier = scene.actors[actor.state.isCarriedBy];
+    if (!carrier.props.flags.canCarryActor) {
+        return;
+    }
     if (!actor.state.isCarried) {
         initCarriedState(scene, actor);
     }
@@ -173,8 +176,7 @@ function processCollisionsWithActors(scene: Scene, actor: Actor) {
         if (otherActor.index === actor.index
             || otherActor.state.isDead
             || !otherActor.state.isVisible
-            || !otherActor.props.flags.hasCollisions
-            || !otherActor.props.flags.isSprite) {
+            || !otherActor.props.flags.hasCollisions) {
             continue;
         }
 
@@ -210,7 +212,7 @@ function processCollisionsWithActors(scene: Scene, actor: Actor) {
                 actor.state.isCarriedBy = otherActor.index;
                 DIFF.set(0, ITRS_SIZE.y * Math.sign(dir.y), 0);
             }
-            if (!actor.props.flags.canCarryActor) {
+            if (!actor.props.flags.canCarryActor && !actor.props.flags.isSprite) {
                 actor.physics.position.add(DIFF);
                 ACTOR_BOX.translate(DIFF);
             }
