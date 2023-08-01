@@ -3,20 +3,16 @@
 Below are some ideas we want to work on. Feel free to contribute with your own ideas or to help us with the ones below.
 
 ## 🐛 Bugs
-- [x] Voices volume too low
-- [x] LBA1: 3D Model Shading
-- [ ] LBA1: 3D Model Quad Strips
-- [x] LBA1: Ladders not working
-- [x] Sprites out of place
 - [ ] Sprites not drawn fully (bottom half missing)
-- [ ] LBA1: Remove island loading between scenes
-- [ ] LBA1: Twinsen stumbles in platforms (2 directions only)
-- [x] Editor: Scene Flags not updating
 - [ ] Scripting: Investigate possible parsing error Scene 155, actor=Hussar, line 135
 - [ ] Invisible Bricks Issues
 - [ ] Shadows Missing
 - [ ] Fix Ground Tiles Atlas Bleeding
 - [ ] Weird Colors on Island Ground Textures (Ex: Otringal or Undergas)
+- [ ] LBA1: 3D Model Quad Strips
+- [ ] LBA1: Remove island loading between scenes
+- [ ] LBA1: Twinsen stumbles in platforms (2 directions only)
+- [ ] LBA1: Gargabe Truck backwards animation not playing correctly
 
 ## 🎮 Gameplay
 - [ ] Intro Images/Scripting Images

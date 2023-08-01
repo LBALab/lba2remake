@@ -11,6 +11,7 @@ _2023_
 #### Editor
 
 - 3d Model Exporter
+- 3d Model Entity Icon per Game
 
 #### Bug fixes
 

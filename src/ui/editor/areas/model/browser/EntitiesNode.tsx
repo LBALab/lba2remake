@@ -3,6 +3,10 @@ import { getEntities } from './entitities';
 import DebugData, { saveMetaData } from '../../../DebugData';
 import Renderer from '../../../../../renderer';
 
+import { getParams } from '../../../../../params';
+
+const game = getParams().game;
+
 const indexStyle = {
     position: 'absolute' as const,
     top: 0,
@@ -47,7 +51,7 @@ const EntityNode = {
         if (data.index in icons) {
             useThumb = true;
         } else {
-            const savedIcon = localStorage.getItem(`icon_model_entity_${data.index}`);
+            const savedIcon = localStorage.getItem(`icon_model_entity_${game}_${data.index}`);
             if (savedIcon) {
                 useThumb = true;
             }
@@ -125,7 +129,7 @@ function saveIcon(data, component) {
             if (dataUrl && dataUrl !== 'data:,') {
                 icons[data.index] = dataUrl;
             }
-            localStorage.setItem(`icon_model_entity_${data.index}`, dataUrl);
+            localStorage.setItem(`icon_model_entity_${game}_${data.index}`, dataUrl);
             DebugData.scope.grid.visible = true;
         }
     }
@@ -135,7 +139,7 @@ function getIcon(data, component) {
     if (data.index in icons) {
         return icons[data.index];
     }
-    const savedIcon = localStorage.getItem(`icon_model_entity_${data.index}`);
+    const savedIcon = localStorage.getItem(`icon_model_entity_${game}_${data.index}`);
     if (savedIcon) {
         if (!icons[data.index]) {
             icons[data.index] = savedIcon;
