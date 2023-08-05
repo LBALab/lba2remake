@@ -78,7 +78,7 @@ export function GOTO_POINT(this: ScriptContext, point: Point) {
         distance = this.actor.goto(point.physics.position);
     }
 
-    if (distance > 0.55) {
+    if (distance > 0.65) {
         this.state.reentryOffset = this.state.offset;
         this.state.continue = false;
         this.state.goingToPoint = true;
@@ -134,7 +134,7 @@ export function GOTO_SYM_POINT(this: ScriptContext, point: Point) {
         distance = this.actor.gotoBackwards(point.physics.position);
     }
 
-    if (distance > 0.55) {
+    if (distance > 0.65) {
         this.state.reentryOffset = this.state.offset;
         this.state.continue = false;
         this.state.goingToPoint = true;
