@@ -329,6 +329,10 @@ function getFloorHeight(grid, actor: Actor, position: THREE.Vector3) {
     const dz = Math.floor(position.z * 32);
     const groundCell = grid.cells[(dx * 64) + dz];
 
+    if (!groundCell) {
+        return -1;
+    }
+
     while (true) {
         if (POSITION.y <= -1) {
             return -1;
