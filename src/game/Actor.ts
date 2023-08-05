@@ -608,18 +608,18 @@ export default class Actor {
                 this.sprite = sprite;
             }
         }
-        if (this.game.getState().config.positionalAudio) {
-            const audio = this.game.getAudioManager();
-            if (this.index === 0) {
-                this.threeObject.add(audio.listener);
-            }
-            if (this.sound) {
-                this.threeObject.add(this.sound);
-            }
-            if (this.soundVoice) {
-                this.threeObject.add(this.soundVoice);
-            }
-        }
+        // if (this.game.getState().config.positionalAudio) {
+        //     const audio = this.game.getAudioManager();
+        //     if (this.index === 0) {
+        //         this.threeObject.add(audio.listener);
+        //     }
+        //     if (this.sound) {
+        //         this.threeObject.add(this.sound);
+        //     }
+        //     if (this.soundVoice) {
+        //         this.threeObject.add(this.soundVoice);
+        //     }
+        // }
         if (params.editor) {
             createActorLabel(this, name, this.scene.is3DCam);
         }
@@ -801,10 +801,10 @@ export default class Actor {
 
     stopVoice() {
         const audio = this.game.getAudioManager();
-        if (this.game.getState().config.positionalAudio) {
-            audio.stopSound(this.soundVoice);
-            return;
-        }
+        // if (this.game.getState().config.positionalAudio) {
+        //     audio.stopSound(this.soundVoice);
+        //     return;
+        // }
         audio.stopVoice();
     }
 
