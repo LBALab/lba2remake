@@ -10,7 +10,14 @@
     "Tank",
     "Guard8",
     null,
-    "Guard10"
+    "Guard10",
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    "PlatformSewers"
   ],
   "zoneNames": [
     null,
