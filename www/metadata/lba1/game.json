@@ -295,7 +295,9 @@
     null,
     null,
     null,
-    null,
+    {
+      "name": "clover_box_lupin-burg_sewer"
+    },
     null,
     null,
     null,
