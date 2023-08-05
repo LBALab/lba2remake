@@ -107,9 +107,7 @@ export function MESSAGE_OBJ(
                 if (cmdState.startTime) {
                     delete cmdState.startTime;
                 }
-                if (!sayMessage) {
-                    this.game.resume(false);
-                }
+                this.game.resume(false);
             }, 4500);
         } else {
             if (!vrFirstPerson && actor.index === 0) {
@@ -136,9 +134,7 @@ export function MESSAGE_OBJ(
             const skip = that.game.getUiState().skip;
             if (skip || that.scene.vr) {
                 cmdState.ended = true;
-                if (!sayMessage) {
-                    that.game.resume(false);
-                }
+                that.game.resume(false);
             } else {
                 that.game.setUiState({
                     skip: true
@@ -152,6 +148,7 @@ export function MESSAGE_OBJ(
 
     if (cmdState.ended) {
         actor.stopVoice();
+        this.game.resume(false);
         this.game.getState().actorTalking = -1;
         if (text.type !== 9) {
             this.game.setUiState({ text: null, skip: false, });
