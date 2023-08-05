@@ -392,9 +392,9 @@ function loadPoints(scene, offset) {
             index: i,
             // normalize position
             pos: [
-                (((0x8000 - data.getInt32(offset + 8, true)) + 512) - 256) * WORLD_SCALE,
+                ((0x8000 - data.getInt32(offset + 8, true)) + 512) * WORLD_SCALE,
                 data.getInt32(offset + 4, true) * WORLD_SCALE,
-                (data.getInt32(offset, true) + 256) * WORLD_SCALE
+                data.getInt32(offset, true) * WORLD_SCALE
             ]
         };
         offset += 12;
