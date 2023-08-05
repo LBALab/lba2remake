@@ -38,15 +38,16 @@ const ActorNode = {
         {
             id: 'visible',
             value: actor.isVisible,
-            render: (value) => {
+            render: () => {
                 const onClick = () => {
                     actor.isVisible = !actor.isVisible;
                     if (actor.threeObject) {
+                        actor.isVisible = !actor.threeObject.visible;
                         actor.threeObject.visible = actor.isVisible;
                     }
                 };
                 return <img
-                    src={`editor/icons/${value ? 'visible' : 'hidden'}.svg`}
+                    src={`editor/icons/${actor.threeObject.visible ? 'visible' : 'hidden'}.svg`}
                     onClick={onClick}
                     style={{cursor: 'pointer', width: 14, height: 14}}
                 />;
