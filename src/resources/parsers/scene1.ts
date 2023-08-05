@@ -319,7 +319,7 @@ function loadPoints(scene, offset) {
             index: i,
             // normalise position
             pos: [
-                (((0x8000 - data.getInt16(offset + 4, true)) + 512) - 256) * WORLD_SCALE,
+                ((0x8000 - data.getInt16(offset + 4, true)) + 256) * WORLD_SCALE,
                 data.getInt16(offset + 2, true) * WORLD_SCALE,
                 (data.getInt16(offset, true) + 256) * WORLD_SCALE
             ]
