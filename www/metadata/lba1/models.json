@@ -1,10 +1,13 @@
 {
   "entities": [],
   "bodies": [
+    "tunic",
+    "tunic_no_medallion",
     null,
-    null,
-    null,
-    "prison_clothes"
+    "prison_clothes",
+    "nurse",
+    "tunic_sword",
+    "tunic_snowboard"
   ],
   "anims": []
 }

@@ -104,6 +104,7 @@ Below are some ideas we want to work on. Feel free to contribute with your own i
 - [ ] Camera Menu (Zones)
 - [ ] Scripting: Highlight Labels when used in Scripts
 - [ ] Overview Camera (Islands)
+- [ ] Scripting: set_used_inventory name instead of index
 
 ## 🚚 Server
 - [ ] Improve Analytics
