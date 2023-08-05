@@ -792,10 +792,10 @@ export default class Actor {
 
     playVoice(index: number, textBankId: number, onEndedCallback = null) {
         const audio = this.game.getAudioManager();
-        if (this.game.getState().config.positionalAudio) {
-            audio.playSoundVoice(this.soundVoice, index, textBankId, onEndedCallback);
-            return;
-        }
+        // if (this.game.getState().config.positionalAudio) {
+        //     audio.playSoundVoice(this.soundVoice, index, textBankId, onEndedCallback);
+        //     return;
+        // }
         audio.playVoice(index, textBankId, onEndedCallback);
     }
 
