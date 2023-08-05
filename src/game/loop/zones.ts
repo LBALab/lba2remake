@@ -67,7 +67,7 @@ export function processZones(game: Game, scene: Scene, time: Time) {
 
         const box = zone.props.box;
         if (pos.x >= box.xMin && pos.x < box.xMax &&
-            pos.y >= box.yMin && pos.y <= box.yMax &&
+            pos.y >= box.yMin - 0.1 && pos.y <= box.yMax + 0.1 &&
             pos.z >= box.zMin && pos.z < box.zMax) {
             const zoneType = ZoneOpcode[zone.props.type];
             if (zoneType !== null && zoneType.handler !== null) {
