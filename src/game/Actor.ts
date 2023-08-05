@@ -630,6 +630,9 @@ export default class Actor {
             return;
         }
         this.props.bodyIndex = index;
+        if (this.index === 0) {
+            this.game.getState().hero.bodyIndex = index;
+        }
         this.reloadModel(scene);
     }
 
@@ -638,6 +641,9 @@ export default class Actor {
             return;
         }
         this.props.animIndex = index;
+        if (this.index === 0) {
+            this.game.getState().hero.animIndex = index;
+        }
         if (this.animState.onAnimEnd) {
             this.animState.onAnimEnd();
         }

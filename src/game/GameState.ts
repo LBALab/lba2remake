@@ -30,6 +30,8 @@ export interface MagicBallState {
 export interface HeroState {
     behaviour: number;
     prevBehaviour: number;
+    bodyIndex: number;
+    animIndex: number;
     usingItemId: number;
     equippedItemId: number;
     inventorySlot: number;
@@ -74,6 +76,8 @@ export function createGameState(): GameState {
         hero: {
             behaviour: 0,
             prevBehaviour: 0,
+            bodyIndex: -1,
+            animIndex: -1,
             life: INITIAL_LIFE,
             money: 0,
             magic: 0,
