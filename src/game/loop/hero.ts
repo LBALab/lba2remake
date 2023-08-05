@@ -113,6 +113,9 @@ export function getBodyFromGameState(game: Game): number {
     }
 
     if (isLBA1) {
+        if (game.getState().flags.quest[LBA1Items.TUNIC]) {
+            return LBA1BodyType.TWINSEN_TUNIC_NO_MEDALLION;
+        }
         return LBA1WeaponToBodyMapping[equippedItem];
     }
 
