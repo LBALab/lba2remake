@@ -645,10 +645,13 @@ function Arg({arg, data}) {
     if (!arg) {
         return <span>{'<undefined>'}</span>;
     }
-    const style = argStyle[arg.type] || defaultArgStyle;
+    let style = argStyle[arg.type] || defaultArgStyle;
     const onDoubleClick = arg.type in argDoubleClick
         ? argDoubleClick[arg.type].bind(null, arg, data)
         : null;
+    if (onDoubleClick) {
+        style = extend({}, style, {cursor: 'pointer'});
+    }
     return <span style={style} onDoubleClick={onDoubleClick}>
         {arg.value}
     </span>;
