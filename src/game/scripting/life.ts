@@ -70,12 +70,14 @@ export function MESSAGE_OBJ(
     const text = this.scene.props.texts[id];
     if (!cmdState.skipListener) {
         const that = this;
-        this.game.pause(false);
+        if (!sayMessage) {
+            this.game.pause(false);
+        }
         let onVoiceEndedCallback = null;
         if (vrFirstPerson) {
             onVoiceEndedCallback = () => {
                 cmdState.ended = true;
-                that.game.resume();
+                that.game.resume(false);
             };
         }
         actor.playVoice(text.index, this.scene.props.textBankId, onVoiceEndedCallback);
@@ -105,7 +107,9 @@ export function MESSAGE_OBJ(
                 if (cmdState.startTime) {
                     delete cmdState.startTime;
                 }
-                this.game.resume(false);
+                if (!sayMessage) {
+                    this.game.resume(false);
+                }
             }, 4500);
         } else {
             if (!vrFirstPerson && actor.index === 0) {
@@ -132,7 +136,9 @@ export function MESSAGE_OBJ(
             const skip = that.game.getUiState().skip;
             if (skip || that.scene.vr) {
                 cmdState.ended = true;
-                that.game.resume();
+                if (!sayMessage) {
+                    that.game.resume(false);
+                }
             } else {
                 that.game.setUiState({
                     skip: true

@@ -13,7 +13,6 @@ Below are some ideas we want to work on. Feel free to contribute with your own i
 - [ ] LBA1: Twinsen stumbles in platforms (2 directions only)
 - [ ] LBA1: Gargabe Truck backwards animation not playing correctly
 - [ ] LBA1: Twinsen Body changing in Lupin-Burg Sewers
-- [ ] Scripting: Pause script while actor displaying message
 
 ## 🎮 Gameplay
 - [ ] Intro Images/Scripting Images
@@ -105,7 +104,6 @@ Below are some ideas we want to work on. Feel free to contribute with your own i
 - [ ] Camera Menu (Zones)
 - [ ] Scripting: Highlight Labels when used in Scripts
 - [ ] Overview Camera (Islands)
-- [x] Add Cursor Animation link in scripting
 
 ## 🚚 Server
 - [ ] Improve Analytics

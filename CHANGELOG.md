@@ -12,6 +12,7 @@ _2023_
 
 - 3d Model Exporter
 - 3d Model Entity Icon per Game
+- LBA1 Metadata Updated
 
 #### Bug fixes
 
@@ -23,6 +24,7 @@ _2023_
 - Behavioiur Menu Icons CSS
 - Fixed Sprites out of place caused by wrong scene point coordinates
 - Fixed Editor Scene Node Variables
+- Freeze time while displaying interjections (fixed various scripting issues)
 
 
 ## [v0.6.0](https://github.com/LBALab/lba2remake/compare/v0.5.0...v0.5.1) Big update!
