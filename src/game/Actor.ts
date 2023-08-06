@@ -616,9 +616,9 @@ export default class Actor {
             if (this.sound) {
                 this.threeObject.add(this.sound);
             }
-            // if (this.soundVoice) {
-            //     this.threeObject.add(this.soundVoice);
-            // }
+            if (this.game.vr && this.soundVoice) {
+                this.threeObject.add(this.soundVoice);
+            }
         }
         if (params.editor) {
             createActorLabel(this, name, this.scene.is3DCam);
@@ -798,19 +798,19 @@ export default class Actor {
 
     playVoice(index: number, textBankId: number, onEndedCallback = null) {
         const audio = this.game.getAudioManager();
-        // if (this.game.getState().config.positionalAudio) {
-        //     audio.playSoundVoice(this.soundVoice, index, textBankId, onEndedCallback);
-        //     return;
-        // }
+        if (this.game.vr && this.game.getState().config.positionalAudio) {
+            audio.playSoundVoice(this.soundVoice, index, textBankId, onEndedCallback);
+            return;
+        }
         audio.playVoice(index, textBankId, onEndedCallback);
     }
 
     stopVoice() {
         const audio = this.game.getAudioManager();
-        // if (this.game.getState().config.positionalAudio) {
-        //     audio.stopSound(this.soundVoice);
-        //     return;
-        // }
+        if (this.game.vr && this.game.getState().config.positionalAudio) {
+            audio.stopSound(this.soundVoice);
+            return;
+        }
         audio.stopVoice();
     }
 
