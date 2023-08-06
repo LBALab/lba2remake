@@ -25,6 +25,7 @@ _2023_
 - Fixed Sprites out of place caused by wrong scene point coordinates
 - Fixed Editor Scene Node Variables
 - Freeze time while displaying interjections (fixed various scripting issues)
+- Fixed issue overriding body index
 
 
 ## [v0.6.0](https://github.com/LBALab/lba2remake/compare/v0.5.0...v0.5.1) Big update!
