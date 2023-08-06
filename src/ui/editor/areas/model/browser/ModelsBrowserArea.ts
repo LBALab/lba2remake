@@ -2,6 +2,7 @@ import {makeOutlinerArea} from '../../utils/outliner';
 import EntitiesNode from './EntitiesNode';
 import BodiesNode from './BodiesNode';
 import AnimsNode from './AnimsNode';
+import InventoryNode from './InventoryNode';
 
 export const EntityBrowserArea = makeOutlinerArea('entities', 'Entities', EntitiesNode, {
     icon: 'folder.png',
@@ -23,6 +24,15 @@ export const AnimBrowserArea = makeOutlinerArea('anims', 'Anims', AnimsNode, {
     icon: 'folder.png',
     style: {
         background: '#000011'
+    },
+    hideRoot: true
+});
+
+export const InventoryBrowserArea = makeOutlinerArea(
+    'inventory-items', 'InventoryItems', InventoryNode, {
+    icon: 'folder.png',
+    style: {
+        background: '#111111'
     },
     hideRoot: true
 });

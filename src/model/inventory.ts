@@ -61,7 +61,8 @@ function loadInventoryModelData(params: any,
         mesh: null,
         boundingBox: null,
         boundingBoxDebugMesh: null,
-        materials: []
+        materials: [],
+        inventory: invIdx,
     };
 
     const animState = new AnimState();

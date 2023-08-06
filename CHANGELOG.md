@@ -13,6 +13,7 @@ _2023_
 - 3d Model Exporter
 - 3d Model Entity Icon per Game
 - LBA1 Metadata Updated
+- Inventory Viewer
 
 #### Bug fixes
 
