@@ -240,7 +240,10 @@ export default class Area extends React.Component<AreaProps, AreaState> {
 
         return <div style={menuStyle(numIcons, isMain)}>
             <img onClick={onClickIcon} style={mainIconStyle()} src={`editor/icons/areas/${icon}`}/>
-            <span onClick={onClickIcon} style={titleStyle}>{this.props.area.name}</span>
+            <span onClick={onClickIcon} style={titleStyle}>
+                {this.props.area.name}
+                <span style={{ fontSize: 15 }}>{!this.state.popup ? ' ▼' : ' ▲'}</span>
+            </span>
 
             {settingsIcon}
             {splitH}
