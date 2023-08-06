@@ -16,7 +16,7 @@ export function createScreen(options) {
     const texture = new THREE.CanvasTexture(canvas);
     texture.encoding = THREE.sRGBEncoding;
     texture.anisotropy = 16;
-    const geometry = new THREE.PlaneBufferGeometry(width / density, height / density);
+    const geometry = new THREE.PlaneGeometry(width / density, height / density);
     const material = new THREE.MeshBasicMaterial({
         color: 0xFFFFFF,
         depthFunc: options.noDepth ? THREE.AlwaysDepth : THREE.LessEqualDepth,

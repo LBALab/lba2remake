@@ -14,7 +14,7 @@ export function createVideoScreen(video) {
     texture.format = THREE.RGBFormat;
     texture.encoding = THREE.sRGBEncoding;
 
-    const geometry = new THREE.PlaneBufferGeometry(640 / density, 480 / density);
+    const geometry = new THREE.PlaneGeometry(640 / density, 480 / density);
     const material = new THREE.MeshBasicMaterial({
         map: texture
     });

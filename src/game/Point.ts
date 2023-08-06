@@ -69,7 +69,7 @@ export default class Point {
 
         this.updateLabel();
 
-        const stickGeom = new THREE.CylinderBufferGeometry(0.036, 0.036, 0.96, 6, 1, false);
+        const stickGeom = new THREE.CylinderGeometry(0.036, 0.036, 0.96, 6, 1, false);
         const stick = new THREE.Mesh(stickGeom, stickMaterial);
         stick.position.set(0, 0.48, 0);
         stick.name = 'stick';
@@ -79,7 +79,7 @@ export default class Point {
             transparent: true
         });
 
-        const clothGeom = new THREE.PlaneBufferGeometry(0.7, 0.7);
+        const clothGeom = new THREE.PlaneGeometry(0.7, 0.7);
         const cloth = new THREE.Mesh(clothGeom, clothMaterial);
         cloth.position.set(0.35, 0.61, 0);
         cloth.name = 'cloth';

@@ -6,7 +6,7 @@ import { WORLD_SCALE_B } from '../../../utils/lba';
 // There's probably a better implementation for this.
 export function loadPickingPlanes(islandObject, layout) {
     const sectionsPlanes = new THREE.Object3D();
-    const sectionsPlanesGeom = new THREE.PlaneBufferGeometry(
+    const sectionsPlanesGeom = new THREE.PlaneGeometry(
         64 * WORLD_SCALE_B,
         64 * WORLD_SCALE_B
     );

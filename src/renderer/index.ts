@@ -140,6 +140,7 @@ function setupThreeRenderer(pixelRatio, canvas, webgl2, rendererOptions) {
     const renderer = new THREE.WebGLRenderer(options);
 
     renderer.outputEncoding = THREE.sRGBEncoding;
+    // renderer.outputColorSpace = THREE.SRGBColorSpace;
     if (rendererOptions.alpha) {
         renderer.setClearColor(0x000000, 0);
     } else {
