@@ -1,0 +1,27 @@
+{
+  "actorNames": [
+    null,
+    "GarbageTruck",
+    "Grobo",
+    "CitadelGuard3",
+    "CitadelGuard4",
+    "CitadelGuard5",
+    null,
+    null,
+    null,
+    "FenceRight",
+    null,
+    null,
+    "Rabbibunny"
+  ],
+  "zoneNames": [
+    null,
+    null,
+    "garbage",
+    "fence",
+    "poster_4",
+    "poster_5",
+    "garbage_area"
+  ],
+  "varcubes": []
+}

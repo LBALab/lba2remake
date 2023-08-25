@@ -110,7 +110,7 @@ const getModelsTexture = async () => {
 // for ad-hoc usage only
 // currently used in some Editor custom parsing
 const getBricksHQR = async () => {
-    const isLBA1 = getParams().game === 'lba1';
+    const isLBA1 = getParams().game === 'lba1' || getParams().game === 'prequel';
     const resName = isLBA1 ? ResourceName.LIBRARIES : ResourceName.BRICKS;
     return await loadResource(resName);
 };

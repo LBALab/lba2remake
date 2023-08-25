@@ -48,7 +48,7 @@ export interface SceneProps {
     textBankId: number;
 }
 
-const isLBA1 = getParams().game === 'lba1';
+const isLBA1 = getParams().game === 'lba1' || getParams().game === 'prequel';
 
 export default class Scene {
     readonly index: number;

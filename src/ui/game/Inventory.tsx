@@ -27,7 +27,7 @@ import { heroUseItem } from '../../game/loop/hero';
 const InventoryObjectsIndex = 4;
 const InventoryTextOffset = 100;
 
-const isLBA1 = getParams().game === 'lba1';
+const isLBA1 = getParams().game === 'lba1' || getParams().game === 'prequel';
 
 const Inventory = ({ game, closeInventory }: any) => {
     const [selectedSlot, setSelectedSlot] = useState(game.getState().hero.inventorySlot);

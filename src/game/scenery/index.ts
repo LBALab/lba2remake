@@ -11,7 +11,7 @@ export async function loadScenery(
     sceneData: any,
     sceneIndex: number
 ): Promise<Scenery> {
-    const isLBA1 = getParams().game === 'lba1';
+    const isLBA1 = getParams().game === 'lba1' || getParams().game === 'prequel';
     if (sceneData.isIsland && isLBA1) {
         return IsoIsland.load(game, sceneData, sceneIndex);
     }

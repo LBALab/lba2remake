@@ -31,7 +31,7 @@ export const BehaviourMode = {
     SKELETON: 13
 };
 
-const isLBA1 = getParams().game === 'lba1';
+const isLBA1 = getParams().game === 'lba1' || getParams().game === 'prequel';
 
 export function updateHero(game: Game, scene: Scene, hero: Actor, time: Time) {
     const behaviour = game.getState().hero.behaviour;

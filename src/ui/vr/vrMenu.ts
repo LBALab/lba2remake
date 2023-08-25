@@ -13,7 +13,7 @@ let teleportMenu = null;
 let mainMenu = null;
 let resume = null;
 
-const isLBA1 = getParams().game === 'lba1';
+const isLBA1 = getParams().game === 'lba1' || getParams().game === 'prequel';
 
 export function createMenu(game, sceneManager, light) {
     menuNode = new THREE.Object3D();

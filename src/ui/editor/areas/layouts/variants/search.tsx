@@ -25,7 +25,7 @@ export async function findAllVariants(lDef) {
     const bkg = await getBricksHQR();
     const layout = loadLayout(bkg, lDef);
     let variantsByScenes: any[];
-    if (getParams().game === 'lba1') {
+    if (getParams().game === 'lba1' || getParams().game === 'prequel') {
         variantsByScenes = [
             await findAllVariantsInScene(bkg, lDef, layout, {
                 sceneryIndex: lDef.library

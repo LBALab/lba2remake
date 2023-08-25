@@ -374,7 +374,7 @@ export function getCamVector(zone: CameraZone) {
     return camVector;
 }
 
-const isLBA1 = getParams().game === 'lba1';
+const isLBA1 = getParams().game === 'lba1' || getParams().game === 'prequel';
 
 function TEXT(game: Game, scene: Scene, zone: Zone, hero: Actor, _time: Time) {
     if (!(zone instanceof TextZone)) {

@@ -4,7 +4,7 @@ import { getParams } from '../../params';
 // Note that slots are for the inventory are defined as starting from 0 in the
 // top left and increasing to the right row by row.
 
-const isLBA1 = getParams().game === 'lba1';
+const isLBA1 = getParams().game === 'lba1' || getParams().game === 'prequel';
 
 const LBA2InventoryColumns = 7;
 const LBA2InventoryRows = 6;    // Original: 5, but it overloaded some slots.

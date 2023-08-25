@@ -6,7 +6,7 @@ import { getBricksHQR } from '../../../../../resources';
 import { areResourcesPreloaded } from '../../../../../resources/load';
 import { getParams } from '../../../../../params';
 
-const isLBA1 = getParams().game === 'lba1';
+const isLBA1 = getParams().game === 'lba1' || getParams().game === 'prequel';
 
 const indexStyle = {
     position: 'absolute' as const,

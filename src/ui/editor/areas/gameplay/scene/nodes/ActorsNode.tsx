@@ -12,7 +12,7 @@ import { getEntities, loadEntities } from '../../../model/browser/entitities';
 import Actor from '../../../../../../game/Actor';
 import { getParams } from '../../../../../../params';
 
-const isLBA1 = getParams().game === 'lba1';
+const isLBA1 = getParams().game === 'lba1' || getParams().game === 'prequel';
 
 const ActorNode = {
     dynamic: true,

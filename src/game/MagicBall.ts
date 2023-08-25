@@ -16,7 +16,7 @@ import GLOW_FRAG from './shaders/magicball/glow.frag.glsl';
 import CLOUD_VERT from './shaders/magicball/cloud.vert.glsl';
 import CLOUD_FRAG from './shaders/magicball/cloud.frag.glsl';
 
-const isLBA1 = getParams().game === 'lba1';
+const isLBA1 = getParams().game === 'lba1' || getParams().game === 'prequel';
 
 const LBA1MagicBallMapping = {
     8: 1,

@@ -17,7 +17,7 @@ import { CURRENT_TRACK, VAR_GAME } from './condition';
 import { SET_TRACK } from './structural';
 import { CameraZone, ConveyorZone, LadderZone, RailZone, SpikeZone, TeleportZone } from '../Zone';
 
-const isLBA1 = getParams().game === 'lba1';
+const isLBA1 = getParams().game === 'lba1' || getParams().game === 'prequel';
 
 export const PALETTE = unimplemented();
 

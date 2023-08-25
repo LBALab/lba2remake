@@ -133,7 +133,7 @@ class BehaviourModeItem extends Component<IBehaviourItem> {
 }
 
 const BehaviourMode = ({ game, behaviour }) => {
-    const isLBA1 = getParams().game === 'lba1';
+    const isLBA1 = getParams().game === 'lba1' || getParams().game === 'prequel';
     let textIndex = behaviour + (isLBA1 ? 0 : 80);
     if (isLBA1 && behaviour === BehaviourModeType.PROTOPACK) {
         textIndex += 1;
@@ -229,7 +229,7 @@ const BehaviourMenu = ({ game, scene }: IBehaviourMenuProps) => {
         6: useRef(null),
         8: useRef(null),
     };
-    const isLBA1 = getParams().game === 'lba1';
+    const isLBA1 = getParams().game === 'lba1' || getParams().game === 'prequel';
 
     let hasProtoPack = !isLBA1 && game.getState().flags.quest[LBA2Items.PROTO_PACK];
     hasProtoPack |= isLBA1 && game.getState().flags.quest[LBA1Items.PROTO_PACK];

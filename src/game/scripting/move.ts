@@ -5,7 +5,7 @@ import { ScriptContext } from './ScriptContext';
 import Point from '../Point';
 import { getParams } from '../../params';
 
-const isLBA1 = getParams().game === 'lba1';
+const isLBA1 = getParams().game === 'lba1' || getParams().game === 'prequel';
 
 const EULER = new THREE.Euler();
 const EULER2 = new THREE.Euler();

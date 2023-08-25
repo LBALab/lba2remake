@@ -177,7 +177,7 @@ interface Context {
     scene: any;
 }
 
-const isLBA1 = getParams().game === 'lba1';
+const isLBA1 = getParams().game === 'lba1' || getParams().game === 'prequel';
 
 export function applyMappings(
     motionController: MotionController,

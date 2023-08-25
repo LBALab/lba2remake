@@ -152,7 +152,7 @@ export default class IsoSceneryPhysics {
             obj.props.entityIndex === BehaviourMode.PROTOPACK) &&
             obj.props.animIndex === AnimType.FORWARD;
 
-        const isLBA1 = getParams().game === 'lba1';
+        const isLBA1 = getParams().game === 'lba1' || getParams().game === 'prequel';
         const basePos = obj.threeObject.position.clone();
         const position = obj.physics.position.clone();
         basePos.multiplyScalar(STEP);

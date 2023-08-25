@@ -548,7 +548,7 @@ export default class Extra {
 }
 
 export function getBonus(type): SpriteType {
-    const isLBA1 = getParams().game === 'lba1';
+    const isLBA1 = getParams().game === 'lba1' || getParams().game === 'prequel';
     const bonus = [];
     for (let b = 0; b < 5; b += 1) {
         if (type & (1 << (b + 4))) {

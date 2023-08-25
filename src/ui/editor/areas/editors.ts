@@ -6,7 +6,7 @@ import IsoGridEditor from './isoGrid/IsoGridEditor';
 import { getParams } from '../../../params';
 import InventoryEditor from './model/InventoryEditor';
 
-const isLBA1 = getParams().game === 'lba1';
+const isLBA1 = getParams().game === 'lba1' || getParams().game === 'prequel';
 
 const editors = isLBA1
 ? [

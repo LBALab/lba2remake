@@ -1,6 +1,6 @@
 import { getParams } from '../../params';
 
-const isLBA1 = getParams().game === 'lba1';
+const isLBA1 = getParams().game === 'lba1' || getParams().game === 'prequel';
 
 const LBA1SampleType = {
     MAGIC_BALL_THROW: 23,

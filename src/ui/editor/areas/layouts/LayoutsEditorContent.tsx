@@ -636,7 +636,7 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
             return;
         }
         const { library } = this.props.sharedState;
-        const scenes = getParams().game === 'lba1'
+        const scenes = getParams().game === 'lba1' || getParams().game === 'prequel'
             ? [library]
             : await findScenesUsingLibrary(library);
         this.setState({

@@ -1,0 +1,21 @@
+{
+  "actorNames": [],
+  "zoneNames": [],
+  "varcubes": [
+    {
+      "name": "welcome_onboard"
+    },
+    null,
+    {
+      "name": "got_ferry_ticket"
+    },
+    null,
+    {
+      "name": "chase_twinsen"
+    },
+    null,
+    {
+      "name": "sound_the_alarm"
+    }
+  ]
+}

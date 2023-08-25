@@ -3,7 +3,7 @@ import { WORLD_SIZE } from '../../utils/lba';
 import sharedData from './sharedData';
 import { getParams } from '../../params';
 
-const isLBA1 = getParams().game === 'lba1';
+const isLBA1 = getParams().game === 'lba1' || getParams().game === 'prequel';
 
 const HERO_TARGET_POS = new THREE.Vector3(0, isLBA1 ? 1.30 : 1.43, 0);
 

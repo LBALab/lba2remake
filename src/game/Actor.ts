@@ -250,7 +250,7 @@ export default class Actor {
             && (props.life > 0 || props.bodyIndex >= 0);
         // Do Meca Pinguin checks for both games correctly
         if (getParams().game === 'lba2' && props.index === 1 ||
-            getParams().game === 'lba1' && props.entityIndex === 9) {
+            (getParams().game === 'lba1' || getParams().game === 'prequel') && props.entityIndex === 9) {
             this.state.isVisible = false;
         }
         this.scripts = {

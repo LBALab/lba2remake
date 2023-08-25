@@ -25,7 +25,7 @@ interface AnimActionContext {
     entityAnim?: any;
 }
 
-const isLBA1 = getParams().game === 'lba1';
+const isLBA1 = getParams().game === 'lba1' || getParams().game === 'prequel';
 
 const ANGLE_OFFSET = isLBA1 ? 0 : 0.225;
 const DART_MODEL = 61;

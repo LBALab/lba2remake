@@ -13,7 +13,7 @@ import Lightning from '../game/scenery/island/environment/Lightning';
 import Renderer from '../renderer';
 import { getParams } from '../params';
 
-const isLBA1 = getParams().game === 'lba1';
+const isLBA1 = getParams().game === 'lba1' || getParams().game === 'prequel';
 
 const push = Array.prototype.push;
 

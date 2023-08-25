@@ -1,7 +1,7 @@
 import { getParams } from '../../../params';
 
 const cachedLayouts = {};
-const isLBA1 = getParams().game === 'lba1';
+const isLBA1 = getParams().game === 'lba1' || getParams().game === 'prequel';
 
 const libOffset = isLBA1 ? 0 : 179;
 
@@ -16,8 +16,12 @@ export function loadLayout(bkg, layout) {
     const dataView = new DataView(buffer);
     const numLayouts = dataView.getUint32(0, true) / 4;
 
+    if (index > numLayouts - 1) {
+        return null;
+    }
+
     const offset = dataView.getUint32(index * 4, true);
-    const nextOffset = index === numLayouts - 1 ?
+    const nextOffset = index >= numLayouts - 1 ?
         dataView.byteLength
         : dataView.getUint32((index + 1) * 4, true);
 

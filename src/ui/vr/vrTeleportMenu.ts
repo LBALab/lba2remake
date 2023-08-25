@@ -28,7 +28,7 @@ const invWorldMat = new THREE.Matrix4();
 
 const planets = LocationsNode.children;
 
-const isLBA1 = getParams().game === 'lba1';
+const isLBA1 = getParams().game === 'lba1' || getParams().game === 'prequel';
 
 export function createTeleportMenu(sceneLight) {
     const teleportMenu = new THREE.Object3D();
