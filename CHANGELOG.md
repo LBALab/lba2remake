@@ -1,7 +1,7 @@
 # Version history
 
 ## [v0.6.1](https://github.com/LBALab/lba2remake/compare/v0.6.0...v0.6.1) Bugfixes
-_2023_
+_September 11th, 2023_
 
 #### Gameplay
 
