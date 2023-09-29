@@ -1,5 +1,17 @@
 # Version history
 
+## [v0.6.2](https://github.com/LBALab/lba2remake/compare/v0.6.1...v0.6.2) Bugfixes
+_September 29th, 2023_
+
+#### Bug fixes
+
+- 3d Model Exporter empty files
+
+#### Editor
+
+- 3d Model Recording to mp4
+
+
 ## [v0.6.1](https://github.com/LBALab/lba2remake/compare/v0.6.0...v0.6.1) Bugfixes
 _September 11th, 2023_
 
