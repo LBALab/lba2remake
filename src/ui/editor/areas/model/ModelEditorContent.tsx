@@ -17,6 +17,7 @@ import { loadEntities } from './browser/entitities';
 import DebugData from '../../DebugData';
 import { getParams } from '../../../../params';
 import { exportModel } from '../../../../model/exporter';
+import { saveAs } from 'file-saver';
 
 interface Props extends TickerProps {
     params: any;
@@ -69,6 +70,8 @@ export default class Model extends FrameListener<Props, State> {
     moving: boolean;
     moved: boolean;
     anim: number;
+    capture: any;
+    recording: boolean;
 
     constructor(props) {
         super(props);
@@ -81,6 +84,7 @@ export default class Model extends FrameListener<Props, State> {
         this.onMouseMove = this.onMouseMove.bind(this);
         this.onWheel = this.onWheel.bind(this);
         this.exportModel = this.exportModel.bind(this);
+        this.recordModel = this.recordModel.bind(this);
 
         this.mouseSpeed = {
             x: 0,
@@ -114,6 +118,9 @@ export default class Model extends FrameListener<Props, State> {
             grid,
         };
         clock.start();
+
+        this.capture = null;
+        this.recording = false;
     }
 
     componentWillUnmount() {
@@ -311,6 +318,9 @@ export default class Model extends FrameListener<Props, State> {
                 <button style={mainInfoButton} onClick={this.exportModel}>
                     Export
                 </button>
+                <button id="recording" style={mainInfoButton} onClick={this.recordModel}>
+                    Record
+                </button>
             </div>
         </div>;
     }
@@ -320,5 +330,35 @@ export default class Model extends FrameListener<Props, State> {
             this.props.sharedState.entity,
             this.props.sharedState.body,
         );
+    }
+
+    async recordModel() {
+        const button = document.getElementById('recording');
+        if (this.recording) {
+            this.capture.stop();
+            this.recording = false;
+            button.style.background = 'rgb(45, 45, 48)';
+            button.innerText = 'Record';
+            return;
+        }
+        this.recording = true;
+        button.style.background = 'red';
+        button.innerText = 'Stop';
+        const stream = this.state.renderer.threeRenderer.domElement.captureStream(60);
+        this.capture = new MediaRecorder(stream, {
+            mimeType: 'video/webm; codecs=vp9'
+        });
+        const chunks = [];
+        this.capture.ondataavailable = (e) => {
+            chunks.push(e.data);
+        };
+        this.capture.onstop = () => {
+            const filename = `${DebugData.metadata.entities[this.props.sharedState.entity]}_${DebugData.metadata.bodies[this.props.sharedState.body]}_${DebugData.metadata.anims[this.props.sharedState.anim]}` || `entity_${this.props.sharedState.entity}_body_${this.props.sharedState.body}_anim_${this.props.sharedState.anim}.webm}`;
+            const blob = new Blob(chunks, {
+                type: 'video/webm'
+            });
+            saveAs(blob, filename);
+        };
+        this.capture.start();
     }
 }
