@@ -48,10 +48,14 @@ async function loadAnimations(entityIdx, body, skeleton: THREE.Skeleton) {
     for (const animInfo of entity.anims) {
         const anim = await getAnimations(animInfo.index, entityIdx);
         if (anim.loopFrame > 0) {
-            clips.push(makeAnimationClip(animInfo, anim, body, skeleton, true));
-            clips.push(makeAnimationClip(animInfo, anim, body, skeleton, false));
-        } else {
-            clips.push(makeAnimationClip(animInfo, anim, body, skeleton, false));
+            const animClip1 = makeAnimationClip(animInfo, anim, body, skeleton, true);
+            if (animClip1) {
+                clips.push(animClip1);
+            }
+        }
+        const animClip2 = makeAnimationClip(animInfo, anim, body, skeleton, false);
+        if (animClip2) {
+            clips.push(animClip2);
         }
     }
     return clips;
@@ -74,6 +78,9 @@ function makeAnimationClip(animInfo, anim, body, skeleton: THREE.Skeleton, intro
         const values = [];
         for (let i = min; i <= max; i += 1) {
             const frameNum = intro ? i : (i === max ? min : i);
+            if (frameNum >= anim.keyframes.length) {
+                return null;
+            }
             const frame = anim.keyframes[frameNum].boneframes[b];
             if (type === 0) {
                 const q = frame.quat;
