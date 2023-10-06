@@ -146,7 +146,7 @@ export async function saveFullSceneModel(replacements, entry): Promise<void> {
             };
             req.setRequestHeader('Content-Type', 'application/octet-stream');
             req.send(new Blob([gltf]));
-        }, {
+        }, undefined, {
             binary: true,
             embedImages: true,
             animations

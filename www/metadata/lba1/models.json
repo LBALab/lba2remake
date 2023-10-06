@@ -1,7 +1,7 @@
 {
   "entities": [],
   "bodies": [
-    "tunic",
+    "default",
     "tunic_no_medallion",
     null,
     "prison_clothes",

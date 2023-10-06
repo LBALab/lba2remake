@@ -34,7 +34,7 @@ export async function exportModel(
     exporter.parse(mesh, (gltf: ArrayBuffer) => {
         const blob = new Blob([gltf], {type: 'model/gltf-binary'});
         saveAs(blob, `${name}.glb`);
-    }, {
+    }, undefined, {
         binary: true,
         embedImages: true,
         animations,

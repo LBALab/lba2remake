@@ -1,6 +1,6 @@
 {
   "name": "lba2remake",
-  "version": "0.6.2",
+  "version": "0.6.3",
   "description": "Little Big Adventure 2 HD version for the web",
   "scripts": {
     "start": "npm run dev",
@@ -25,7 +25,7 @@
     "@lbalab/hqr": "^3.4.1",
     "@types/lodash": "^4.14.169",
     "@types/react-dom": "^16.9.13",
-    "@types/three": "^0.127.1",
+    "@types/three": "^0.140.0",
     "@types/dom-mediacapture-record": "^1.0.6",
     "@webxr-input-profiles/assets": "^1.0.8",
     "@webxr-input-profiles/motion-controllers": "^1.0.0",
@@ -44,7 +44,7 @@
     "sass": "^1.43.4",
     "sass-loader": "^12.3.0",
     "simplex-noise": "^2.4.0",
-    "three": "^0.137.0",
+    "three": "^0.151.0",
     "webxr-polyfill": "^2.0.3"
   },
   "devDependencies": {

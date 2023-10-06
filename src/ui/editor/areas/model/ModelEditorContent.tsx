@@ -13,7 +13,7 @@ import {
     registerResources,
     preloadResources,
 } from '../../../../resources';
-import { loadEntities } from './browser/entitities';
+import { loadEntities, getEntities } from './browser/entitities';
 import DebugData from '../../DebugData';
 import { getParams } from '../../../../params';
 import { exportModel } from '../../../../model/exporter';
@@ -83,8 +83,9 @@ export default class Model extends FrameListener<Props, State> {
         this.onMouseUp = this.onMouseUp.bind(this);
         this.onMouseMove = this.onMouseMove.bind(this);
         this.onWheel = this.onWheel.bind(this);
-        this.exportModel = this.exportModel.bind(this);
-        this.recordModel = this.recordModel.bind(this);
+        this.export = this.export.bind(this);
+        this.exportAll = this.exportAll.bind(this);
+        this.record = this.record.bind(this);
 
         this.mouseSpeed = {
             x: 0,
@@ -315,24 +316,40 @@ export default class Model extends FrameListener<Props, State> {
             <div ref={this.onLoad} style={fullscreen}/>
             <div id="stats" style={{position: 'absolute', top: 0, left: 0, width: '50%'}}/>
             <div style={exportButtonWrapperStyle}>
-                <button style={mainInfoButton} onClick={this.exportModel}>
+                <button style={mainInfoButton} onClick={this.export}>
                     Export
                 </button>
-                <button id="recording" style={mainInfoButton} onClick={this.recordModel}>
+                <button id="exporting" style={mainInfoButton} onClick={this.exportAll}>
+                    Export All
+                </button>
+                <button id="recording" style={mainInfoButton} onClick={this.record}>
                     Record
                 </button>
             </div>
         </div>;
     }
 
-    async exportModel() {
+    async export() {
         exportModel(
             this.props.sharedState.entity,
             this.props.sharedState.body,
         );
     }
 
-    async recordModel() {
+    async exportAll() {
+        if (confirm('Exporting all models is a long running process. Are you sure you want to continue?') === true) {
+            await loadEntities();
+            const entities = getEntities();
+            for (const entity of entities) {
+                for (const body of entity.bodies) {
+                    exportModel(entity.index, body.index);
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                }
+            }
+        }
+    }
+
+    async record() {
         const button = document.getElementById('recording');
         if (this.recording) {
             this.capture.stop();
