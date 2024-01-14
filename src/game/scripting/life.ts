@@ -70,7 +70,7 @@ export function MESSAGE_OBJ(
     const text = this.scene.props.texts[id];
     if (!cmdState.skipListener) {
         const that = this;
-        if (!(sayMessage || text.type === 9)) {
+        if (!(sayMessage || text.type === 9) && !this.game.vr) {
             this.game.pause(false);
         }
         let onVoiceEndedCallback = null;
