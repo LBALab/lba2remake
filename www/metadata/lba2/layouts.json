@@ -5490,6 +5490,11 @@
       "file": "FI_070_baby_cushion.glb",
       "orientation": 0
     },
+    "71": {
+      "replace": true,
+      "file": "FI_071_red_soup.glb",
+      "orientation": 0
+    },
     "72": {
       "replace": true,
       "file": "FI_072_baby_bottles.glb",
