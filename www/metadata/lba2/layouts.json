@@ -5285,6 +5285,16 @@
     }
   },
   "15": {
+    "0": {
+      "replace": true,
+      "file": "FI_000_001_010_011_padded_armchair.glb",
+      "orientation": 0
+    },
+    "1": {
+      "replace": true,
+      "file": "FI_000_001_010_011_padded_armchair.glb",
+      "orientation": 1
+    },
     "2": {
       "replace": true,
       "file": "FI_002_003_francos_building_wall.glb",
@@ -5319,6 +5329,16 @@
       "replace": true,
       "file": "FI_008_francos_building_wall_round_corner.glb",
       "orientation": 0
+    },
+    "10": {
+      "replace": true,
+      "file": "FI_000_001_010_011_padded_armchair.glb",
+      "orientation": 3
+    },
+    "11": {
+      "replace": true,
+      "file": "FI_000_001_010_011_padded_armchair.glb",
+      "orientation": 2
     },
     "17": {
       "replace": true,
