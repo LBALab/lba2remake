@@ -5540,6 +5540,11 @@
       "file": "FI_072_baby_bottles.glb",
       "orientation": 0
     },
+    "73": {
+      "replace": true,
+      "file": "FI_073_little_doll.glb",
+      "orientation": 0
+    },
     "74": {
       "replace": true,
       "file": "FI_074_abacus.glb",
