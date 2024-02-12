@@ -5565,6 +5565,11 @@
       "file": "FI_079_big_candle.glb",
       "orientation": 0
     },
+    "80": {
+      "replace": true,
+      "file": "FI_080_big_dry_flower_pot.glb",
+      "orientation": 0
+    },
     "81": {
       "replace": true,
       "file": "FI_081_francos_building_wall_window_covered.glb",
