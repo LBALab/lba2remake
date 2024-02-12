@@ -5330,6 +5330,11 @@
       "file": "FI_008_francos_building_wall_round_corner.glb",
       "orientation": 0
     },
+    "9": {
+      "replace": true,
+      "file": "FI_009_padded_armchair_long.glb",
+      "orientation": 0
+    },
     "10": {
       "replace": true,
       "file": "FI_000_001_010_011_padded_armchair.glb",
@@ -5339,6 +5344,11 @@
       "replace": true,
       "file": "FI_000_001_010_011_padded_armchair.glb",
       "orientation": 2
+    },
+    "12": {
+      "replace": true,
+      "file": "FI_012_padded_beanbag.glb",
+      "orientation": 0
     },
     "17": {
       "replace": true,
