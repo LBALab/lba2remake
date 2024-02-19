@@ -5585,6 +5585,11 @@
       "file": "FI_082_francos_building_wall_window_big_covered.glb",
       "orientation": 0
     },
+    "83": {
+      "replace": true,
+      "file": "FI_083_shiny_globe.glb",
+      "orientation": 0
+    },
     "84": {
       "replace": true,
       "file": "FI_084_dark_monk_altar.glb",
