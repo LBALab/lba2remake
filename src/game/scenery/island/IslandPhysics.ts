@@ -328,7 +328,11 @@ function processBoxIntersections(
 ) {
     const boundingBox = obj.model || obj instanceof Extra
         ? obj.model.boundingBox
-        : obj.sprite.boundingBox;
+        : obj.sprite?.boundingBox;
+    // still need to investigate better why both model and sprites are null
+    if (!boundingBox) {
+        return isTouchingGround;
+    }
     ACTOR_BOX.copy(boundingBox);
     ACTOR_BOX.translate(position);
     let collision = false;
