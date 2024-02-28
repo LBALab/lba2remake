@@ -145,9 +145,11 @@ export const detectVersion = (gameFolder: string, dosboxFolder: string) => {
             return version;
         }
     }
-    console.error('Unsupported game installation. Currently supported GoG versions for windows and mac. ' +
-        'Make sure you specified the correct folder path with installed LBA 2 game. If you verified it is correct, then ' +
-        'most probably you can still run the remake, but you will have to copy the game files manually. Refer to the README.md');
+    console.error('Unsupported game installation. Currently supported GoG versions for Windows and Mac. ' +
+        'Make sure you specified the correct folder path with installed LBA 2 game. ' +
+        'For newer GoG versions, refer to the Speedrun>Windows folder. ' +
+        'If you verified it is correct, then most probably you can still run the remake, ' +
+        'but you will have to copy the game files manually. Refer to the README.md ');
     process.exit(1);
 };
 
