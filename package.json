@@ -29,7 +29,7 @@
     "@types/dom-mediacapture-record": "^1.0.6",
     "@webxr-input-profiles/assets": "^1.0.8",
     "@webxr-input-profiles/motion-controllers": "^1.0.0",
-    "blockly": "^6.20210701.0",
+    "blockly": "^10.0.2",
     "color-convert": "^2.0.1",
     "file-saver": "^2.0.5",
     "form-data": "^4.0.0",
