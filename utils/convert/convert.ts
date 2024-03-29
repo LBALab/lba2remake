@@ -314,7 +314,7 @@ const samplesConvertor = async (game) => {
 const convertToM4aAudio = async (inputFilePath: string, outputFilePath: string, bitrate: number) => {
     console.log(`Converting ${inputFilePath} to ${outputFilePath} with bitrate ${bitrate}k`);
     removeFile(outputFilePath);
-    FFmpeg.runSync(`-i "${inputFilePath}" -c:a aac -b:a ${bitrate}k "${outputFilePath}"`);
+    FFmpeg.runSync(`-i "${inputFilePath}" -af afftdn,anlmdn=s=7:p=0.002:r=0.002:m=15 -c:a aac -b:a ${bitrate}k "${outputFilePath}"`);
 };
 
 const convertToWavAudio = async (inputFilePath: string, outputFilePath: string) => {
