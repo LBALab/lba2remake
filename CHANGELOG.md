@@ -1,7 +1,7 @@
 # Version history
 
 ## [v0.6.5](https://github.com/LBALab/lba2remake/compare/v0.6.4...v0.6.5) Bugfixes
-_January 14th, 2024_
+_March 29th, 2024_
 
 #### Audio
 
