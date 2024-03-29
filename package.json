@@ -22,14 +22,14 @@
     "unpack": "ts-node utils/convert/unpack.ts"
   },
   "dependencies": {
-    "@lbalab/hqr": "^3.4.1",
+    "@lbalab/hqr": "^3.4.4",
+    "@types/dom-mediacapture-record": "^1.0.6",
     "@types/lodash": "^4.14.169",
     "@types/react-dom": "^16.9.13",
     "@types/three": "^0.140.0",
-    "@types/dom-mediacapture-record": "^1.0.6",
     "@webxr-input-profiles/assets": "^1.0.8",
     "@webxr-input-profiles/motion-controllers": "^1.0.0",
-    "blockly": "^6.20210701.0",
+    "blockly": "^10.4.3",
     "color-convert": "^2.0.1",
     "file-saver": "^2.0.5",
     "form-data": "^4.0.0",
@@ -75,7 +75,7 @@
     "typescript": "^3.9.9",
     "webpack": "^5.76.0",
     "webpack-cli": "^4.9.1",
-    "webpack-dev-middleware": "^3.7.3",
+    "webpack-dev-middleware": "^7.2.0",
     "yml-loader": "^2.1.0"
   },
   "repository": "https://github.com/LBALab/lba2remake.git",
