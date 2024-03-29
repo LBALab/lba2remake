@@ -1,5 +1,12 @@
 # Version history
 
+## [v0.6.5](https://github.com/LBALab/lba2remake/compare/v0.6.4...v0.6.5) Bugfixes
+_January 14th, 2024_
+
+#### Audio
+
+- Adding a de-noise filter to the LBA1 audio conversions #695
+
 ## [v0.6.4](https://github.com/LBALab/lba2remake/compare/v0.6.3...v0.6.4) Bugfixes
 _January 14th, 2024_
 
