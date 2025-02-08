@@ -109,6 +109,14 @@ export default class AnimState {
         this.reachedLastFrame = false;
     }
 
+    setAnimFrame(frame: number) {
+        this._currentFrame = frame;
+        this.currentTime = 0;
+        this.kfs[0] = this.anim.keyframes[frame];
+        this.kfs[1] = null;
+        this._keyframeChanged = true;
+    }
+
     /**
      * This selects the pair of keyframes we want
      * to use for interpolation. This is a function of

@@ -650,6 +650,10 @@ export default class Actor {
         this.animState.onAnimEnd = null;
     }
 
+    setAnimFrame(frame) {
+        this.animState.setAnimFrame(frame);
+    }
+
     setSprite(scene, index) {
         if (this.props.spriteIndex === index) {
             return;

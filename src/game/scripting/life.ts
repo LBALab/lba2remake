@@ -628,7 +628,9 @@ export function ACTION(this: ScriptContext) {
     this.game.controlsState.action = 1;
 }
 
-export const SET_FRAME = unimplemented();
+export function SET_FRAME(this: ScriptContext, frame: number) {
+    this.actor.setAnimFrame(frame);
+}
 
 export function SET_SPRITE(this: ScriptContext, index: number) {
     this.actor.setSprite(this.scene, index);
@@ -666,7 +668,12 @@ export const SAVE_HERO = unimplemented();
 
 export const RESTORE_HERO = unimplemented();
 
-export const ANIM_SET = unimplemented();
+export function ANIM_SET(this: ScriptContext, animIndex: number) {
+    if (animIndex === -1) {
+        return;
+    }
+    this.actor.setAnim(animIndex);
+}
 
 export const RAIN = unimplemented();
 
