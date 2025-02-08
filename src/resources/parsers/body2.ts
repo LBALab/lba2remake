@@ -265,15 +265,15 @@ export function computeBoundingBox(object, bodyProps) {
         const {xMin, yMin, zMin, xMax, yMax, zMax} = object;
         object.boundingBox = new THREE.Box3(
             new THREE.Vector3(
-                xMin * WORLD_SCALE,
+                xMin * WORLD_SCALE - 0.05,
                 yMin * WORLD_SCALE,
-                zMin * WORLD_SCALE
+                zMin * WORLD_SCALE - 0.05
             )
             ,
             new THREE.Vector3(
-                xMax * WORLD_SCALE,
+                xMax * WORLD_SCALE - 0.05,
                 yMax * WORLD_SCALE,
-                zMax * WORLD_SCALE
+                zMax * WORLD_SCALE - 0.05
             )
         );
     }
