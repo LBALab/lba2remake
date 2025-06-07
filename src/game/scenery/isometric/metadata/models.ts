@@ -15,6 +15,7 @@ import { getParams } from '../../../../params';
 import { loadFx } from './fx/loader';
 import Game from '../../../Game';
 import { Fx } from './fx/Fx';
+import { createTwinklingStar } from '../misc/twinkling_star';
 
 const exporter = new GLTFExporter();
 
@@ -95,6 +96,47 @@ export async function loadFullSceneModel(
             }
         }
     });
+
+    if (entry === 117) {
+        // Twinkling star effects for entry 117 (scene 173, Kurtz house)
+        // Specs: pos (Vector3), size (scale), color (hex Color), speed (twinkle rate)
+        const starSpecs = [
+            {
+                pos: new THREE.Vector3(41.3, 3.85, 35),
+                size: 1.0,
+                color: 0xefb810,
+                speed: 1.514
+            },
+            {
+                pos: new THREE.Vector3(41.17, 3.4, 35.5),
+                size: 0.6,
+                color: 0x3c341e,
+                speed: 1.259
+            }
+            // Add more stars by adding additional objects to this array.
+        ];
+
+        for (const spec of starSpecs) {
+            const { pos, size, color, speed } = spec;
+            // Create a twinkling star (defined in ../misc/twinkling_star.ts)
+            const starEffect = await createTwinklingStar(
+                pos,
+                new THREE.Color(color),
+                size,
+                speed
+            );
+            // Add the star's mesh to the scene
+            threeObject.add(starEffect.threeObject);
+            // Register the star's update function to animate its twinkle each frame
+            effects.push({
+                init: () => {}, // no extra initialization needed
+                update: (_game, _scene, time) => {
+                    starEffect.update(time); // update star effect (uses time.elapsed in shader)
+                }
+            });
+        }
+    }
+
     const mixer = new THREE.AnimationMixer(threeObject);
     applyAnimationUpdaters(threeObject, model.animations);
     each(model.animations, (clip) => {

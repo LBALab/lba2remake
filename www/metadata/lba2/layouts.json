@@ -5285,6 +5285,16 @@
     }
   },
   "15": {
+    "0": {
+      "replace": true,
+      "file": "FI_000_001_010_011_padded_armchair.glb",
+      "orientation": 0
+    },
+    "1": {
+      "replace": true,
+      "file": "FI_000_001_010_011_padded_armchair.glb",
+      "orientation": 1
+    },
     "2": {
       "replace": true,
       "file": "FI_002_003_francos_building_wall.glb",
@@ -5320,6 +5330,26 @@
       "file": "FI_008_francos_building_wall_round_corner.glb",
       "orientation": 0
     },
+    "9": {
+      "replace": true,
+      "file": "FI_009_padded_armchair_long.glb",
+      "orientation": 0
+    },
+    "10": {
+      "replace": true,
+      "file": "FI_000_001_010_011_padded_armchair.glb",
+      "orientation": 3
+    },
+    "11": {
+      "replace": true,
+      "file": "FI_000_001_010_011_padded_armchair.glb",
+      "orientation": 2
+    },
+    "12": {
+      "replace": true,
+      "file": "FI_012_padded_beanbag.glb",
+      "orientation": 0
+    },
     "17": {
       "replace": true,
       "file": "FI_017_francos_building_wall_window_big.glb",
@@ -5340,6 +5370,11 @@
       "file": "FI_020_francos_building_wall_window.glb",
       "orientation": 0
     },
+    "22": {
+      "replace": true,
+      "file": "FI_022_padded_stool.glb",
+      "orientation": 0
+    },
     "23": {
       "replace": true,
       "file": "FI_023_francos_doorframe.glb",
@@ -5348,6 +5383,11 @@
     "24": {
       "replace": true,
       "file": "FI_024_francos_doorframe.glb",
+      "orientation": 0
+    },
+    "25": {
+      "replace": true,
+      "file": "FI_025_round_table.glb",
       "orientation": 0
     },
     "26": {
@@ -5485,9 +5525,24 @@
       "file": "FI_069_short_stool.glb",
       "orientation": 0
     },
+    "70": {
+      "replace": true,
+      "file": "FI_070_baby_cushion.glb",
+      "orientation": 0
+    },
+    "71": {
+      "replace": true,
+      "file": "FI_071_red_soup.glb",
+      "orientation": 0
+    },
     "72": {
       "replace": true,
       "file": "FI_072_baby_bottles.glb",
+      "orientation": 0
+    },
+    "73": {
+      "replace": true,
+      "file": "FI_073_little_doll.glb",
       "orientation": 0
     },
     "74": {
@@ -5515,6 +5570,11 @@
       "file": "FI_079_big_candle.glb",
       "orientation": 0
     },
+    "80": {
+      "replace": true,
+      "file": "FI_080_big_dry_flower_pot.glb",
+      "orientation": 0
+    },
     "81": {
       "replace": true,
       "file": "FI_081_francos_building_wall_window_covered.glb",
@@ -5523,6 +5583,11 @@
     "82": {
       "replace": true,
       "file": "FI_082_francos_building_wall_window_big_covered.glb",
+      "orientation": 0
+    },
+    "83": {
+      "replace": true,
+      "file": "FI_083_shiny_globe.glb",
       "orientation": 0
     },
     "84": {
