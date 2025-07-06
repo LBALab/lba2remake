@@ -1,5 +1,18 @@
 # Version history
 
+## [v0.6.6](https://github.com/LBALab/lba2remake/compare/v0.6.5...v0.6.6) Bugfixes
+_February 3rd, 2025_
+
+#### Gameplay
+
+- Adding ANIM_SET life command
+- Adding SET_FRAME life command
+
+#### Bug fixes
+
+- Reduce default Bounding Box size so Twinsen can interact with objects
+
+
 ## [v0.6.5](https://github.com/LBALab/lba2remake/compare/v0.6.4...v0.6.5) Bugfixes
 _March 29th, 2024_
 
