@@ -10,5 +10,4 @@ node_modules
 /dist
 /yarn.lock
 .DS_Store
-.build-config.js
 .netlify
