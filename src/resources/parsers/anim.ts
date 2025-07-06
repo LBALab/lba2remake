@@ -5,6 +5,10 @@ import { Resource } from '../load';
 import { Anim, KeyFrame, BoneFrame, BoneframeCanFall } from '../../model/anim/types';
 
 export const parseAnim = (resource: Resource, index: number) => {
+    if (index < 0) {
+        console.debug(`Anim index ${index} is invalid in this context.`);
+        return null;
+    }
     const buffer = resource.getEntry(index);
     const data = new DataView(buffer);
     const obj : Anim = {

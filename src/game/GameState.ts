@@ -27,6 +27,22 @@ export interface MagicBallState {
     maxBounces: number;
 }
 
+interface ActorPhysicsState {
+    position: THREE.Vector3;
+    orientation: THREE.Quaternion;
+    temp: {
+        position: THREE.Vector3;
+        destination: THREE.Vector3;
+        angle: number;
+        destAngle: number;
+        doorPosition?: [number, number, number];
+    };
+    carried: {
+        position: THREE.Vector3;
+        orientation: THREE.Quaternion;
+    };
+}
+
 export interface HeroState {
     behaviour: number;
     prevBehaviour: number;
@@ -45,12 +61,17 @@ export interface HeroState {
     magicball: MagicBallState;
     handStrength: number;
     lastValidPosTime: number;
-    position: THREE.Vector3;
+    physics: ActorPhysicsState;
     animState?: AnimStateJSON;
+}
+
+interface SceneState {
+    index: number;
 }
 
 export interface GameState {
     config: GameConfig;
+    scene: SceneState;
     hero: HeroState;
     // The actor index who is currently talking.
     actorTalking: number;
@@ -73,6 +94,9 @@ export function createGameState(): GameState {
             ambienceVolume: 0.2,
             positionalAudio: getParams().audio3d,
         }, getLanguageConfig()),
+        scene: {
+            index: 0,
+        },
         hero: {
             behaviour: 0,
             prevBehaviour: 0,
@@ -87,12 +111,12 @@ export function createGameState(): GameState {
             clover: { boxes: 2, leafs: 1 },
             magicball: null,
             handStrength: 5, // LVL_0
-            position: null,
             lastValidPosTime: 0,
             animState: null,
             inventorySlot: 0,
             usingItemId: -1,
             equippedItemId: -1,
+            physics: null,
         },
         actorTalking: -1,
         flags: {
@@ -101,7 +125,7 @@ export function createGameState(): GameState {
             holomap: createHolomapFlags()
         },
         save(hero: Actor) {
-            this.hero.position = hero.physics.position;
+            this.hero.physics = hero.physics;
             this.hero.animState = hero.animState.toJSON();
             return JSON.stringify(omit(this, ['save', 'load', 'config']));
         },
@@ -110,9 +134,45 @@ export function createGameState(): GameState {
             if (!state) {
                 return;
             }
-            hero.physics.position.x = state.hero.position.x;
-            hero.physics.position.y = state.hero.position.y;
-            hero.physics.position.z = state.hero.position.z;
+            hero.physics.position = new THREE.Vector3(
+                state.hero.physics.position.x,
+                state.hero.physics.position.y,
+                state.hero.physics.position.z,
+            );
+            hero.physics.orientation = new THREE.Quaternion(
+                state.hero.physics.orientation.x,
+                state.hero.physics.orientation.y,
+                state.hero.physics.orientation.z,
+                state.hero.physics.orientation.w
+            );
+            // hero.threeObject.rotation.setFromQuaternion(state.hero.physics.orientation);
+            // hero.physics.temp.position = new THREE.Vector3(
+            //     state.hero.physics.temp.position?.x || 0,
+            //     state.hero.physics.temp.position?.y || 0,
+            //     state.hero.physics.temp.position?.z || 0
+            // );
+            // hero.physics.temp.destination = new THREE.Vector3(
+            //     state.hero.physics.temp.destination?.x || 0,
+            //     state.hero.physics.temp.destination?.y || 0,
+            //     state.hero.physics.temp.destination?.z || 0
+            // );
+            hero.physics.temp.angle = state.hero.physics.temp.angle;
+            hero.physics.temp.destAngle = state.hero.physics.temp.angle; // void turning
+            hero.state.isTurning = true;
+            // if (state.hero.physics.temp.doorPosition) {
+            //     hero.physics.temp.doorPosition = [
+            //         state.hero.physics.temp.doorPosition[0],
+            //         state.hero.physics.temp.doorPosition[1],
+            //         state.hero.physics.temp.doorPosition[2]
+            //     ];
+            // } else {
+            //     hero.physics.temp.doorPosition = null;
+            // }
+            hero.physics.carried.position = new THREE.Vector3(
+                state.hero.physics.carried.position.x,
+                state.hero.physics.carried.position.y,
+                state.hero.physics.carried.position.z
+            );
             // Merge the current animState with the saved one, overwritting
             // things like the currentFrame etc. to ensure we e.g. continue to
             // fly the jetpack if we drown whilst using it.

@@ -31,7 +31,7 @@ interface GameUIProps {
     setUiState: (state: any, callback?: Function) => void;
     sharedState?: any;
     stateHandler?: any;
-    showMenu: (inGameMenu?: boolean) => void;
+    showMenu: (inGameMenu?: boolean, continueMenu?: boolean) => void;
     hideMenu: (wasPaused?: boolean) => void;
 }
 
@@ -189,11 +189,43 @@ export default class GameUI extends React.Component<GameUIProps, GameUIState> {
         sceneManager.goto(0, true);
     }
 
+    saveGame() {
+        const { game, sceneManager } = this.props;
+        const state = game.getState();
+        state.save(sceneManager.getScene().actors[0]);
+        state.hero.animState = null; // Reset hero anim state
+        state.scene.index = sceneManager.getScene().index;
+        localStorage.setItem('game_state', JSON.stringify(state));
+        game.setUiState({hasSaveGame: true});
+    }
+
+    async continueGameScene() {
+        const { game, sceneManager } = this.props;
+        game.resume();
+        game.continueState();
+        const scene = await sceneManager.goto(game.getState().scene.index, true, false, true);
+        game.getState().load(JSON.stringify(game.getState()), scene.actors[0]);
+    }
+
     onMenuItemChanged(item) {
         const { game } = this.props;
         switch (item) {
             case 70: { // Resume
                 this.props.hideMenu();
+                break;
+            }
+            case 73: { // Save Game
+                if (game.isPaused()) {
+                    game.resume();
+                }
+                this.props.setUiState({showMenu: false, inGameMenu: true});
+                this.saveGame();
+                this.props.setUiState({hasSaveGame: true});
+                break;
+            }
+            case 69: { // Continue
+                this.props.hideMenu();
+                this.continueGameScene();
                 break;
             }
             case 71: { // New Game
@@ -332,6 +364,7 @@ export default class GameUI extends React.Component<GameUIProps, GameUIState> {
             showMenu,
             teleportMenu,
             inGameMenu,
+            hasSaveGame,
             loading,
             text,
             skip,
@@ -366,6 +399,7 @@ export default class GameUI extends React.Component<GameUIProps, GameUIState> {
             <Menu
                 showMenu={showMenu && !teleportMenu}
                 inGameMenu={inGameMenu}
+                hasSaveGame={hasSaveGame}
                 onItemChanged={this.onMenuItemChanged}
             />
             {showMenu && !teleportMenu

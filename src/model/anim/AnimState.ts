@@ -188,6 +188,9 @@ export default class AnimState {
     }
 
     setFromJSON(data: AnimStateJSON) {
+        if (!data) {
+            return;
+        }
         this.interpolating = data.interpolating;
         this._hasEnded = data.hasEnded;
         this.reachedLastFrame = data.reachedLastFrame;

@@ -24,6 +24,7 @@ export default interface UIState {
     menuTexts?: any;
     showMenu: boolean;
     inGameMenu: boolean;
+    hasSaveGame: boolean;
     teleportMenu: boolean;
     behaviourMenu: boolean;
     inventory: boolean;
@@ -44,6 +45,7 @@ export function initUIState(game: Game): UIState {
         menuTexts: null,
         showMenu: false,
         inGameMenu: false,
+        hasSaveGame: localStorage.getItem('game_state') !== null,
         teleportMenu: false,
         behaviourMenu: false,
         inventory: false,

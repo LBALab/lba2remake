@@ -129,6 +129,18 @@ export default class Game {
         this.resetControlsState();
     }
 
+    continueState() {
+        this._gameState = createGameState();
+        const newState = localStorage.getItem('game_state');
+        if (newState) {
+            this._gameState = {
+                ...this._gameState,
+                ...JSON.parse(newState),
+            };
+        }
+        this.resetControlsState();
+    }
+
     resetControlsState() {
         this.controlsState.controlVector.set(0, 0),
         this.controlsState.action = 0;

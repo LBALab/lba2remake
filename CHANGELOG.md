@@ -1,7 +1,11 @@
 # Version history
 
-## [v0.6.7](https://github.com/LBALab/lba2remake/compare/v0.6.5...v0.6.6) Bugfixes
+## [v0.6.7](https://github.com/LBALab/lba2remake/compare/v0.6.6...v0.6.7) Bugfixes
 _July 6th, 2025_
+
+#### Gameplay
+
+- Single Save Game (continue menu option will load the last saved game)
 
 #### Replacement 3D models
 

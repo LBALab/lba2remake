@@ -15,13 +15,15 @@ interface Item {
     text?: string;
 }
 
-const getMenuItems = (resume: boolean = false): Item[] => {
+const getMenuItems = (resume: boolean = false, continueMenu: boolean = false): Item[] => {
     const params = getParams();
+    const continuing = !resume && continueMenu;
     const menu = [
         { item: 'ResumeGame', index: 70, isVisible: resume, isEnabled: true, textId: 'resumeGame' },
-        { item: 'NewGame', index: 71, isVisible: true, isEnabled: true, textId: 'newGame' },
+        { item: 'ContinueGame', index: 69, isVisible: continuing, isEnabled: true, textId: 'continueGame' },
         { item: 'LoadGame', index: 72, isVisible: false, isEnabled: false, textId: 'loadGame' },
-        { item: 'SaveGame', index: 73, isVisible: false, isEnabled: false, textId: 'saveGame' },
+        { item: 'SaveGame', index: 73, isVisible: resume, isEnabled: true, textId: 'saveGame' },
+        { item: 'NewGame', index: 71, isVisible: !resume, isEnabled: true, textId: 'newGame' },
         { item: 'Teleport', index: -1, isVisible: true, isEnabled: true, textId: 'teleport' },
         { item: 'Editor', index: -2, isVisible: !params.editor, isEnabled: true, textId: 'editor' },
         {
@@ -60,6 +62,7 @@ const getOptionItems = (): Item[] => {
 interface MProps {
     showMenu: boolean;
     inGameMenu: boolean;
+    hasSaveGame: boolean;
     onItemChanged: (id: number) => void;
 }
 
@@ -76,7 +79,7 @@ export default class Menu extends React.Component<MProps, MState> {
         this.gamepadListener = this.gamepadListener.bind(this);
         this.state = {
             selectedIndex: 0,
-            items: getMenuItems(false),
+            items: getMenuItems(false, localStorage.getItem('game_state') !== null),
         };
     }
 
@@ -86,7 +89,7 @@ export default class Menu extends React.Component<MProps, MState> {
     }
 
     componentWillReceiveProps(newProps) {
-        const menu = getMenuItems(newProps.inGameMenu);
+        const menu = getMenuItems(newProps.inGameMenu, newProps.hasSaveGame);
         this.setState({ items: menu, selectedIndex: 0 });
     }
 
@@ -138,7 +141,7 @@ export default class Menu extends React.Component<MProps, MState> {
                 });
             } else if (this.state.items[selectedIndex].index === 741) {
                 this.setState({
-                    items: getMenuItems(this.props.inGameMenu),
+                    items: getMenuItems(this.props.inGameMenu, this.props.hasSaveGame),
                     selectedIndex: 0,
                 });
             }
