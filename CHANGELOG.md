@@ -1,5 +1,14 @@
 # Version history
 
+## [v0.6.7](https://github.com/LBALab/lba2remake/compare/v0.6.5...v0.6.6) Bugfixes
+_July 6th, 2025_
+
+#### Replacement 3D models
+
+- Added Franco's Island 3D models
+- Added Twinkling star effects for entry 117 (scene 173, Kurtz house)
+
+
 ## [v0.6.6](https://github.com/LBALab/lba2remake/compare/v0.6.5...v0.6.6) Bugfixes
 _February 3rd, 2025_
 
