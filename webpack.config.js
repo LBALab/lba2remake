@@ -7,7 +7,7 @@ module.exports = {
     output: {
         path: path.join(__dirname, './dist'),
         filename: 'bundle.js',
-        publicPath: path.join(__dirname, './www'),
+        publicPath: '/',
     },
     resolve: {
         extensions: ['.ts', '.tsx', '.js', '.glsl', '.proto', '.yaml', '.md'],
