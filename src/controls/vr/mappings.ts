@@ -245,7 +245,8 @@ export function applyMappings(
         if (enabled) {
             const behaviour = game.getState().hero.behaviour;
             const index = listBehaviours.findIndex(b => b === behaviour);
-            const newBehaviour = listBehaviours[(index + (listBehaviours.length - 1)) % listBehaviours.length];
+            const prevIndex = (index - 1 + listBehaviours.length) % listBehaviours.length;
+            const newBehaviour = listBehaviours[prevIndex];
             setBehaviour(game, newBehaviour);
         }
     });
