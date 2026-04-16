@@ -245,7 +245,7 @@ export function applyMappings(
         if (enabled) {
             const behaviour = game.getState().hero.behaviour;
             const index = listBehaviours.findIndex(b => b === behaviour);
-            const newBehaviour = listBehaviours[Math.max(index - 1, 0)];
+            const newBehaviour = listBehaviours[(index + (listBehaviours.length - 1)) % listBehaviours.length];
             setBehaviour(game, newBehaviour);
         }
     });
@@ -253,7 +253,7 @@ export function applyMappings(
         if (enabled) {
             const behaviour = game.getState().hero.behaviour;
             const index = listBehaviours.findIndex(b => b === behaviour);
-            const newBehaviour = listBehaviours[Math.min(index + 1, listBehaviours.length - 1)];
+            const newBehaviour = listBehaviours[(index + 1) % listBehaviours.length];
             setBehaviour(game, newBehaviour);
         }
     });
