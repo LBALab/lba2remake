@@ -1,5 +1,13 @@
 # Version history
 
+## [v0.6.8](https://github.com/LBALab/lba2remake/compare/v0.6.7...v0.6.8) Bugfixes
+_April 16th, 2026_
+
+#### Controls
+
+- Fixed VR mappings for Valve Index controllers
+
+
 ## [v0.6.7](https://github.com/LBALab/lba2remake/compare/v0.6.6...v0.6.7) Bugfixes
 _July 6th, 2025_
 
