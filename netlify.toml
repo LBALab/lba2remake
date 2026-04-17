@@ -1,0 +1,6 @@
+[build]
+  command = "bash utils/deploy/download-assets.sh && npm run build"
+  publish = "www"
+
+[build.environment]
+  NODE_VERSION = "18"

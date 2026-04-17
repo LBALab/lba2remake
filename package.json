@@ -19,7 +19,8 @@
     "import": "utils/convert/import.sh",
     "import:win": "powershell -File utils/convert/import.ps1",
     "convert": "ts-node utils/convert/convert.ts",
-    "unpack": "ts-node utils/convert/unpack.ts"
+    "unpack": "ts-node utils/convert/unpack.ts",
+    "pack:assets": "bash utils/deploy/pack-assets.sh"
   },
   "dependencies": {
     "@lbalab/hqr": "^3.4.4",
