@@ -152,7 +152,7 @@ export default class TeleportMenu extends React.Component<TMProps, TMState> {
         }, loc);
     }
 
-    componentWillMount() {
+    componentDidMount() {
         window.addEventListener('resize', this.resize);
     }
 

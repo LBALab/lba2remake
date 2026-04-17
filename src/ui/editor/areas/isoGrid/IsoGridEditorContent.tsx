@@ -312,8 +312,8 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
         }
     }
 
-    componentWillMount() {
-        super.componentWillMount();
+    componentDidMount() {
+        super.componentDidMount();
         window.addEventListener('keydown', this.onKeyDown);
         window.addEventListener('keyup', this.onKeyUp);
     }
@@ -940,7 +940,7 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
 }
 
 function makeSelectionObject() {
-    const geometry = new THREE.BoxBufferGeometry(WORLD_SCALE_B, WORLD_SCALE_B * 0.5, WORLD_SCALE_B);
+    const geometry = new THREE.BoxGeometry(WORLD_SCALE_B, WORLD_SCALE_B * 0.5, WORLD_SCALE_B);
     const edges = new THREE.EdgesGeometry(geometry);
     const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({
         color: 0xffffff

@@ -19,7 +19,7 @@ const filterKeys = keys => filter(keys, k => typeof(k) === 'number'
 const getKeys = (obj): (string | number)[] => {
     if (obj === null
         || obj === undefined
-        || obj === {}
+        || Object.keys(obj).length === 0
         || obj instanceof Function
         || typeof(obj) === 'number'
         || typeof(obj) === 'string'
@@ -42,7 +42,7 @@ const getKeys = (obj): (string | number)[] => {
 const countKeys = (obj): number => {
     if (obj === null
         || obj === undefined
-        || obj === {}
+        || Object.keys(obj).length === 0
         || obj instanceof Function
         || typeof(obj) === 'number'
         || typeof(obj) === 'string'

@@ -17,9 +17,7 @@ export function getParamNames(func: MetaFunction) : string[] {
         return func.__param_names;
     }
     const fnStr = func.toString().replace(STRIP_COMMENTS, '');
-    let result = fnStr.slice(fnStr.indexOf('(') + 1, fnStr.indexOf(')')).match(ARGUMENT_NAMES);
-    if (result === null)
-        result = [];
+    let result: string[] = fnStr.slice(fnStr.indexOf('(') + 1, fnStr.indexOf(')')).match(ARGUMENT_NAMES) || [];
     return result;
 }
 

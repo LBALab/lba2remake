@@ -345,9 +345,9 @@ async function appendMeshGeometry(
     transform.multiply(matrixWorld || node.matrixWorld);
 
     const geom = node.geometry as THREE.BufferGeometry;
-    const pos_attr = geom.attributes.position;
-    const normal_attr = geom.attributes.normal;
-    const uv_attr = geom.attributes.uv;
+    const pos_attr = geom.attributes.position as THREE.BufferAttribute;
+    const normal_attr = geom.attributes.normal as THREE.BufferAttribute;
+    const uv_attr = geom.attributes.uv as THREE.BufferAttribute;
     const index_attr = geom.index;
 
     const rotation = new THREE.Matrix4();

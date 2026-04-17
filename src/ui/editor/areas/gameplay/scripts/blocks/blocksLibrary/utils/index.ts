@@ -61,7 +61,7 @@ export class FieldActor extends Blockly.FieldDropdown {
     argsToUpdate: string[];
 
     constructor(argsToUpdate: string[] = []) {
-        super(generateActors);
+        super(generateActors as Blockly.MenuGeneratorFunction);
         this.argsToUpdate = argsToUpdate;
     }
 
@@ -120,7 +120,7 @@ export class FieldDropdownLBA extends Blockly.FieldDropdown {
         if (!FieldDropdownLBA.supports(type)) {
             throw new Error(`Unsupported type: ${type}`);
         }
-        super(typeGenerator[type]);
+        super(typeGenerator[type] as Blockly.MenuGeneratorFunction);
     }
 
     setValue(value) {

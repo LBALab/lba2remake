@@ -83,14 +83,16 @@ export default class Menu extends React.Component<MProps, MState> {
         };
     }
 
-    componentWillMount() {
+    componentDidMount() {
         window.addEventListener('keydown', this.listener);
         window.addEventListener('lbagamepadchanged', this.gamepadListener);
     }
 
-    componentWillReceiveProps(newProps) {
-        const menu = getMenuItems(newProps.inGameMenu, newProps.hasSaveGame);
-        this.setState({ items: menu, selectedIndex: 0 });
+    componentDidUpdate(prevProps) {
+        if (prevProps.inGameMenu !== this.props.inGameMenu || prevProps.hasSaveGame !== this.props.hasSaveGame) {
+            const menu = getMenuItems(this.props.inGameMenu, this.props.hasSaveGame);
+            this.setState({ items: menu, selectedIndex: 0 });
+        }
     }
 
     componentWillUnmount() {

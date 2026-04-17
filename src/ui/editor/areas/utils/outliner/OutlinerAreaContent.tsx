@@ -69,8 +69,10 @@ export function makeContentComponent(tree, frame, ownStyle, sep = 'normal', hide
             }
         }
 
-        componentWillReceiveProps(newProps) {
-            this.setState({ root: this.findRoot(newProps.sharedState.path) });
+        componentDidUpdate(prevProps) {
+            if (prevProps.sharedState.path !== this.props.sharedState.path) {
+                this.setState({ root: this.findRoot(this.props.sharedState.path) });
+            }
         }
 
         render() {

@@ -3,7 +3,12 @@ import {cloneDeep} from 'lodash';
 import {getObjectName} from '../ui/editor/DebugData';
 import {createBoundingBox} from '../utils/rendering';
 import { getParams } from '../params';
-import assert from 'assert';
+
+function assert(condition: boolean): asserts condition {
+    if (!condition) {
+        throw new Error('Assertion failed');
+    }
+}
 
 export const ZONE_TYPE = [
     'TELEPORT',

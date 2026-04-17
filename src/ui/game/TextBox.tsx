@@ -27,15 +27,15 @@ export default class TextBox extends React.Component<TBProps, TBState> {
         this.interval = null;
     }
 
-    componentWillMount() {
+    componentDidMount() {
         if (this.props.text) {
             this.interval = window.setInterval(this.update, 35);
         }
     }
 
-    componentWillReceiveProps(newProps) {
-        if (newProps.text !== this.props.text) {
-            if (newProps.text) {
+    componentDidUpdate(prevProps) {
+        if (this.props.text !== prevProps.text) {
+            if (this.props.text) {
                 this.setState({ content: '', offset: 0 });
                 clearInterval(this.interval);
                 this.interval = window.setInterval(this.update, 35);
@@ -45,7 +45,7 @@ export default class TextBox extends React.Component<TBProps, TBState> {
                 this.interval = null;
             }
         }
-        if (newProps.skip !== this.props.skip
+        if (this.props.skip !== prevProps.skip
             && this.props.text
             && this.props.text.value) {
             this.setState({offset: 0, content: this.props.text.value.replace(/@/g, '\n')});

@@ -62,7 +62,7 @@ export default class Root extends React.Component<RootProps, RootState> {
         }
     }
 
-    componentWillMount() {
+    componentDidMount() {
         window.addEventListener('hashchange', this.onHashChange);
         document.addEventListener('displaychangelog', this.openChangeLog);
 

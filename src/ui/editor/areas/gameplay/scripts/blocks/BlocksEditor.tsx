@@ -25,9 +25,6 @@ interface State {
 
 let idCount = 0;
 
-Blockly.HSV_SATURATION = 0.9;
-Blockly.HSV_VALUE = 0.55;
-
 each(blocksLibrary, (def, type) => {
     Blockly.Blocks[type] = def;
 });
@@ -106,7 +103,7 @@ export default class BlocksEditor extends FrameListener<Props, State> {
                     collapse: true,
                     sounds: false,
                     trashcan: false,
-                    theme: (Blockly as any).Themes.Dark
+                    theme: Blockly.Themes.Classic
                 });
                 this.toolboxElem = ref.querySelector('.blocklyToolboxDiv');
                 this.setToolboxVisible(false);
@@ -132,12 +129,12 @@ export default class BlocksEditor extends FrameListener<Props, State> {
                     }
                 });
                 this.workspace.addChangeListener((e) => {
-                    if (e instanceof Blockly.Events.Ui) {
-                        if ((e as any).element === 'click' && e.workspaceId === this.workspace.id) {
+                    if (e instanceof Blockly.Events.Click) {
+                        if (e.workspaceId === this.workspace.id) {
                             this.setToolboxVisible(false);
                         }
                     }
-                    if (e instanceof Blockly.Events.Create) {
+                    if (e instanceof Blockly.Events.BlockCreate) {
                         const newBlock = this.workspace.getBlockById(e.blockId);
                         if (newBlock.type === 'lba_behaviour' && Number(newBlock.data) === -1) {
                             let bId = 0;
@@ -160,7 +157,7 @@ export default class BlocksEditor extends FrameListener<Props, State> {
                             }
                         }
                     }
-                    if (e instanceof Blockly.Events.Delete) {
+                    if (e instanceof Blockly.Events.BlockDelete) {
                         if (e.blockId === this.initBehaviourId) {
                             const elem = this.toolbox.querySelector('#init_behaviour');
                             elem.setAttribute('disabled', 'false');
@@ -170,12 +167,12 @@ export default class BlocksEditor extends FrameListener<Props, State> {
                     }
                     if (e.workspaceId === this.workspace.id && !this.isRebuilding) {
                         let updated = false;
-                        if (e instanceof Blockly.Events.Delete ||
-                            e instanceof Blockly.Events.Change ||
-                            e instanceof Blockly.Events.Create) {
+                        if (e instanceof Blockly.Events.BlockDelete ||
+                            e instanceof Blockly.Events.BlockChange ||
+                            e instanceof Blockly.Events.BlockCreate) {
                             updated = true;
                         }
-                        if (e instanceof Blockly.Events.Move) {
+                        if (e instanceof Blockly.Events.BlockMove) {
                             const m = e as any;
                             if (m.newParentId !== m.oldParentId) {
                                 updated = true;

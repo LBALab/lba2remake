@@ -1,8 +1,10 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 
 import Ticker from './ui/utils/Ticker';
 import UIWrapper from './ui/UIWrapper';
+
+let root = null;
 
 window.onload = () => {
     init();
@@ -36,8 +38,10 @@ window.addEventListener('unhandledrejection', (event) => {
 
 function init(error = null) {
     const ticker = new Ticker();
-    ReactDOM.render(
-        React.createElement(UIWrapper, {ticker, error}) as any,
-        document.getElementById('root') as any
+    if (!root) {
+        root = createRoot(document.getElementById('root') as unknown as Element);
+    }
+    root.render(
+        React.createElement(UIWrapper, {ticker, error}) as any
     );
 }

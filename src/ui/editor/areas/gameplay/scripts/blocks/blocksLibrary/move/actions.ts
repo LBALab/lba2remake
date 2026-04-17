@@ -1,4 +1,5 @@
 import Blockly from 'blockly';
+import { FieldAngle } from '@blockly/field-angle';
 import {
     makeIcon,
     setterBlock,
@@ -91,18 +92,18 @@ export const lba_move_no_body = genericMoveCmd((_block, field) => {
 
 export const lba_move_set_angle = genericMoveCmd((_block, field) => {
     field('set angle');
-    field(new Blockly.FieldAngle(), 'arg_0');
+    field(new FieldAngle(), 'arg_0');
 });
 
 export const lba_move_set_angle_rnd = genericMoveCmd((_block, field) => {
     field('set random angle');
-    field(new Blockly.FieldAngle(), 'arg_0');
-    field(new Blockly.FieldAngle(), 'arg_1');
+    field(new FieldAngle(), 'arg_0');
+    field(new FieldAngle(), 'arg_1');
 });
 
 export const lba_move_set_orientation = genericMoveCmd((_block, field) => {
     field('set orientation');
-    field(new Blockly.FieldAngle(), 'arg_0');
+    field(new FieldAngle(), 'arg_0');
 });
 
 export const lba_move_replace = genericMoveCmd((_block, field) => {

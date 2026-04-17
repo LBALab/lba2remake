@@ -201,7 +201,7 @@ function resetCameraOrientation(controlsState, scene: Scene) {
 }
 
 export async function loadModelsMetaData() {
-    return new Promise((resolve) => {
+    return new Promise<void>((resolve) => {
         const { game } = getParams();
         const request = new XMLHttpRequest();
         request.open('GET', `metadata/${game}/models.json`, true);
@@ -233,7 +233,7 @@ export async function loadSceneMetaData(sceneIndex) {
         return null;
     }
 
-    return new Promise((resolve) => {
+    return new Promise<void>((resolve) => {
         const { game } = getParams();
         const request = new XMLHttpRequest();
         request.open('GET', `metadata/${game}/scene_${sceneIndex}.json`, true);
@@ -296,7 +296,7 @@ export function loadGameMetaData() {
 }
 
 export async function loadIslandsMetaData() {
-    return new Promise((resolve) => {
+    return new Promise<void>((resolve) => {
         const { game } = getParams();
         const request = new XMLHttpRequest();
         request.open('GET', `metadata/${game}/islands.json`, true);

@@ -43,13 +43,13 @@ export default class AskChoice extends React.Component<ACProps, ACState> {
         this.state = { selectedIndex: 0 };
     }
 
-    componentWillMount() {
+    componentDidMount() {
         window.addEventListener('keydown', this.listener);
         window.addEventListener('lbagamepadchanged', this.gamepadListener);
     }
 
-    componentWillReceiveProps(newProps) {
-        if (newProps.ask)
+    componentDidUpdate(prevProps) {
+        if (prevProps.ask !== this.props.ask)
             this.setState({ selectedIndex: 0 });
     }
 

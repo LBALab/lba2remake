@@ -39,8 +39,8 @@ export default class CinemaEffect extends React.Component<CEProps, CEState> {
         this.timeout = null;
     }
 
-    componentWillReceiveProps(newProps) {
-        if (newProps.enabled !== this.props.enabled) {
+    componentDidUpdate(prevProps) {
+        if (this.props.enabled !== prevProps.enabled) {
             this.setState({animate: true});
             this.timeout = window.setTimeout(() => {
                 this.setState({animate: false});

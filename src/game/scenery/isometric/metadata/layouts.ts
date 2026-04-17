@@ -15,7 +15,7 @@ export async function loadLayoutsMetadata(entry, library, isEditor, mergeReplace
     const libMetadata = layoutsMetadata[library.index];
     const layouts = {};
     const variants = [];
-    await Promise.all(map(libMetadata, async (data, idx) => {
+    await Promise.all(map(libMetadata, async (data, idx: string) => {
         let info = null;
         if (data.replace) {
             if (hasFullReplacement) {

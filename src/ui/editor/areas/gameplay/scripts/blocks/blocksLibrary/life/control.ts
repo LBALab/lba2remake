@@ -80,7 +80,7 @@ export const lba_switch = {
         this.setColour(180);
 
         this.setOnChange((event) => {
-            if (event instanceof Blockly.Events.Move) {
+            if (event instanceof Blockly.Events.BlockMove) {
                 const e = event as any;
                 if (e.newParentId === this.id && e.newInputName === 'condition') {
                     const condBlock = this.getInput('condition').connection.targetBlock();
@@ -174,7 +174,7 @@ function makeCase(orCase) {
             this.setNextStatement(true, ['SWITCH', 'LIFE']);
             this.setColour(180);
             this.setOnChange((event) => {
-                if (event instanceof Blockly.Events.Move) {
+                if (event instanceof Blockly.Events.BlockMove) {
                     const e = event as any;
                     if (e.blockId === this.id && e.newParentId) {
                         const input = this.getInput('operand');

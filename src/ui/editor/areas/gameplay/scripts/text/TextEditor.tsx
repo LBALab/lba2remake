@@ -85,8 +85,8 @@ export default class TextEditor extends FrameListener<Props, State> {
         };
     }
 
-    componentWillMount() {
-        super.componentWillMount();
+    componentDidMount() {
+        super.componentDidMount();
         document.addEventListener('mousedown', this.enableSeparator);
         document.addEventListener('mousemove', this.updateSeparator);
         document.addEventListener('mouseup', this.disableSeparator);
@@ -139,9 +139,9 @@ export default class TextEditor extends FrameListener<Props, State> {
         }
     }
 
-    componentWillReceiveProps(newProps) {
-        if (newProps.sharedState.actorIndex !== this.state.actorIndex) {
-            this.setState({ actorIndex: newProps.sharedState.actorIndex });
+    componentDidUpdate(prevProps) {
+        if (prevProps.sharedState.actorIndex !== this.props.sharedState.actorIndex) {
+            this.setState({ actorIndex: this.props.sharedState.actorIndex });
         }
     }
 

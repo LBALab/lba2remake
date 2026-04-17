@@ -1,4 +1,5 @@
 import Blockly from 'blockly';
+import { FieldAngle } from '@blockly/field-angle';
 import {
     makeIcon,
     setterBlock,
@@ -191,12 +192,12 @@ export const lba_set_position = action((_block, field) => {
 
 export const lba_set_orientation = action((_block, field) => {
     field('set orientation to');
-    field(new Blockly.FieldAngle(), 'arg_0');
+    field(new FieldAngle(), 'arg_0');
 });
 
 export const lba_set_inverse_orientation = action((_block, field) => {
     field('set inverse orientation to');
-    field(new Blockly.FieldAngle(), 'arg_0');
+    field(new FieldAngle(), 'arg_0');
 });
 
 /*

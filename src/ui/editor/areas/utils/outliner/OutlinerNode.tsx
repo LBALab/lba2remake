@@ -103,17 +103,17 @@ export default class OutlinerNode extends React.Component<Props, State> {
         return true;
     }
 
-    componentWillReceiveProps(newProps) {
-        if (!isEqual(newProps.activePath, this.props.activePath)
-            || !isEqual(newProps.path, this.props.path)) {
-            const collapsed = !(newProps.level < 1 || this.isInActivePath(newProps));
+    componentDidUpdate(prevProps) {
+        if (!isEqual(this.props.activePath, prevProps.activePath)
+            || !isEqual(this.props.path, prevProps.path)) {
+            const collapsed = !(this.props.level < 1 || this.isInActivePath(this.props));
             if (collapsed !== this.state.collapsed) {
                 this.setState({collapsed});
             }
         }
     }
 
-    componentWillMount() {
+    componentDidMount() {
         if (this.props.node.dynamic || this.props.node.selected) {
             this.props.ticker.register(this);
         }

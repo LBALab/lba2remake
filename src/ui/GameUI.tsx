@@ -60,7 +60,7 @@ export default class GameUI extends React.Component<GameUIProps, GameUIState> {
         };
     }
 
-    componentWillMount() {
+    componentDidMount() {
         window.addEventListener('keydown', this.listenerKeyDown);
         window.addEventListener('keyup', this.listenerKeyUp);
         window.addEventListener('lbagamepadchanged', this.gamepadListener);

@@ -406,7 +406,7 @@ function loadSphereGeometry(geometries, body) {
             geometries.colored.polyTypes.push(0);
         };
 
-        const { array: vertex } = sphereGeometry.attributes.position;
+        const { array: vertex } = sphereGeometry.attributes.position as THREE.BufferAttribute;
         const { array: index, count } = sphereGeometry.index;
         for (let i = 0; i < count; i += 1) {
             const idx = index[i] * 3;

@@ -332,8 +332,8 @@ function loadSphereGeometry(geometry, body, palette) {
         const color = getColor(s.colour, s.intensity, palette);
         const bone = getBone(body, s.vertex);
 
-        const { array: vertex } = sphereGeometry.attributes.position;
-        const { array: normals } = sphereGeometry.attributes.normal;
+        const { array: vertex } = sphereGeometry.attributes.position as THREE.BufferAttribute;
+        const { array: normals } = sphereGeometry.attributes.normal as THREE.BufferAttribute;
         const { array: index, count } = sphereGeometry.index;
         for (let i = 0; i < vertex.length; i += 3) {
             push.apply(geometry.positions, [
@@ -380,8 +380,8 @@ function loadLineGeometry(geometry, body, palette) {
         const segmentGeometry = new THREE.CylinderGeometry(thickness, thickness, 1, 6, 1);
         const color = getColor(line.colour, line.intensity, palette);
 
-        const { array: vertex } = segmentGeometry.attributes.position;
-        const { array: normals } = segmentGeometry.attributes.normal;
+        const { array: vertex } = segmentGeometry.attributes.position as THREE.BufferAttribute;
+        const { array: normals } = segmentGeometry.attributes.normal as THREE.BufferAttribute;
         const { array: index, count } = segmentGeometry.index;
         for (let i = 0; i < vertex.length; i += 3) {
             P.set(

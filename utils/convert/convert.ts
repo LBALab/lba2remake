@@ -3,7 +3,7 @@
 import fs from 'fs';
 import path from 'path';
 import os from 'os';
-import FFmpeg from 'ffmpeg-cli';
+import { execSync } from 'child_process';
 import synth from 'synth-js';
 
 import { CompressionType, HQR, HQREntry, HQRVirtualEntry } from '@lbalab/hqr';
@@ -77,13 +77,13 @@ const convertToMp4 = async (languageTrack: number, inputFilePath: string, output
     if (languageTrack !== -1) {
         const aviPath = `${inputFilePath}.avi`;
         removeFile(aviPath);
-        FFmpeg.runSync(`-i "${inputFilePath}" -q:v 0 -q:a 0 -filter_complex "[0:1][0:${languageTrack}] amerge=inputs=2" "${aviPath}"`);
+        execSync(`ffmpeg -i "${inputFilePath}" -q:v 0 -q:a 0 -filter_complex "[0:1][0:${languageTrack}] amerge=inputs=2" "${aviPath}"`, { encoding: 'utf8' });
         removeFile(outputFilePath);
-        FFmpeg.runSync(`-i "${aviPath}" -q:v 0 -q:a 0 "${outputFilePath}"`);
+        execSync(`ffmpeg -i "${aviPath}" -q:v 0 -q:a 0 "${outputFilePath}"`, { encoding: 'utf8' });
         removeFile(aviPath);
     } else {
         removeFile(outputFilePath);
-        FFmpeg.runSync(`-i "${inputFilePath}" -c:v libx264 -crf 22 -pix_fmt yuv420p "${outputFilePath}"`);
+        execSync(`ffmpeg -i "${inputFilePath}" -c:v libx264 -crf 22 -pix_fmt yuv420p "${outputFilePath}"`, { encoding: 'utf8' });
     }
 };
 
@@ -314,13 +314,13 @@ const samplesConvertor = async (game) => {
 const convertToM4aAudio = async (inputFilePath: string, outputFilePath: string, bitrate: number) => {
     console.log(`Converting ${inputFilePath} to ${outputFilePath} with bitrate ${bitrate}k`);
     removeFile(outputFilePath);
-    FFmpeg.runSync(`-i "${inputFilePath}" -af afftdn,anlmdn=s=7:p=0.002:r=0.002:m=15 -c:a aac -b:a ${bitrate}k "${outputFilePath}"`);
+    execSync(`ffmpeg -i "${inputFilePath}" -af afftdn,anlmdn=s=7:p=0.002:r=0.002:m=15 -c:a aac -b:a ${bitrate}k "${outputFilePath}"`, { encoding: 'utf8' });
 };
 
 const convertToWavAudio = async (inputFilePath: string, outputFilePath: string) => {
     console.log(`Converting ${inputFilePath} to ${outputFilePath}`);
     removeFile(outputFilePath);
-    FFmpeg.runSync(`-i "${inputFilePath}" -c:a pcm_s16le "${outputFilePath}"`);
+    execSync(`ffmpeg -i "${inputFilePath}" -c:a pcm_s16le "${outputFilePath}"`, { encoding: 'utf8' });
 };
 
 const convertors = {

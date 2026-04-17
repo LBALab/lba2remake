@@ -11,7 +11,7 @@ export default abstract class FrameListener<TProps extends TickerProps = TickerP
         }
     }
 
-    componentWillMount() {
+    componentDidMount() {
         this.props.ticker.register(this);
     }
 

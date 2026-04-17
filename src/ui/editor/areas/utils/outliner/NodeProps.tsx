@@ -27,7 +27,7 @@ export default class NodeProps extends React.Component<Props, State> {
         };
     }
 
-    componentWillMount() {
+    componentDidMount() {
         if (this.props.dynamic) {
             this.props.ticker.register(this);
         }

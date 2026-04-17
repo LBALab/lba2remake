@@ -384,4 +384,4 @@ const baseTree = `<xml id="toolbox" style="display: none">
 </category>
 </xml>`;
 
-export const createToolboxTree = () => Blockly.Xml.textToDom(baseTree);
+export const createToolboxTree = () => Blockly.utils.xml.textToDom(baseTree);

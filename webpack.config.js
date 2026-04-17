@@ -25,7 +25,7 @@ module.exports = {
     },
     module: {
         rules: [{
-            test: /((blockly|file-saver|xxhash-wasm)\/.*\.js)$/,
+            test: /((file-saver|xxhash-wasm)\/.*\.js)$/,
             enforce: "pre",
             use: ["source-map-loader"],
         }, {
@@ -41,32 +41,15 @@ module.exports = {
                 }
             }]
         }, {
-            test: /\.tsx?$/,
-            include: /src/,
-            exclude: /node_modules/,
-            enforce: 'pre',
-            use: [
-                {
-                    loader: 'tslint-loader',
-                    options: {
-                        configFile: './tslint.yaml',
-                        tsConfigFile: './tsconfig.json',
-                        emitErrors: false
-                    }
-                }
-            ]
-        }, {
             test: /\.glsl?$/,
             exclude: /node_modules/,
             use: [{
                 loader: 'glsl-custom-loader'
             }]
         }, {
-            test: /\.md?$/,
+            test: /\.md$/,
             exclude: /node_modules/,
-            use: [{
-                loader: 'raw-loader'
-            }]
+            type: 'asset/source'
         }, {
             test: /\.yaml?$/,
             exclude: /node_modules/,
@@ -96,15 +79,16 @@ module.exports = {
                         url: false,
                     }
                 },
-                "sass-loader"
+                {
+                    loader: "sass-loader",
+                    options: {
+                        sassOptions: {
+                            silenceDeprecations: ['import', 'global-builtin', 'legacy-js-api', 'if-function'],
+                        }
+                    }
+                }
             ]
         }]
     },
-    plugins: [
-        new webpack.DefinePlugin({
-            'process.env': {
-                'NODE_ENV': '"' + process.env.NODE_ENV + '"'
-            }
-        })
-    ]
+    plugins: []
 };

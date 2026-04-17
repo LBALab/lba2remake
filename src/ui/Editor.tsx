@@ -87,7 +87,7 @@ export default class Editor extends React.Component<EditorProps, EditorState> {
         };
     }
 
-    componentWillMount() {
+    componentDidMount() {
         document.addEventListener('mousedown', this.enableSeparator);
         document.addEventListener('touchstart', this.enableSeparator);
         document.addEventListener('mousemove', this.updateSeparator);

@@ -1,4 +1,5 @@
 import Blockly from 'blockly';
+import { FieldAngle } from '@blockly/field-angle';
 import {
     makeIcon,
     typeIcons,
@@ -294,7 +295,7 @@ function condition({
     };
 }
 
-const operators = [
+const operators: [string, string][] = [
     ['=', '=='],
     ['≠', '!='],
     ['>', '>'],
@@ -313,7 +314,7 @@ export function addOperand(input, operandType) {
     if (numberTypes.includes(operandType)) {
         input.appendField(new Blockly.FieldNumber(), 'operand');
     } else if (operandType === 'angle') {
-        input.appendField(new Blockly.FieldAngle(), 'operand');
+        input.appendField(new FieldAngle(), 'operand');
     } else if (FieldDropdownLBA.supports(operandType)) {
         input.appendField(new FieldDropdownLBA(operandType), 'operand');
     } else {

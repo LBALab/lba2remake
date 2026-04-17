@@ -232,8 +232,8 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
         }
     }
 
-    componentWillMount() {
-        super.componentWillMount();
+    componentDidMount() {
+        super.componentDidMount();
         window.addEventListener('keydown', this.onKeyDown);
     }
 

@@ -49,7 +49,7 @@ export async function loadFullSceneModel(
     const effects: Fx[] = [];
     threeObject.traverse((node) => {
         if (node instanceof THREE.Mesh) {
-            const color_attr = (node.geometry as THREE.BufferGeometry).attributes.color;
+            const color_attr = (node.geometry as THREE.BufferGeometry).attributes.color as THREE.BufferAttribute;
             if (color_attr) {
                 color_attr.normalized = true;
             }
