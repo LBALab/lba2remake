@@ -1,6 +1,8 @@
 # LBA1 & LBA2 Remake
 A Little Big Adventure 1 & 2 / Twinsen's Adveneture / Twinsen's Odyssey reimplementation in Typescript / Three.js / React
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/7fdb8607-f1b3-432b-9356-0b7a0a2e8df8/deploy-status)](https://app.netlify.com/projects/lba2remake/deploys)
+
 #### [Live demo](https://www.lba2remake.net) (or [Editor mode](https://www.lba2remake.net/#editor=true))
 
 
