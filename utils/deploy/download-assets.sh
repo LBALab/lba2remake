@@ -17,6 +17,16 @@ resolve_url() {
   fi
 }
 
+# Returns a safe-to-log version of a URL (masks sensitive parts).
+display_url() {
+  local url="$1"
+  if [[ "$url" =~ drive\.usercontent\.google\.com ]]; then
+    echo "https://drive.usercontent.google.com/download?id=***&export=download&confirm=t"
+  else
+    echo "(URL hidden)"
+  fi
+}
+
 download_game_assets() {
   local game="$1" # LBA | LBA2
   local url="$2"
@@ -29,15 +39,17 @@ download_game_assets() {
   fi
 
   url="$(resolve_url "$url")"
+  local shown_url
+  shown_url="$(display_url "$url")"
 
   local tmp
   tmp=$(mktemp /tmp/assets-XXXXXX.tar.gz)
 
   if [ -n "$secret" ]; then
-    echo "[$game] Downloading (with auth): curl -fSL --progress-bar -H \"Authorization: Bearer ***\" \"$url\" -o \"$tmp\""
+    echo "[$game] Downloading (with auth): curl -fSL --progress-bar -H \"Authorization: Bearer ***\" \"$shown_url\" -o \"$tmp\""
     curl -fSL --progress-bar -H "Authorization: Bearer $secret" "$url" -o "$tmp"
   else
-    echo "[$game] Downloading: curl -fSL --progress-bar \"$url\" -o \"$tmp\""
+    echo "[$game] Downloading: curl -fSL --progress-bar \"$shown_url\" -o \"$tmp\""
     curl -fSL --progress-bar "$url" -o "$tmp"
   fi
 
