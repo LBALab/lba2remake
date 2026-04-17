@@ -18,7 +18,7 @@ resolve_url() {
 }
 
 download_game_assets() {
-  local game="$1"       # e.g. LBA1
+  local game="$1" # LBA | LBA2
   local url="$2"
   local secret="${3:-}"
   local target="$ASSETS_DIR/$game"
@@ -67,5 +67,5 @@ fi
 
 mkdir -p "$ASSETS_DIR"
 
-download_game_assets "LBA1" "$LBA1_ASSETS_URL" "${LBA1_ASSETS_SECRET:-}"
+download_game_assets "LBA" "$LBA1_ASSETS_URL" "${LBA1_ASSETS_SECRET:-}"
 download_game_assets "LBA2" "$LBA2_ASSETS_URL" "${LBA2_ASSETS_SECRET:-}"

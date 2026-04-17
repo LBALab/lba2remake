@@ -6,7 +6,7 @@ OUT_DIR="${1:-dist}"
 
 mkdir -p "$OUT_DIR"
 
-for game in LBA1 LBA2; do
+for game in LBA LBA2; do
   src="$ASSETS_DIR/$game"
   out="$OUT_DIR/${game}.tar.gz"
 
